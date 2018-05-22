@@ -1,0 +1,64 @@
+[
+  {
+    "namespace": "experiments.normandy",
+    "description": "Normandy",
+    "functions": [
+      {
+        "name": "getManualMode",
+        "type": "function",
+        "description": "Get the state of manual mode",
+        "async": true,
+        "parameters": []
+      },
+
+      {
+        "name": "setManualMode",
+        "type": "function",
+        "description": "Turn manual mode on or off",
+        "async": true,
+        "parameters": [
+          {
+            "name": "manualMode",
+            "type": "boolean",
+            "description": "The new value for manual mode"
+          }
+        ]
+      },
+
+      {
+        "name": "standardRun",
+        "type": "function",
+        "description": "Run Normandy as if the timer had fired",
+        "async": true,
+        "parameters": []
+      }
+    ],
+
+    "events": [
+      {
+        "name": "onManualMode",
+        "type": "function",
+        "description": "Manual mode has changed",
+        "parameters": [
+          {
+            "name": "manualMode",
+            "description": "The new value of manual mode",
+            "type": "boolean"
+          }
+        ]
+      },
+      {
+        "name": "onNormandyLog",
+        "type": "function",
+        "description": "Normandy has logged a message",
+        "parameters": [
+          {
+            "name": "message",
+            "description": "The message logged by Normandy",
+            "type": "object"
+          }
+        ]
+      }
+    ]
+  }
+]

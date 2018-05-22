@@ -1,0 +1,34 @@
+{
+  "manifest_version": 2,
+  "name": "Normandy Devtools",
+  "version": "1.0",
+  "description": "A set of tools for interacting with Normandy without using a server.",
+  "homepage_url": "https://github.com/mythmon/normandy-devtools",
+  "applications": {
+    "gecko": {
+      "id": "normandy-devtools@mozilla.com"
+    }
+  },
+
+  "background": {
+    "scripts": ["background.js"]
+  },
+
+  "browser_action": {
+    "default_title": "Normandy Devtools",
+    "browser_style": true
+  },
+
+  "permissions": [],
+
+  "experiment_apis": {
+    "normandy": {
+      "schema": "experiments/normandy/schema.json",
+      "parent": {
+        "scopes": ["addon_parent"],
+        "script": "experiments/normandy/api.js",
+        "paths": [["experiments", "normandy"]]
+      }
+    }
+  }
+}
