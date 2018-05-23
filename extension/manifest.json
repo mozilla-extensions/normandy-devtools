@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Normandy Devtools",
-  "version": "1.0",
+  "version": "0.1",
   "description": "A set of tools for interacting with Normandy without using a server.",
   "homepage_url": "https://github.com/mythmon/normandy-devtools",
   "applications": {
