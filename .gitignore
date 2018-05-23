@@ -1,2 +1,6 @@
 content/bundle.js
 content/bundle.js.map
+content/*.eot
+content/*.ttf
+content/*.svg
+content/*.woff

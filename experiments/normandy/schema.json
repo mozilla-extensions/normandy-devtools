@@ -31,6 +31,42 @@
         "description": "Run Normandy as if the timer had fired",
         "async": true,
         "parameters": []
+      },
+
+      {
+        "name": "evaluateFilter",
+        "type": "function",
+        "description": "Evaluate a filter expression",
+        "async": true,
+        "parameters": [
+          {
+            "name": "filter",
+            "type": "string",
+            "description": "The filter to evaluate"
+          },
+          {
+            "name": "recipe",
+            "type": "object",
+            "description": "The associated recipe object",
+            "additionalProperties": true,
+            "optional": true
+          }
+        ]
+      },
+
+      {
+        "name": "runRecipe",
+        "type": "function",
+        "description": "Unconditionally run a recipe. Filters and signing are not considered",
+        "async": true,
+        "parameters": [
+          {
+            "name": "recipe",
+            "type": "object",
+            "description": "The recipe to run",
+            "additionalProperties": true
+          }
+        ]
       }
     ],
 

@@ -1,5 +1,10 @@
-ChromeUtils.import("resource://gre/modules/Services.jsm");
-ChromeUtils.import("resource://normandy/lib/RecipeRunner.jsm");
+ChromeUtils.import("resource://gre/modules/XPCOMUtils.jsm");
+
+XPCOMUtils.defineLazyModuleGetters(this, {
+  Services: "resource://gre/modules/Services.jsm",
+  ActionsManager: "resource://normandy/lib/ActionsManager.jsm",
+  RecipeRunner: "resource://normandy/lib/RecipeRunner.jsm",
+});
 
 const PREF_NORMANDY_ENABLE = "app.normandy.enabled";
 
@@ -16,6 +21,29 @@ var normandy = class extends ExtensionAPI {
 
           async setManualMode(manualMode) {
             Services.prefs.setBoolPref(PREF_NORMANDY_ENABLE, !manualMode);
+            if (manualMode) {
+              Services.prefs.setIntPref("app.normandy.logging.level", 0);
+            } else {
+              Services.prefs.clearUserPref("app.normandy.logging.level");
+            }
+          },
+
+          async evaluateFilter(filter, recipe=null) {
+            let builtRecipe;
+            if (recipe) {
+              builtRecipe = {...recipe, filter_expression: filter};
+            } else {
+              builtRecipe = {filter_expression: filter, id: 1, arguments: {}};
+            }
+            return RecipeRunner.checkFilter(builtRecipe);
+          },
+
+          async runRecipe(recipe) {
+            const actions = new ActionsManager();
+            await actions.fetchRemoteActions();
+            await actions.preExecution();
+            await actions.runRecipe(recipe);
+            // Don't finalze, to avoid unenrolling users from studies
           },
 
           onManualMode: new EventManager({
@@ -50,7 +78,6 @@ var normandy = class extends ExtensionAPI {
                     if (cleanMessage.includes('\t')) {
                       // Try to clean some stuff up
                       cleanMessage = cleanMessage.replace(/^\d+\s+app\.normandy\.(\S*)\s+[A-Z]+\s+/, (_, mod) => `${mod}: `);
-                      console.log('message cleaned up', message.message, '->', cleanMessage);
                     }
                     fire.async({
                       message: cleanMessage,
@@ -66,7 +93,6 @@ var normandy = class extends ExtensionAPI {
           }).api(),
 
           async standardRun() {
-            console.log("Calling RecipeRunner.run()");
             await RecipeRunner.run();
           }
         },

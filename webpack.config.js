@@ -7,21 +7,23 @@ module.exports = {
     'content': './content/index.js',
   },
   output: {
-    filename: '[name]/bundle.js',
-    path: path.resolve(__dirname),
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'content'),
   },
   module: {
     rules: [
       {
         test: /\.js$/,
-        include: [
-          path.resolve(__dirname, './content'),
-        ],
+        include: [path.resolve(__dirname, './content')],
         use: 'babel-loader',
       },
       {
-        test: /\.css$/,
-        use: [ 'style-loader', 'css-loader' ]
+        test: /\.less/,
+        use: ['style-loader', 'css-loader', 'less-loader']
+      },
+      {
+        test: /\.(png|ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/,
+        loader: 'file-loader',
       },
     ],
   },
