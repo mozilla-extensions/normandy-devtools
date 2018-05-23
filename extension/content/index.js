@@ -1,35 +1,35 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Divider, Layout, Table } from 'antd';
-import { DateTime } from 'luxon'
-import autoscroll from 'autoscroll-react';
+import React from "react";
+import ReactDOM from "react-dom";
 
-import './style.less';
-import LogViewer from './LogViewer';
-import RecipeViewer from './RecipeViewer';
-import api from './api';
+import "./style.less";
+import LogViewer from "./LogViewer";
+import RecipeViewer from "./RecipeViewer";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      messages: [],
+      messages: []
     };
 
     this.handleLogMessage = this.handleLogMessage.bind(this);
     this.runNormandy = this.runNormandy.bind(this);
   }
 
-  async componentWillMount() {
-    browser.experiments.normandy.onNormandyLog.addListener(this.handleLogMessage);
+  async componentDidMount() {
+    browser.experiments.normandy.onNormandyLog.addListener(
+      this.handleLogMessage
+    );
   }
 
   componentWillUnmount() {
-    browser.experiments.normandy.onNormandyLog.removeListener(this.handleLogMessage);
+    browser.experiments.normandy.onNormandyLog.removeListener(
+      this.handleLogMessage
+    );
   }
 
   handleLogMessage(message) {
-    this.setState(({messages}) => ({messages: messages.concat([message])}));
+    this.setState(({ messages }) => ({ messages: messages.concat([message]) }));
   }
 
   async runNormandy() {
@@ -37,7 +37,7 @@ class App extends React.Component {
   }
 
   render() {
-    const {messages} = this.state;
+    const { messages } = this.state;
     return (
       <div className="app">
         <header>
@@ -63,11 +63,11 @@ class App extends React.Component {
   }
 }
 
-let target = document.querySelector('#target');
+let target = document.querySelector("#target");
 
 if (!target) {
-  target = document.createElement('div');
-  target.setAttribute('id', 'target');
+  target = document.createElement("div");
+  target.setAttribute("id", "target");
   document.body.appendChild(target);
 }
 

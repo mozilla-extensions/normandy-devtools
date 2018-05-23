@@ -1,12 +1,16 @@
 {
   "devDependencies": {
     "babel-core": "<7",
+    "babel-eslint": "^8.2.3",
     "babel-loader": "^7.1.4",
     "babel-plugin-import": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-3": "^6.24.1",
     "copy-webpack-plugin": "^4.5.1",
     "css-loader": "^0.28.11",
+    "eslint-plugin-mozilla": "^0.13.0",
+    "eslint-plugin-no-unsanitized": "^3.0.2",
+    "eslint-plugin-react": "^7.8.2",
     "file-loader": "^1.1.11",
     "html-webpack-plugin": "^3.2.0",
     "less-loader": "^4.1.0",
@@ -19,6 +23,9 @@
   "dependencies": {
     "antd": "^3.5.3",
     "autoscroll-react": "^3.2.0",
+    "eslint": "^4.19.1",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-prettier": "^2.6.0",
     "js-yaml": "^3.11.0",
     "luxon": "^1.2.1",
     "photon-ant": "^0.1.4",
