@@ -2,6 +2,10 @@
 const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const GenerateJsonPlugin = require("generate-json-webpack-plugin");
+
+const package = require("./package.json");
+const manifest = require("./extension/manifest.json");
 
 module.exports = {
   mode: "development",
@@ -16,13 +20,27 @@ module.exports = {
   plugins: [
     new CopyWebpackPlugin([
       "extension/background.js",
-      "extension/manifest.json",
       { from: "extension/experiments", to: "./experiments/" }
     ]),
     new HtmlWebpackPlugin({
       title: "Normandy Devtools",
       filename: "content.html"
-    })
+    }),
+    new GenerateJsonPlugin(
+      "manifest.json",
+      manifest,
+      (key, value) => {
+        if (typeof value === 'string' && value.startsWith('$')) {
+          let parts = value.slice(1).split('.');
+          let object = package;
+          while (parts.length > 0) {
+            object = object[parts.pop()];
+          }
+          return object;
+        }
+        return value;
+      },
+    ),
   ],
   module: {
     rules: [

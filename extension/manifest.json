@@ -1,9 +1,10 @@
 {
   "manifest_version": 2,
-  "name": "Normandy Devtools",
-  "version": "0.1",
-  "description": "A set of tools for interacting with Normandy without using a server.",
-  "homepage_url": "https://github.com/mythmon/normandy-devtools",
+  "name": "$name",
+  "version": "$version",
+  "description": "$description",
+  "homepage_url": "$homepage_url",
+
   "applications": {
     "gecko": {
       "id": "normandy-devtools@mozilla.com"
