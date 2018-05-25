@@ -31,10 +31,13 @@ this extension active.
 1. Change `xpinstall.signatures.required` to `false`, so that unsigned
    extensions can be installed.
 
-2. Download and install the latest release from the [releases page on
-Github](https://github.com/mozilla/normandy-devtools/releases).
+2. Download the latest release from the [releases page on
+   Github](https://github.com/mozilla/normandy-devtools/releases).
 
-3. Click on the icon in the browser toolbar.
+3. Open `about:addons`, and choose "Install from File" from the gear in the top
+   right. Choose the `.zip` file downloaded from  the releases page.
+
+4. Click on the icon in the browser toolbar.
 
 Note that the extension will not automatically update.
 
