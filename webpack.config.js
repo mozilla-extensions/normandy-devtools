@@ -20,7 +20,8 @@ module.exports = {
   plugins: [
     new CopyWebpackPlugin([
       "extension/background.js",
-      { from: "extension/experiments", to: "./experiments/" }
+      { from: "extension/experiments/", to: "experiments/" },
+      { from: "extension/images/", to: "images/" },
     ]),
     new HtmlWebpackPlugin({
       title: "Normandy Devtools",

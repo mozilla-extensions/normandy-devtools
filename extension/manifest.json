@@ -11,13 +11,22 @@
     }
   },
 
+  "icons": {
+    "48": "images/icon.png",
+    "96": "images/icon@2x.png"
+  },
+
   "background": {
     "scripts": ["background.js"]
   },
 
   "browser_action": {
     "default_title": "Normandy Devtools",
-    "browser_style": true
+    "browser_style": true,
+    "default_icon": {
+      "16": "images/button.png",
+      "32": "images/button@2x.png"
+    }
   },
 
   "permissions": [],
