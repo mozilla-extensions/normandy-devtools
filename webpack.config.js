@@ -3,8 +3,9 @@ const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const GenerateJsonPlugin = require("generate-json-webpack-plugin");
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
-const package = require("./package.json");
+const packageData = require("./package.json");
 const manifest = require("./extension/manifest.json");
 
 module.exports = {
@@ -33,7 +34,7 @@ module.exports = {
       (key, value) => {
         if (typeof value === 'string' && value.startsWith('$')) {
           let parts = value.slice(1).split('.');
-          let object = package;
+          let object = packageData;
           while (parts.length > 0) {
             object = object[parts.pop()];
           }
@@ -52,7 +53,10 @@ module.exports = {
       },
       {
         test: /\.less/,
-        use: ["style-loader", "css-loader", "less-loader"]
+        use: ExtractTextPlugin.extract({
+          fallback: "style-loader",
+          use: ["css-loader", "less-loader"],
+        }),
       },
       {
         test: /\.(png|ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/,
