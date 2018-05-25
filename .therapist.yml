@@ -1,6 +1,6 @@
 actions:
   eslint:
    description: ESLint
-   run: eslint --ignore-pattern '!.eslintrc.js' --ignore-pattern '!.prettierrc.js' {files} && git add -A
+   run: eslint --fix --ignore-pattern '!.eslintrc.js' --ignore-pattern '!.prettierrc.js' {files} && git add -A
    include:
       - "*.js"

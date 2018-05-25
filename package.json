@@ -10,14 +10,11 @@
     "build:extension": "web-ext build -s dist --overwrite-dest",
     "build:webpack": "webpack --mode production --progress",
     "build:webpack-dev": "webpack --mode development --progress",
-
     "clean": "rimraf dist web-ext-artifacts",
-
     "lint": "npm-run-all lint:eslint",
     "lint-fix": "npm-run-all lint:eslint-fix",
     "lint:eslint": "eslint --ignore-pattern '!.eslintrc.js' --ignore-pattern '!.prettierrc.js' .eslintrc.js .prettierrc.js webpackconfig.js extension",
     "lint:eslint-fix": "yarn run lint:eslint --fix",
-
     "watch": "npm-run-all build:webpack-dev --parallel --race watch:*",
     "watch:extension": "web-ext run -s dist",
     "watch:webpack": "webpack --progress --mode development --watch"
@@ -37,7 +34,7 @@
     "eslint-plugin-no-unsanitized": "^3.0.2",
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-react": "^7.8.2",
-    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "extract-text-webpack-plugin": "^3.0.2",
     "file-loader": "^1.1.11",
     "generate-json-webpack-plugin": "^0.3.1",
     "html-webpack-plugin": "^3.2.0",
