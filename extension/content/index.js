@@ -9,7 +9,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      messages: []
+      messages: [],
     };
 
     this.handleLogMessage = this.handleLogMessage.bind(this);
@@ -18,13 +18,13 @@ class App extends React.Component {
 
   async componentDidMount() {
     browser.experiments.normandy.onNormandyLog.addListener(
-      this.handleLogMessage
+      this.handleLogMessage,
     );
   }
 
   componentWillUnmount() {
     browser.experiments.normandy.onNormandyLog.removeListener(
-      this.handleLogMessage
+      this.handleLogMessage,
     );
   }
 

@@ -28,5 +28,5 @@ export async function fetchRecipePage(page = 1, qs = {}) {
 
 export default {
   fetchRecipes,
-  fetchRecipePage
+  fetchRecipePage,
 };

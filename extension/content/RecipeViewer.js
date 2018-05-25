@@ -13,7 +13,7 @@ export default class RecipeViewer extends React.Component {
       recipePages: {},
       loading: true,
       page: 1,
-      count: 0
+      count: 0,
     };
 
     this.handlePageChange = this.handlePageChange.bind(this);
@@ -25,7 +25,7 @@ export default class RecipeViewer extends React.Component {
     this.setState(({ recipePages }) => ({
       recipePages: { ...recipePages, [page]: data.results },
       loading: false,
-      count: data.count
+      count: data.count,
     }));
   }
 
@@ -39,7 +39,7 @@ export default class RecipeViewer extends React.Component {
       recipePages: { ...recipePages, [page]: data.results },
       page,
       loading: false,
-      count: data.count
+      count: data.count,
     }));
   }
 
@@ -71,7 +71,7 @@ class Recipe extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      filterMatches: null
+      filterMatches: null,
     };
   }
 
@@ -79,7 +79,7 @@ class Recipe extends React.Component {
     const { recipe } = this.props;
     let filterMatches = await browser.experiments.normandy.evaluateFilter(
       recipe.filter_expression,
-      recipe
+      recipe,
     );
     this.setState({ filterMatches });
   }
@@ -105,7 +105,7 @@ class Recipe extends React.Component {
             {yaml.safeDump(arguments_, {
               sortKeys: true,
               indent: 4,
-              noRefs: true
+              noRefs: true,
             })}
           </code>
         </pre>
@@ -179,7 +179,7 @@ class RunRecipeButton extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      running: false
+      running: false,
     };
     this.handleClick = this.handleClick.bind(this);
   }
@@ -197,7 +197,7 @@ class RunRecipeButton extends React.Component {
       revision_id: currentRevision.id,
       action: currentRevision.recipe.action.name,
       arguments: currentRevision.recipe.arguments,
-      filter_expression: currentRevision.recipe.filter_expression
+      filter_expression: currentRevision.recipe.filter_expression,
     };
     await browser.experiments.normandy.runRecipe(v1Recipe);
     this.setState({ running: false });

@@ -2,6 +2,6 @@
 module.exports = {
   globals: {
     ExtensionCommon: false,
-    ExtensionAPI: false
-  }
+    ExtensionAPI: false,
+  },
 };

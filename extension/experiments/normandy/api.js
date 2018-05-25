@@ -4,7 +4,7 @@ ChromeUtils.import("resource://gre/modules/XPCOMUtils.jsm");
 XPCOMUtils.defineLazyModuleGetters(this, {
   Services: "resource://gre/modules/Services.jsm",
   ActionsManager: "resource://normandy/lib/ActionsManager.jsm",
-  RecipeRunner: "resource://normandy/lib/RecipeRunner.jsm"
+  RecipeRunner: "resource://normandy/lib/RecipeRunner.jsm",
 });
 
 const PREF_NORMANDY_ENABLE = "app.normandy.enabled";
@@ -56,17 +56,17 @@ var normandy = class extends ExtensionAPI {
                   switch (topic) {
                     case "nsPref:changed": {
                       fire.async(
-                        !Services.prefs.getBoolPref(PREF_NORMANDY_ENABLE, true)
+                        !Services.prefs.getBoolPref(PREF_NORMANDY_ENABLE, true),
                       );
                       break;
                     }
                   }
-                }
+                },
               };
               Services.prefs.addObserver(PREF_NORMANDY_ENABLE, observer);
               return () =>
                 Services.prefs.removeObserver(PREF_NORMANDY_ENABLE, observer);
-            }
+            },
           }).api(),
 
           onNormandyLog: new EventManager({
@@ -83,27 +83,27 @@ var normandy = class extends ExtensionAPI {
                       // Try to clean some stuff up
                       cleanMessage = cleanMessage.replace(
                         /^\d+\s+app\.normandy\.(\S*)\s+[A-Z]+\s+/,
-                        (_, mod) => `${mod}: `
+                        (_, mod) => `${mod}: `,
                       );
                     }
                     fire.async({
                       message: cleanMessage,
                       level: messageLevels[message.logLevel],
-                      timeStamp: message.timeStamp
+                      timeStamp: message.timeStamp,
                     });
                   }
-                }
+                },
               };
               Services.console.registerListener(observer);
               return () => Services.console.unregisterListener(observer);
-            }
+            },
           }).api(),
 
           async standardRun() {
             await RecipeRunner.run();
-          }
-        }
-      }
+          },
+        },
+      },
     };
   }
 };

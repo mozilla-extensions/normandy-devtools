@@ -5,10 +5,10 @@ module.exports = {
     "eslint:recommended",
     "plugin:prettier/recommended",
     "plugin:mozilla/recommended",
-    "plugin:react/recommended"
+    "plugin:react/recommended",
   ],
   rules: {
     "mozilla/no-define-cc-etc": "off", // seems broken outside of m-c
-    "react/prop-types": "off" // TODO
-  }
+    "react/prop-types": "off", // TODO
+  },
 };
