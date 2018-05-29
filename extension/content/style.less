@@ -1,108 +1,110 @@
 @import '~photon-ant/index.less';
 
-@grid-padding: 20px;
+@box-padding: 20px;
 
 * {
   box-sizing: border-box;
 }
 
 .app {
-  display: grid;
-  grid-template-columns: ~"[head-start content-start] auto [content-end side-start] 350px [side-end head-end]";
-  grid-template-rows: ~"[head-start]" 2 * @grid-padding + 33px ~"[head-end content-start side-start] auto [content-end side-end]";
   min-height: 100vh;
 
   header {
-    grid-area: head;
+    align-items: baseline;
     background-color: @purple-50;
+    display: flex;
+    padding: @box-padding;
 
     h1 {
       color: @white;
       font-weight: 400;
-      margin: 0;
+      margin: 0 @box-padding 0 0;
+    }
+
+    nav {
+      font-size: 20px;
+
+      a {
+        color: @white;
+
+        &:not(:last-child) {
+          margin-right: @box-padding;
+        }
+
+        &.active {
+          font-weight: 600;
+        }
+
+        &:hover {
+          text-shadow: 0 0 2px @white;
+        }
+
+        &:focus {
+          box-shadow: none;
+        }
+      }
     }
   }
+}
 
-  header,
-  .content,
-  aside {
-    padding: 2em;
+.content {
+  padding: @box-padding;
+
+  section {
+    margin-top: 25px;
   }
+}
 
-  .content {
-    grid-area: content;
-    max-width: ~"calc(100vw - 400px)";
+.recipe-viewer {
+  .recipe-list {
+    margin-bottom: 10px;
+    min-height: 475px;
 
-    section {
-      margin-top: 25px;
-    }
-  }
+    .ant-collapse-header {
+      padding-right: 12px;
 
-  .recipe-viewer {
-    .recipe-list {
-      margin-bottom: 10px;
-      min-height: 475px;
+      .recipe-header {
+        display: flex;
 
-      .ant-collapse-header {
-        padding-right: 12px;
+        h3 {
+          flex: 1 1;
+          font-size: 15px;
+        }
 
-        .recipe-header {
-          display: flex;
-
-          h3 {
-            flex: 1 1;
-            font-size: 15px;
+        .icons {
+          > * {
+            margin-left: 5px;
           }
 
-          .icons {
-            > * {
-              margin-left: 5px;
+          .filter-match {
+            position: relative;
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+
+            :not(.anticon-user) {
+              left: 3px;
+              position: absolute;
+              top: 4px;
             }
 
-            .filter-match {
-              position: relative;
-              width: 16px;
-              height: 16px;
-              display: inline-block;
-
-              :not(.anticon-user) {
-                left: 3px;
-                position: absolute;
-                top: 4px;
-              }
-
-              .anticon-user {
-                color: #aaa;
-                position: absolute;
-                left: -2px;
-                top: 0px;
-              }
+            .anticon-user {
+              color: #aaa;
+              position: absolute;
+              left: -2px;
+              top: 0px;
             }
           }
         }
       }
+    }
 
-      h4 {
-        font-weight: 600;
-      }
+    h4 {
+      font-weight: 600;
     }
   }
+}
 
-  aside {
-    grid-area: side;
-    border-left: 1px solid #ebedf0;
-  }
-
-  .logs {
-    max-height: ~"calc(100vh - 175px)";
-    overflow: scroll;
-
-    .log-line:not(:last-child) {
-      margin-bottom: 1em;
-    }
-  }
-
-  span.ant-spin-dot > i {
-    display: none;
-  }
+span.ant-spin-dot > i {
+  display: none;
 }
