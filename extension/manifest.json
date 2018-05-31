@@ -7,7 +7,8 @@
 
   "applications": {
     "gecko": {
-      "id": "normandy-devtools@mozilla.com"
+      "id": "normandy-devtools@mozilla.com",
+      "strict_min_version": "62"
     }
   },
 
