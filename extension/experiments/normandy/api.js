@@ -5,11 +5,14 @@ XPCOMUtils.defineLazyModuleGetters(this, {
   Services: "resource://gre/modules/Services.jsm",
   ActionsManager: "resource://normandy/lib/ActionsManager.jsm",
   RecipeRunner: "resource://normandy/lib/RecipeRunner.jsm",
+  FilterExpressions:
+    "resource://gre/modules/components-utils/FilterExpressions.jsm",
 });
 
 const PREF_NORMANDY_ENABLE = "app.normandy.enabled";
 
 const { EventManager } = ExtensionCommon;
+const { ExtensionError } = ExtensionUtils;
 
 var normandy = class extends ExtensionAPI {
   getAPI(context) {
@@ -29,14 +32,59 @@ var normandy = class extends ExtensionAPI {
             }
           },
 
-          async evaluateFilter(filter, recipe = null) {
-            let builtRecipe;
-            if (recipe) {
-              builtRecipe = { ...recipe, filter_expression: filter };
-            } else {
-              builtRecipe = { filter_expression: filter, id: 1, arguments: {} };
+          async getClientContext(recipe = undefined) {
+            if (!recipe) {
+              recipe = { id: 1, arguments: {} };
             }
-            return RecipeRunner.checkFilter(builtRecipe);
+            let context = RecipeRunner.getFilterContext(recipe);
+
+            // context.normandy is a proxy object that can't be sent to the
+            // webextension directly. Instead, manually copy relavent keys to a
+            // simple object, and return that.
+            let builtContext = { normandy: {} };
+            const keysToCopy = [
+              "recipe",
+              "userId",
+              "isFirstRun",
+              "distribution",
+              "version",
+              "channel",
+              "isDefaultBrowser",
+              "syncSetup",
+              "syncDesktopDevices",
+              "syncMobileDevices",
+              "syncTotalDevices",
+              "locale",
+              "doNotTrack",
+            ];
+            const keysToAwait = [
+              "country",
+              "request_time",
+              "experiments",
+              "searchEngine",
+              "addons",
+              "plugins",
+              "telemetry",
+            ];
+            for (const key of keysToCopy) {
+              builtContext.normandy[key] = context.normandy[key];
+            }
+            for (const key of keysToAwait) {
+              builtContext.normandy[key] = await context.normandy[key];
+            }
+            return builtContext;
+          },
+
+          async evaluateFilter(filter, context = {}) {
+            try {
+              return await FilterExpressions.eval(filter, context);
+            } catch (e) {
+              throw new ExtensionError(e.message);
+            }
+          },
+
+          async checkRecipeFilter(recipe) {
+            return RecipeRunner.checkFilter(recipe);
           },
 
           async runRecipe(recipe) {

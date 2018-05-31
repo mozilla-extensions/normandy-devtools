@@ -51,6 +51,10 @@ module.exports = {
         use: ["style-loader", "css-loader", "less-loader"],
       },
       {
+        test: /\.css/,
+        use: ["style-loader", "css-loader"],
+      },
+      {
         test: /\.(png|ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/,
         loader: "file-loader",
       },

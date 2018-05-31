@@ -24,8 +24,9 @@
     "babel-eslint": "^8.2.3",
     "babel-loader": "^7.1.4",
     "babel-plugin-import": "^1.7.0",
+    "babel-plugin-transform-async-generator-functions": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-3": "^6.24.1",
     "copy-webpack-plugin": "^4.5.1",
     "css-loader": "^0.28.11",
     "eslint": "^4.19.1",
@@ -52,8 +53,10 @@
     "js-yaml": "^3.11.0",
     "luxon": "^1.2.1",
     "photon-ant": "^0.1.4",
+    "rc-tree": "^1.11.4",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
+    "react-error-boundary": "^1.2.3",
     "react-router-dom": "^4.2.2"
   }
 }

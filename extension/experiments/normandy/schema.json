@@ -34,6 +34,22 @@
       },
 
       {
+        "name": "getClientContext",
+        "type": "function",
+        "description": "Get the client context that would be used for filter evaluation",
+        "async": true,
+        "parameters": [
+          {
+            "name": "recipe",
+            "optional": true,
+            "description": "A recipe object to include in the context",
+            "type": "object",
+            "additionalProperties": true
+          }
+        ]
+      },
+
+      {
         "name": "evaluateFilter",
         "type": "function",
         "description": "Evaluate a filter expression",
@@ -50,6 +66,21 @@
             "description": "The associated recipe object",
             "additionalProperties": true,
             "optional": true
+          }
+        ]
+      },
+
+      {
+        "name": "checkRecipeFilter",
+        "type": "function",
+        "description": "Evaluate a recipe's filter expression",
+        "async": true,
+        "parameters": [
+          {
+            "name": "recipe",
+            "type": "object",
+            "description": "The recipe to check",
+            "additionalProperties": true
           }
         ]
       },

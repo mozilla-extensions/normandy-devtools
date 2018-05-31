@@ -1,10 +1,8 @@
 {
-  "presets": [
-    "react",
-    "stage-3"
-  ],
-
+  "presets":  ["react"],
   "plugins": [
-    ["import", {"libraryName": "antd", "libraryDirectory": "es", "style": "less"}]
+    ["import", {"libraryName": "antd", "libraryDirectory": "es", "style": "less"}],
+    "transform-object-rest-spread",
+    "transform-async-generator-functions"
   ]
 }
