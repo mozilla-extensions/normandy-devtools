@@ -14,10 +14,10 @@ A set of tools for interacting with Normandy without using a server.
 ## Planned features
 
 * Use a different Normandy environment, such as stage or local development ([Issue #1](https://github.com/mozilla/normandy-devtools/issues/1))
-* Choose branch for preference studies ([Issue #2](https://github.com/mozilla/normandy-devtools/issues/1))
-* Create custom one-off recipes for testing ([Issue #3](https://github.com/mozilla/normandy-devtools/issues/1))
-* Temporarily change filter expressions context ([Issue #4(https://github.com/mozilla/normandy-devtools/issues/1))
-* Check signature state of recipes  ([Issue #5](https://github.com/mozilla/normandy-devtools/issues/1))
+* Choose branch for preference studies ([Issue #2](https://github.com/mozilla/normandy-devtools/issues/2))
+* Create custom one-off recipes for testing ([Issue #3](https://github.com/mozilla/normandy-devtools/issues/3))
+* Temporarily change filter expressions context ([Issue #4](https://github.com/mozilla/normandy-devtools/issues/4))
+* Check signature state of recipes  ([Issue #5](https://github.com/mozilla/normandy-devtools/issues/5))
 
 # Installation
 
