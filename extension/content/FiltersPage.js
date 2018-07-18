@@ -1,5 +1,6 @@
 import React from "react";
 import { Icon } from "antd";
+import AceEditor from "react-ace";
 
 import DataTree from "./DataTree";
 
@@ -27,7 +28,7 @@ export default class FiltersPage extends React.Component {
     this.setState({ context });
   }
 
-  async handleFilterChange({ target: { value } }) {
+  async handleFilterChange(value) {
     this.setState({ filterExpression: value, running: true });
     clearTimeout(this.filterDebounce);
     this.filterDebounce = setTimeout(this.updateFilterResult, 500);
@@ -65,23 +66,29 @@ export default class FiltersPage extends React.Component {
 
         <div className="filter">
           <h2>Evaluate JEXL</h2>
+
           <div>
-            <textarea
-              spellCheck="false"
-              value={filterExpression}
+            <AceEditor
+              mode="jexl"
+              theme="github"
               onChange={this.handleFilterChange}
+              value={filterExpression}
+              height={300}
             />
           </div>
-          <div>
-            Last Value:
+        </div>
+
+        <div className="result">
+          <h2>Results</h2>
+          {error && <div>Last Error: {error.toString()}</div>}
+          <pre>
             <code>
               {lastValue === undefined
                 ? "undefined"
-                : JSON.stringify(lastValue)}
+                : JSON.stringify(lastValue, null, 4)}
             </code>
-            {running && <Icon type="reload" spin />}
-          </div>
-          {error && <div>Last Error: {error.toString()}</div>}
+          </pre>
+          {running && <Icon type="reload" spin />}
         </div>
       </div>
     );

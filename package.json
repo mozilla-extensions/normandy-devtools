@@ -1,6 +1,6 @@
 {
   "name": "normandy-devtools",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "A set of tools for interacting with the Firefox Normandy client",
   "homepage_url": "https://github.com/mozilla/normandy-devtools",
   "private": true,
@@ -55,6 +55,7 @@
     "photon-ant": "^0.1.4",
     "rc-tree": "^1.11.4",
     "react": "^16.3.2",
+    "react-ace": "^6.1.1",
     "react-dom": "^16.3.2",
     "react-error-boundary": "^1.2.3",
     "react-router-dom": "^4.2.2"
