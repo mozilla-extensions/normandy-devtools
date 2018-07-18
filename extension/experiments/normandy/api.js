@@ -43,27 +43,28 @@ var normandy = class extends ExtensionAPI {
             // simple object, and return that.
             let builtContext = { normandy: {} };
             const keysToCopy = [
-              "recipe",
-              "userId",
-              "isFirstRun",
-              "distribution",
-              "version",
               "channel",
+              "distribution",
+              "doNotTrack",
               "isDefaultBrowser",
-              "syncSetup",
+              "isFirstRun",
+              "locale",
+              "recipe",
               "syncDesktopDevices",
               "syncMobileDevices",
+              "syncSetup",
               "syncTotalDevices",
-              "locale",
-              "doNotTrack",
+              "userId",
+              "version",
             ];
             const keysToAwait = [
-              "country",
-              "request_time",
-              "experiments",
-              "searchEngine",
               "addons",
+              "country",
+              "experiments",
+              "os",
               "plugins",
+              "request_time",
+              "searchEngine",
               "telemetry",
             ];
             for (const key of keysToCopy) {
