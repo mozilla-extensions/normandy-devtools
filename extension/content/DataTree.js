@@ -78,6 +78,9 @@ function makeTreeNodes({ data, title, key }) {
         <TreeNode title={`${title}: ${data ? "true" : "false"}`} key={key} />
       );
     }
+    case "undefined": {
+      return <TreeNode title={`${title}: <undefined>`} key={key} />;
+    }
     default: {
       throw new Error(`Unexpected data type ${typeof data}: ${data}`);
     }
