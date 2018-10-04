@@ -7,6 +7,7 @@ import "./style.less";
 import RecipesPage from "./RecipesPage";
 import FiltersPage from "./FiltersPage";
 import PrefStudiesPage from "./PrefStudiesPage";
+import AddonStudiesPage from "./AddonStudiesPage";
 
 class App extends React.Component {
   render() {
@@ -18,7 +19,8 @@ class App extends React.Component {
             <nav>
               <NavLink to="/recipes">Recipes</NavLink>
               <NavLink to="/filters">Filters</NavLink>
-              <NavLink to="/pref-studies">Preference Studies</NavLink>
+              <NavLink to="/pref-studies">Pref Studies</NavLink>
+              <NavLink to="/addon-studies">Addon Studies</NavLink>
             </nav>
           </header>
 
@@ -27,6 +29,7 @@ class App extends React.Component {
             <Route path="/recipes" component={RecipesPage} />
             <Route path="/filters" component={FiltersPage} />
             <Route path="/pref-studies" component={PrefStudiesPage} />
+            <Route path="/addon-studies" component={AddonStudiesPage} />
           </ErrorBoundary>
         </div>
       </HashRouter>

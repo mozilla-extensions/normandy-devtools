@@ -106,6 +106,14 @@
         "description": "Get an array of all preference studies, both active and inactive",
         "async": true,
         "parameters": []
+      },
+
+      {
+        "name": "getAddonStudies",
+        "type": "function",
+        "description": "Get an array of all add-on studies, both active and inactive",
+        "async": true,
+        "parameters": []
       }
     ],
 

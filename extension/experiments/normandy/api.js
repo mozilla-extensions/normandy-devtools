@@ -3,6 +3,7 @@ ChromeUtils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 XPCOMUtils.defineLazyModuleGetters(this, {
   ActionsManager: "resource://normandy/lib/ActionsManager.jsm",
+  AddonStudies: "resource://normandy/lib/AddonStudies.jsm",
   FilterExpressions:
     "resource://gre/modules/components-utils/FilterExpressions.jsm",
   PreferenceExperiments: "resource://normandy/lib/PreferenceExperiments.jsm",
@@ -155,6 +156,10 @@ var normandy = class extends ExtensionAPI {
 
           async getPreferenceStudies() {
             return PreferenceExperiments.getAll();
+          },
+
+          async getAddonStudies() {
+            return AddonStudies.getAll();
           },
         },
       },

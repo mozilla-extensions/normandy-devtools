@@ -14,7 +14,7 @@ export default class PrefStudiesPage extends React.Component {
 
   async componentDidMount() {
     this.setState({ loading: true });
-    const studies = await normandy.getPreferenceStudies();
+    const studies = await normandy.getAddonStudies();
     this.setState({ loading: false, studies });
   }
 
@@ -30,7 +30,7 @@ export default class PrefStudiesPage extends React.Component {
               <h3>Active</h3>
               <Collapse className="recipe-list">
                 {studies
-                  .filter(study => !study.expired)
+                  .filter(study => study.active)
                   .map(study => <Study key={study.id} study={study} />)}
               </Collapse>
             </section>
@@ -39,7 +39,7 @@ export default class PrefStudiesPage extends React.Component {
               <h3>Expired</h3>
               <Collapse className="recipe-list">
                 {studies
-                  .filter(study => study.expired)
+                  .filter(study => !study.active)
                   .map(study => <Study key={study.id} study={study} />)}
               </Collapse>
             </section>
@@ -54,41 +54,35 @@ class Study extends React.Component {
   render() {
     const { study, ...panelProps } = this.props;
 
+    const deliveryConsoleUrl = `https://delivery-console.prod.mozaws.net/recipe/${
+      study.recipeId
+    }/`;
+
     return (
-      <Collapse.Panel
-        {...panelProps}
-        header={<StudyHeader study={study} />}
-        key={study.name}
-      >
+      <Collapse.Panel {...panelProps} header={<StudyHeader study={study} />}>
         <dl>
-          <dt>Preference Name</dt>
+          <dt>Description</dt>
           <dd>
-            <code>{study.preferenceName}</code>
+            <blockquote>{study.description}</blockquote>
           </dd>
 
-          <dt>Preference Value ({study.preferenceType})</dt>
+          <dt>Recipe</dt>
           <dd>
-            <code>{study.preferenceValue}</code>
+            {" "}
+            <a href={deliveryConsoleUrl}>{deliveryConsoleUrl}</a>{" "}
           </dd>
 
-          <dt>Study Branch</dt>
-          <dd>{study.branch}</dd>
+          <dd>{study.recipeId}</dd>
 
-          <dt>Experiment Type</dt>
+          <dt>Addon</dt>
           <dd>
-            <code>{study.experimentType}</code>
+            <a href={study.addonUrl}>
+              <code>{study.addonId}</code> - <code>{study.addonVersion}</code>
+            </a>
           </dd>
 
-          <dt>Last Seen</dt>
-          <dd>{new Date(study.lastSeen).toLocaleString()}</dd>
-
-          <dt>Preference Branch Type</dt>
-          <dd>{study.preferenceBranchType}</dd>
-
-          <dt>Previous Value</dt>
-          <dd>
-            <code>{study.previousPreferenceValue}</code>
-          </dd>
+          <dt>Enrolled at</dt>
+          <dd>{new Date(study.studyStartDate).toLocaleString()}</dd>
         </dl>
       </Collapse.Panel>
     );
@@ -97,8 +91,9 @@ class Study extends React.Component {
 
 class StudyHeader extends React.Component {
   render() {
-    const { study } = this.props;
-    const { name } = study;
+    const {
+      study: { name },
+    } = this.props;
 
     return (
       <div className="recipe-header">
