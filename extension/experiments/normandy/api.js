@@ -2,11 +2,12 @@
 ChromeUtils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 XPCOMUtils.defineLazyModuleGetters(this, {
-  Services: "resource://gre/modules/Services.jsm",
   ActionsManager: "resource://normandy/lib/ActionsManager.jsm",
-  RecipeRunner: "resource://normandy/lib/RecipeRunner.jsm",
   FilterExpressions:
     "resource://gre/modules/components-utils/FilterExpressions.jsm",
+  PreferenceExperiments: "resource://normandy/lib/PreferenceExperiments.jsm",
+  RecipeRunner: "resource://normandy/lib/RecipeRunner.jsm",
+  Services: "resource://gre/modules/Services.jsm",
 });
 
 const PREF_NORMANDY_ENABLE = "app.normandy.enabled";
@@ -39,7 +40,7 @@ var normandy = class extends ExtensionAPI {
             let context = RecipeRunner.getFilterContext(recipe);
 
             // context.normandy is a proxy object that can't be sent to the
-            // webextension directly. Instead, manually copy relavent keys to a
+            // webextension directly. Instead, manually copy relevant keys to a
             // simple object, and return that.
             let builtContext = { normandy: {} };
             const keysToCopy = [
@@ -93,7 +94,7 @@ var normandy = class extends ExtensionAPI {
             await actions.fetchRemoteActions();
             await actions.preExecution();
             await actions.runRecipe(recipe);
-            // Don't finalze, to avoid unenrolling users from studies
+            // Don't finalize, to avoid unenrolling users from studies
           },
 
           onManualMode: new EventManager({
@@ -150,6 +151,10 @@ var normandy = class extends ExtensionAPI {
 
           async standardRun() {
             await RecipeRunner.run();
+          },
+
+          async getPreferenceStudies() {
+            return PreferenceExperiments.getAll();
           },
         },
       },

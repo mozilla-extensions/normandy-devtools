@@ -6,6 +6,7 @@ import ErrorBoundary from "react-error-boundary";
 import "./style.less";
 import RecipesPage from "./RecipesPage";
 import FiltersPage from "./FiltersPage";
+import PrefStudiesPage from "./PrefStudiesPage";
 
 class App extends React.Component {
   render() {
@@ -17,6 +18,7 @@ class App extends React.Component {
             <nav>
               <NavLink to="/recipes">Recipes</NavLink>
               <NavLink to="/filters">Filters</NavLink>
+              <NavLink to="/pref-studies">Preference Studies</NavLink>
             </nav>
           </header>
 
@@ -24,6 +26,7 @@ class App extends React.Component {
             <Route exact path="/" render={() => <Redirect to="/recipes" />} />
             <Route path="/recipes" component={RecipesPage} />
             <Route path="/filters" component={FiltersPage} />
+            <Route path="/pref-studies" component={PrefStudiesPage} />
           </ErrorBoundary>
         </div>
       </HashRouter>
