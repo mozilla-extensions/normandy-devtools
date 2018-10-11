@@ -7,6 +7,20 @@ import api from "./api";
 const PAGE_SIZE = 10;
 const normandy = browser.experiments.normandy;
 
+function convertToV1Recipe(v3Recipe) {
+  // Normandy expects a v1-style recipe, but we have a v3-style recipe. Convert it.
+  return {
+    id: v3Recipe.id,
+    name: v3Recipe.latest_revision.name,
+    enabled: v3Recipe.latest_revision.enabled,
+    is_approved: v3Recipe.latest_revision.is_approved,
+    revision_id: v3Recipe.latest_revision.id,
+    action: v3Recipe.latest_revision.action.name,
+    arguments: v3Recipe.latest_revision.arguments,
+    filter_expression: v3Recipe.latest_revision.filter_expression,
+  };
+}
+
 export default class RecipesPage extends React.Component {
   constructor(props) {
     super(props);
@@ -108,14 +122,18 @@ class Recipe extends React.Component {
 
   async componentDidMount() {
     const { recipe } = this.props;
-    let filterMatches = await normandy.checkRecipeFilter(recipe);
+    let filterMatches = await normandy.checkRecipeFilter(convertToV1Recipe(recipe));
     this.setState({ filterMatches });
   }
 
   render() {
     const { recipe, ...panelProps } = this.props;
-    const { id, filter_expression, arguments: arguments_ } = recipe;
     const { filterMatches } = this.state;
+
+    const {
+      id,
+      latest_revision: { filter_expression, arguments: arguments_ },
+    } = recipe;
 
     return (
       <Collapse.Panel
@@ -145,7 +163,7 @@ class Recipe extends React.Component {
 class RecipeHeader extends React.Component {
   render() {
     const { filterMatches, recipe } = this.props;
-    const { id, name, enabled } = recipe;
+    const { id, latest_revision: { name, enabled } } = recipe;
 
     return (
       <div className="recipe-header">
@@ -212,22 +230,10 @@ class RunRecipeButton extends React.Component {
     this.handleClick = this.handleClick.bind(this);
   }
 
-  async handleClick() {
+  async handleClick(ev) {
     const { recipe } = this.props;
     this.setState({ running: true });
-    // Normandy expects a v1-style recipe, but we have a v3-style recipe. Convert it.
-    const currentRevision = recipe.approved_revision || recipe.latest_revision;
-    const v1Recipe = {
-      id: recipe.id,
-      name: currentRevision.recipe.name,
-      enabled: currentRevision.recipe.enabled,
-      is_approved: currentRevision.recipe.is_approved,
-      revision_id: currentRevision.id,
-      action: currentRevision.recipe.action.name,
-      arguments: currentRevision.recipe.arguments,
-      filter_expression: currentRevision.recipe.filter_expression,
-    };
-    await normandy.runRecipe(v1Recipe);
+    await normandy.runRecipe(convertToV1Recipe(recipe));
     this.setState({ running: false });
   }
 
