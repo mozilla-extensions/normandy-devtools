@@ -25,11 +25,12 @@
     "babel-loader": "^7.1.4",
     "babel-plugin-import": "^1.7.0",
     "babel-plugin-transform-async-generator-functions": "^6.24.1",
+    "babel-plugin-transform-decorators-legacy": "^1.3.5",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-react": "^6.24.1",
     "copy-webpack-plugin": "^4.5.1",
     "css-loader": "^0.28.11",
-    "eslint": "^4.19.1",
+    "eslint": "^5.16.0",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-mozilla": "^0.13.0",
     "eslint-plugin-no-unsanitized": "^3.0.2",
@@ -39,6 +40,7 @@
     "file-loader": "^1.1.11",
     "generate-json-webpack-plugin": "^0.3.1",
     "html-webpack-plugin": "^3.2.0",
+    "less": "^3.9.0",
     "less-loader": "^4.1.0",
     "npm-run-all": "^4.1.3",
     "prettier": "^1.12.1",
@@ -48,16 +50,16 @@
     "webpack-cli": "^2.1.3"
   },
   "dependencies": {
-    "antd": "^3.5.3",
+    "autobind-decorator": "^2.4.0",
     "autoscroll-react": "^3.2.0",
     "js-yaml": "^3.11.0",
     "luxon": "^1.2.1",
-    "photon-ant": "^0.1.4",
     "rc-tree": "^1.11.4",
     "react": "^16.3.2",
     "react-ace": "^6.1.1",
     "react-dom": "^16.3.2",
     "react-error-boundary": "^1.2.3",
-    "react-router-dom": "^4.2.2"
+    "react-router-dom": "^4.2.2",
+    "rsuite": "^3.8.5"
   }
 }

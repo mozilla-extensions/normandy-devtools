@@ -1,0 +1,44 @@
+#root {
+  min-height: 100vh;
+}
+
+.app-container {
+  padding-left: 260px;
+}
+
+.app-sidebar {
+  background: @B050;
+  height: 100vh;
+  overflow: auto;
+  left: 0;
+  position: fixed;
+  top: 0;
+
+  .logo {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0;
+    padding: 18px 20px 18px 56px;
+    position: relative;
+
+    svg {
+      margin-top: -15px;
+      left: 14px;
+      position: absolute;
+      top: 50%;
+      width: 30px;
+    }
+  }
+}
+
+.page-wrapper {
+  padding: 30px 20px;
+}
+
+.recipe-actions {
+  margin-right: 50px;
+
+  > .rs-icon {
+    margin-left: 10px;
+  }
+}

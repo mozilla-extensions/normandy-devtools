@@ -1,8 +1,7 @@
 import React from "react";
-import { Icon } from "antd";
 import AceEditor from "react-ace";
 
-import DataTree from "./DataTree";
+import DataTree from "../DataTree";
 
 const normandy = browser.experiments.normandy;
 
@@ -56,7 +55,7 @@ export default class FiltersPage extends React.Component {
   }
 
   render() {
-    const { filterExpression, lastValue, running, error, context } = this.state;
+    const { filterExpression, lastValue, error, context } = this.state;
     return (
       <div className="content filter-page">
         <div className="context">
@@ -88,7 +87,6 @@ export default class FiltersPage extends React.Component {
                 : JSON.stringify(lastValue, null, 4)}
             </code>
           </pre>
-          {running && <Icon type="reload" spin />}
         </div>
       </div>
     );

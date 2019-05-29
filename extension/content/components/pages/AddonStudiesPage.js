@@ -1,5 +1,5 @@
 import React from "react";
-import { Spin, Collapse } from "antd";
+import { Loader, Panel } from "rsuite";
 
 const normandy = browser.experiments.normandy;
 
@@ -18,48 +18,46 @@ export default class PrefStudiesPage extends React.Component {
     this.setState({ loading: false, studies });
   }
 
-  render() {
+  renderStudiesList() {
     const { studies, loading } = this.state;
 
-    return (
-      <div className="content">
-        <section className="pref-study-viewer">
-          <h2>Preference Studies</h2>
-          <Spin spinning={loading}>
-            <section>
-              <h3>Active</h3>
-              <Collapse className="recipe-list">
-                {studies
-                  .filter(study => study.active)
-                  .map(study => <Study key={study.id} study={study} />)}
-              </Collapse>
-            </section>
+    if (loading) {
+      return (
+        <Loader size="md" speed="slow" content="Loading studies&hellip;" />
+      );
+    } else if (studies) {
+      return (
+        <React.Fragment>
+          <h3>Active</h3>
+          {studies
+            .filter(study => !study.expired)
+            .map(study => <Study key={study.id} study={study} />)}
+          <h3>Expired</h3>
+          {studies
+            .filter(study => study.expired)
+            .map(study => <Study key={study.id} study={study} />)}
+        </React.Fragment>
+      );
+    }
 
-            <section>
-              <h3>Expired</h3>
-              <Collapse className="recipe-list">
-                {studies
-                  .filter(study => !study.active)
-                  .map(study => <Study key={study.id} study={study} />)}
-              </Collapse>
-            </section>
-          </Spin>
-        </section>
-      </div>
-    );
+    return null;
+  }
+
+  render() {
+    return <div className="page-wrapper">{this.renderStudiesList()}</div>;
   }
 }
 
 class Study extends React.Component {
   render() {
-    const { study, ...panelProps } = this.props;
+    const { study } = this.props;
 
     const deliveryConsoleUrl = `https://delivery-console.prod.mozaws.net/recipe/${
       study.recipeId
     }/`;
 
     return (
-      <Collapse.Panel {...panelProps} header={<StudyHeader study={study} />}>
+      <Panel header={study.name} key={study.name} collapsible bordered>
         <dl>
           <dt>Description</dt>
           <dd>
@@ -84,21 +82,7 @@ class Study extends React.Component {
           <dt>Enrolled at</dt>
           <dd>{new Date(study.studyStartDate).toLocaleString()}</dd>
         </dl>
-      </Collapse.Panel>
-    );
-  }
-}
-
-class StudyHeader extends React.Component {
-  render() {
-    const {
-      study: { name },
-    } = this.props;
-
-    return (
-      <div className="recipe-header">
-        <h3>{name}</h3>
-      </div>
+      </Panel>
     );
   }
 }
