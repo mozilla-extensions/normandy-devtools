@@ -103,7 +103,7 @@ export default class RecipesPage extends React.Component {
   }
 
   render() {
-    const { count, loading, page } = this.state;
+    const { count, page } = this.state;
 
     return (
       <React.Fragment>
@@ -119,11 +119,11 @@ export default class RecipesPage extends React.Component {
 
         <div className="page-wrapper">
           {this.renderRecipeList()}
-          {!loading && (
+          <div>
             <Pagination
               activePage={page}
               maxButtons={5}
-              pages={count}
+              pages={Math.ceil(count / 25)}
               onSelect={this.handlePageChange}
               prev
               next
@@ -132,7 +132,7 @@ export default class RecipesPage extends React.Component {
               ellipsis
               boundaryLinks
             />
-          )}
+          </div>
         </div>
       </React.Fragment>
     );
