@@ -58,7 +58,7 @@ class App extends React.Component {
               </Sidenav.Body>
             </Sidenav>
           </Sidebar>
-          <Container>
+          <Container className="page-container">
             <ErrorBoundary>
               <Route exact path="/" render={() => <Redirect to="/recipes" />} />
               <Route path="/recipes" component={RecipesPage} />

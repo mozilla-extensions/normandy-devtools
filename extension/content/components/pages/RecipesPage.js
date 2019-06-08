@@ -1,5 +1,6 @@
 import autobind from "autobind-decorator";
 import React from "react";
+import Highlight from "react-highlight";
 import {
   Button,
   Header,
@@ -224,21 +225,23 @@ class Recipe extends React.Component {
     } = recipe;
 
     return (
-      <Panel header={this.renderHeader()} collapsible bordered>
+      <Panel
+        className="recipe-listing"
+        header={this.renderHeader()}
+        collapsible
+        bordered
+      >
         <h4>Filter</h4>
-        <pre>
-          <code>{filter_expression}</code>
-        </pre>
+        <Highlight className="javascript">{filter_expression}</Highlight>
+
         <h4>Arguments</h4>
-        <pre>
-          <code>
-            {yaml.safeDump(arguments_, {
-              sortKeys: true,
-              indent: 4,
-              noRefs: true,
-            })}
-          </code>
-        </pre>
+        <Highlight className="yaml">
+          {yaml.safeDump(arguments_, {
+            sortKeys: true,
+            indent: 4,
+            noRefs: true,
+          })}
+        </Highlight>
       </Panel>
     );
   }

@@ -1,5 +1,6 @@
 import React from "react";
 import AceEditor from "react-ace";
+import Split from "react-split";
 
 import DataTree from "../DataTree";
 
@@ -57,28 +58,24 @@ export default class FiltersPage extends React.Component {
   render() {
     const { filterExpression, lastValue, error, context } = this.state;
     return (
-      <div className="content filter-page">
-        <div className="context">
-          <h2>Client Context</h2>
+      <Split sizes={[33, 34, 33]} className="split">
+        <div className="col">
+          <strong>Client Context</strong>
           <DataTree data={context} title="context" />
         </div>
-
-        <div className="filter">
-          <h2>Evaluate JEXL</h2>
-
-          <div>
-            <AceEditor
-              mode="jexl"
-              theme="github"
-              onChange={this.handleFilterChange}
-              value={filterExpression}
-              height={300}
-            />
-          </div>
+        <div className="col">
+          <strong>JEXL Filter Expression</strong>
+          <AceEditor
+            mode="javascript"
+            theme="tomorrow-night"
+            onChange={this.handleFilterChange}
+            value={filterExpression}
+            height="100%"
+            width="100%"
+          />
         </div>
-
-        <div className="result">
-          <h2>Results</h2>
+        <div className="col">
+          <strong>Output</strong>
           {error && <div>Last Error: {error.toString()}</div>}
           <pre>
             <code>
@@ -88,7 +85,7 @@ export default class FiltersPage extends React.Component {
             </code>
           </pre>
         </div>
-      </div>
+      </Split>
     );
   }
 }
