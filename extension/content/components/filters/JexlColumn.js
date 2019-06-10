@@ -9,7 +9,7 @@ import "codemirror/theme/neo.css";
 
 export default class JexlColumn extends React.PureComponent {
   static propTypes = {
-    filterExpression: PropTypes.object.isRequired,
+    filterExpression: PropTypes.string.isRequired,
     onBeforeChange: PropTypes.func.isRequired,
   };
 
