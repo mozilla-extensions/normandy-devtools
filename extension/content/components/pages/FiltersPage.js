@@ -10,7 +10,7 @@ import OutputColumn from "devtools/components/filters/OutputColumn";
 const normandy = browser.experiments.normandy;
 
 @autobind
-export default class FiltersPage extends React.PureComponent {
+class FiltersPage extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -100,3 +100,5 @@ export default class FiltersPage extends React.PureComponent {
     );
   }
 }
+
+export default FiltersPage;

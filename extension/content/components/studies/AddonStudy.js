@@ -10,9 +10,7 @@ export default class AddonStudy extends React.PureComponent {
   render() {
     const { study } = this.props;
 
-    const deliveryConsoleUrl = `https://delivery-console.prod.mozaws.net/recipe/${
-      study.recipeId
-    }/`;
+    const deliveryConsoleUrl = `https://delivery-console.prod.mozaws.net/recipe/${study.recipeId}/`;
 
     return (
       <Panel header={study.name} key={study.name} collapsible bordered>

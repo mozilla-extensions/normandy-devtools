@@ -8,7 +8,7 @@ import api from "devtools/utils/api";
 const normandy = browser.experiments.normandy;
 
 @autobind
-export default class RecipesPage extends React.PureComponent {
+class RecipesPage extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -17,9 +17,6 @@ export default class RecipesPage extends React.PureComponent {
       page: 1,
       count: 0,
     };
-
-    this.handlePageChange = this.handlePageChange.bind(this);
-    this.runNormandy = this.runNormandy.bind(this);
   }
 
   async runNormandy() {
@@ -119,3 +116,5 @@ export default class RecipesPage extends React.PureComponent {
     );
   }
 }
+
+export default RecipesPage;
