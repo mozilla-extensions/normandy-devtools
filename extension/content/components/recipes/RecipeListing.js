@@ -22,7 +22,7 @@ function convertToV1Recipe(v3Recipe) {
 }
 
 @autobind
-export default class RecipeListing extends React.Component {
+export default class RecipeListing extends React.PureComponent {
   static propTypes = {
     recipe: PropTypes.object.isRequired,
   };

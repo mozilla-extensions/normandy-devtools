@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 
-export default class Logo extends React.Component {
+export default class Logo extends React.PureComponent {
   static propTypes = {
     color0: PropTypes.string,
     color1: PropTypes.string,

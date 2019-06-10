@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { Panel } from "rsuite";
 
-export default class AddonStudy extends React.Component {
+export default class AddonStudy extends React.PureComponent {
   static propTypes = {
     study: PropTypes.object.isRequired,
   };

@@ -8,7 +8,7 @@ import api from "devtools/utils/api";
 const normandy = browser.experiments.normandy;
 
 @autobind
-export default class RecipesPage extends React.Component {
+export default class RecipesPage extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {

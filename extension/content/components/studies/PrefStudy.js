@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { Panel } from "rsuite";
 
-export default class PrefStudy extends React.Component {
+export default class PrefStudy extends React.PureComponent {
   static propTypes = {
     study: PropTypes.object.isRequired,
   };

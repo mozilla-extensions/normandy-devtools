@@ -5,7 +5,7 @@ import PrefStudy from "devtools/components/studies/PrefStudy";
 
 const normandy = browser.experiments.normandy;
 
-export default class PrefStudiesPage extends React.Component {
+export default class PrefStudiesPage extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
