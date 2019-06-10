@@ -4,5 +4,6 @@ module.exports = {
     ExtensionAPI: false,
     ExtensionCommon: false,
     ExtensionUtils: false,
+    XPCOMUtils: false,
   },
 };
