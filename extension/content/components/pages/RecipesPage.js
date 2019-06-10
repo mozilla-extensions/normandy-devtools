@@ -14,7 +14,7 @@ import {
 } from "rsuite";
 import yaml from "js-yaml";
 
-import api from "../../utils/api";
+import api from "devtools/utils/api";
 
 const normandy = browser.experiments.normandy;
 
@@ -94,7 +94,9 @@ export default class RecipesPage extends React.Component {
 
     if (loading) {
       return (
-        <Loader size="md" speed="slow" content="Loading recipes&hellip;" />
+        <div className="text-center">
+          <Loader content="Loading recipes&hellip;" />
+        </div>
       );
     } else if (recipes) {
       return recipes.map(recipe => <Recipe key={recipe.id} recipe={recipe} />);
@@ -126,6 +128,7 @@ export default class RecipesPage extends React.Component {
               maxButtons={5}
               pages={Math.ceil(count / 25)}
               onSelect={this.handlePageChange}
+              size="lg"
               prev
               next
               first

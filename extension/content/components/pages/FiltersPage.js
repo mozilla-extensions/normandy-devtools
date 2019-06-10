@@ -1,12 +1,16 @@
+import autobind from "autobind-decorator";
 import React from "react";
-import AceEditor from "react-ace";
 import Split from "react-split";
+import { Loader } from "rsuite";
 
-import DataTree from "../DataTree";
+import DataTree from "devtools/components/common/DataTree";
+import JexlColumn from "devtools/components/filters/JexlColumn";
+import OutputColumn from "devtools/components/filters/OutputColumn";
 
 const normandy = browser.experiments.normandy;
 
-export default class FiltersPage extends React.Component {
+@autobind
+export default class FiltersPage extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -18,9 +22,6 @@ export default class FiltersPage extends React.Component {
     };
 
     this.filterDebounce = null;
-
-    this.handleFilterChange = this.handleFilterChange.bind(this);
-    this.updateFilterResult = this.updateFilterResult.bind(this);
   }
 
   async componentDidMount() {
@@ -28,7 +29,7 @@ export default class FiltersPage extends React.Component {
     this.setState({ context });
   }
 
-  async handleFilterChange(value) {
+  async handleFilterChange(editor, data, value) {
     this.setState({ filterExpression: value, running: true });
     clearTimeout(this.filterDebounce);
     this.filterDebounce = setTimeout(this.updateFilterResult, 500);
@@ -55,35 +56,45 @@ export default class FiltersPage extends React.Component {
     }
   }
 
+  handleDoubleClickTreeNode(event, node) {
+    const { filterExpression } = this.state;
+    this.handleFilterChange(
+      null,
+      null,
+      `${filterExpression}${node.props.value}`,
+    );
+  }
+
   render() {
-    const { filterExpression, lastValue, error, context } = this.state;
+    const { filterExpression, lastValue, error, context, running } = this.state;
     return (
-      <Split sizes={[33, 34, 33]} className="split">
+      <Split sizes={[33, 34, 33]} gutterSize={1} className="split">
         <div className="col">
-          <strong>Client Context</strong>
-          <DataTree data={context} title="context" />
+          <div className="filter-column">
+            <header>
+              <strong>Client Context</strong>
+            </header>
+            {!context.normandy && (
+              <div className="text-center">
+                <Loader />
+              </div>
+            )}
+            <DataTree
+              data={context.normandy}
+              title="normandy"
+              key="normandy"
+              onDoubleClick={this.handleDoubleClickTreeNode}
+            />
+          </div>
         </div>
         <div className="col">
-          <strong>JEXL Filter Expression</strong>
-          <AceEditor
-            mode="javascript"
-            theme="tomorrow-night"
-            onChange={this.handleFilterChange}
-            value={filterExpression}
-            height="100%"
-            width="100%"
+          <JexlColumn
+            filterExpression={filterExpression}
+            onBeforeChange={this.handleFilterChange}
           />
         </div>
         <div className="col">
-          <strong>Output</strong>
-          {error && <div>Last Error: {error.toString()}</div>}
-          <pre>
-            <code>
-              {lastValue === undefined
-                ? "undefined"
-                : JSON.stringify(lastValue, null, 4)}
-            </code>
-          </pre>
+          <OutputColumn value={lastValue} error={error} running={running} />
         </div>
       </Split>
     );

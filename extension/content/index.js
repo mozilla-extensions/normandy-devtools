@@ -4,12 +4,12 @@ import { HashRouter, Route, NavLink, Redirect } from "react-router-dom";
 import ErrorBoundary from "react-error-boundary";
 import { Container, Icon, Nav, Sidebar, Sidenav } from "rsuite";
 
-import "./less/index.less";
-import Logo from "./components/svg/Logo";
-import RecipesPage from "./components/pages/RecipesPage";
-import FiltersPage from "./components/pages/FiltersPage";
-import PrefStudiesPage from "./components/pages/PrefStudiesPage";
-import AddonStudiesPage from "./components/pages/AddonStudiesPage";
+import "devtools/less/index.less";
+import Logo from "devtools/components/svg/Logo";
+import RecipesPage from "devtools/components/pages/RecipesPage";
+import FiltersPage from "devtools/components/pages/FiltersPage";
+import PrefStudiesPage from "devtools/components/pages/PrefStudiesPage";
+import AddonStudiesPage from "devtools/components/pages/AddonStudiesPage";
 
 class App extends React.Component {
   render() {

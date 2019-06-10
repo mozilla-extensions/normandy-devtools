@@ -1,0 +1,77 @@
+.filter-column {
+  height: 100%;
+  padding: 40px 0 0 0;
+  position: relative;
+
+  > header {
+    box-sizing: border-box;
+    height: 40px;
+    left: 0;
+    line-height: 20px;
+    padding: 10px;
+    position: absolute;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    top: 0;
+    white-space: nowrap;
+    width: 100%;
+
+    .rs-icon {
+      margin-left: 10px;
+    }
+  }
+
+  > pre {
+    box-sizing: border-box;
+    display: block;
+    height: 100%;
+    margin: 0;
+    width: 100%;
+
+    > code {
+      box-sizing: border-box;
+      height: 100%;
+      padding: 0 10px;
+      width: 100%;
+    }
+  }
+
+  .react-codemirror2 {
+    box-sizing: border-box;
+    height: 100%;
+
+    .CodeMirror {
+      height: 100%;
+    }
+
+    .CodeMirror-line {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+  }
+
+  .rc-tree {
+    padding: 0 10px;
+    user-select: none;
+    -moz-user-select: none;
+
+    li span.rc-tree-switcher:not(.rc-tree-switcher-noop) {
+      text-align: center;
+      background: none;
+    }
+
+    .rc-tree-title {
+      font-family: monospace;
+      padding-left: 2px;
+    }
+  }
+}
+
+.output-column {
+  .rs-message {
+    left: 10px;
+    position: absolute;
+    right: 10px;
+    width: auto;
+  }
+}
