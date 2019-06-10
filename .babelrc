@@ -1,7 +1,7 @@
 {
   "presets":  ["react"],
   "plugins": [
-    ["import", {"libraryName": "antd", "libraryDirectory": "es", "style": "less"}],
+    "transform-decorators-legacy",
     "transform-object-rest-spread",
     "transform-async-generator-functions"
   ]

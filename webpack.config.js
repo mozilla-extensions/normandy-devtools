@@ -17,6 +17,11 @@ module.exports = {
     filename: "[name].js",
     path: path.resolve(__dirname, "dist"),
   },
+  resolve: {
+    alias: {
+      devtools: path.resolve(__dirname, "extension/content"),
+    },
+  },
   plugins: [
     new CopyWebpackPlugin([
       "extension/background.js",
@@ -25,6 +30,7 @@ module.exports = {
     ]),
     new HtmlWebpackPlugin({
       title: "Normandy Devtools",
+      favicon: path.resolve(__dirname, "extension/images/favicon.png"),
       filename: "content.html",
     }),
     new GenerateJsonPlugin("manifest.json", manifest, (key, value) => {
@@ -48,7 +54,16 @@ module.exports = {
       },
       {
         test: /\.less/,
-        use: ["style-loader", "css-loader", "less-loader"],
+        use: [
+          "style-loader",
+          "css-loader",
+          {
+            loader: "less-loader",
+            options: {
+              javascriptEnabled: true,
+            },
+          },
+        ],
       },
       {
         test: /\.css/,

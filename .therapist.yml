@@ -1,6 +1,24 @@
 actions:
   eslint:
-   description: ESLint
-   run: eslint --fix --ignore-pattern '!.eslintrc.js' --ignore-pattern '!.prettierrc.js' {files} && git add -A
-   include:
+    description: eslint
+    run: yarn eslint {files}
+    fix: yarn eslint --fix {files}
+    include:
       - "*.js"
+    exclude:
+      - ".eslintrc.js"
+      - ".prettierrc.js"
+shortcuts:
+  lint:
+    flags:
+      - include-unstaged
+      - include-untracked
+  "lint:all":
+    extends: lint
+    flags: use-tracked-files
+  fix:
+    extends: lint
+    flags: fix
+  "fix:all":
+    extends: fix
+    flags: use-tracked-files

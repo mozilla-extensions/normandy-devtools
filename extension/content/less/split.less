@@ -1,0 +1,29 @@
+.split {
+  display: flex;
+
+  .col {
+    height: 100vh;
+    overflow: auto;
+  }
+
+  .gutter {
+    border-right: 1px solid @B200;
+    cursor: col-resize;
+    max-width: 0;
+    position: relative;
+    z-index: 2;
+
+    &:hover {
+      border-right: 1px dashed @blue;
+    }
+
+    &:before {
+      content: '';
+      height: 100%;
+      position: absolute;
+      left: -5px;
+      top: 0;
+      width: 11px;
+    }
+  }
+}

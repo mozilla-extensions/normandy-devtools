@@ -92,8 +92,14 @@ var normandy = class extends ExtensionAPI {
 
           async runRecipe(recipe) {
             const actions = new ActionsManager();
-            await actions.fetchRemoteActions();
-            await actions.preExecution();
+            if (actions.fetchRemoteActions) {
+              // This is deprecated so only run if it exists
+              await actions.fetchRemoteActions();
+            }
+            if (actions.preExecution) {
+              // This is deprecated so only run if it exists
+              await actions.preExecution();
+            }
             await actions.runRecipe(recipe);
             // Don't finalize, to avoid unenrolling users from studies
           },
