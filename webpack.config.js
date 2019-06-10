@@ -30,7 +30,7 @@ module.exports = {
     ]),
     new HtmlWebpackPlugin({
       title: "Normandy Devtools",
-      favicon: path.resolve(__dirname, "extension/images/button@2x.png"),
+      favicon: path.resolve(__dirname, "extension/images/favicon.png"),
       filename: "content.html",
     }),
     new GenerateJsonPlugin("manifest.json", manifest, (key, value) => {
