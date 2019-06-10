@@ -1,6 +1,15 @@
+import PropTypes from "prop-types";
 import React from "react";
 
 export default class Logo extends React.Component {
+  static propTypes = {
+    color0: PropTypes.string,
+    color1: PropTypes.string,
+    color2: PropTypes.string,
+    color3: PropTypes.string,
+    outline: PropTypes.bool,
+  };
+
   render() {
     const { outline } = this.props;
     const { color0, color1, color2, color3 } = this.props;

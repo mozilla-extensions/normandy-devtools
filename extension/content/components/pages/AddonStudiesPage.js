@@ -1,5 +1,7 @@
 import React from "react";
-import { Loader, Panel } from "rsuite";
+import { Loader } from "rsuite";
+
+import AddonStudy from "devtools/components/studies/AddonStudy";
 
 const normandy = browser.experiments.normandy;
 
@@ -31,11 +33,11 @@ export default class PrefStudiesPage extends React.Component {
           <h3>Active</h3>
           {studies
             .filter(study => !study.expired)
-            .map(study => <Study key={study.id} study={study} />)}
+            .map(study => <AddonStudy key={study.id} study={study} />)}
           <h3>Expired</h3>
           {studies
             .filter(study => study.expired)
-            .map(study => <Study key={study.id} study={study} />)}
+            .map(study => <AddonStudy key={study.id} study={study} />)}
         </React.Fragment>
       );
     }
@@ -45,44 +47,5 @@ export default class PrefStudiesPage extends React.Component {
 
   render() {
     return <div className="page-wrapper">{this.renderStudiesList()}</div>;
-  }
-}
-
-class Study extends React.Component {
-  render() {
-    const { study } = this.props;
-
-    const deliveryConsoleUrl = `https://delivery-console.prod.mozaws.net/recipe/${
-      study.recipeId
-    }/`;
-
-    return (
-      <Panel header={study.name} key={study.name} collapsible bordered>
-        <dl>
-          <dt>Description</dt>
-          <dd>
-            <blockquote>{study.description}</blockquote>
-          </dd>
-
-          <dt>Recipe</dt>
-          <dd>
-            {" "}
-            <a href={deliveryConsoleUrl}>{deliveryConsoleUrl}</a>{" "}
-          </dd>
-
-          <dd>{study.recipeId}</dd>
-
-          <dt>Addon</dt>
-          <dd>
-            <a href={study.addonUrl}>
-              <code>{study.addonId}</code> - <code>{study.addonVersion}</code>
-            </a>
-          </dd>
-
-          <dt>Enrolled at</dt>
-          <dd>{new Date(study.studyStartDate).toLocaleString()}</dd>
-        </dl>
-      </Panel>
-    );
   }
 }
