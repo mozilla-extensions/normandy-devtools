@@ -8,6 +8,11 @@ actions:
     exclude:
       - ".eslintrc.js"
       - ".prettierrc.js"
+  stylelint:
+    run: yarn stylelint {files}
+    include:
+      - "*.css"
+      - "*.less"
 shortcuts:
   lint:
     flags:

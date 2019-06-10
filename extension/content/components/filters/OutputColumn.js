@@ -1,8 +1,13 @@
+import PropTypes from "prop-types";
 import React from "react";
 import Highlight from "react-highlight";
 import { Icon, Message } from "rsuite";
 
 class Output extends React.PureComponent {
+  static propTypes = {
+    value: PropTypes.any,
+  };
+
   render() {
     const { value } = this.props;
     return (
@@ -12,6 +17,12 @@ class Output extends React.PureComponent {
 }
 
 export default class OutputColumn extends React.PureComponent {
+  static propTypes = {
+    error: PropTypes.object,
+    running: PropTypes.bool,
+    value: PropTypes.any,
+  };
+
   renderErrorMessage() {
     const { error } = this.props;
     if (error) {

@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import Tree, { TreeNode } from "rc-tree";
 import React from "react";
 import { Icon } from "rsuite";
@@ -5,6 +6,12 @@ import { Icon } from "rsuite";
 import "rc-tree/assets/index.css";
 
 export default class DataTree extends React.PureComponent {
+  static propTypes = {
+    data: PropTypes.object,
+    onDoubleClick: PropTypes.func,
+    title: PropTypes.string,
+  };
+
   getSwitcherIcon(obj) {
     if (obj.isLeaf) {
       return null;

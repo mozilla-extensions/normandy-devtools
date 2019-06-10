@@ -1,8 +1,9 @@
 {
-  "presets":  ["react"],
+  "presets":  ["@babel/preset-react"],
   "plugins": [
-    "transform-decorators-legacy",
-    "transform-object-rest-spread",
-    "transform-async-generator-functions"
+    ["@babel/plugin-proposal-decorators", { "legacy": true, "loose": true }],
+    "@babel/plugin-proposal-object-rest-spread",
+    "@babel/plugin-proposal-async-generator-functions",
+    "@babel/plugin-proposal-class-properties"
   ]
 }
