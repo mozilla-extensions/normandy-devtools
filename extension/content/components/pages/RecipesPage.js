@@ -1,10 +1,13 @@
 import autobind from "autobind-decorator";
 import React from "react";
+import { Controlled as CodeMirror } from "react-codemirror2";
 import {
+  Button,
   Drawer,
   Header,
   Icon,
   Loader,
+  Modal,
   Nav,
   Navbar,
   Pagination,
@@ -28,11 +31,14 @@ class RecipesPage extends React.PureComponent {
     });
 
     this.state = {
+      arbitraryRecipe: "",
       count: 0,
       environment: ENVIRONMENTS.prod,
       loading: false,
       page: 1,
+      runningArbitrary: false,
       showSettings: false,
+      showWriteRecipes: false,
       recipePages,
     };
   }
@@ -153,6 +159,72 @@ class RecipesPage extends React.PureComponent {
     );
   }
 
+  showWriteRecipePopup() {
+    this.setState({ showWriteRecipes: true });
+  }
+
+  hideWriteRecipePopup() {
+    this.setState({ showWriteRecipes: false });
+  }
+
+  handleArbitraryRecipeChange(editor, data, value) {
+    this.setState({ arbitraryRecipe: value });
+  }
+
+  async runArbitraryRecipe() {
+    const { arbitraryRecipe } = this.state;
+    this.setState({ runningArbitrary: true });
+    try {
+      await normandy.runRecipe(JSON.parse(arbitraryRecipe));
+    } catch (ex) {
+      throw ex;
+    } finally {
+      this.setState({ runningArbitrary: false });
+    }
+  }
+
+  renderWriteRecipeModal() {
+    const { arbitraryRecipe, runningArbitrary } = this.state;
+
+    return (
+      <Modal
+        show={this.state.showWriteRecipes}
+        onHide={this.hideWriteRecipePopup}
+      >
+        <Modal.Header>
+          <Modal.Title>Write a recipe</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <CodeMirror
+            options={{
+              mode: "javascript",
+              theme: "neo",
+              lineNumbers: true,
+              styleActiveLine: true,
+            }}
+            value={arbitraryRecipe}
+            style={{
+              height: "auto",
+            }}
+            onBeforeChange={this.handleArbitraryRecipeChange}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            onClick={this.runArbitraryRecipe}
+            appearance="primary"
+            disabled={runningArbitrary}
+          >
+            Run
+          </Button>
+          <Button onClick={this.hideWriteRecipePopup} appearance="subtle">
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  }
+
   renderRunButton() {
     const { environment } = this.state;
     if (environment !== ENVIRONMENTS.prod) {
@@ -173,6 +245,12 @@ class RecipesPage extends React.PureComponent {
         <Header>
           <Navbar>
             <Nav pullRight>
+              <Nav.Item
+                icon={<Icon icon="edit" />}
+                onClick={this.showWriteRecipePopup}
+              >
+                Write & Run Arbitrary
+              </Nav.Item>
               {this.renderRunButton()}
               <Nav.Item icon={<Icon icon="gear" />} onClick={this.showSettings}>
                 Settings
@@ -201,6 +279,7 @@ class RecipesPage extends React.PureComponent {
         </div>
 
         {this.renderSettingsDrawer()}
+        {this.renderWriteRecipeModal()}
       </React.Fragment>
     );
   }

@@ -2,11 +2,6 @@ import PropTypes from "prop-types";
 import React from "react";
 import { Controlled as CodeMirror } from "react-codemirror2";
 
-// Mode and theme for Code Mirror
-import "codemirror/addon/selection/active-line";
-import "codemirror/mode/javascript/javascript";
-import "codemirror/theme/neo.css";
-
 export default class JexlColumn extends React.PureComponent {
   static propTypes = {
     filterExpression: PropTypes.string.isRequired,
