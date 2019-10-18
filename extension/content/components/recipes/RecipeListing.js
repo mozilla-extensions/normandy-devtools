@@ -7,10 +7,11 @@ import { Button, Icon, Panel, Tag } from "rsuite";
 
 const normandy = browser.experiments.normandy;
 
-function convertToV1Recipe(v3Recipe) {
+function convertToV1Recipe(v3Recipe, environmentName) {
   // Normandy expects a v1-style recipe, but we have a v3-style recipe. Convert it.
+  const idSuffix = environmentName !== "prod" ? `-${environmentName}` : "";
   return {
-    id: v3Recipe.id,
+    id: `${v3Recipe.id}${idSuffix}`,
     name: v3Recipe.latest_revision.name,
     enabled: v3Recipe.latest_revision.enabled,
     is_approved: v3Recipe.latest_revision.is_approved,
@@ -24,6 +25,7 @@ function convertToV1Recipe(v3Recipe) {
 @autobind
 class RecipeListing extends React.PureComponent {
   static propTypes = {
+    environmentName: PropTypes.object.string,
     recipe: PropTypes.object.isRequired,
   };
 
@@ -36,17 +38,17 @@ class RecipeListing extends React.PureComponent {
   }
 
   async componentDidMount() {
-    const { recipe } = this.props;
+    const { environmentName, recipe } = this.props;
     let filterMatches = await normandy.checkRecipeFilter(
-      convertToV1Recipe(recipe),
+      convertToV1Recipe(recipe, environmentName),
     );
     this.setState({ filterMatches });
   }
 
   async handleRunButtonClick(ev) {
-    const { recipe } = this.props;
+    const { environmentName, recipe } = this.props;
     this.setState({ running: true });
-    await normandy.runRecipe(convertToV1Recipe(recipe));
+    await normandy.runRecipe(convertToV1Recipe(recipe, environmentName));
     this.setState({ running: false });
   }
 
