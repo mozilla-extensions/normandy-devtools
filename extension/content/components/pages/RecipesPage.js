@@ -2,6 +2,7 @@ import autobind from "autobind-decorator";
 import React from "react";
 import { Controlled as CodeMirror } from "react-codemirror2";
 import { Button, Icon, Loader, Modal, Nav, Pagination } from "rsuite";
+import { Map } from "immutable";
 
 import { ENVIRONMENTS } from "devtools/config";
 import RecipeListing from "devtools/components/recipes/RecipeListing";
@@ -14,11 +15,6 @@ class RecipesPage extends BaseApiPage {
   constructor(props) {
     super(props);
 
-    const recipePages = {};
-    Object.keys(ENVIRONMENTS).forEach(v => {
-      recipePages[v] = {};
-    });
-
     this.state = {
       // inherit state from BaseApiPage,
       ...this.state,
@@ -27,7 +23,7 @@ class RecipesPage extends BaseApiPage {
       page: 1,
       runningArbitrary: false,
       showWriteRecipe: false,
-      recipePages,
+      recipePages: new Map(Object.keys(ENVIRONMENTS).map(v => [v, new Map()])),
     };
   }
 
@@ -36,11 +32,8 @@ class RecipesPage extends BaseApiPage {
   }
 
   async updateData() {
-    const { environment, page } = this.state;
-    if (
-      environment in this.state.recipePages &&
-      page in this.state.recipePages[environment]
-    ) {
+    const { environment, page, recipePages } = this.state;
+    if (recipePages.hasIn([environment, page])) {
       // cache hit
       this.setState({ page });
       return;
@@ -48,15 +41,9 @@ class RecipesPage extends BaseApiPage {
 
     // cache miss
     this.setState({ loading: true });
-    let data = await this.api.fetchRecipePage(page, { ordering: "-id" });
+    const data = await this.api.fetchRecipePage(page, { ordering: "-id" });
     this.setState(({ recipePages }) => ({
-      recipePages: {
-        ...recipePages,
-        [environment]: {
-          ...recipePages.environment,
-          [page]: data.results,
-        },
-      },
+      recipePages: recipePages.setIn([environment, page], data.results),
       page,
       loading: false,
       count: data.count,
@@ -152,7 +139,7 @@ class RecipesPage extends BaseApiPage {
 
   renderContent() {
     const { recipePages, loading, count, page, environment } = this.state;
-    const recipes = recipePages[environment][page];
+    const recipes = recipePages.getIn([environment, page]);
 
     return (
       <>
