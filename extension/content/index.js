@@ -16,6 +16,7 @@ import RecipesPage from "devtools/components/pages/RecipesPage";
 import FiltersPage from "devtools/components/pages/FiltersPage";
 import PrefStudiesPage from "devtools/components/pages/PrefStudiesPage";
 import AddonStudiesPage from "devtools/components/pages/AddonStudiesPage";
+import RecipeTimelinePage from "devtools/components/pages/RecipeTimelinePage";
 
 class App extends React.Component {
   render() {
@@ -60,17 +61,30 @@ class App extends React.Component {
                   >
                     Add-on Studies
                   </Nav.Item>
+                  <Nav.Item
+                    componentClass={NavLink}
+                    to="/recipe-timeline"
+                    icon={<Icon icon="road" />}
+                  >
+                    Recipe Timeline
+                  </Nav.Item>
                 </Nav>
               </Sidenav.Body>
             </Sidenav>
           </Sidebar>
           <Container className="page-container">
             <ErrorBoundary>
-              <Route exact path="/" render={() => <Redirect to="/recipes" />} />
+              {/* <Route exact path="/" render={() => <Redirect to="/recipes" />} /> */}
+              <Route
+                exact
+                path="/"
+                render={() => <Redirect to="/recipe-timeline" />}
+              />
               <Route path="/recipes" component={RecipesPage} />
               <Route path="/filters" component={FiltersPage} />
               <Route path="/pref-studies" component={PrefStudiesPage} />
               <Route path="/addon-studies" component={AddonStudiesPage} />
+              <Route path="/recipe-timeline" component={RecipeTimelinePage} />
             </ErrorBoundary>
           </Container>
         </Container>

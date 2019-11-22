@@ -27,6 +27,9 @@ class BaseApiPage extends BasePage {
 
     this.api = new Proxy(api, {
       get: (realApi, prop) => {
+        if (!api[prop]) {
+          throw new Error(`No API method named ${prop}`);
+        }
         return (...args) => realApi[prop](this.state.environment, ...args);
       },
     });
