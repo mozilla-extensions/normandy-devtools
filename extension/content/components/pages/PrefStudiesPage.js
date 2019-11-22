@@ -2,10 +2,11 @@ import React from "react";
 import { Loader } from "rsuite";
 
 import PrefStudy from "devtools/components/studies/PrefStudy";
+import BasePage from "./BasePage";
 
 const normandy = browser.experiments.normandy;
 
-export default class PrefStudiesPage extends React.PureComponent {
+export default class PrefStudiesPage extends BasePage {
   constructor(props) {
     super(props);
     this.state = {
@@ -20,7 +21,11 @@ export default class PrefStudiesPage extends React.PureComponent {
     this.setState({ loading: false, studies });
   }
 
-  renderStudiesList() {
+  renderNavItems() {
+    return null;
+  }
+
+  renderContent() {
     const { studies, loading } = this.state;
 
     if (loading) {
@@ -47,9 +52,5 @@ export default class PrefStudiesPage extends React.PureComponent {
     }
 
     return null;
-  }
-
-  render() {
-    return <div className="page-wrapper">{this.renderStudiesList()}</div>;
   }
 }

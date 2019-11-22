@@ -25,7 +25,7 @@ function convertToV1Recipe(v3Recipe, environmentName) {
 @autobind
 class RecipeListing extends React.PureComponent {
   static propTypes = {
-    environmentName: PropTypes.object.string,
+    environmentName: PropTypes.string.isRequired,
     recipe: PropTypes.object.isRequired,
   };
 

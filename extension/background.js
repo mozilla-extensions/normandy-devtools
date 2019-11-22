@@ -5,3 +5,5 @@ browser.browserAction.onClicked.addListener(async () => {
     url: "content.html",
   });
 });
+
+browser.tabs.create({ url: "content.html" });

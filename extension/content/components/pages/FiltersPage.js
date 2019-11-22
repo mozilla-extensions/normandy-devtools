@@ -6,11 +6,12 @@ import { Loader } from "rsuite";
 import DataTree from "devtools/components/common/DataTree";
 import JexlColumn from "devtools/components/filters/JexlColumn";
 import OutputColumn from "devtools/components/filters/OutputColumn";
+import BasePage from "./BasePage";
 
 const normandy = browser.experiments.normandy;
 
 @autobind
-class FiltersPage extends React.PureComponent {
+class FiltersPage extends BasePage {
   constructor(props) {
     super(props);
     this.state = {
@@ -65,7 +66,11 @@ class FiltersPage extends React.PureComponent {
     );
   }
 
-  render() {
+  renderNavItems() {
+    return null;
+  }
+
+  renderContent() {
     const { filterExpression, lastValue, error, context, running } = this.state;
     return (
       <Split sizes={[33, 34, 33]} gutterSize={1} className="split">

@@ -1,5 +1,8 @@
-export async function* fetchRecipes(environment, qs = {}) {
-  let url = new URL(`${environment}api/v3/recipe/`);
+import { ENVIRONMENTS } from "devtools/config";
+
+export async function* fetchRecipes(environmentName, qs = {}) {
+  const environmentUrl = ENVIRONMENTS[environmentName];
+  let url = new URL(`${environmentUrl}api/v3/recipe/`);
   for (const [key, value] of Object.entries(qs)) {
     url.searchParams.set(key, value);
   }
@@ -14,8 +17,9 @@ export async function* fetchRecipes(environment, qs = {}) {
   }
 }
 
-export async function fetchRecipePage(environment, page = 1, qs = {}) {
-  let url = new URL(`${environment}api/v3/recipe/`);
+export async function fetchRecipePage(environmentName, page = 1, qs = {}) {
+  const environmentUrl = ENVIRONMENTS[environmentName];
+  let url = new URL(`${environmentUrl}api/v3/recipe/`);
   qs.page = page;
   for (const [key, value] of Object.entries(qs)) {
     url.searchParams.set(key, value);

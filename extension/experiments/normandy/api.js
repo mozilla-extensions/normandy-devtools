@@ -87,7 +87,12 @@ var normandy = class extends ExtensionAPI {
           },
 
           async checkRecipeFilter(recipe) {
-            return RecipeRunner.checkFilter(recipe);
+            if (RecipeRunner.checkFilter) {
+              return RecipeRunner.checkFilter(recipe);
+            } else if (RecipeRunner.shouldRunRecipe) {
+              return RecipeRunner.shouldRunRecipe(recipe);
+            }
+            throw new Error("Incompatible version of Normandy");
           },
 
           async runRecipe(recipe) {
