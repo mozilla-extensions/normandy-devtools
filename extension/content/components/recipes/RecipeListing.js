@@ -2,8 +2,9 @@ import autobind from "autobind-decorator";
 import yaml from "js-yaml";
 import PropTypes from "prop-types";
 import React from "react";
-import Highlight from "react-highlight";
 import { Button, Icon, Panel, Tag } from "rsuite";
+
+import Highlight from "devtools/components/common/Highlight";
 
 const normandy = browser.experiments.normandy;
 
