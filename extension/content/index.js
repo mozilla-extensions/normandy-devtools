@@ -9,13 +9,13 @@ import "devtools/less/index.less";
 
 // Languages for highlight.js
 import javascript from "highlight.js/lib/languages/javascript";
-import json from "highlight.js/lib/languages/javascript";
+import json from "highlight.js/lib/languages/json";
 import yaml from "highlight.js/lib/languages/yaml";
 
 // Register highlight.js languages
-highlightjs.registerLanguage(javascript);
-highlightjs.registerLanguage(json);
-highlightjs.registerLanguage(yaml);
+highlightjs.registerLanguage("javascript", javascript);
+highlightjs.registerLanguage("json", json);
+highlightjs.registerLanguage("yaml", yaml);
 
 let root = document.querySelector("#root");
 
