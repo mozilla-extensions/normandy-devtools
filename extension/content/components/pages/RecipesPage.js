@@ -17,6 +17,7 @@ import {
 import { ENVIRONMENTS } from "devtools/config";
 import RecipeListing from "devtools/components/recipes/RecipeListing";
 import api from "devtools/utils/api";
+import { convertToV1Recipe } from "devtools/utils/recipes";
 
 const normandy = browser.experiments.normandy;
 
@@ -99,6 +100,15 @@ class RecipesPage extends React.PureComponent {
     this.setState({ showSettings: false });
   }
 
+  copyRecipeToArbitrary(v3Recipe) {
+    const { environment } = this.state;
+    const v1Recipe = convertToV1Recipe(v3Recipe, environment);
+    this.setState({
+      arbitraryRecipe: JSON.stringify(v1Recipe, null, 4),
+      showWriteRecipes: true,
+    });
+  }
+
   renderRecipeList() {
     const { environment, loading, page, recipePages } = this.state;
     const recipes = recipePages[environment][page];
@@ -119,6 +129,7 @@ class RecipesPage extends React.PureComponent {
           key={recipe.id}
           recipe={recipe}
           environmentName={envName}
+          copyRecipeToArbitrary={this.copyRecipeToArbitrary}
         />
       ));
     }
@@ -190,6 +201,7 @@ class RecipesPage extends React.PureComponent {
       <Modal
         show={this.state.showWriteRecipes}
         onHide={this.hideWriteRecipePopup}
+        size="lg"
       >
         <Modal.Header>
           <Modal.Title>Write a recipe</Modal.Title>
