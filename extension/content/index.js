@@ -74,12 +74,7 @@ class App extends React.Component {
           </Sidebar>
           <Container className="page-container">
             <ErrorBoundary>
-              {/* <Route exact path="/" render={() => <Redirect to="/recipes" />} /> */}
-              <Route
-                exact
-                path="/"
-                render={() => <Redirect to="/recipe-timeline" />}
-              />
+              <Route exact path="/" render={() => <Redirect to="/recipes" />} />
               <Route path="/recipes" component={RecipesPage} />
               <Route path="/filters" component={FiltersPage} />
               <Route path="/pref-studies" component={PrefStudiesPage} />
