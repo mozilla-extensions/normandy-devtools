@@ -5,6 +5,8 @@ import moment from "moment";
 
 import "./RecipeTimeline.less";
 
+window.PropTypes = PropTypes;
+
 export default class RecipeTimeline extends React.Component {
   static propTypes = {
     history: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -78,7 +80,7 @@ export default class RecipeTimeline extends React.Component {
 
   render() {
     return (
-      <Timeline class="recipe-timeline">
+      <Timeline className="recipe-timeline">
         {this.getEvents().map(({ id, datetime, description, icon = null }) => (
           <Timeline.Item key={id} dot={icon}>
             <Date datetime={datetime} />
@@ -106,21 +108,26 @@ Date.propTypes = {
   datetime: PropTypes.instanceOf(moment).isRequired,
 };
 
-function User({ obj: { first_name, last_name, id, email } }) {
+function User({ obj }) {
+  if (!obj) {
+    return "<Missing user>";
+  }
+  const { first_name, last_name, id, email } = obj;
+
   if (first_name && last_name) {
     return `${first_name} ${last_name}`;
   } else if (email) {
-    return email;
+    return `<${email}>`;
   } else if (id) {
-    return `User ${id}`;
+    return `<User ${id}>`;
   }
-  return "Unknown user";
+  return "<Unknown user>";
 }
 User.propTypes = {
-  datetime: PropTypes.shape({
+  obj: PropTypes.shape({
     first_name: PropTypes.string,
     last_name: PropTypes.string,
     email: PropTypes.string,
-    id: PropTypes.oneOf(PropTypes.number, PropTypes.string),
-  }).isRequired,
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  }),
 };

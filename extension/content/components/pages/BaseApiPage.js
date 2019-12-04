@@ -1,6 +1,7 @@
 import autobind from "autobind-decorator";
 import React from "react";
 import { Drawer, Icon, Nav, SelectPicker } from "rsuite";
+import PropTypes from "proptypes";
 
 import { ENVIRONMENTS } from "devtools/config";
 import BasePage from "devtools/components/pages/BasePage";
@@ -11,11 +12,30 @@ import api from "devtools/utils/api";
  *
  * Provides an API wrapper at `this.api` which automatically handles
  * environments. Use this wrapper access the API.
- *
- * Overwrite `updateData`, as well as anything from `BasePage`.
  **/
 @autobind
-class BaseApiPage extends BasePage {
+class BaseApiPage extends React.Component {
+  static propTypes = {
+    /** Fetch any data, using values from state. Should be overwritten. */
+    updateData: PropTypes.func.isRequired,
+
+    /**
+     * Nav bar items. Set this to add navbar items.
+     */
+    navItems: PropTypes.node,
+
+    /** Main page content. */
+    pageContent: PropTypes.func.isRequired,
+
+    /**
+     * Extra content on the page that is outside of the page content. Can be
+     * used for modals and sidebars.
+     */
+    extra: PropTypes.node,
+  };
+
+  static defaultProps = {};
+
   constructor(props) {
     super(props);
 
@@ -25,7 +45,7 @@ class BaseApiPage extends BasePage {
       showSettings: false,
     };
 
-    this.api = new Proxy(api, {
+    this.apiProxy = new Proxy(api, {
       get: (realApi, prop) => {
         if (!api[prop]) {
           throw new Error(`No API method named ${prop}`);
@@ -36,11 +56,19 @@ class BaseApiPage extends BasePage {
   }
 
   componentDidMount() {
-    this.updateData();
+    this.props.updateData({
+      api: this.apiProxy,
+      environment: this.state.environment,
+    });
   }
 
   handleEnvironmentChange(environment) {
-    this.setState({ environment }, () => this.updateData());
+    this.setState({ environment }, () =>
+      this.props.updateData({
+        api: this.apiProxy,
+        environment: this.state.environment,
+      }),
+    );
   }
 
   showSettings() {
@@ -81,22 +109,31 @@ class BaseApiPage extends BasePage {
     );
   }
 
-  renderNavItems() {
+  render() {
+    const { navItems, extra, pageContent } = this.props;
+    const { environment } = this.state;
+
     return (
-      <>
-        <Nav.Item icon={<Icon icon="gear" />} onClick={this.showSettings}>
-          Settings
-        </Nav.Item>
-      </>
+      <BasePage
+        navItems={
+          <>
+            <Nav.Item icon={<Icon icon="gear" />} onClick={this.showSettings}>
+              Settings
+            </Nav.Item>
+            {navItems}
+          </>
+        }
+        hideNavBar={false}
+        extra={
+          <>
+            {this.renderSettingsDrawer()}
+            {extra}
+          </>
+        }
+        pageContent={pageContent({ environment, api: this.apiProxy })}
+      />
     );
   }
-
-  renderExtra() {
-    return this.renderSettingsDrawer();
-  }
-
-  /** Fetch any data, using values from state. Should be overwritten. */
-  updateData() {}
 }
 
 export default BaseApiPage;

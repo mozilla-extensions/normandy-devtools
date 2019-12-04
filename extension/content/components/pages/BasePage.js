@@ -1,6 +1,7 @@
 import autobind from "autobind-decorator";
 import React from "react";
 import { Header, Icon, Nav, Navbar } from "rsuite";
+import PropTypes from "proptypes";
 
 /**
  * A page in the devtools.
@@ -9,54 +10,40 @@ import { Header, Icon, Nav, Navbar } from "rsuite";
  */
 @autobind
 class BasePage extends React.Component {
-  /**
-   * Nav bar items. Overwrite this to add, change, or remove navbar items.
-   *
-   * To overwrite while respecting super class choices, use this pattern:
-   *
-   * ```js
-   * renderNavItems() {
-   *   return (
-   *     <>
-   *       <Nav.Item icon={...}>My Item</Nav.Item
-   *       {super.renderNavItems()}
-   *     </>
-   *   )
-   * }
-   * ```
-   *
-   * To completely remove the navigation bar, return `null`.
-   */
-  renderNavItems() {
-    return (
+  static propTypes = {
+    /**
+     * Nav bar items. Set this to add navbar items. To completely remove the
+     * navigation bar, set the prop `hideNavBar={true}`.
+     */
+    navItems: PropTypes.node,
+    hideNavBar: PropTypes.bool,
+    /** Main page content. */
+    pageContent: PropTypes.node.isRequired,
+    /** Extra content on the page that is outside of the page content. Can be used for modals and sidebars. */
+    extra: PropTypes.node,
+  };
+
+  static defaultProps = {
+    hideNavBar: false,
+    navItems: (
       <Nav.Item icon={<Icon icon="question-mark" />}>Unimplemented</Nav.Item>
-    );
-  }
-
-  /** Main page content. Overwrite this to show content. */
-  renderContent() {
-    return "Unimplemented";
-  }
-
-  /** Extra content on the page. Overwrite this for modals and sidebars. */
-  renderExtra() {
-    return null;
-  }
+    ),
+  };
 
   render() {
-    const navItems = this.renderNavItems();
+    const { navItems, pageContent, extra, hideNavBar } = this.props;
 
     return (
       <>
-        {navItems && (
+        {!hideNavBar && (
           <Header>
             <Navbar>
-              <Nav pullRight>{this.renderNavItems()}</Nav>
+              <Nav pullRight>{navItems}</Nav>
             </Navbar>
           </Header>
         )}
-        <div className="page-wrapper">{this.renderContent()}</div>
-        {this.renderExtra()}
+        <div className="page-wrapper">{pageContent}</div>
+        {extra}
       </>
     );
   }

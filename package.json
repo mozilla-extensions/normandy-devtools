@@ -58,6 +58,7 @@
     "immutable": "^4.0.0-rc.12",
     "js-yaml": "^3.11.0",
     "luxon": "^1.2.1",
+    "proptypes": "^1.1.0",
     "rc-tree": "^2.1.0",
     "react": "^16.3.2",
     "react-codemirror2": "^6.0.0",
