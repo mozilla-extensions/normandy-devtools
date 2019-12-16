@@ -10,12 +10,12 @@ A set of tools for interacting with Normandy without using a server.
 * Allows executing individual recipes, regardless of filters
 * See current filter expression context
 * Evaluate filter expressions
+* Use a different Normandy environment (does not change browser settings)
+* Create custom one-off recipes for testing
 
 ## Planned features
 
-* Use a different Normandy environment, such as stage or local development ([Issue #1](https://github.com/mozilla/normandy-devtools/issues/1))
 * Choose branch for preference studies ([Issue #2](https://github.com/mozilla/normandy-devtools/issues/2))
-* Create custom one-off recipes for testing ([Issue #3](https://github.com/mozilla/normandy-devtools/issues/3))
 * Temporarily change filter expressions context ([Issue #4](https://github.com/mozilla/normandy-devtools/issues/4))
 * Check signature state of recipes  ([Issue #5](https://github.com/mozilla/normandy-devtools/issues/5))
 
@@ -41,7 +41,8 @@ Note that the extension will not automatically update.
 
 # Development
 
-Prerequisites for working the extension:
+You'll need to use Nightly and about:debugging to use unsigned development
+versions of the add-on.
 
 ```
 $ git clone https://github.com/mozilla/normandy-devtools.git

@@ -5,6 +5,12 @@ import ErrorBoundary from "react-error-boundary";
 import { Container, Icon, Nav, Sidebar, Sidenav } from "rsuite";
 
 import "devtools/less/index.less";
+
+// Mode and theme for Code Mirror
+import "codemirror/addon/selection/active-line";
+import "codemirror/mode/javascript/javascript";
+import "codemirror/theme/neo.css";
+
 import Logo from "devtools/components/svg/Logo";
 import RecipesPage from "devtools/components/pages/RecipesPage";
 import FiltersPage from "devtools/components/pages/FiltersPage";
