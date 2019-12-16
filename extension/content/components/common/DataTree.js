@@ -48,7 +48,13 @@ export default class DataTree extends React.PureComponent {
 function makeTreeNodes({ data, title, key = null }) {
   let fullKey = title;
   if (key) {
-    fullKey = Number.isInteger(title) ? `${key}[${title}]` : `${key}.${title}`;
+    if (Number.isInteger(title)) {
+      fullKey = `${key}[${title}]`;
+    } else if (/[^_A-Z]/i.test(title)) {
+      fullKey = `${key}["${title}"]`;
+    } else {
+      fullKey = `${key}.${title}`;
+    }
   }
 
   switch (typeof data) {
