@@ -6,12 +6,12 @@ import { Map } from "immutable";
 
 import { ENVIRONMENTS } from "devtools/config";
 import RecipeListing from "devtools/components/recipes/RecipeListing";
-import BaseApiPage from "./BaseApiPage";
+import BaseApiPage from "devtools/components/pages/BaseApiPage";
 
 const normandy = browser.experiments.normandy;
 
 @autobind
-class RecipesPage extends BaseApiPage {
+class RecipesPage extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -27,12 +27,8 @@ class RecipesPage extends BaseApiPage {
     };
   }
 
-  async runNormandy() {
-    await normandy.standardRun();
-  }
-
-  async updateData() {
-    const { environment, page, recipePages } = this.state;
+  async updateData({ environment, api }) {
+    const { page, recipePages } = this.state;
     if (recipePages.hasIn([environment, page])) {
       // cache hit
       this.setState({ page });
@@ -41,13 +37,17 @@ class RecipesPage extends BaseApiPage {
 
     // cache miss
     this.setState({ loading: true });
-    const data = await this.api.fetchRecipePage(page, { ordering: "-id" });
+    const data = await api.fetchRecipePage(page, { ordering: "-id" });
     this.setState(({ recipePages }) => ({
       recipePages: recipePages.setIn([environment, page], data.results),
       page,
       loading: false,
       count: data.count,
     }));
+  }
+
+  async runNormandy() {
+    await normandy.standardRun();
   }
 
   handlePageChange(page) {
@@ -116,71 +116,66 @@ class RecipesPage extends BaseApiPage {
     );
   }
 
-  renderNavItems() {
-    const { environment } = this.state;
-
+  render() {
     return (
-      <>
-        <Nav.Item
-          icon={<Icon icon="edit" />}
-          onClick={this.showWriteRecipePopup}
-        >
-          Write &amp; Run Arbitrary
-        </Nav.Item>
-        {environment === "prod" && (
-          <Nav.Item icon={<Icon icon="play" />} onClick={this.runNormandy}>
-            Run Normandy
-          </Nav.Item>
+      <BaseApiPage
+        updateData={async ({ environment, api }) =>
+          this.updateData({ environment, api })
+        }
+        navItems={({ environment }) => (
+          <>
+            <Nav.Item
+              icon={<Icon icon="edit" />}
+              onClick={this.showWriteRecipePopup}
+            >
+              Write &amp; Run Arbitrary
+            </Nav.Item>
+            {environment === "prod" && (
+              <Nav.Item icon={<Icon icon="play" />} onClick={this.runNormandy}>
+                Run Normandy
+              </Nav.Item>
+            )}
+          </>
         )}
-        {super.renderNavItems()}
-      </>
-    );
-  }
+        pageContent={({ environment }) => {
+          const { recipePages, loading, count, page } = this.state;
+          const recipes = recipePages.getIn([environment, page]);
 
-  renderContent() {
-    const { recipePages, loading, count, page, environment } = this.state;
-    const recipes = recipePages.getIn([environment, page]);
-
-    return (
-      <>
-        {loading && (
-          <div className="text-center">
-            <Loader content="Loading recipes&hellip;" />
-          </div>
-        )}
-        {recipes &&
-          recipes.map(recipe => (
-            <RecipeListing
-              key={recipe.id}
-              recipe={recipe}
-              environmentName={environment}
-            />
-          ))}
-        <div>
-          <Pagination
-            activePage={page}
-            maxButtons={5}
-            pages={Math.ceil(count / 25)}
-            onSelect={this.handlePageChange}
-            size="lg"
-            prev
-            next
-            first
-            last
-            ellipsis
-            boundaryLinks
-          />
-        </div>
-      </>
-    );
-  }
-
-  renderExtra() {
-    return (
-      <>
-        {super.renderExtra()}
-        {this.renderWriteRecipeModal()}
-      </>
+          return (
+            <>
+              {loading && (
+                <div className="text-center">
+                  <Loader content="Loading recipes&hellip;" />
+                </div>
+              )}
+              {recipes &&
+                recipes.map(recipe => (
+                  <RecipeListing
+                    key={recipe.id}
+                    recipe={recipe}
+                    environmentName={environment}
+                  />
+                ))}
+              <div>
+                <Pagination
+                  activePage={page}
+                  maxButtons={5}
+                  pages={Math.ceil(count / 25)}
+                  onSelect={this.handlePageChange}
+                  size="lg"
+                  prev
+                  next
+                  first
+                  last
+                  ellipsis
+                  boundaryLinks
+                />
+              </div>
+            </>
+          );
+        }}
+        extra={() => this.renderWriteRecipeModal()}
+      />
     );
   }
 }

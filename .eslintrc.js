@@ -9,6 +9,6 @@ module.exports = {
   ],
   rules: {
     "mozilla/no-define-cc-etc": "off", // seems broken outside of m-c
-    "generator-star-spacing": "off",
+    "generator-star-spacing": "off", // this is handled by Prettier
   },
 };

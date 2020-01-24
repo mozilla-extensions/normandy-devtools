@@ -6,12 +6,12 @@ import { Loader } from "rsuite";
 import DataTree from "devtools/components/common/DataTree";
 import JexlColumn from "devtools/components/filters/JexlColumn";
 import OutputColumn from "devtools/components/filters/OutputColumn";
-import BasePage from "./BasePage";
+import BasePage from "devtools/components/pages/BasePage";
 
 const normandy = browser.experiments.normandy;
 
 @autobind
-class FiltersPage extends BasePage {
+class FiltersPage extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -66,42 +66,55 @@ class FiltersPage extends BasePage {
     );
   }
 
-  renderNavItems() {
-    return null;
-  }
-
-  renderContent() {
-    const { filterExpression, lastValue, error, context, running } = this.state;
+  render() {
     return (
-      <Split sizes={[33, 34, 33]} gutterSize={1} className="split">
-        <div className="col">
-          <div className="filter-column">
-            <header>
-              <strong>Client Context</strong>
-            </header>
-            {!context.normandy && (
-              <div className="text-center">
-                <Loader />
+      <BasePage
+        hideNavBar={true}
+        pageContent={() => {
+          const {
+            filterExpression,
+            lastValue,
+            error,
+            context,
+            running,
+          } = this.state;
+          return (
+            <Split sizes={[33, 34, 33]} gutterSize={1} className="split">
+              <div className="col">
+                <div className="filter-column">
+                  <header>
+                    <strong>Client Context</strong>
+                  </header>
+                  {!context.normandy && (
+                    <div className="text-center">
+                      <Loader />
+                    </div>
+                  )}
+                  <DataTree
+                    data={context.normandy}
+                    title="normandy"
+                    key="normandy"
+                    onDoubleClick={this.handleDoubleClickTreeNode}
+                  />
+                </div>
               </div>
-            )}
-            <DataTree
-              data={context.normandy}
-              title="normandy"
-              key="normandy"
-              onDoubleClick={this.handleDoubleClickTreeNode}
-            />
-          </div>
-        </div>
-        <div className="col">
-          <JexlColumn
-            filterExpression={filterExpression}
-            onBeforeChange={this.handleFilterChange}
-          />
-        </div>
-        <div className="col">
-          <OutputColumn value={lastValue} error={error} running={running} />
-        </div>
-      </Split>
+              <div className="col">
+                <JexlColumn
+                  filterExpression={filterExpression}
+                  onBeforeChange={this.handleFilterChange}
+                />
+              </div>
+              <div className="col">
+                <OutputColumn
+                  value={lastValue}
+                  error={error}
+                  running={running}
+                />
+              </div>
+            </Split>
+          );
+        }}
+      />
     );
   }
 }

@@ -6,28 +6,37 @@ import PropTypes from "proptypes";
 /**
  * A page in the devtools.
  *
- * Overwrite `renderNavItems`, `renderContent`, and `renderExtra`
+ * Use by composing into your component. Provide at least `pageContent`, which
+ * will be included into the page.
  */
 @autobind
 class BasePage extends React.Component {
   static propTypes = {
     /**
-     * Nav bar items. Set this to add navbar items. To completely remove the
-     * navigation bar, set the prop `hideNavBar={true}`.
+     * Nav bar items. If this is empty the navbar will still be shown. To
+     * completely remove the navigation bar, set the prop `hideNavBar={true}`.
      */
-    navItems: PropTypes.node,
+    navItems: PropTypes.func,
+
+    /** Hide the navbar completely. */
     hideNavBar: PropTypes.bool,
+
     /** Main page content. */
-    pageContent: PropTypes.node.isRequired,
-    /** Extra content on the page that is outside of the page content. Can be used for modals and sidebars. */
-    extra: PropTypes.node,
+    pageContent: PropTypes.func.isRequired,
+
+    /**
+     * Extra content on the page that is outside of the page content. Can be
+     * used for modals and sidebars.
+     */
+    extra: PropTypes.func,
   };
 
   static defaultProps = {
     hideNavBar: false,
-    navItems: (
+    navItems: () => (
       <Nav.Item icon={<Icon icon="question-mark" />}>Unimplemented</Nav.Item>
     ),
+    extra: () => null,
   };
 
   render() {
@@ -38,12 +47,12 @@ class BasePage extends React.Component {
         {!hideNavBar && (
           <Header>
             <Navbar>
-              <Nav pullRight>{navItems}</Nav>
+              <Nav pullRight>{navItems()}</Nav>
             </Navbar>
           </Header>
         )}
-        <div className="page-wrapper">{pageContent}</div>
-        {extra}
+        <div className="page-wrapper">{pageContent()}</div>
+        {extra()}
       </>
     );
   }

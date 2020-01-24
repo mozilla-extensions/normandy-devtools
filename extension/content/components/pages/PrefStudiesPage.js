@@ -2,11 +2,11 @@ import React from "react";
 import { Loader } from "rsuite";
 
 import PrefStudy from "devtools/components/studies/PrefStudy";
-import BasePage from "./BasePage";
+import BasePage from "devtools/components/pages/BasePage";
 
 const normandy = browser.experiments.normandy;
 
-export default class PrefStudiesPage extends BasePage {
+export default class PrefStudiesPage extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -21,36 +21,43 @@ export default class PrefStudiesPage extends BasePage {
     this.setState({ loading: false, studies });
   }
 
-  renderNavItems() {
-    return null;
-  }
+  render() {
+    return (
+      <BasePage
+        hideNavBar={true}
+        pageContent={() => {
+          const { studies, loading } = this.state;
 
-  renderContent() {
-    const { studies, loading } = this.state;
+          if (loading) {
+            return (
+              <Loader
+                size="md"
+                speed="slow"
+                content="Loading studies&hellip;"
+              />
+            );
+          } else if (studies) {
+            return (
+              <React.Fragment>
+                <h3>Active</h3>
+                {studies
+                  .filter(study => !study.expired)
+                  .map(study => (
+                    <PrefStudy key={study.id} study={study} />
+                  ))}
+                <h3>Expired</h3>
+                {studies
+                  .filter(study => study.expired)
+                  .map(study => (
+                    <PrefStudy key={study.id} study={study} />
+                  ))}
+              </React.Fragment>
+            );
+          }
 
-    if (loading) {
-      return (
-        <Loader size="md" speed="slow" content="Loading studies&hellip;" />
-      );
-    } else if (studies) {
-      return (
-        <React.Fragment>
-          <h3>Active</h3>
-          {studies
-            .filter(study => !study.expired)
-            .map(study => (
-              <PrefStudy key={study.id} study={study} />
-            ))}
-          <h3>Expired</h3>
-          {studies
-            .filter(study => study.expired)
-            .map(study => (
-              <PrefStudy key={study.id} study={study} />
-            ))}
-        </React.Fragment>
-      );
-    }
-
-    return null;
+          return null;
+        }}
+      />
+    );
   }
 }

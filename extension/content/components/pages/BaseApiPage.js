@@ -10,9 +10,22 @@ import api from "devtools/utils/api";
 /**
  * A page that uses the API and can switch environments
  *
- * Provides an API wrapper at `this.api` which automatically handles
- * environments. Use this wrapper access the API.
- **/
+ * Use by composing into your component, like:
+ *
+ *   function MyApiPage(props) {
+ *     return (
+ *       <BaseApiPage
+ *         updateData={({ environment, api }) => fetchDataFromServer(...)}
+ *         pageContent={({ environment, api }) => {
+ *           return "Page content using environment and API"
+ *         }}
+ *       />
+ *     );
+ *   }
+ *
+ * Passes the current environment and an API proxy that uses that environment
+ * to each of the extension functions updateData and pageContent.
+ */
 @autobind
 class BaseApiPage extends React.Component {
   static propTypes = {
@@ -22,7 +35,7 @@ class BaseApiPage extends React.Component {
     /**
      * Nav bar items. Set this to add navbar items.
      */
-    navItems: PropTypes.node,
+    navItems: PropTypes.func,
 
     /** Main page content. */
     pageContent: PropTypes.func.isRequired,
@@ -31,10 +44,13 @@ class BaseApiPage extends React.Component {
      * Extra content on the page that is outside of the page content. Can be
      * used for modals and sidebars.
      */
-    extra: PropTypes.node,
+    extra: PropTypes.func,
   };
 
-  static defaultProps = {};
+  static defaultProps = {
+    navItems: () => [],
+    extra: () => null,
+  };
 
   constructor(props) {
     super(props);
@@ -62,12 +78,16 @@ class BaseApiPage extends React.Component {
     });
   }
 
+  extensionFuncParams() {
+    return {
+      api: this.apiProxy,
+      environment: this.state.environment,
+    };
+  }
+
   handleEnvironmentChange(environment) {
     this.setState({ environment }, () =>
-      this.props.updateData({
-        api: this.apiProxy,
-        environment: this.state.environment,
-      }),
+      this.props.updateData(this.extensionFuncParams()),
     );
   }
 
@@ -111,26 +131,26 @@ class BaseApiPage extends React.Component {
 
   render() {
     const { navItems, extra, pageContent } = this.props;
-    const { environment } = this.state;
+    const extensionFuncParams = this.extensionFuncParams();
 
     return (
       <BasePage
-        navItems={
+        navItems={() => (
           <>
             <Nav.Item icon={<Icon icon="gear" />} onClick={this.showSettings}>
               Settings
             </Nav.Item>
-            {navItems}
+            {navItems(extensionFuncParams)}
           </>
-        }
+        )}
         hideNavBar={false}
-        extra={
+        extra={() => (
           <>
             {this.renderSettingsDrawer()}
-            {extra}
+            {extra(extensionFuncParams)}
           </>
-        }
-        pageContent={pageContent({ environment, api: this.apiProxy })}
+        )}
+        pageContent={() => pageContent(extensionFuncParams)}
       />
     );
   }

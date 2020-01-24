@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Timeline, Icon } from "rsuite";
 import moment from "moment";
 
-import "./RecipeTimeline.less";
+import "devtools/components/recipes/RecipeTimeline.less";
 
 window.PropTypes = PropTypes;
 
