@@ -50,9 +50,8 @@ class RecipesPage extends React.PureComponent {
     await normandy.standardRun();
   }
 
-  handlePageChange(page) {
-    this.setState({ page });
-    this.updateData();
+  handlePageChange({ page, environment, api }) {
+    this.setState({ page }, () => this.updateData({ environment, api }));
   }
 
   showWriteRecipePopup() {
@@ -137,7 +136,7 @@ class RecipesPage extends React.PureComponent {
             )}
           </>
         )}
-        pageContent={({ environment }) => {
+        pageContent={({ environment, api }) => {
           const { recipePages, loading, count, page } = this.state;
           const recipes = recipePages.getIn([environment, page]);
 
@@ -161,7 +160,9 @@ class RecipesPage extends React.PureComponent {
                   activePage={page}
                   maxButtons={5}
                   pages={Math.ceil(count / 25)}
-                  onSelect={this.handlePageChange}
+                  onSelect={page =>
+                    this.handlePageChange({ page, environment, api })
+                  }
                   size="lg"
                   prev
                   next
