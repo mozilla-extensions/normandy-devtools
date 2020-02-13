@@ -115,17 +115,28 @@ class FiltersPage extends React.PureComponent {
             <header>
               <strong>Client Context</strong>
             </header>
-            {!context.normandy && (
+            {!(context.normandy || context.env) && (
               <div className="text-center">
                 <Loader />
               </div>
             )}
-            <DataTree
-              data={context.normandy}
-              title="normandy"
-              key="normandy"
-              onDoubleClick={this.handleDoubleClickTreeNode}
-            />
+            {context.env && (
+              <DataTree
+                data={context.env}
+                title="env"
+                key="env"
+                onDoubleClick={this.handleDoubleClickTreeNode}
+                defaultExpanded={false}
+              />
+            )}
+            {context.normandy && (
+              <DataTree
+                data={context.normandy}
+                title="normandy"
+                key="normandy"
+                onDoubleClick={this.handleDoubleClickTreeNode}
+              />
+            )}
           </div>
         </div>
         <div className="col">
