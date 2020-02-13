@@ -71,17 +71,54 @@ var normandy = class extends ExtensionAPI {
 
             // it is generally safe to await values that aren't promises, just a bit inefficient
             for (const key of keys) {
-              if (key == "liveTelemetry") {
-                // Live Telemetry is a weird proxy object. Unpack it.
-                builtContext.normandy.liveTelemetry = {
-                  main: await context.normandy.liveTelemetry.main,
-                };
-                builtContext.env.liveTelemetry = {
-                  main: await context.env.liveTelemetry.main,
-                };
-              } else {
-                builtContext.normandy[key] = await context.normandy[key];
-                builtContext.env[key] = await context.env[key];
+              try {
+                if (key == "liveTelemetry") {
+                  // Live Telemetry is a weird proxy object. Unpack it.
+                  builtContext.normandy.liveTelemetry = {
+                    main: await context.normandy.liveTelemetry.main,
+                  };
+                  builtContext.env.liveTelemetry = {
+                    main: await context.env.liveTelemetry.main,
+                  };
+                } else if (key == "appinfo") {
+                  // appinfo can't be directly cloned, but we can manually clone most of it
+                  let appinfo = context.env.appinfo;
+                  let appinfoCopy = {};
+                  for (const name of Object.keys(
+                    Object.getOwnPropertyDescriptors(appinfo),
+                  )) {
+                    // ignore functions and objects
+                    try {
+                      const value = appinfo[name];
+                      if (
+                        typeof value != "function" &&
+                        typeof value != "object"
+                      ) {
+                        appinfoCopy[name] = value;
+                      } else if (typeof value == "object") {
+                        console.warn(
+                          `Ignoring appinfo key ${name} with type ${typeof value}:`,
+                          value,
+                        );
+                      }
+                    } catch (e) {
+                      console.warn(
+                        `Couldn't get appinfo key ${name}: ${e.name}`,
+                      );
+                    }
+                  }
+
+                  builtContext.normandy[key] = appinfoCopy;
+                  builtContext.env[key] = appinfoCopy;
+                } else {
+                  const value = Cu.cloneInto(await context.env[key], {});
+                  builtContext.normandy[key] = value;
+                  builtContext.env[key] = value;
+                }
+              } catch (err) {
+                builtContext.normandy[key] = "<error>";
+                builtContext.env[key] = "<error>";
+                console.warn(`Could not get context key ${key}: ${err}`);
               }
             }
             return builtContext;
