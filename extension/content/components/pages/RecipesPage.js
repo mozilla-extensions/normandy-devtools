@@ -1,6 +1,7 @@
 import autobind from "autobind-decorator";
 import React from "react";
 import { Controlled as CodeMirror } from "react-codemirror2";
+import Highlight from "react-highlight";
 import {
   Button,
   Drawer,
@@ -40,6 +41,8 @@ class RecipesPage extends React.PureComponent {
       runningArbitrary: false,
       showSettings: false,
       showWriteRecipes: false,
+      showReadRecipe: false,
+      recipeSelected: false,
       recipePages,
     };
   }
@@ -130,6 +133,7 @@ class RecipesPage extends React.PureComponent {
           recipe={recipe}
           environmentName={envName}
           copyRecipeToArbitrary={this.copyRecipeToArbitrary}
+          showRecipe={this.showRecipe}
         />
       ));
     }
@@ -192,6 +196,34 @@ class RecipesPage extends React.PureComponent {
     } finally {
       this.setState({ runningArbitrary: false });
     }
+  }
+
+  showRecipe(recipe) {
+    this.setState({ showReadRecipe: true, recipeSelected: recipe });
+  }
+
+  hideRecipeModal() {
+    this.setState({ showReadRecipe: false });
+  }
+
+  renderViewRecipeModal() {
+    return (
+      <Modal
+        show={this.state.showReadRecipe}
+        onHide={this.hideRecipeModal}
+        size="lg"
+      >
+        <Modal.Header>
+          <Modal.Title>Recipe View</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <Highlight language="json">
+            {JSON.stringify(this.state.recipeSelected, null, 1)}
+          </Highlight>
+        </Modal.Body>
+      </Modal>
+    );
   }
 
   renderWriteRecipeModal() {
@@ -292,6 +324,7 @@ class RecipesPage extends React.PureComponent {
 
         {this.renderSettingsDrawer()}
         {this.renderWriteRecipeModal()}
+        {this.renderViewRecipeModal()}
       </React.Fragment>
     );
   }
