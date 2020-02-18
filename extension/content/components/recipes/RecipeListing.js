@@ -14,6 +14,7 @@ class RecipeListing extends React.PureComponent {
     environmentName: PropTypes.object.string,
     recipe: PropTypes.object.isRequired,
     copyRecipeToArbitrary: PropTypes.func.isRequired,
+    showRecipe: PropTypes.func.showRecipe,
   };
 
   constructor(props) {
