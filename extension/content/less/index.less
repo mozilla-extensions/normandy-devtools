@@ -1,9 +1,13 @@
-@import "~rsuite/styles/less/index.less";
+@import "~rsuite/lib/styles/common";
+@import "~rsuite/lib/styles/type";
 @import "~highlight.js/styles/nord.css";
 @import '~codemirror/lib/codemirror.css';
 // Theme
 @import "theme";
 // Extension styling
+@import "common";
 @import "main";
 @import "split";
 @import "filter-page";
+// Import this after "theme"
+@import "~rsuite/lib/styles/icon";

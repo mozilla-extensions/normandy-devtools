@@ -37,7 +37,7 @@ module.exports = {
       if (typeof value === "string" && value.startsWith("$")) {
         let parts = value.slice(1).split(".");
         let object = packageData;
-        while (parts.length > 0) {
+        while (parts.length) {
           object = object[parts.pop()];
         }
         return object;
