@@ -19,6 +19,8 @@ class FiltersPage extends React.PureComponent {
       error: null,
       running: false,
       context: {},
+      cursorStart: { line: 0, ch: 0 },
+      cursorEnd: { line: 0, ch: 0 },
     };
 
     this.filterDebounce = null;
@@ -29,10 +31,27 @@ class FiltersPage extends React.PureComponent {
     this.setState({ context });
   }
 
-  async handleFilterChange(editor, data, value) {
-    this.setState({ filterExpression: value, running: true });
+  updateFilter(value) {
+    const updatedState = {
+      filterExpression: value,
+      running: true,
+    };
+    this.setState(updatedState);
     clearTimeout(this.filterDebounce);
     this.filterDebounce = setTimeout(this.updateFilterResult, 500);
+  }
+
+  handleFilterChange(editor, data, value) {
+    this.updateFilter(value);
+  }
+
+  handleCursorActivity(editor) {
+    const from = editor.getCursor("from");
+    const to = editor.getCursor("to");
+    this.setState({
+      cursorStart: { line: from.line, ch: from.ch },
+      cursorEnd: { line: to.line, ch: to.ch },
+    });
   }
 
   async updateFilterResult() {
@@ -57,12 +76,34 @@ class FiltersPage extends React.PureComponent {
   }
 
   handleDoubleClickTreeNode(event, node) {
-    const { filterExpression } = this.state;
-    this.handleFilterChange(
-      null,
-      null,
-      `${filterExpression}${node.props.value}`,
-    );
+    const { cursorEnd, cursorStart, filterExpression } = this.state;
+    const insert = node.props.value;
+    const filterExpressionLines = filterExpression.split("\n");
+
+    if (cursorStart.line === cursorEnd.line) {
+      const line = filterExpressionLines[cursorStart.line];
+
+      const newLine =
+        line.slice(0, cursorStart.ch) + insert + line.slice(cursorEnd.ch);
+
+      filterExpressionLines.splice(cursorStart.line, 1, newLine);
+    } else {
+      const firstLine = filterExpressionLines[cursorStart.line];
+      const lastLine = filterExpressionLines[cursorEnd.line];
+      const newLine =
+        firstLine.slice(0, cursorStart.ch) +
+        insert +
+        lastLine.slice(cursorEnd.ch);
+
+      filterExpressionLines.splice(
+        cursorStart.line,
+        cursorEnd.line - cursorStart.line + 1,
+        newLine,
+      );
+    }
+
+    this.updateFilter(filterExpressionLines.join("\n"));
+    this.jexlColumn.focus();
   }
 
   render() {
@@ -74,23 +115,38 @@ class FiltersPage extends React.PureComponent {
             <header>
               <strong>Client Context</strong>
             </header>
-            {!context.normandy && (
+            {!(context.normandy || context.env) && (
               <div className="text-center">
                 <Loader />
               </div>
             )}
-            <DataTree
-              data={context.normandy}
-              title="normandy"
-              key="normandy"
-              onDoubleClick={this.handleDoubleClickTreeNode}
-            />
+            {context.env && (
+              <DataTree
+                data={context.env}
+                title="env"
+                key="env"
+                onDoubleClick={this.handleDoubleClickTreeNode}
+                defaultExpanded={false}
+              />
+            )}
+            {context.normandy && (
+              <DataTree
+                data={context.normandy}
+                title="normandy"
+                key="normandy"
+                onDoubleClick={this.handleDoubleClickTreeNode}
+              />
+            )}
           </div>
         </div>
         <div className="col">
           <JexlColumn
+            ref={ref => {
+              this.jexlColumn = ref;
+            }}
             filterExpression={filterExpression}
             onBeforeChange={this.handleFilterChange}
+            onCursorActivity={this.handleCursorActivity}
           />
         </div>
         <div className="col">

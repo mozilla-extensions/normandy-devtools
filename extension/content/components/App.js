@@ -1,8 +1,9 @@
 import React from "react";
-import { HashRouter, Route, NavLink, Redirect } from "react-router-dom";
+import { HashRouter, Route, NavLink, Redirect, Switch } from "react-router-dom";
 import ErrorBoundary from "react-error-boundary";
 import { Container, Icon, Nav, Sidebar, Sidenav } from "rsuite";
 
+import DevtoolsAddressBar from "devtools/components/common/DevtoolsAddressBar";
 import Logo from "devtools/components/svg/Logo";
 import RecipesPage from "devtools/components/pages/RecipesPage";
 import FiltersPage from "devtools/components/pages/FiltersPage";
@@ -58,11 +59,39 @@ export default class App extends React.Component {
           </Sidebar>
           <Container className="page-container">
             <ErrorBoundary>
-              <Route exact path="/" render={() => <Redirect to="/recipes" />} />
-              <Route path="/recipes" component={RecipesPage} />
-              <Route path="/filters" component={FiltersPage} />
-              <Route path="/pref-studies" component={PrefStudiesPage} />
-              <Route path="/addon-studies" component={AddonStudiesPage} />
+              <DevtoolsAddressBar />
+              <Switch>
+                <Route
+                  exact
+                  path="/"
+                  render={() => <Redirect to="/recipes" />}
+                />
+                <Route path="/recipes" component={RecipesPage} />
+                <Route path="/filters" component={FiltersPage} />
+                <Route path="/pref-studies" component={PrefStudiesPage} />
+                <Route path="/addon-studies" component={AddonStudiesPage} />
+                <Route
+                  // url encoded url like "ext+normandy://page"
+                  path={/\/ext%2Bnormandy%3a(?:%2F)*(.*)/i}
+                  render={({ match }) => (
+                    <>
+                      <Redirect
+                        to={"/" + decodeURIComponent(match.params["0"])}
+                      />
+                    </>
+                  )}
+                />
+                <Route
+                  render={args => (
+                    <>
+                      <span>404</span>
+                      <pre>
+                        <code>{JSON.stringify(args, null, 4)}</code>
+                      </pre>
+                    </>
+                  )}
+                />
+              </Switch>
             </ErrorBoundary>
           </Container>
         </Container>

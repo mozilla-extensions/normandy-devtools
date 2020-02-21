@@ -44,7 +44,8 @@
 .recipe-actions {
   margin-right: 50px;
 
-  > .rs-icon {
+  > .rs-icon,
+  > button {
     margin-left: 10px;
   }
 }
@@ -55,5 +56,32 @@
   pre {
     overflow: auto;
     width: 100%;
+  }
+}
+
+.react-codemirror2,
+code.hljs {
+  font-size: @font-size-base - 1;
+}
+
+.ndt-address-bar {
+  background: #F7F7FA;
+  display: flex;
+  padding: 5px;
+  position: relative;
+
+  > input {
+    flex: 1 1 100%;
+    padding-left: 24px;
+  }
+
+  > img {
+    flex: 0 0;
+    height: 16px;
+    left: 14px;
+    opacity: 0.6;
+    position: absolute;
+    top: 13px;
+    width: 16px;
   }
 }

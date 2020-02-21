@@ -50,6 +50,13 @@
       padding-left: 10px;
       padding-right: 10px;
     }
+
+    .CodeMirror:not(.CodeMirror-focused) {
+      .CodeMirror-cursor {
+        background: none;
+        border-left: 2px solid rgba(155, 157, 162, 0.37);
+      }
+    }
   }
 
   .rc-tree {
@@ -64,6 +71,7 @@
 
     .rc-tree-title {
       font-family: monospace;
+      font-size: @font-size-base - 1;
       padding-left: 2px;
     }
   }

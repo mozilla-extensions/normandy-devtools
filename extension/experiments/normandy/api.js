@@ -4,6 +4,7 @@ ChromeUtils.import("resource://gre/modules/XPCOMUtils.jsm");
 XPCOMUtils.defineLazyModuleGetters(this, {
   ActionsManager: "resource://normandy/lib/ActionsManager.jsm",
   AddonStudies: "resource://normandy/lib/AddonStudies.jsm",
+  ClientEnvironment: "resource://normandy/lib/ClientEnvironment.jsm",
   FilterExpressions:
     "resource://gre/modules/components-utils/FilterExpressions.jsm",
   PreferenceExperiments: "resource://normandy/lib/PreferenceExperiments.jsm",
@@ -43,37 +44,82 @@ var normandy = class extends ExtensionAPI {
             // context.normandy is a proxy object that can't be sent to the
             // webextension directly. Instead, manually copy relevant keys to a
             // simple object, and return that.
-            let builtContext = { normandy: {} };
-            const keysToCopy = [
-              "channel",
-              "distribution",
-              "doNotTrack",
-              "isDefaultBrowser",
-              "isFirstRun",
-              "locale",
-              "recipe",
-              "syncDesktopDevices",
-              "syncMobileDevices",
-              "syncSetup",
-              "syncTotalDevices",
-              "userId",
-              "version",
-            ];
-            const keysToAwait = [
-              "addons",
-              "country",
-              "experiments",
-              "os",
-              "plugins",
-              "request_time",
-              "searchEngine",
-              "telemetry",
-            ];
-            for (const key of keysToCopy) {
-              builtContext.normandy[key] = context.normandy[key];
+
+            let builtContext = { normandy: {}, env: {} };
+
+            // Walk up the class chain for ClientEnvironment, collecting
+            // applicable keys as we go. Stop when we get to an unnamed object,
+            // which is usually just a plain function is the super class of a
+            // class that doesn't extend anything. Also stop if we get to an
+            // undefined object, just in case.
+            let env = ClientEnvironment;
+            let keys = new Set();
+            while (env && env.name) {
+              for (const [name, descriptor] of Object.entries(
+                Object.getOwnPropertyDescriptors(env),
+              )) {
+                // All of the properties we are looking for are are static getters (so
+                // will have a truthy `get` property) and are defined on the class, so
+                // will be configurable
+                if (descriptor.configurable && descriptor.get) {
+                  keys.add(name);
+                }
+              }
+              // Check for the next parent
+              env = Object.getPrototypeOf(env);
             }
-            for (const key of keysToAwait) {
-              builtContext.normandy[key] = await context.normandy[key];
+
+            // it is generally safe to await values that aren't promises, just a bit inefficient
+            for (const key of keys) {
+              try {
+                if (key == "liveTelemetry") {
+                  // Live Telemetry is a weird proxy object. Unpack it.
+                  builtContext.normandy.liveTelemetry = {
+                    main: await context.normandy.liveTelemetry.main,
+                  };
+                  builtContext.env.liveTelemetry = {
+                    main: await context.env.liveTelemetry.main,
+                  };
+                } else if (key == "appinfo") {
+                  // appinfo can't be directly cloned, but we can manually clone most of it
+                  let appinfo = context.env.appinfo;
+                  let appinfoCopy = {};
+                  for (const name of Object.keys(
+                    Object.getOwnPropertyDescriptors(appinfo),
+                  )) {
+                    // ignore functions and objects
+                    try {
+                      const value = appinfo[name];
+                      if (
+                        typeof value != "function" &&
+                        typeof value != "object"
+                      ) {
+                        appinfoCopy[name] = value;
+                      } else if (typeof value == "object") {
+                        console.warn(
+                          `Ignoring appinfo key ${name} with type ${typeof value}:`,
+                          value,
+                        );
+                      }
+                    } catch (e) {
+                      console.warn(
+                        `Couldn't get appinfo key ${name}: ${e.name}`,
+                      );
+                    }
+                  }
+
+                  builtContext.normandy[key] = appinfoCopy;
+                  builtContext.env[key] = appinfoCopy;
+                } else {
+                  const value = Cu.cloneInto(await context.env[key], {});
+                  builtContext.normandy[key] = value;
+                  builtContext.env[key] = value;
+                }
+              } catch (err) {
+                builtContext.normandy[key] = "<error>";
+                builtContext.env[key] = "<error>";
+                console.warn(`Could not get context key ${key}: ${err}`);
+              }
             }
             return builtContext;
           },

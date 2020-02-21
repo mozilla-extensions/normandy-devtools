@@ -10,6 +10,11 @@ export default class DataTree extends React.PureComponent {
     data: PropTypes.object,
     onDoubleClick: PropTypes.func,
     title: PropTypes.string,
+    defaultExpanded: PropTypes.bool,
+  };
+
+  static defaultProps = {
+    defaultExpanded: true,
   };
 
   getSwitcherIcon(obj) {
@@ -27,11 +32,11 @@ export default class DataTree extends React.PureComponent {
   }
 
   render() {
-    const { data, onDoubleClick, title } = this.props;
+    const { data, onDoubleClick, title, defaultExpanded } = this.props;
     if (data) {
       return (
         <Tree
-          defaultExpandedKeys={[title]}
+          defaultExpandedKeys={defaultExpanded ? [title] : []}
           switcherIcon={this.getSwitcherIcon}
           selectable={false}
           onDoubleClick={onDoubleClick}
@@ -48,7 +53,13 @@ export default class DataTree extends React.PureComponent {
 function makeTreeNodes({ data, title, key = null }) {
   let fullKey = title;
   if (key) {
-    fullKey = Number.isInteger(title) ? `${key}[${title}]` : `${key}.${title}`;
+    if (Number.isInteger(title)) {
+      fullKey = `${key}[${title}]`;
+    } else if (/[^_A-Z]/i.test(title)) {
+      fullKey = `${key}["${title}"]`;
+    } else {
+      fullKey = `${key}.${title}`;
+    }
   }
 
   switch (typeof data) {

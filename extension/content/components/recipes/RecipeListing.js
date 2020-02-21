@@ -3,29 +3,18 @@ import yaml from "js-yaml";
 import PropTypes from "prop-types";
 import React from "react";
 import { Button, Icon, Panel, Tag } from "rsuite";
+import { convertToV1Recipe } from "devtools/utils/recipes";
 
 import Highlight from "devtools/components/common/Highlight";
 
 const normandy = browser.experiments.normandy;
 
-function convertToV1Recipe(v3Recipe) {
-  // Normandy expects a v1-style recipe, but we have a v3-style recipe. Convert it.
-  return {
-    id: v3Recipe.id,
-    name: v3Recipe.latest_revision.name,
-    enabled: v3Recipe.latest_revision.enabled,
-    is_approved: v3Recipe.latest_revision.is_approved,
-    revision_id: v3Recipe.latest_revision.id,
-    action: v3Recipe.latest_revision.action.name,
-    arguments: v3Recipe.latest_revision.arguments,
-    filter_expression: v3Recipe.latest_revision.filter_expression,
-  };
-}
-
 @autobind
 class RecipeListing extends React.PureComponent {
   static propTypes = {
+    environmentName: PropTypes.object.string,
     recipe: PropTypes.object.isRequired,
+    copyRecipeToArbitrary: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -37,17 +26,29 @@ class RecipeListing extends React.PureComponent {
   }
 
   async componentDidMount() {
-    const { recipe } = this.props;
+    const { environmentName, recipe } = this.props;
     let filterMatches = await normandy.checkRecipeFilter(
-      convertToV1Recipe(recipe),
+      convertToV1Recipe(recipe, environmentName),
     );
     this.setState({ filterMatches });
   }
 
+  handleCopyToArbitraryButtonClick(ev) {
+    this.props.copyRecipeToArbitrary(this.props.recipe);
+  }
+
+  renderCopyToArbitraryButton() {
+    return (
+      <Button onClick={this.handleCopyToArbitraryButtonClick}>
+        <Icon icon="edit" /> Copy to Arbitrary Editor
+      </Button>
+    );
+  }
+
   async handleRunButtonClick(ev) {
-    const { recipe } = this.props;
+    const { environmentName, recipe } = this.props;
     this.setState({ running: true });
-    await normandy.runRecipe(convertToV1Recipe(recipe));
+    await normandy.runRecipe(convertToV1Recipe(recipe, environmentName));
     this.setState({ running: false });
   }
 
@@ -94,6 +95,7 @@ class RecipeListing extends React.PureComponent {
     return (
       <React.Fragment>
         <span className="pull-right recipe-actions">
+          {this.renderCopyToArbitraryButton()}
           {this.renderRunButton()}
           {this.renderEnabledIcon()}
           {this.renderFilterIcon()}

@@ -1,6 +1,6 @@
 {
   "name": "normandy-devtools",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "A set of tools for interacting with the Firefox Normandy client",
   "homepage_url": "https://github.com/mozilla/normandy-devtools",
   "private": true,
@@ -13,7 +13,7 @@
     "clean": "rimraf dist web-ext-artifacts",
     "lint": "npm-run-all lint:eslint",
     "lint-fix": "npm-run-all lint:eslint-fix",
-    "lint:eslint": "eslint --ignore-pattern '!.eslintrc.js' --ignore-pattern '!.prettierrc.js' .eslintrc.js .prettierrc.js webpackconfig.js extension",
+    "lint:eslint": "eslint webpack.config.js extension",
     "lint:eslint-fix": "yarn run lint:eslint --fix",
     "watch": "npm-run-all build:webpack-dev --parallel --race watch:*",
     "watch:extension": "web-ext run -s dist",
