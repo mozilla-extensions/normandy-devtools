@@ -6,6 +6,9 @@
     "plugin:mozilla/recommended",
     "plugin:react/recommended"
   ],
+  "plugins": [
+    "mozilla"
+  ],
   "rules": {
     "mozilla/no-define-cc-etc": "off"
   }
