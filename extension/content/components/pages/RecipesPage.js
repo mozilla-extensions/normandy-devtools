@@ -189,6 +189,8 @@ class RecipesPage extends React.PureComponent {
   async runArbitraryRecipe() {
     const { arbitraryRecipe } = this.state;
     this.setState({ runningArbitrary: true });
+
+    /* eslint-disable no-useless-catch */
     try {
       await normandy.runRecipe(JSON.parse(arbitraryRecipe));
     } catch (ex) {
@@ -196,6 +198,7 @@ class RecipesPage extends React.PureComponent {
     } finally {
       this.setState({ runningArbitrary: false });
     }
+    /* eslint-enable no-useless-catch */
   }
 
   showRecipe(recipe) {

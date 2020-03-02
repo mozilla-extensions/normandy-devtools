@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
-import Highlight from "react-highlight";
 import { Icon, Message } from "rsuite";
+
+import Highlight from "devtools/components/common/Highlight";
 
 class Output extends React.PureComponent {
   static propTypes = {

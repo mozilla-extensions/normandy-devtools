@@ -1,0 +1,8 @@
+status = [
+  "ci/circleci: lint",
+  "ci/circleci: build-extension"
+]
+# Avoid including verbose details from PR bodies
+cut_body_after = "\n---\n"
+block_labels = ["bors-dont-merge"]
+delete_merged_branches = true
