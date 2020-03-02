@@ -197,8 +197,9 @@ class RecipesPage extends React.PureComponent {
     } finally {
       this.setState({ runningArbitrary: false });
     }
+
+    /* eslint-enable no-useless-catch */
   }
-  /* eslint-enable no-useless-catch */
 
   showRecipe(recipe) {
     this.setState({ showReadRecipe: true, recipeSelected: recipe });
