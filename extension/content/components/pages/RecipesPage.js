@@ -1,7 +1,7 @@
 import autobind from "autobind-decorator";
 import React from "react";
 import { Controlled as CodeMirror } from "react-codemirror2";
-import Highlight from "react-highlight";
+import Highlight from "devtools/components/common/Highlight";
 import {
   Button,
   Drawer,
@@ -189,8 +189,6 @@ class RecipesPage extends React.PureComponent {
   async runArbitraryRecipe() {
     const { arbitraryRecipe } = this.state;
     this.setState({ runningArbitrary: true });
-
-    /* eslint-disable no-useless-catch */
     try {
       await normandy.runRecipe(JSON.parse(arbitraryRecipe));
     } catch (ex) {
@@ -198,7 +196,6 @@ class RecipesPage extends React.PureComponent {
     } finally {
       this.setState({ runningArbitrary: false });
     }
-    /* eslint-enable no-useless-catch */
   }
 
   showRecipe(recipe) {
