@@ -15,6 +15,7 @@ class RecipeListing extends React.PureComponent {
     environmentName: PropTypes.object.string,
     recipe: PropTypes.object.isRequired,
     copyRecipeToArbitrary: PropTypes.func.isRequired,
+    showRecipe: PropTypes.func.showRecipe,
   };
 
   constructor(props) {
@@ -105,6 +106,14 @@ class RecipeListing extends React.PureComponent {
     );
   }
 
+  handleshowRecipeButton() {
+    this.props.showRecipe(this.props.recipe);
+  }
+
+  renderViewRecipeButton() {
+    return <Button onClick={this.handleshowRecipeButton}>View Recipe</Button>;
+  }
+
   render() {
     const { recipe } = this.props;
 
@@ -119,6 +128,7 @@ class RecipeListing extends React.PureComponent {
         collapsible
         bordered
       >
+        {this.renderViewRecipeButton()}
         <h4>Filter</h4>
         <Highlight className="javascript">{filter_expression}</Highlight>
 
