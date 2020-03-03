@@ -15,7 +15,8 @@
       "^.+\\.js$": "babel-jest"
     },
     "moduleNameMapper": {
-      "^devtools/(.*)$": "<rootDir>/extension/content/$1"
+      "^devtools/(.*)$": "<rootDir>/extension/content/$1",
+      "\\.(less|css)$": "identity-obj-proxy"
     }
   },
   "scripts": {
@@ -60,6 +61,7 @@
     "file-loader": "5.0.2",
     "generate-json-webpack-plugin": "0.3.1",
     "html-webpack-plugin": "3.2.0",
+    "identity-obj-proxy": "3.0.0",
     "jest": "25.1.0",
     "less": "3.10.3",
     "less-loader": "5.0.0",
