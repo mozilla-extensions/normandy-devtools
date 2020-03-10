@@ -71,6 +71,7 @@ class RecipesPage extends React.PureComponent {
     let data = await api.fetchRecipePage(environment, page, {
       ordering: "-id",
     });
+
     this.setState(({ recipePages }) => ({
       recipePages: {
         ...recipePages,
@@ -168,6 +169,7 @@ class RecipesPage extends React.PureComponent {
             cleanable={false}
             searchable={false}
             onChange={this.handleEnvironmentChange}
+            data-testid="environments"
           />
         </Drawer.Body>
       </Drawer>
@@ -299,7 +301,11 @@ class RecipesPage extends React.PureComponent {
                 Write & Run Arbitrary
               </Nav.Item>
               {this.renderRunButton()}
-              <Nav.Item icon={<Icon icon="gear" />} onClick={this.showSettings}>
+              <Nav.Item
+                icon={<Icon icon="gear" />}
+                onClick={this.showSettings}
+                data-testid="settings"
+              >
                 Settings
               </Nav.Item>
             </Nav>
