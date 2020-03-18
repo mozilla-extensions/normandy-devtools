@@ -1,5 +1,6 @@
 import React from "react";
 import { useLocation, useHistory } from "react-router-dom";
+import { Icon, Input, InputGroup } from "rsuite";
 
 export default function DevtoolsAddressBar() {
   function showLocation(location) {
@@ -20,13 +21,20 @@ export default function DevtoolsAddressBar() {
 
   return (
     <div className="ndt-address-bar">
-      <img src="/images/extensionGeneric-16.svg" />
-      <input
-        type="text"
-        value={address}
-        onChange={ev => setAddress(ev.target.value)}
-        onKeyPress={handleKeyPress}
-      />
+      <InputGroup>
+        <InputGroup.Addon>
+          <Icon icon="link" />
+        </InputGroup.Addon>
+        <Input
+          type="text"
+          value={address}
+          onChange={ev => setAddress(ev.target.value)}
+          onKeyPress={handleKeyPress}
+        />
+        <InputGroup.Button>
+          <Icon icon="copy" />
+        </InputGroup.Button>
+      </InputGroup>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 /* eslint-env node */
 const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const Dotenv = require("dotenv-webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const GenerateJsonPlugin = require("generate-json-webpack-plugin");
 
@@ -12,6 +13,7 @@ module.exports = {
   devtool: "source-map",
   entry: {
     content: "./extension/content/index.js",
+    redirect: "./extension/content/redirect.js",
   },
   output: {
     filename: "[name].js",
@@ -23,6 +25,7 @@ module.exports = {
     },
   },
   plugins: [
+    new Dotenv(),
     new CopyWebpackPlugin([
       "extension/background.js",
       { from: "extension/experiments/", to: "experiments/" },
@@ -32,6 +35,12 @@ module.exports = {
       title: "Normandy Devtools",
       favicon: path.resolve(__dirname, "extension/images/favicon.png"),
       filename: "content.html",
+      chunks: ["content"],
+    }),
+    new HtmlWebpackPlugin({
+      title: "Redirect",
+      filename: "redirect.html",
+      chunks: ["redirect"],
     }),
     new GenerateJsonPlugin("manifest.json", manifest, (key, value) => {
       if (typeof value === "string" && value.startsWith("$")) {

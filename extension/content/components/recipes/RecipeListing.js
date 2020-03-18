@@ -12,10 +12,10 @@ const normandy = browser.experiments.normandy;
 @autobind
 class RecipeListing extends React.PureComponent {
   static propTypes = {
-    environmentName: PropTypes.object.string,
+    environmentName: PropTypes.string,
     recipe: PropTypes.object.isRequired,
     copyRecipeToArbitrary: PropTypes.func.isRequired,
-    showRecipe: PropTypes.func.showRecipe,
+    showRecipe: PropTypes.func,
   };
 
   constructor(props) {
