@@ -71,9 +71,9 @@
       },
 
       {
-        "name": "checkRecipeFilter",
+        "name": "getRecipeSuitabilities",
         "type": "function",
-        "description": "Evaluate a recipe's filter expression",
+        "description": "Evaluate a recipe's suitability. This encompasses filters, capabilities, signature checks, and more. Returns an array of matching suitabilities.",
         "async": true,
         "parameters": [
           {
