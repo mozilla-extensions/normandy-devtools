@@ -146,7 +146,14 @@ var normandy = class extends ExtensionAPI {
               // This is deprecated so only run if it exists
               await actions.preExecution();
             }
-            await actions.runRecipe(recipe);
+            if (actions.processRecipe) {
+              await actions.processRecipe(
+                recipe,
+                "RECIPE_SUITABILITY_FILTER_MATCH",
+              );
+            } else if (actions.runRecipe) {
+              await actions.runRecipe(recipe);
+            }
             // Don't finalize, to avoid unenrolling users from studies
           },
 
