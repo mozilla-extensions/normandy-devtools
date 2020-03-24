@@ -19,17 +19,18 @@ class RecipeListing extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      filterMatches: null,
+      recipeSuitabilities: null,
       running: false,
     };
   }
 
   async componentDidMount() {
     const { environmentName, recipe } = this.props;
-    let filterMatches = await normandy.checkRecipeFilter(
-      convertToV1Recipe(recipe, environmentName),
-    );
-    this.setState({ filterMatches });
+    this.setState({
+      recipeSuitabilities: await normandy.getRecipeSuitabilities(
+        convertToV1Recipe(recipe, environmentName),
+      ),
+    });
   }
 
   handleCopyToArbitraryButtonClick(ev) {
@@ -68,20 +69,58 @@ class RecipeListing extends React.PureComponent {
     } = recipe;
 
     if (enabled) {
-      return <Icon icon="check-circle" size="lg" className="text-success" />;
+      return (
+        <Icon
+          icon="check-circle"
+          size="lg"
+          className="text-success"
+          title="Recipe enabled"
+        />
+      );
     }
 
-    return <Icon icon="close-circle" size="lg" className="text-danger" />;
+    return (
+      <Icon
+        icon="close-circle"
+        size="lg"
+        className="text-danger"
+        title="Recipe disabled"
+      />
+    );
   }
 
   renderFilterIcon() {
-    const { filterMatches } = this.state;
+    const { recipeSuitabilities } = this.state;
 
-    if (filterMatches) {
-      return <Icon icon="filter" size="lg" className="text-success" />;
+    let style = {};
+
+    let hoverText = "loading...";
+    if (recipeSuitabilities) {
+      hoverText = recipeSuitabilities
+        .map(s => s.replace("RECIPE_SUITABILITY_", ""))
+        .join("\n");
     }
 
-    return <Icon icon="filter" size="lg" className="text-danger" />;
+    if (recipeSuitabilities && recipeSuitabilities.length == 1) {
+      if (recipeSuitabilities[0] == "RECIPE_SUITABILITY_FILTER_MATCH") {
+        style.color = "green";
+      } else if (
+        recipeSuitabilities[0] == "RECIPE_SUITABILITY_FILTER_MISMATCH"
+      ) {
+        style.color = "red";
+      } else {
+        style.color = "yellow";
+      }
+    } else if (
+      recipeSuitabilities &&
+      recipeSuitabilities.includes("RECIPE_SUITABILITY_")
+    ) {
+      style.color = "orange";
+    } else {
+      style.color = "pink";
+    }
+
+    return <Icon icon="filter" size="lg" style={style} title={hoverText} />;
   }
 
   renderHeader() {
