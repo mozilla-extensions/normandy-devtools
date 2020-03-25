@@ -25,7 +25,7 @@ const reducer = (state, action) => {
   }
 };
 
-export const GlobalStateProvider = ({ children }) => {
+export function GlobalStateProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
   React.useEffect(() => {
     Object.values(environmentStore.getAll()).forEach(e => {
@@ -38,7 +38,7 @@ export const GlobalStateProvider = ({ children }) => {
     });
   }, []);
   return <Provider value={{ state, dispatch }}>{children}</Provider>;
-};
+}
 
 GlobalStateProvider.propTypes = {
   children: PropTypes.any,

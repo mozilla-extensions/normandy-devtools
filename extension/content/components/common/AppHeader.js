@@ -23,6 +23,32 @@ import {
 } from "devtools/contexts/globalState";
 import environmentStore from "devtools/utils/environmentStore";
 
+export default function AppHeader() {
+  return (
+    <Header>
+      <div className="app-header">
+        <span className="logo">
+          <Logo />
+          <span className="logo-text">
+            Normandy
+            <br />
+            Devtools
+          </span>
+        </span>
+        <span className="fluid">
+          <AddressBar />
+        </span>
+        <span>
+          <EnvironmentConfigurator />
+        </span>
+        <span>
+          <Authenticator />
+        </span>
+      </div>
+    </Header>
+  );
+}
+
 function AddressBar() {
   function showLocation(location) {
     return `ext+normandy:/${location.pathname}${location.search}`;
@@ -51,7 +77,7 @@ function AddressBar() {
       <Input
         type="text"
         value={address}
-        onChange={ev => setAddress(ev.target.value)}
+        onChange={value => setAddress(value)}
         onKeyPress={handleKeyPress}
       />
       <InputGroup.Button>
@@ -65,14 +91,10 @@ function EnvironmentConfigurator() {
   const [showEnvironmentModal, setShowEnvironmentModal] = React.useState(false);
 
   const environments = environmentStore.getAll();
-  const envOptions = Object.keys(environments).reduce((reduced, value) => {
-    reduced.push({
-      label: value.charAt(0).toUpperCase() + value.slice(1),
-      value,
-    });
-    return reduced;
-  }, []);
-
+  const envOptions = Object.keys(environments).map(v => ({
+    label: v.charAt(0).toUpperCase() + v.slice(1),
+    value: v,
+  }));
   const { state: globalState, dispatch } = React.useContext(globalStateContext);
 
   return (
@@ -164,31 +186,5 @@ function Authenticator() {
     >
       Log In
     </IconButton>
-  );
-}
-
-export default function AppHeader() {
-  return (
-    <Header>
-      <div className="app-header">
-        <span className="logo">
-          <Logo />
-          <span className="logo-text">
-            Normandy
-            <br />
-            Devtools
-          </span>
-        </span>
-        <span className="fluid">
-          <AddressBar />
-        </span>
-        <span>
-          <EnvironmentConfigurator />
-        </span>
-        <span>
-          <Authenticator />
-        </span>
-      </div>
-    </Header>
   );
 }

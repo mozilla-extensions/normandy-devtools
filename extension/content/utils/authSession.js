@@ -40,11 +40,13 @@ class AuthSession {
   }
 
   get accessToken() {
-    return this.authResult && this.authResult.accessToken;
+    const { authResult } = this;
+    return authResult && authResult.accessToken;
   }
 
   get profile() {
-    return this.authResult && this.authResult.idTokenPayload;
+    const { authResult } = this;
+    return authResult && authResult.idTokenPayload;
   }
 
   /**
@@ -75,6 +77,9 @@ class AuthSession {
 
   /**
    * Generate a random string to use as a nonce.
+   *
+   * Sourced from:
+   * https://auth0.com/docs/api-auth/tutorials/nonce#generate-a-cryptographically-random-nonce
    *
    * @param {int} length  The length of the generated string.
    * @returns {string}
@@ -107,11 +112,12 @@ class AuthSession {
    * @param {int} refreshThreshold  How long before the expiration time to trigger a refresh.
    */
   confirmAuthentication(refreshThreshold = 0) {
-    if (this.expiresAt && this.authResult) {
-      if (this.expiresAt - new Date().getTime() <= refreshThreshold) {
+    const { expiresAt, authResult } = this;
+    if (expiresAt && authResult) {
+      if (expiresAt - new Date().getTime() <= refreshThreshold) {
         this.refresh();
       } else {
-        this.setSession(this.authResult);
+        this.setSession(authResult);
       }
     } else {
       this.logout();

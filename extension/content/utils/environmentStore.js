@@ -12,12 +12,6 @@ class Environment {
     this.oidcClientId = config.oidcClientId;
     this.oidcDomain = config.oidcDomain;
     this.authSession = new AuthSession(key, config);
-    this.authSession.registerHandler("login", this.handleLogin);
-    this.authSession.registerHandler("logout", this.handleLogout);
-  }
-
-  handleLogin(authResult) {
-    this.setAuthToken();
   }
 
   isAuthenticated() {

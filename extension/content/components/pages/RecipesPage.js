@@ -25,7 +25,7 @@ const normandy = browser.experiments.normandy;
 @autobind
 class RecipesPage extends React.PureComponent {
   static propTypes = {
-    environment: PropTypes.string,
+    environment: PropTypes.object,
   };
 
   constructor(props) {

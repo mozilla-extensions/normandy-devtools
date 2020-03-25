@@ -38,6 +38,35 @@ this extension active.
 
 Note that the extension will not automatically update.
 
+# Configuration
+
+You may want to configure some aspects of your build for local development.
+To do this you need to create a `.env` file in the root directory of the 
+project and set the relevant values:
+
+#### NDT_DEFAULT_ENV
+
+This sets the default environment set at startup when you load the 
+extension.
+
+Must be one of `prod`, `stage`, `dev` or `local`. 
+
+#### NDT_LOCAL_READ_ONLY_URL
+
+The URL for your local readable instance of Normandy server.
+
+#### NDT_LOCAL_WRITEABLE_URL
+
+The URL for your local writeable instance of Normandy server.
+
+#### NDT_LOCAL_OIDC_CLIENT_ID
+
+The Auth0 client ID used by your local instance of Normandy server.
+
+#### NDT_LOCAL_OIDC_DOMAIN
+
+The Auth0 domain of the tenant used by your local instance of Normandy 
+server.
 
 # Development
 
