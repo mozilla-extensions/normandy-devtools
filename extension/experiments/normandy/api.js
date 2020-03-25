@@ -132,8 +132,47 @@ var normandy = class extends ExtensionAPI {
             }
           },
 
-          async checkRecipeFilter(recipe) {
-            return RecipeRunner.checkFilter(recipe);
+          async getRecipeSuitabilities(recipe) {
+            const FILTER_MATCH = "RECIPE_SUITABILITY_FILTER_MATCH";
+            const FILTER_MISMATCH = "RECIPE_SUITABILITY_FILTER_MISMATCH";
+
+            if (RecipeRunner.getRecipeSuitability) {
+              let suitabilities = [];
+              // for (const suitability of RecipeRunner.getAllSuitabilities(
+              //   recipe,
+              //   null,
+              // )) {
+              //   suitabilities.push(suitability);
+              // }
+
+              let generator = RecipeRunner.getAllSuitabilities(recipe, null);
+              let { value, done } = await generator.next();
+              while (!done) {
+                // We know that the signature won't match, we didn't pass one. Ignore this
+                if (value != "RECIPE_SUITABILITY_SIGNATURE_ERROR") {
+                  suitabilities.push(value);
+                }
+                let next = await generator.next();
+                done = next.done;
+                value = next.value;
+              }
+
+              return suitabilities;
+            } else if (RecipeRunner.shouldRunRecipe) {
+              if (RecipeRunner.checkFilter(recipe)) {
+                return [FILTER_MATCH];
+              }
+              return [FILTER_MISMATCH];
+            } else if (RecipeRunner.checkFilter) {
+              if (RecipeRunner.checkFilter(recipe)) {
+                return [FILTER_MATCH];
+              }
+              return [FILTER_MISMATCH];
+            }
+
+            throw new Error(
+              "Incompatible with current Firefox, none of getRecipeSuitability, checkFilter, or shouldRunRecipe exist.",
+            );
           },
 
           async runRecipe(recipe) {
@@ -146,7 +185,14 @@ var normandy = class extends ExtensionAPI {
               // This is deprecated so only run if it exists
               await actions.preExecution();
             }
-            await actions.runRecipe(recipe);
+            if (actions.processRecipe) {
+              await actions.processRecipe(
+                recipe,
+                "RECIPE_SUITABILITY_FILTER_MATCH",
+              );
+            } else if (actions.runRecipe) {
+              await actions.runRecipe(recipe);
+            }
             // Don't finalize, to avoid unenrolling users from studies
           },
 

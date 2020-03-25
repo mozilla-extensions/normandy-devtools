@@ -22,11 +22,7 @@ A set of tools for interacting with Normandy without using a server.
 # Installation
 
 This extension uses a web extension experimental API to communicate with
-Normandy. It requires Firefox 62 or higher. As of version 0.5.0, the
-add-on can be installed on any compatible Nightly without changing preferences.
-
-It is recommended to use Nightly with a dedicated profile while development of
-this extension active.
+Normandy. It requires Firefox 62 or higher.
 
 1. Download the latest release from the [releases page on
    Github](https://github.com/mozilla/normandy-devtools/releases).
@@ -73,24 +69,32 @@ server.
 You'll need to use Nightly and about:debugging to use unsigned development
 versions of the add-on.
 
+> WARNING: This workflow is only useful for working on the extension itself.
+> If you aren't working on the code yourself, you should get a release build
+> from above.
+
 ```
 $ git clone https://github.com/mozilla/normandy-devtools.git
 $ cd normandy-devtools
 $ yarn install
 ```
 
-To run the extension in development mode:
+To run the extension in development mode, you'll need two commands in two separate terminals:
+
+First automatically rebuild the extension files
 
 ```
-$ yarn watch
+$ yarn watch:webpack
 ```
 
-To build the extension in production mode:
+Second, automatically rebuild the XPI file and update it in a Nightly temporary profile
 
 ```
-$ yarn build
+$ yarn watch:extension --firefox path/to/nightly
 ```
 
-This will create a zip file `./web-ext-artifacts/normandy-devtools-$VERSION.zip`.
+# Release
 
-To sign the zip file, use [mozilla-addon-signer](https://github.com/rehandalal/mozilla-addon-signer).
+Releases are built automatically and available on the
+[releases pages on Github](https://github.com/mozilla/normandy-devtools/releases).
+There is no manual build process, since it relies on having secrets to sign the add-on.

@@ -5,6 +5,20 @@
   "homepage_url": "https://github.com/mozilla/normandy-devtools",
   "private": true,
   "license": "MPLv2",
+  "jest": {
+    "globals": {
+      "browser": {
+        "experiments": {}
+      }
+    },
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    },
+    "moduleNameMapper": {
+      "^devtools/(.*)$": "<rootDir>/extension/content/$1",
+      "\\.(less|css)$": "identity-obj-proxy"
+    }
+  },
   "scripts": {
     "build": "npm-run-all clean build:webpack build:extension build:finalize",
     "build:extension": "web-ext build -s dist --overwrite-dest",
@@ -16,6 +30,7 @@
     "lint-fix": "npm-run-all lint:eslint-fix",
     "lint:eslint": "eslint webpack.config.js extension",
     "lint:eslint-fix": "yarn run lint:eslint --fix",
+    "test": "jest",
     "watch": "npm-run-all build:webpack-dev --parallel --race watch:*",
     "watch:extension": "web-ext run -s dist",
     "watch:webpack": "webpack --progress --mode development --watch"
@@ -26,8 +41,13 @@
     "@babel/plugin-proposal-class-properties": "7.8.3",
     "@babel/plugin-proposal-decorators": "7.8.3",
     "@babel/plugin-proposal-object-rest-spread": "7.8.3",
+    "@babel/plugin-transform-runtime": "7.8.3",
+    "@babel/preset-env": "7.8.6",
     "@babel/preset-react": "7.8.3",
+    "@testing-library/jest-dom": "5.1.1",
+    "@testing-library/react": "9.4.1",
     "babel-eslint": "10.1.0",
+    "babel-jest": "25.1.0",
     "babel-loader": "8.0.6",
     "copy-webpack-plugin": "5.1.1",
     "css-loader": "3.4.2",
@@ -42,6 +62,8 @@
     "file-loader": "5.1.0",
     "generate-json-webpack-plugin": "0.3.1",
     "html-webpack-plugin": "3.2.0",
+    "identity-obj-proxy": "3.0.0",
+    "jest": "25.1.0",
     "less": "3.11.1",
     "less-loader": "5.0.0",
     "npm-run-all": "4.1.5",

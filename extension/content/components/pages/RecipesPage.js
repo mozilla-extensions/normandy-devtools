@@ -81,6 +81,7 @@ class RecipesPage extends React.PureComponent {
     let data = await api.fetchRecipePage(environment, page, {
       ordering: "-id",
     });
+
     this.setState(({ recipePages }) => ({
       recipePages: {
         ...recipePages,

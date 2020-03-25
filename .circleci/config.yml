@@ -26,7 +26,7 @@ jobs:
           name: Lint
           command: therapist run --use-tracked-files
 
-  build-extension:
+  tests:
     docker:
       - image: node:12-stretch
 
@@ -37,6 +37,28 @@ jobs:
           - v2-dependencies-{{ checksum "yarn.lock" }}
           # fallback to using the latest cache if no exact match is found
           - v2-dependencies-
+      - run:
+          name: Install node dependencies
+          command: yarn install --frozen-lockfile
+      - save_cache:
+          paths:
+            - "node_modules"
+          key: v2-dependencies-{{ checksum "yarn.lock" }}
+      - run:
+          name: Run tests
+          command: yarn test
+
+  build-extension:
+    docker:
+      - image: node:12-stretch
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ checksum "yarn.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v2-dependencies-
       - run:
           name: Install node dependencies
           command: yarn install --frozen-lockfile
