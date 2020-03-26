@@ -141,6 +141,8 @@ class AuthSession {
       }),
     });
 
+    console.log(redirectUri);
+
     const hash = redirectUri
       .split("#")
       .splice(1)

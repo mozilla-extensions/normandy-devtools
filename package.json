@@ -5,20 +5,6 @@
   "homepage_url": "https://github.com/mozilla/normandy-devtools",
   "private": true,
   "license": "MPLv2",
-  "jest": {
-    "globals": {
-      "browser": {
-        "experiments": {}
-      }
-    },
-    "transform": {
-      "^.+\\.js$": "babel-jest"
-    },
-    "moduleNameMapper": {
-      "^devtools/(.*)$": "<rootDir>/extension/content/$1",
-      "\\.(less|css)$": "identity-obj-proxy"
-    }
-  },
   "scripts": {
     "build": "npm-run-all clean build:webpack build:extension build:finalize",
     "build:extension": "web-ext build -s dist --overwrite-dest",
