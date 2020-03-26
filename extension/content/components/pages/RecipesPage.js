@@ -15,24 +15,30 @@ import {
 } from "rsuite";
 
 import RecipeListing from "devtools/components/recipes/RecipeListing";
-import api from "devtools/utils/api";
-import environmentStore from "devtools/utils/environmentStore";
+import {
+  useEnvironments,
+  useEnvironmentState,
+  useSelectedEnvironment,
+  useSelectedEnvironmentAPI,
+} from "devtools/contexts/environment";
 import { convertToV1Recipe } from "devtools/utils/recipes";
-import { globalStateContext } from "devtools/contexts/globalState";
 
 const normandy = browser.experiments.normandy;
 
 @autobind
 class RecipesPage extends React.PureComponent {
   static propTypes = {
+    api: PropTypes.object,
     environment: PropTypes.object,
+    environmentKey: PropTypes.string,
+    environments: PropTypes.object,
   };
 
   constructor(props) {
     super(props);
 
     const recipePages = {};
-    Object.keys(environmentStore.getAll()).forEach(v => {
+    Object.keys(props.environments).forEach(v => {
       recipePages[v] = {};
     });
 
@@ -60,16 +66,17 @@ class RecipesPage extends React.PureComponent {
   }
 
   async componentDidUpdate(prevProps) {
-    const { environment } = this.props;
-    if (environment.key !== prevProps.environment.key) {
+    const { environmentKey, environment } = this.props;
+    if (environmentKey !== prevProps.environmentKey) {
       this.refreshRecipeList(environment, this.state.page);
     }
   }
 
   async refreshRecipeList(environment, page) {
+    const { api, environmentKey } = this.props;
     if (
-      environment.key in this.state.recipePages &&
-      page in this.state.recipePages[environment.key]
+      environmentKey in this.state.recipePages &&
+      page in this.state.recipePages[environmentKey]
     ) {
       // cache hit
       this.setState({ page });
@@ -78,15 +85,15 @@ class RecipesPage extends React.PureComponent {
 
     // cache miss
     this.setState({ loading: true });
-    let data = await api.fetchRecipePage(environment, page, {
+    let data = await api.fetchRecipePage(page, {
       ordering: "-id",
     });
 
     this.setState(({ recipePages }) => ({
       recipePages: {
         ...recipePages,
-        [environment.key]: {
-          ...recipePages[environment.key],
+        [environmentKey]: {
+          ...recipePages[environmentKey],
           [page]: data.results,
         },
       },
@@ -102,8 +109,8 @@ class RecipesPage extends React.PureComponent {
   }
 
   copyRecipeToArbitrary(v3Recipe) {
-    const { environment } = this.props;
-    const v1Recipe = convertToV1Recipe(v3Recipe, environment.key);
+    const { environmentKey } = this.props;
+    const v1Recipe = convertToV1Recipe(v3Recipe, environmentKey);
     this.setState({
       arbitraryRecipe: JSON.stringify(v1Recipe, null, 4),
       showWriteRecipes: true,
@@ -112,8 +119,8 @@ class RecipesPage extends React.PureComponent {
 
   renderRecipeList() {
     const { loading, page, recipePages } = this.state;
-    const { environment } = this.props;
-    const recipes = recipePages[environment.key][page];
+    const { environmentKey } = this.props;
+    const { [environmentKey]: { [page]: recipes = [] } = {} } = recipePages;
 
     if (loading) {
       return (
@@ -126,7 +133,7 @@ class RecipesPage extends React.PureComponent {
         <RecipeListing
           key={recipe.id}
           recipe={recipe}
-          environmentName={environment.key}
+          environmentName={environmentKey}
           copyRecipeToArbitrary={this.copyRecipeToArbitrary}
           showRecipe={this.showRecipe}
         />
@@ -235,8 +242,8 @@ class RecipesPage extends React.PureComponent {
   }
 
   renderRunButton() {
-    const { environment } = this.props;
-    if (environment.key !== "prod") {
+    const { environmentKey } = this.props;
+    if (environmentKey !== "prod") {
       return null;
     }
     return (
@@ -292,8 +299,17 @@ class RecipesPage extends React.PureComponent {
 }
 
 export default function WrappedRecipePage(props) {
-  const { state: globalState } = React.useContext(globalStateContext);
+  const { selectedKey } = useEnvironmentState();
+  const environment = useSelectedEnvironment();
+  const environments = useEnvironments();
+  const api = useSelectedEnvironmentAPI();
   return (
-    <RecipesPage {...props} environment={globalState.selectedEnvironment} />
+    <RecipesPage
+      {...props}
+      environmentKey={selectedKey}
+      environment={environment}
+      environments={environments}
+      api={api}
+    />
   );
 }
