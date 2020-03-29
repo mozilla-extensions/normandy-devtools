@@ -1,6 +1,8 @@
 import autobind from "autobind-decorator";
 import PropTypes from "prop-types";
 import React from "react";
+import { Link } from "react-router-dom";
+
 import { Controlled as CodeMirror } from "react-codemirror2";
 import Highlight from "devtools/components/common/Highlight";
 import {
@@ -21,7 +23,9 @@ import {
   useSelectedEnvironment,
   useSelectedEnvironmentAPI,
 } from "devtools/contexts/environment";
+import RecipeEditor from "devtools/components/recipes/RecipeEditor";
 import { convertToV1Recipe } from "devtools/utils/recipes";
+import { useSelectedEnvironmentAuth } from "../../contexts/environment";
 
 const normandy = browser.experiments.normandy;
 
@@ -32,6 +36,7 @@ class RecipesPage extends React.PureComponent {
     environment: PropTypes.object,
     environmentKey: PropTypes.string,
     environments: PropTypes.object,
+    match: PropTypes.object,
   };
 
   constructor(props) {
@@ -119,9 +124,8 @@ class RecipesPage extends React.PureComponent {
 
   renderRecipeList() {
     const { loading, page, recipePages } = this.state;
-    const { environmentKey } = this.props;
+    const { environmentKey, match } = this.props;
     const { [environmentKey]: { [page]: recipes = [] } = {} } = recipePages;
-
     if (loading) {
       return (
         <div className="text-center">
@@ -136,11 +140,41 @@ class RecipesPage extends React.PureComponent {
           environmentName={environmentKey}
           copyRecipeToArbitrary={this.copyRecipeToArbitrary}
           showRecipe={this.showRecipe}
+          match={match}
         />
       ));
     }
 
     return null;
+  }
+
+  renderRecipeListPage() {
+    const { count, page } = this.state;
+    return (
+      <React.Fragment>
+        {this.renderRecipeList()}
+        <div>
+          <Pagination
+            activePage={page}
+            maxButtons={5}
+            pages={Math.ceil(count / 25)}
+            onSelect={this.handlePageChange}
+            size="lg"
+            prev
+            next
+            first
+            last
+            ellipsis
+            boundaryLinks
+          />
+        </div>
+      </React.Fragment>
+    );
+  }
+
+  renderRecipeEditor() {
+    const { environment } = this.props;
+    return <RecipeEditor environmentName={environment} />;
   }
 
   showWriteRecipePopup() {
@@ -254,13 +288,19 @@ class RecipesPage extends React.PureComponent {
   }
 
   render() {
-    const { count, page } = this.state;
-
+    const { match, page, count } = this.props;
     return (
       <React.Fragment>
         <Header>
           <Navbar>
             <Nav pullRight>
+              <Nav.Item
+                componentClass={Link}
+                to={`${match.path}/new`}
+                icon={<Icon icon="edit" />}
+              >
+                Create Recipe
+              </Nav.Item>
               <Nav.Item
                 icon={<Icon icon="edit" />}
                 onClick={this.showWriteRecipePopup}
@@ -303,12 +343,14 @@ export default function WrappedRecipePage(props) {
   const environment = useSelectedEnvironment();
   const environments = useEnvironments();
   const api = useSelectedEnvironmentAPI();
+  const auth = useSelectedEnvironmentAuth();
   return (
     <RecipesPage
       {...props}
       environmentKey={selectedKey}
       environment={environment}
       environments={environments}
+      auth={auth}
       api={api}
     />
   );

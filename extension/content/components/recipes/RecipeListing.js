@@ -2,7 +2,10 @@ import autobind from "autobind-decorator";
 import yaml from "js-yaml";
 import PropTypes from "prop-types";
 import React from "react";
-import { Button, Icon, Panel, Tag } from "rsuite";
+
+import { Link } from "react-router-dom";
+
+import { Button, Icon, Panel, Tag, ButtonToolbar } from "rsuite";
 import { convertToV1Recipe } from "devtools/utils/recipes";
 
 import Highlight from "devtools/components/common/Highlight";
@@ -16,6 +19,7 @@ class RecipeListing extends React.PureComponent {
     recipe: PropTypes.object.isRequired,
     copyRecipeToArbitrary: PropTypes.func.isRequired,
     showRecipe: PropTypes.func,
+    match: PropTypes.object,
   };
 
   constructor(props) {
@@ -149,8 +153,18 @@ class RecipeListing extends React.PureComponent {
     this.props.showRecipe(this.props.recipe);
   }
 
-  renderViewRecipeButton() {
-    return <Button onClick={this.handleshowRecipeButton}>View Recipe</Button>;
+  renderRecipeButtonToolBar() {
+    const { match, recipe } = this.props;
+
+    return (
+      <ButtonToolbar>
+        <Button componentClass={Link} to={`${match.path}/edit/${recipe.id}`}>
+          Edit Recipe
+        </Button>
+
+        <Button onClick={this.handleshowRecipeButton}>View Recipe</Button>
+      </ButtonToolbar>
+    );
   }
 
   render() {
@@ -167,7 +181,8 @@ class RecipeListing extends React.PureComponent {
         collapsible
         bordered
       >
-        {this.renderViewRecipeButton()}
+        {this.renderRecipeButtonToolBar()}
+
         <h4>Filter</h4>
         <Highlight className="javascript">{filter_expression}</Highlight>
 

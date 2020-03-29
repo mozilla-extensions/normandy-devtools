@@ -97,6 +97,13 @@ export default class NormandyAPI {
       version,
     });
   }
+
+  async fetchActions({ version = 3 }) {
+    return this.request({
+      url: "action/",
+      version,
+    });
+  }
 }
 
 export class RequestError extends Error {
