@@ -8,12 +8,12 @@ import RecipesPage from "devtools/components/pages/RecipesPage";
 import FiltersPage from "devtools/components/pages/FiltersPage";
 import PrefStudiesPage from "devtools/components/pages/PrefStudiesPage";
 import AddonStudiesPage from "devtools/components/pages/AddonStudiesPage";
-import { GlobalStateProvider } from "devtools/contexts/globalState";
+import { EnvironmentProvider } from "devtools/contexts/environment";
 
 export default function App(props) {
   return (
     <HashRouter>
-      <GlobalStateProvider>
+      <EnvironmentProvider>
         <div className="app-container">
           <AppHeader />
           <div className="content-wrapper">
@@ -80,7 +80,7 @@ export default function App(props) {
             </div>
           </div>
         </div>
-      </GlobalStateProvider>
+      </EnvironmentProvider>
     </HashRouter>
   );
 }

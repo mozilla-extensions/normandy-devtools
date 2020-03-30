@@ -5,15 +5,15 @@ import "@testing-library/jest-dom/extend-expect";
 import { WebAuth } from "auth0-js";
 
 import AppHeader from "devtools/components/common/AppHeader";
-import { GlobalStateProvider } from "devtools/contexts/globalState";
+import { EnvironmentProvider } from "devtools/contexts/environment";
 
 // This component uses the global context and location so wrap it in the required providers.
 function WrappedAppHeader() {
   return (
     <HashRouter>
-      <GlobalStateProvider>
+      <EnvironmentProvider>
         <AppHeader />
-      </GlobalStateProvider>
+      </EnvironmentProvider>
     </HashRouter>
   );
 }

@@ -19,9 +19,14 @@ import {
 import Logo from "devtools/components/svg/Logo";
 import {
   ACTION_SELECT_ENVIRONMENT,
-  globalStateContext,
-} from "devtools/contexts/globalState";
-import environmentStore from "devtools/utils/environmentStore";
+  login,
+  logout,
+  useEnvironmentDispatch,
+  useEnvironments,
+  useEnvironmentState,
+  useSelectedEnvironment,
+  useSelectedEnvironmentAuth,
+} from "devtools/contexts/environment";
 
 export default function AppHeader() {
   return (
@@ -41,7 +46,7 @@ export default function AppHeader() {
         <span>
           <EnvironmentConfigurator />
         </span>
-        <span>
+        <span className="authenticator">
           <Authenticator />
         </span>
       </div>
@@ -90,12 +95,14 @@ function AddressBar() {
 function EnvironmentConfigurator() {
   const [showEnvironmentModal, setShowEnvironmentModal] = React.useState(false);
 
-  const environments = environmentStore.getAll();
+  const environments = useEnvironments();
   const envOptions = Object.keys(environments).map(v => ({
     label: v.charAt(0).toUpperCase() + v.slice(1),
     value: v,
   }));
-  const { state: globalState, dispatch } = React.useContext(globalStateContext);
+
+  const { selectedKey } = useEnvironmentState();
+  const dispatch = useEnvironmentDispatch();
 
   return (
     <>
@@ -106,9 +113,7 @@ function EnvironmentConfigurator() {
         }}
       >
         <strong>Environment:&nbsp;</strong>
-        <span className="text-primary">
-          {globalState.selectedEnvironment.key}
-        </span>
+        <span className="text-primary">{selectedKey}</span>
       </IconButton>
 
       <Modal
@@ -126,13 +131,13 @@ function EnvironmentConfigurator() {
               <ControlLabel>Current Environment</ControlLabel>
               <SelectPicker
                 data={envOptions}
-                defaultValue={globalState.selectedEnvironment.key}
+                defaultValue={selectedKey}
                 searchable={false}
                 cleanable={false}
-                onChange={v => {
+                onChange={key => {
                   dispatch({
                     type: ACTION_SELECT_ENVIRONMENT,
-                    environment: v,
+                    key,
                   });
                 }}
               />
@@ -145,33 +150,47 @@ function EnvironmentConfigurator() {
 }
 
 function Authenticator() {
-  const { state: globalState } = React.useContext(globalStateContext);
-  const environment = environmentStore.get(globalState.selectedEnvironment.key);
+  const auth = useSelectedEnvironmentAuth();
+  const dispatch = useEnvironmentDispatch();
+  const environment = useSelectedEnvironment();
+  const { selectedKey } = useEnvironmentState();
 
-  if (environment.isAuthenticated()) {
-    const { profile } = environment.authSession;
+  const handleLoginClick = () => {
+    login(dispatch, selectedKey, environment);
+  };
+
+  const handleLogoutClick = () => {
+    logout(dispatch, selectedKey);
+  };
+
+  if (auth.result) {
+    const { idTokenPayload: profile } = auth.result;
     return (
       <Whisper
         trigger="click"
         placement="bottomEnd"
         speaker={
-          <Popover title={`Signed in as: ${profile.email}`}>
-            <a
-              onClick={() => {
-                environment.authSession.logout();
-              }}
-            >
-              Log Out
-            </a>
+          <Popover>
+            <div>
+              Signed in as:
+              <br />
+              <strong>{profile.email}</strong>
+            </div>
+            <ul className="link-list">
+              <li onClick={handleLogoutClick}>Log Out</li>
+            </ul>
           </Popover>
         }
       >
-        <Avatar
-          alt={profile.email.substring(0, 1)}
-          src={profile.picture}
-          size="sm"
-          circle
-        />
+        <div className="d-flex">
+          <Avatar
+            alt={profile.email.substring(0, 1)}
+            src={profile.picture}
+            size="sm"
+            circle
+          />
+          <Icon icon="caret-down" />
+        </div>
       </Whisper>
     );
   }
@@ -180,9 +199,7 @@ function Authenticator() {
     <IconButton
       appearance="primary"
       icon={<Icon icon="user" />}
-      onClick={() => {
-        environment.authSession.login();
-      }}
+      onClick={handleLoginClick}
     >
       Log In
     </IconButton>
