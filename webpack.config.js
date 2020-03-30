@@ -4,6 +4,8 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const Dotenv = require("dotenv-webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const GenerateJsonPlugin = require("generate-json-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const FixStyleOnlyEntriesPlugin = require("webpack-fix-style-only-entries");
 
 const packageData = require("./package.json");
 const manifest = require("./extension/manifest.json");
@@ -14,6 +16,8 @@ module.exports = {
   entry: {
     content: "./extension/content/index.js",
     redirect: "./extension/content/redirect.js",
+    "dark-theme": "./extension/content/less/dark.less",
+    "light-theme": "./extension/content/less/light.less",
   },
   output: {
     filename: "[name].js",
@@ -25,6 +29,8 @@ module.exports = {
     },
   },
   plugins: [
+    new FixStyleOnlyEntriesPlugin(),
+    new MiniCssExtractPlugin(),
     new Dotenv(),
     new CopyWebpackPlugin([
       "extension/background.js",
@@ -36,6 +42,7 @@ module.exports = {
       favicon: path.resolve(__dirname, "extension/images/favicon.png"),
       filename: "content.html",
       chunks: ["content"],
+      excludeChunks: ["dark-theme", "light-theme"],
     }),
     new HtmlWebpackPlugin({
       title: "Redirect",
@@ -64,7 +71,7 @@ module.exports = {
       {
         test: /\.less/,
         use: [
-          "style-loader",
+          MiniCssExtractPlugin.loader,
           "css-loader",
           {
             loader: "less-loader",
