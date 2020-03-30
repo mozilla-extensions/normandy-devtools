@@ -1,13 +1,14 @@
 .split {
   display: flex;
+  height: 100%;
 
   .col {
-    height: 100vh;
+    height: 100%;
     overflow: auto;
   }
 
   .gutter {
-    border-right: 1px solid @B200;
+    border-right: 1px solid @border-base-color;
     cursor: col-resize;
     max-width: 0;
     position: relative;

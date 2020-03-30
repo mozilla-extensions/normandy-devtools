@@ -1,10 +1,10 @@
 import autobind from "autobind-decorator";
+import PropTypes from "prop-types";
 import React from "react";
 import { Controlled as CodeMirror } from "react-codemirror2";
 import Highlight from "devtools/components/common/Highlight";
 import {
   Button,
-  Drawer,
   Header,
   Icon,
   Loader,
@@ -12,34 +12,36 @@ import {
   Nav,
   Navbar,
   Pagination,
-  SelectPicker,
 } from "rsuite";
 
-import { ENVIRONMENTS } from "devtools/config";
 import RecipeListing from "devtools/components/recipes/RecipeListing";
 import api from "devtools/utils/api";
+import environmentStore from "devtools/utils/environmentStore";
 import { convertToV1Recipe } from "devtools/utils/recipes";
+import { globalStateContext } from "devtools/contexts/globalState";
 
 const normandy = browser.experiments.normandy;
 
 @autobind
 class RecipesPage extends React.PureComponent {
+  static propTypes = {
+    environment: PropTypes.object,
+  };
+
   constructor(props) {
     super(props);
 
     const recipePages = {};
-    Object.values(ENVIRONMENTS).forEach(v => {
+    Object.keys(environmentStore.getAll()).forEach(v => {
       recipePages[v] = {};
     });
 
     this.state = {
       arbitraryRecipe: "",
       count: 0,
-      environment: ENVIRONMENTS.prod,
       loading: false,
       page: 1,
       runningArbitrary: false,
-      showSettings: false,
       showWriteRecipes: false,
       showReadRecipe: false,
       recipeSelected: false,
@@ -52,14 +54,22 @@ class RecipesPage extends React.PureComponent {
   }
 
   async componentDidMount() {
-    const { environment, page } = this.state;
+    const { page } = this.state;
+    const { environment } = this.props;
     this.refreshRecipeList(environment, page);
+  }
+
+  async componentDidUpdate(prevProps) {
+    const { environment } = this.props;
+    if (environment.key !== prevProps.environment.key) {
+      this.refreshRecipeList(environment, this.state.page);
+    }
   }
 
   async refreshRecipeList(environment, page) {
     if (
-      environment in this.state.recipePages &&
-      page in this.state.recipePages[environment]
+      environment.key in this.state.recipePages &&
+      page in this.state.recipePages[environment.key]
     ) {
       // cache hit
       this.setState({ page });
@@ -75,8 +85,8 @@ class RecipesPage extends React.PureComponent {
     this.setState(({ recipePages }) => ({
       recipePages: {
         ...recipePages,
-        [environment]: {
-          ...recipePages.environment,
+        [environment.key]: {
+          ...recipePages[environment.key],
           [page]: data.results,
         },
       },
@@ -87,26 +97,13 @@ class RecipesPage extends React.PureComponent {
   }
 
   handlePageChange(page) {
-    const { environment } = this.state;
+    const { environment } = this.props;
     this.refreshRecipeList(environment, page);
   }
 
-  handleEnvironmentChange(environment) {
-    this.setState({ environment });
-    this.refreshRecipeList(environment, 1);
-  }
-
-  showSettings() {
-    this.setState({ showSettings: true });
-  }
-
-  hideSettings() {
-    this.setState({ showSettings: false });
-  }
-
   copyRecipeToArbitrary(v3Recipe) {
-    const { environment } = this.state;
-    const v1Recipe = convertToV1Recipe(v3Recipe, environment);
+    const { environment } = this.props;
+    const v1Recipe = convertToV1Recipe(v3Recipe, environment.key);
     this.setState({
       arbitraryRecipe: JSON.stringify(v1Recipe, null, 4),
       showWriteRecipes: true,
@@ -114,12 +111,9 @@ class RecipesPage extends React.PureComponent {
   }
 
   renderRecipeList() {
-    const { environment, loading, page, recipePages } = this.state;
-    const recipes = recipePages[environment][page];
-
-    let envName = Object.keys(ENVIRONMENTS).find(
-      v => ENVIRONMENTS[v] === environment,
-    );
+    const { loading, page, recipePages } = this.state;
+    const { environment } = this.props;
+    const recipes = recipePages[environment.key][page];
 
     if (loading) {
       return (
@@ -132,7 +126,7 @@ class RecipesPage extends React.PureComponent {
         <RecipeListing
           key={recipe.id}
           recipe={recipe}
-          environmentName={envName}
+          environmentName={environment.key}
           copyRecipeToArbitrary={this.copyRecipeToArbitrary}
           showRecipe={this.showRecipe}
         />
@@ -140,40 +134,6 @@ class RecipesPage extends React.PureComponent {
     }
 
     return null;
-  }
-
-  renderSettingsDrawer() {
-    const { showSettings, environment } = this.state;
-
-    const envOptions = Object.keys(ENVIRONMENTS).reduce((reduced, value) => {
-      reduced.push({
-        label: value.charAt(0).toUpperCase() + value.slice(1),
-        value: ENVIRONMENTS[value],
-      });
-      return reduced;
-    }, []);
-
-    return (
-      <Drawer
-        placement="right"
-        show={showSettings}
-        onHide={this.hideSettings}
-        size="xs"
-      >
-        <Drawer.Header>Settings</Drawer.Header>
-        <Drawer.Body>
-          <h5>Environment</h5>
-          <SelectPicker
-            data={envOptions}
-            defaultValue={environment}
-            cleanable={false}
-            searchable={false}
-            onChange={this.handleEnvironmentChange}
-            data-testid="environments"
-          />
-        </Drawer.Body>
-      </Drawer>
-    );
   }
 
   showWriteRecipePopup() {
@@ -275,8 +235,8 @@ class RecipesPage extends React.PureComponent {
   }
 
   renderRunButton() {
-    const { environment } = this.state;
-    if (environment !== ENVIRONMENTS.prod) {
+    const { environment } = this.props;
+    if (environment.key !== "prod") {
       return null;
     }
     return (
@@ -301,13 +261,6 @@ class RecipesPage extends React.PureComponent {
                 Write & Run Arbitrary
               </Nav.Item>
               {this.renderRunButton()}
-              <Nav.Item
-                icon={<Icon icon="gear" />}
-                onClick={this.showSettings}
-                data-testid="settings"
-              >
-                Settings
-              </Nav.Item>
             </Nav>
           </Navbar>
         </Header>
@@ -331,7 +284,6 @@ class RecipesPage extends React.PureComponent {
           </div>
         </div>
 
-        {this.renderSettingsDrawer()}
         {this.renderWriteRecipeModal()}
         {this.renderViewRecipeModal()}
       </React.Fragment>
@@ -339,4 +291,9 @@ class RecipesPage extends React.PureComponent {
   }
 }
 
-export default RecipesPage;
+export default function WrappedRecipePage(props) {
+  const { state: globalState } = React.useContext(globalStateContext);
+  return (
+    <RecipesPage {...props} environment={globalState.selectedEnvironment} />
+  );
+}

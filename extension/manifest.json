@@ -44,7 +44,9 @@
     ]
   },
 
-  "permissions": [],
+  "permissions": [
+    "identity"
+  ],
 
   "experiment_apis": {
     "normandy": {
@@ -61,7 +63,7 @@
     {
       "protocol": "ext+normandy",
       "name": "Normandy Devtools",
-      "uriTemplate": "/content.html#/%s"
+      "uriTemplate": "/redirect.html?r=%s"
     }
   ]
 }
