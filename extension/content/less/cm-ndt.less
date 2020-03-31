@@ -105,6 +105,16 @@
       border-left: 2px solid var(--cm-color-cursor);
     }
   }
+
+  .CodeMirror-selected {
+    background: fade(@color-protocol-light-gray-50, 30%);
+  }
+
+  &.CodeMirror-focused {
+    .CodeMirror-selected {
+      background: fade(@color-protocol-purple-10, 30%);
+    }
+  }
 }
 
 @media (prefers-color-scheme: dark) {
