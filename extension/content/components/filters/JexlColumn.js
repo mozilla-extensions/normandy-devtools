@@ -3,11 +3,6 @@ import PropTypes from "prop-types";
 import React from "react";
 import { Controlled as CodeMirror } from "react-codemirror2";
 
-// Mode and theme for Code Mirror
-import "codemirror/addon/selection/active-line";
-import "codemirror/mode/javascript/javascript";
-import "codemirror/theme/neo.css";
-
 @autobind
 class JexlColumn extends React.PureComponent {
   static propTypes = {
@@ -46,7 +41,7 @@ class JexlColumn extends React.PureComponent {
           onBlur={this.handleBlur}
           options={{
             mode: "javascript",
-            theme: "neo",
+            theme: "ndt",
             lineNumbers: false,
             styleActiveLine: true,
             gutters: [],

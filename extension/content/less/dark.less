@@ -1,3 +1,13 @@
 @import "~rsuite/lib/styles/themes/dark/index";
 @import "~highlight.js/styles/nord.css";
 @import "index";
+
+.cm-s-nord {
+  &.CodeMirror {
+    background: @body-bg;
+  }
+
+  .CodeMirror-activeline-background {
+    background: @sidenav-default-bg;
+  }
+}

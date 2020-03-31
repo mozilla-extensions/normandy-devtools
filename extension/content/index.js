@@ -14,6 +14,12 @@ highlightjs.registerLanguage("javascript", javascript);
 highlightjs.registerLanguage("json", json);
 highlightjs.registerLanguage("yaml", yaml);
 
+// Mode for Code Mirror
+// eslint-disable-next-line no-unused-vars
+import { Controlled } from "react-codemirror2"; // Imported for side effect
+import "codemirror/addon/selection/active-line";
+import "codemirror/mode/javascript/javascript";
+
 let root = document.querySelector("#root");
 
 if (!root) {

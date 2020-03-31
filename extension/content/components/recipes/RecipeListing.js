@@ -94,8 +94,6 @@ class RecipeListing extends React.PureComponent {
   renderFilterIcon() {
     const { recipeSuitabilities } = this.state;
 
-    let style = {};
-
     let hoverText = "loading...";
     if (recipeSuitabilities) {
       hoverText = recipeSuitabilities
@@ -103,26 +101,32 @@ class RecipeListing extends React.PureComponent {
         .join("\n");
     }
 
+    let textColor = "violet";
     if (recipeSuitabilities && recipeSuitabilities.length == 1) {
       if (recipeSuitabilities[0] == "RECIPE_SUITABILITY_FILTER_MATCH") {
-        style.color = "green";
+        textColor = "green";
       } else if (
         recipeSuitabilities[0] == "RECIPE_SUITABILITY_FILTER_MISMATCH"
       ) {
-        style.color = "red";
+        textColor = "red";
       } else {
-        style.color = "yellow";
+        textColor = "yellow";
       }
     } else if (
       recipeSuitabilities &&
       recipeSuitabilities.includes("RECIPE_SUITABILITY_")
     ) {
-      style.color = "orange";
-    } else {
-      style.color = "pink";
+      textColor = "orange";
     }
 
-    return <Icon icon="filter" size="lg" style={style} title={hoverText} />;
+    return (
+      <Icon
+        icon="filter"
+        size="lg"
+        className={`text-${textColor}`}
+        title={hoverText}
+      />
+    );
   }
 
   renderHeader() {
@@ -140,7 +144,7 @@ class RecipeListing extends React.PureComponent {
           {this.renderEnabledIcon()}
           {this.renderFilterIcon()}
         </span>
-        <Tag color="cyan">{id}</Tag> {name}
+        <Tag color="blue">{id}</Tag> {name}
       </React.Fragment>
     );
   }
