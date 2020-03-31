@@ -27,6 +27,11 @@ if (!root) {
   root.setAttribute("id", "root");
   document.body.appendChild(root);
 
+  // To help with FOUC
+  const style = document.createElement("style");
+  style.innerHTML = "#root { display: none }";
+  document.body.appendChild(style);
+
   ["light", "dark"].forEach(theme => {
     const styleLink = document.createElement("link");
     styleLink.setAttribute("href", `${theme}-theme.css`);
