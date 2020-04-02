@@ -13,24 +13,24 @@ import {
 } from "rsuite";
 import { Controlled as CodeMirror } from "react-codemirror2";
 import {
-  useEnvironments,
-  useEnvironmentState,
-  useSelectedEnvironment,
   useSelectedEnvironmentAPI,
   useSelectedEnvironmentAuth,
 } from "devtools/contexts/environment";
 
-function RecipeEditor(props) {
-  const { match, environment, api, auth } = props;
+export default function RecipeEditor(props) {
+  const { match } = props;
+  const api = useSelectedEnvironmentAPI();
+  const auth = useSelectedEnvironmentAuth();
   let [data, setData] = useState({});
   let [actions, setActions] = useState([]);
 
-  async function getActionsOptions(environment) {
+  async function getActionsOptions() {
     let res = await api.fetchActions(3);
-    actions = res.results.map(action => ({
+    let actions = res.results.map(action => ({
       label: action.name,
       value: action.id,
     }));
+
     setActions(actions);
   }
 
@@ -48,7 +48,7 @@ function RecipeEditor(props) {
   }
 
   useEffect(() => {
-    getActionsOptions(environment);
+    getActionsOptions();
     if (match.params.id) {
       getRecipe(match.params.id);
     }
@@ -74,7 +74,7 @@ function RecipeEditor(props) {
         Authorization: "Bearer " + token,
       },
 
-      method: method,
+      method,
       data: requestBody,
     });
     requestSave
@@ -83,7 +83,7 @@ function RecipeEditor(props) {
         Alert.success("Changes Saved");
       })
       .catch(err => {
-        Alert.error(`An Error Occured: ${JSON.stringify(err.data)}`);
+        Alert.error(`An Error Occurred: ${JSON.stringify(err.data)}`);
       });
   };
 
@@ -102,12 +102,12 @@ function RecipeEditor(props) {
       <Form fluid formValue={data} onChange={data => setData(data)}>
         <FormGroup>
           <ControlLabel>Name</ControlLabel>
-          <FormControl name="name" />
+          <FormControl name="name" data-testid="recipeName" />
           <HelpBlock>Required</HelpBlock>
         </FormGroup>
         <FormGroup>
           <ControlLabel>Experiment Slug</ControlLabel>
-          <FormControl name="experimenter_slug" />
+          <FormControl name="experimenter_slug" data-testid="experimentSlug" />
         </FormGroup>
         <FormGroup>
           <ControlLabel>Extra Filter Expression</ControlLabel>
@@ -133,7 +133,7 @@ function RecipeEditor(props) {
           <ControlLabel>Actions</ControlLabel>
           <FormControl
             name={"action_id"}
-            placeholder={"Actions"}
+            placeholder={"Select an action"}
             data={actions}
             searchable={false}
             size="lg"
@@ -190,23 +190,4 @@ function ActionArgument(props) {
 
 RecipeEditor.propTypes = {
   match: PropTypes.object,
-  environment: PropTypes.object,
 };
-
-export default function WrappedRecipePage(props) {
-  const { selectedKey } = useEnvironmentState();
-  const environment = useSelectedEnvironment();
-  const environments = useEnvironments();
-  const api = useSelectedEnvironmentAPI();
-  const auth = useSelectedEnvironmentAuth();
-  return (
-    <RecipeEditor
-      {...props}
-      environmentKey={selectedKey}
-      environment={environment}
-      environments={environments}
-      auth={auth}
-      api={api}
-    />
-  );
-}
