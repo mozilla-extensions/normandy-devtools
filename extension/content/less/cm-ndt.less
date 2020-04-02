@@ -1,0 +1,126 @@
+/* Code mirror theme for NDT */
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --cm-background: @body-bg;
+    --cm-color: @text-color;
+    --cm-color-comment: @color-protocol-light-gray-70;
+    --cm-color-blue: @color-protocol-blue-40;
+    --cm-color-violet: @color-protocol-purple-60;
+    --cm-color-orange: @color-protocol-orange-70;
+    --cm-color-yellow: @color-protocol-yellow-60;
+    --cm-color-green: @color-protocol-green-70;
+    --cm-color-gray: @color-protocol-light-gray-50;
+    --cm-color-cursor: fade(@color-protocol-light-gray-50, 40%);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --cm-background: @body-bg;
+    --cm-color: @text-color;
+    --cm-color-comment: @color-protocol-light-gray-70;
+    --cm-color-blue: @color-protocol-blue-40;
+    --cm-color-violet: @color-protocol-purple-50;
+    --cm-color-orange: @color-protocol-orange-60;
+    --cm-color-yellow: @color-protocol-yellow-50;
+    --cm-color-green: @color-protocol-green-60;
+    --cm-color-gray: @color-protocol-light-gray-50;
+    --cm-color-cursor: fade(@color-protocol-light-gray-50, 40%);
+  }
+}
+
+.cm-s-ndt {
+  /* Color scheme */
+
+  &.CodeMirror {
+    background-color: var(--cm-background);
+    color: var(--cm-color);
+    line-height: 1.4375;
+  }
+
+  .cm-comment {
+    color: var(--cm-color-comment);
+  }
+
+  .cm-keyword,
+  .cm-property {
+    color: var(--cm-color-blue);
+  }
+
+  .cm-atom,
+  .cm-number {
+    color: var(--cm-color-violet);
+  }
+
+  .cm-node,
+  .cm-tag {
+    color: var(--cm-color-orange);
+  }
+
+  .cm-string {
+    color: var(--cm-color-yellow);
+  }
+
+  .cm-variable,
+  .cm-qualifier {
+    color: var(--cm-color-green);
+  }
+
+  pre {
+    padding: 0;
+  }
+
+  /* Editor styling */
+
+  .CodeMirror-gutters {
+    background-color: transparent;
+    border: none;
+    border-right: 10px solid transparent;
+  }
+
+  .CodeMirror-linenumber {
+    color: var(--cm-color-gray);
+    padding: 0;
+  }
+
+  .CodeMirror-guttermarker {
+    color: var(--cm-color-blue);
+  }
+
+  .CodeMirror-guttermarker-subtle {
+    color: var(--cm-color-gray);
+  }
+
+  .CodeMirror-cursor {
+    background: var(--cm-color-cursor);
+    border: 0;
+    width: auto;
+    z-index: 1;
+  }
+
+  .CodeMirror:not(.CodeMirror-focused) {
+    .CodeMirror-cursor {
+      background: none;
+      border-left: 2px solid var(--cm-color-cursor);
+    }
+  }
+
+  .CodeMirror-selected {
+    background: fade(@color-protocol-light-gray-50, 30%);
+  }
+
+  &.CodeMirror-focused {
+    .CodeMirror-selected {
+      background: fade(@color-protocol-purple-10, 30%);
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .cm-s-ndt {
+    .CodeMirror-activeline-background {
+      background: @sidenav-default-bg;
+    }
+  }
+}

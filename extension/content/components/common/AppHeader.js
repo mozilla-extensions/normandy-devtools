@@ -27,6 +27,7 @@ import {
   useSelectedEnvironment,
   useSelectedEnvironmentAuth,
 } from "devtools/contexts/environment";
+import { upperCaseFirst } from "devtools/utils/helpers";
 
 export default function AppHeader() {
   return (
@@ -96,9 +97,9 @@ function EnvironmentConfigurator() {
   const [showEnvironmentModal, setShowEnvironmentModal] = React.useState(false);
 
   const environments = useEnvironments();
-  const envOptions = Object.keys(environments).map(v => ({
-    label: v.charAt(0).toUpperCase() + v.slice(1),
-    value: v,
+  const envOptions = Object.keys(environments).map(key => ({
+    label: upperCaseFirst(key),
+    value: key,
   }));
 
   const { selectedKey } = useEnvironmentState();
@@ -113,7 +114,7 @@ function EnvironmentConfigurator() {
         }}
       >
         <strong>Environment:&nbsp;</strong>
-        <span className="text-primary">{selectedKey}</span>
+        <strong className="text-primary">{upperCaseFirst(selectedKey)}</strong>
       </IconButton>
 
       <Modal

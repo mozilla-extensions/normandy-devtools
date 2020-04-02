@@ -25,7 +25,6 @@ export default class NormandyAPI {
 
     const settings = {
       headers,
-      credentials: "same-origin",
       method: "GET",
       ...options,
     };

@@ -14,12 +14,23 @@ highlightjs.registerLanguage("javascript", javascript);
 highlightjs.registerLanguage("json", json);
 highlightjs.registerLanguage("yaml", yaml);
 
+// Mode for Code Mirror
+// eslint-disable-next-line no-unused-vars
+import { Controlled } from "react-codemirror2"; // Imported for side effect
+import "codemirror/addon/selection/active-line";
+import "codemirror/mode/javascript/javascript";
+
 let root = document.querySelector("#root");
 
 if (!root) {
   root = document.createElement("div");
   root.setAttribute("id", "root");
   document.body.appendChild(root);
+
+  // To help with FOUC
+  const style = document.createElement("style");
+  style.innerHTML = "#root { display: none }";
+  document.body.appendChild(style);
 
   ["light", "dark"].forEach(theme => {
     const styleLink = document.createElement("link");
