@@ -37,6 +37,8 @@ class RecipesPage extends React.PureComponent {
     environmentKey: PropTypes.string,
     environments: PropTypes.object,
     match: PropTypes.object,
+    page: PropTypes.integer,
+    count: PropTypes.integer,
   };
 
   constructor(props) {
