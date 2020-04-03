@@ -12,15 +12,11 @@ import {
   InputPicker,
 } from "rsuite";
 import { Controlled as CodeMirror } from "react-codemirror2";
-import {
-  useSelectedEnvironmentAPI,
-  useSelectedEnvironmentAuth,
-} from "devtools/contexts/environment";
+import { useSelectedEnvironmentAPI } from "devtools/contexts/environment";
 
 export default function RecipeEditor(props) {
   const { match } = props;
   const api = useSelectedEnvironmentAPI();
-  const auth = useSelectedEnvironmentAuth();
   let [data, setData] = useState({});
   let [actions, setActions] = useState([]);
 
@@ -37,13 +33,6 @@ export default function RecipeEditor(props) {
   async function getRecipe(id) {
     let recipe = await api.fetchRecipe(id, 3);
     const { latest_revision } = recipe;
-    latest_revision.arguments = JSON.stringify(
-      latest_revision.arguments,
-      null,
-      1,
-    );
-    latest_revision.action_id = latest_revision.action.id;
-    delete latest_revision.comment;
     setData(latest_revision);
   }
 
@@ -54,47 +43,40 @@ export default function RecipeEditor(props) {
     }
   }, []);
 
+  const handleActionIDChange = value => {
+    if (data.action) {
+      data.action.id = value;
+      setData({ ...data });
+    } else {
+      data.action = { id: value };
+      setData({ ...data });
+    }
+  };
   const handleChange = (key, value) => {
     setData({ ...data, [key]: value });
   };
 
   const handleSubmit = () => {
-    let recipeEndpoint = "recipe/";
-    let method = "POST";
-    if (match.params.id) {
-      recipeEndpoint = `recipe/${match.params.id}/`;
-      method = "PUT";
-    }
-    const token = auth.result.accessToken;
+    const id = match.params.id;
     const requestBody = formatRequestBody();
-    const requestSave = api.request({
-      version: 3,
-      url: recipeEndpoint,
-      extraHeaders: {
-        Authorization: "Bearer " + token,
-      },
+    const requestSave = api.saveRecipe(id, requestBody);
 
-      method,
-      data: requestBody,
-    });
     requestSave
       .then(() => {
         location.replace("/content.html#");
         Alert.success("Changes Saved");
       })
       .catch(err => {
-        Alert.error(`An Error Occurred: ${JSON.stringify(err.data)}`);
+        Alert.error(`An Error Occurred: ${JSON.stringify(err.data)}`, 5000);
       });
   };
 
   const formatRequestBody = () => {
-    const dataCopy = JSON.parse(JSON.stringify(data));
-    try {
-      dataCopy.arguments = JSON.parse(dataCopy.arguments);
-    } catch (err) {
-      Alert.error("Arguments is not valid JSON");
-    }
-    return dataCopy;
+    /* eslint-disable no-unused-vars */
+    const { ["comment"]: _omitData, ...requestBody } = data;
+    /* eslint-enable no-unused-vars */
+    requestBody.action_id = data.action.id;
+    return requestBody;
   };
 
   return (
@@ -131,21 +113,20 @@ export default function RecipeEditor(props) {
         </FormGroup>
         <FormGroup>
           <ControlLabel>Actions</ControlLabel>
-          <FormControl
-            name={"action_id"}
+          <InputPicker
+            name={"actionId"}
             placeholder={"Select an action"}
             data={actions}
-            searchable={false}
-            size="lg"
             block
-            accepter={InputPicker}
+            value={data.action ? data.action.id : null}
+            onChange={value => handleActionIDChange(value)}
           />
         </FormGroup>
         <ActionArgument
           name="arguments"
-          value={data.arguments}
+          value={JSON.stringify(data.arguments, null, 1)}
           handleChange={handleChange}
-          action={data.action_id}
+          action={data.action ? data.action.id : null}
         />
         <ButtonToolbar>
           <Button appearance="primary" onClick={handleSubmit}>
@@ -179,7 +160,7 @@ function ActionArgument(props) {
           }}
           value={props.value}
           onBeforeChange={(editor, data, value) =>
-            props.handleChange(props.name, value)
+            props.handleChange(props.name, JSON.parse(value))
           }
         />
       </FormGroup>

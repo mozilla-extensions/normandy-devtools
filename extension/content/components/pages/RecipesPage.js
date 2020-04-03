@@ -23,9 +23,7 @@ import {
   useSelectedEnvironment,
   useSelectedEnvironmentAPI,
 } from "devtools/contexts/environment";
-import RecipeEditor from "devtools/components/recipes/RecipeEditor";
 import { convertToV1Recipe } from "devtools/utils/recipes";
-import { useSelectedEnvironmentAuth } from "../../contexts/environment";
 
 const normandy = browser.experiments.normandy;
 
@@ -148,35 +146,6 @@ class RecipesPage extends React.PureComponent {
     }
 
     return null;
-  }
-
-  renderRecipeListPage() {
-    const { count, page } = this.state;
-    return (
-      <React.Fragment>
-        {this.renderRecipeList()}
-        <div>
-          <Pagination
-            activePage={page}
-            maxButtons={5}
-            pages={Math.ceil(count / 25)}
-            onSelect={this.handlePageChange}
-            size="lg"
-            prev
-            next
-            first
-            last
-            ellipsis
-            boundaryLinks
-          />
-        </div>
-      </React.Fragment>
-    );
-  }
-
-  renderRecipeEditor() {
-    const { environment } = this.props;
-    return <RecipeEditor environmentName={environment} />;
   }
 
   showWriteRecipePopup() {
@@ -345,14 +314,12 @@ export default function WrappedRecipePage(props) {
   const environment = useSelectedEnvironment();
   const environments = useEnvironments();
   const api = useSelectedEnvironmentAPI();
-  const auth = useSelectedEnvironmentAuth();
   return (
     <RecipesPage
       {...props}
       environmentKey={selectedKey}
       environment={environment}
       environments={environments}
-      auth={auth}
       api={api}
     />
   );

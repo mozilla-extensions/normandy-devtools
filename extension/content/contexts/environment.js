@@ -192,7 +192,8 @@ export function useSelectedEnvironmentAuth() {
 
 export function useSelectedEnvironmentAPI() {
   const environment = useSelectedEnvironment();
-  return new NormandyAPI(environment);
+  const auth = useSelectedEnvironmentAuth();
+  return new NormandyAPI(environment, auth);
 }
 
 export function updateEnvironment(dispatch, key, config) {
