@@ -31,9 +31,8 @@ export default function RecipeEditor(props) {
   }
 
   async function getRecipe(id) {
-    let recipe = await api.fetchRecipe(id, 3);
-    const { latest_revision } = recipe;
-    setData(latest_revision);
+    const recipe = await api.fetchRecipe(id, 3);
+    setData(recipe.latest_revision);
   }
 
   useEffect(() => {
