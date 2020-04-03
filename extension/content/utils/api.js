@@ -61,7 +61,7 @@ export default class NormandyAPI {
 
       delete settings.data;
     }
-    console.log(JSON.stringify(settings));
+
     const response = await fetch(apiUrl, settings);
 
     if (!response.ok) {
