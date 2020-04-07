@@ -90,7 +90,7 @@ export default function RecipeEditor(props) {
           <HelpBlock>Required</HelpBlock>
         </FormGroup>
         <FormGroup>
-          <ControlLabel>Experiment Slug</ControlLabel>
+          <ControlLabel>Experimenter Slug</ControlLabel>
           <FormControl name="experimenter_slug" data-testid="experimentSlug" />
         </FormGroup>
         <FormGroup>
@@ -171,8 +171,15 @@ function ActionArgument(props) {
       </FormGroup>
     );
   }
-  return "";
+  return null;
 }
+
+ActionArgument.propTypes = {
+  name: PropTypes.string,
+  action: PropTypes.integer,
+  value: PropTypes.object,
+  handleChange: PropTypes.func,
+};
 
 RecipeEditor.propTypes = {
   match: PropTypes.object,
