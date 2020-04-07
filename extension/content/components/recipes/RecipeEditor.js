@@ -146,7 +146,11 @@ export default function RecipeEditor(props) {
 function ActionArgument(props) {
   const handleArgumentChange = (editor, data, value) => {
     let newValue = {};
-    newValue = JSON.parse(value);
+    try {
+      newValue = JSON.parse(value);
+    } catch (ex) {
+      // Do nothing
+    }
     props.handleChange("arguments", newValue);
   };
   if (props.action) {
