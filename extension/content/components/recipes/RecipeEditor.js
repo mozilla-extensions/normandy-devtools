@@ -20,12 +20,12 @@ import { useSelectedEnvironmentAPI } from "devtools/contexts/environment";
 export default function RecipeEditor(props) {
   const { match } = props;
   const api = useSelectedEnvironmentAPI();
-  let [data, setData] = useState({});
-  let [actions, setActions] = useState([]);
+  const [data, setData] = useState({ arguments: {} });
+  const [actions, setActions] = useState([]);
 
   async function getActionsOptions() {
-    let res = await api.fetchActions(3);
-    let actions = res.results.map(action => ({
+    const res = await api.fetchActions();
+    const actions = res.results.map(action => ({
       label: action.name,
       value: action.id,
     }));
@@ -34,7 +34,7 @@ export default function RecipeEditor(props) {
   }
 
   async function getRecipe(id) {
-    const recipe = await api.fetchRecipe(id, 3);
+    const recipe = await api.fetchRecipe(id);
     setData(recipe.latest_revision);
   }
 
