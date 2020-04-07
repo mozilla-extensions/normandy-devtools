@@ -126,7 +126,7 @@ export default function RecipeEditor(props) {
         </FormGroup>
         <ActionArgument
           name="arguments"
-          value={JSON.stringify(data.arguments, null, 1)}
+          value={JSON.stringify(data.arguments, null, 2)}
           handleChange={handleChange}
           action={data.action ? data.action.id : null}
         />
@@ -145,13 +145,12 @@ export default function RecipeEditor(props) {
 
 function ActionArgument(props) {
   const handleArgumentChange = (editor, data, value) => {
-    let newValue = {};
     try {
-      newValue = JSON.parse(value);
+      const newValue = JSON.parse(value);
+      props.handleChange("arguments", newValue);
     } catch (ex) {
       // Do nothing
     }
-    props.handleChange("arguments", newValue);
   };
   if (props.action) {
     return (
