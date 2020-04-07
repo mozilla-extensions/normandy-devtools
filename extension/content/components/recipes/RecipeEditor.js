@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createRef } from "react";
 import PropTypes from "prop-types";
 import {
   Alert,
@@ -22,6 +22,7 @@ export default function RecipeEditor(props) {
   const api = useSelectedEnvironmentAPI();
   const [data, setData] = useState({ arguments: {} });
   const [actions, setActions] = useState([]);
+  const argumentsRef = createRef();
 
   async function getActionsOptions() {
     const res = await api.fetchActions();
@@ -60,25 +61,37 @@ export default function RecipeEditor(props) {
 
   const handleSubmit = () => {
     const id = match.params.id;
-    const requestBody = formatRequestBody();
-    const requestSave = api.saveRecipe(id, requestBody);
+    try {
+      const requestBody = formatRequestBody();
 
-    requestSave
-      .then(() => {
-        location.replace("/content.html#");
-        Alert.success("Changes Saved");
-      })
-      .catch(err => {
-        Alert.error(`An Error Occurred: ${JSON.stringify(err.data)}`, 5000);
-      });
+      const requestSave = api.saveRecipe(id, requestBody);
+
+      requestSave
+        .then(() => {
+          location.replace("/content.html#");
+          Alert.success("Changes Saved");
+        })
+        .catch(err => {
+          Alert.error(`An Error Occurred: ${JSON.stringify(err.data)}`, 5000);
+        });
+    } catch (err) {
+      Alert.error(err.message);
+    }
   };
 
   const formatRequestBody = () => {
     /* eslint-disable no-unused-vars */
-    const { ["comment"]: _omitData, ...requestBody } = data;
+    const { comment: _omitComment, ...cleanedData } = data;
     /* eslint-enable no-unused-vars */
-    requestBody.action_id = data.action.id;
-    return requestBody;
+    cleanedData.action_id = data.action.id;
+    try {
+      cleanedData.arguments = JSON.parse(
+        argumentsRef.current.editor.getValue(),
+      );
+    } catch {
+      throw new Error("Action arguments is not valid JSON");
+    }
+    return cleanedData;
   };
 
   return (
@@ -127,8 +140,8 @@ export default function RecipeEditor(props) {
         <ActionArgument
           name="arguments"
           value={JSON.stringify(data.arguments, null, 2)}
-          handleChange={handleChange}
           action={data.action ? data.action.id : null}
+          ref={argumentsRef}
         />
         <ButtonToolbar>
           <Button appearance="primary" onClick={handleSubmit}>
@@ -143,39 +156,27 @@ export default function RecipeEditor(props) {
   );
 }
 
-function ActionArgument(props) {
-  const handleArgumentChange = (editor, data, value) => {
-    try {
-      const newValue = JSON.parse(value);
-      props.handleChange("arguments", newValue);
-    } catch (ex) {
-      // Do nothing
-    }
-  };
-  if (props.action) {
-    return (
-      <FormGroup>
-        <ControlLabel>Action Arguments</ControlLabel>
-        <CodeMirrorUC
-          name={props.name}
-          options={{
-            mode: "javascript",
-            theme: "neo",
-            lineNumbers: true,
-            lineWrapping: true,
-            styleActiveLine: true,
-          }}
-          style={{
-            height: "auto",
-          }}
-          value={props.value}
-          onChange={handleArgumentChange}
-        />
-      </FormGroup>
-    );
-  }
-  return null;
-}
+const ActionArgument = React.forwardRef((props, ref) => (
+  <FormGroup>
+    <ControlLabel>Action Arguments</ControlLabel>
+    <CodeMirrorUC
+      name={props.name}
+      options={{
+        mode: "javascript",
+        theme: "neo",
+        lineNumbers: true,
+        lineWrapping: true,
+        styleActiveLine: true,
+      }}
+      style={{
+        height: "auto",
+      }}
+      value={props.value}
+      ref={ref}
+    />
+  </FormGroup>
+));
+ActionArgument.displayName = "ActionArgument";
 
 ActionArgument.propTypes = {
   name: PropTypes.string,
