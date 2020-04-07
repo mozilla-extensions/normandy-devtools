@@ -258,7 +258,6 @@ class RecipesPage extends React.PureComponent {
 
   render() {
     const { page, count } = this.state;
-    const { match } = this.props;
     return (
       <React.Fragment>
         <Header>
@@ -266,7 +265,7 @@ class RecipesPage extends React.PureComponent {
             <Nav pullRight>
               <Nav.Item
                 componentClass={Link}
-                to={`${match.path}/new`}
+                to={"recipes/new"}
                 icon={<Icon icon="edit" />}
               >
                 Create Recipe

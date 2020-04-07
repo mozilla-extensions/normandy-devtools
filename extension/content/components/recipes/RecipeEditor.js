@@ -11,7 +11,10 @@ import {
   HelpBlock,
   InputPicker,
 } from "rsuite";
-import { Controlled as CodeMirror } from "react-codemirror2";
+import {
+  UnControlled as CodeMirrorUC,
+  Controlled as CodeMirror,
+} from "react-codemirror2";
 import { useSelectedEnvironmentAPI } from "devtools/contexts/environment";
 
 export default function RecipeEditor(props) {
@@ -43,13 +46,13 @@ export default function RecipeEditor(props) {
   }, []);
 
   const handleActionIDChange = value => {
-    if (data.action) {
-      data.action.id = value;
-      setData({ ...data });
-    } else {
-      data.action = { id: value };
-      setData({ ...data });
-    }
+    setData({
+      ...data,
+      action: {
+        ...data.action,
+        id: value,
+      },
+    });
   };
   const handleChange = (key, value) => {
     setData({ ...data, [key]: value });
@@ -141,11 +144,16 @@ export default function RecipeEditor(props) {
 }
 
 function ActionArgument(props) {
+  const handleArgumentChange = (editor, data, value) => {
+    let newValue = {};
+    newValue = JSON.parse(value);
+    props.handleChange("arguments", newValue);
+  };
   if (props.action) {
     return (
       <FormGroup>
         <ControlLabel>Action Arguments</ControlLabel>
-        <CodeMirror
+        <CodeMirrorUC
           name={props.name}
           options={{
             mode: "javascript",
@@ -158,9 +166,7 @@ function ActionArgument(props) {
             height: "auto",
           }}
           value={props.value}
-          onBeforeChange={(editor, data, value) =>
-            props.handleChange(props.name, JSON.parse(value))
-          }
+          onChange={handleArgumentChange}
         />
       </FormGroup>
     );

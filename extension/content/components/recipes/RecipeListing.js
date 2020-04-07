@@ -18,7 +18,6 @@ class RecipeListing extends React.PureComponent {
     recipe: PropTypes.object.isRequired,
     copyRecipeToArbitrary: PropTypes.func.isRequired,
     showRecipe: PropTypes.func,
-    match: PropTypes.object,
   };
 
   constructor(props) {
@@ -153,11 +152,11 @@ class RecipeListing extends React.PureComponent {
   }
 
   renderRecipeButtonToolBar() {
-    const { match, recipe } = this.props;
+    const { recipe } = this.props;
 
     return (
       <ButtonToolbar>
-        <Button componentClass={Link} to={`${match.path}/edit/${recipe.id}`}>
+        <Button componentClass={Link} to={`recipes/edit/${recipe.id}`}>
           Edit Recipe
         </Button>
 
