@@ -2,7 +2,9 @@
 
 @media (prefers-color-scheme: light) {
   :root {
-    --cm-background: @body-bg;
+    --cm-background: @input-bg;
+    --cm-border: @input-border;
+    --cm-border-focus: @input-border-focus;
     --cm-color: @text-color;
     --cm-color-comment: @color-protocol-light-gray-70;
     --cm-color-blue: @color-protocol-blue-40;
@@ -17,7 +19,9 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --cm-background: @body-bg;
+    --cm-background: @input-bg;
+    --cm-border: @input-border;
+    --cm-border-focus: @input-border-focus;
     --cm-color: @text-color;
     --cm-color-comment: @color-protocol-light-gray-70;
     --cm-color-blue: @color-protocol-blue-40;
@@ -35,8 +39,14 @@
 
   &.CodeMirror {
     background-color: var(--cm-background);
+    border: 1px solid var(--cm-border);
+    border-radius: @input-border-radius;
     color: var(--cm-color);
     line-height: 1.4375;
+
+    &.CodeMirror-focused {
+      border-color: var(--cm-border-focus);
+    }
   }
 
   .cm-comment {
