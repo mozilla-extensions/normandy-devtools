@@ -64,6 +64,10 @@ The Auth0 client ID used by your local instance of Normandy server.
 The Auth0 domain of the tenant used by your local instance of Normandy 
 server.
 
+#### NDT_LOCAL_EXPERIMENTER_URL
+
+The URL for your local instance of Experimenter.
+
 # Development
 
 You'll need to use Nightly and about:debugging to use unsigned development
