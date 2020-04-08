@@ -5,6 +5,7 @@ import { Icon, Nav, Sidenav } from "rsuite";
 
 import AppHeader from "devtools/components/common/AppHeader";
 import RecipesPage from "devtools/components/pages/RecipesPage";
+import RecipeEditor from "devtools/components/recipes/RecipeEditor";
 import FiltersPage from "devtools/components/pages/FiltersPage";
 import PrefStudiesPage from "devtools/components/pages/PrefStudiesPage";
 import AddonStudiesPage from "devtools/components/pages/AddonStudiesPage";
@@ -61,6 +62,9 @@ export default function App(props) {
                     path="/"
                     render={() => <Redirect to="/recipes" />}
                   />
+
+                  <Route path="/recipes/edit/:id" component={RecipeEditor} />
+                  <Route path="/recipes/new" component={RecipeEditor} />
                   <Route path="/recipes" component={RecipesPage} />
                   <Route path="/filters" component={FiltersPage} />
                   <Route path="/pref-studies" component={PrefStudiesPage} />

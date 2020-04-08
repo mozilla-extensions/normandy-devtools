@@ -1,6 +1,7 @@
 export default class NormandyAPI {
-  constructor(environment) {
+  constructor(environment, auth) {
     this.environment = environment;
+    this.auth = auth;
   }
 
   getBaseUrl({ version = 3, mode }) {
@@ -34,6 +35,13 @@ export default class NormandyAPI {
     );
     const mode = isReadOperation ? "r" : "w";
     const apiUrl = new URL(url, this.getBaseUrl({ version, mode }));
+
+    if (!isReadOperation) {
+      settings.headers.append(
+        "Authorization",
+        `Bearer  ${this.auth.result.accessToken}`,
+      );
+    }
 
     if ("data" in settings) {
       if ("body" in settings) {
@@ -90,10 +98,29 @@ export default class NormandyAPI {
     });
   }
 
-  async fetchRecipe(id, { version = 3 }) {
+  async fetchRecipe(id) {
     return this.request({
       url: `recipe/${id}/`,
-      version,
+    });
+  }
+
+  async saveRecipe(id, data) {
+    let url = "recipe/";
+    let method = "POST";
+    if (id) {
+      url = `recipe/${id}/`;
+      method = "PUT";
+    }
+    return this.request({
+      url,
+      method,
+      data,
+    });
+  }
+
+  async fetchActions() {
+    return this.request({
+      url: "action/",
     });
   }
 }

@@ -1,6 +1,8 @@
 import autobind from "autobind-decorator";
 import PropTypes from "prop-types";
 import React from "react";
+import { Link } from "react-router-dom";
+
 import { Controlled as CodeMirror } from "react-codemirror2";
 import Highlight from "devtools/components/common/Highlight";
 import {
@@ -32,6 +34,7 @@ class RecipesPage extends React.PureComponent {
     environment: PropTypes.object,
     environmentKey: PropTypes.string,
     environments: PropTypes.object,
+    match: PropTypes.object,
   };
 
   constructor(props) {
@@ -119,9 +122,8 @@ class RecipesPage extends React.PureComponent {
 
   renderRecipeList() {
     const { loading, page, recipePages } = this.state;
-    const { environmentKey } = this.props;
+    const { environmentKey, match } = this.props;
     const { [environmentKey]: { [page]: recipes = [] } = {} } = recipePages;
-
     if (loading) {
       return (
         <div className="text-center">
@@ -136,6 +138,7 @@ class RecipesPage extends React.PureComponent {
           environmentName={environmentKey}
           copyRecipeToArbitrary={this.copyRecipeToArbitrary}
           showRecipe={this.showRecipe}
+          match={match}
         />
       ));
     }
@@ -254,13 +257,19 @@ class RecipesPage extends React.PureComponent {
   }
 
   render() {
-    const { count, page } = this.state;
-
+    const { page, count } = this.state;
     return (
       <React.Fragment>
         <Header>
           <Navbar>
             <Nav pullRight>
+              <Nav.Item
+                componentClass={Link}
+                to={"recipes/new"}
+                icon={<Icon icon="edit" />}
+              >
+                Create Recipe
+              </Nav.Item>
               <Nav.Item
                 icon={<Icon icon="edit" />}
                 onClick={this.showWriteRecipePopup}
