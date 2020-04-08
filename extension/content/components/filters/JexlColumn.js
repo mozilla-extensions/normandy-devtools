@@ -1,7 +1,8 @@
 import autobind from "autobind-decorator";
 import PropTypes from "prop-types";
 import React from "react";
-import { Controlled as CodeMirror } from "react-codemirror2";
+
+import CodeMirror from "devtools/components/common/CodeMirror";
 
 @autobind
 class JexlColumn extends React.PureComponent {
@@ -37,19 +38,18 @@ class JexlColumn extends React.PureComponent {
           <strong>JEXL Filter Expression</strong>
         </header>
         <CodeMirror
-          editorDidMount={this.handleEditorMounted}
-          onBlur={this.handleBlur}
+          value={filterExpression}
           options={{
             mode: "javascript",
-            theme: "ndt",
             lineNumbers: false,
             styleActiveLine: true,
             gutters: [],
           }}
-          value={filterExpression}
           style={{
             height: "auto",
           }}
+          editorDidMount={this.handleEditorMounted}
+          onBlur={this.handleBlur}
           onBeforeChange={onBeforeChange}
           onCursorActivity={onCursorActivity}
         />

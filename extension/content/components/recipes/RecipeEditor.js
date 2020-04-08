@@ -11,11 +11,9 @@ import {
   HelpBlock,
   InputPicker,
 } from "rsuite";
-import {
-  UnControlled as CodeMirrorUC,
-  Controlled as CodeMirror,
-} from "react-codemirror2";
+
 import { useSelectedEnvironmentAPI } from "devtools/contexts/environment";
+import CodeMirror from "devtools/components/common/CodeMirror";
 
 export default function RecipeEditor(props) {
   const { match } = props;
@@ -109,16 +107,9 @@ export default function RecipeEditor(props) {
         <FormGroup>
           <ControlLabel>Extra Filter Expression</ControlLabel>
           <CodeMirror
-            name="extra_filter_expression"
             options={{
               mode: "javascript",
-              theme: "neo",
               lineNumbers: true,
-              lineWrapping: true,
-              styleActiveLine: true,
-            }}
-            style={{
-              height: "auto",
             }}
             value={data.extra_filter_expression}
             onBeforeChange={(editor, data, value) =>
@@ -138,7 +129,6 @@ export default function RecipeEditor(props) {
           />
         </FormGroup>
         <ActionArgument
-          name="arguments"
           value={JSON.stringify(data.arguments, null, 2)}
           action={data.action ? data.action.id : null}
           ref={argumentsRef}
@@ -156,35 +146,38 @@ export default function RecipeEditor(props) {
   );
 }
 
-const ActionArgument = React.forwardRef((props, ref) => (
-  <FormGroup>
-    <ControlLabel>Action Arguments</ControlLabel>
-    <CodeMirrorUC
-      name={props.name}
-      options={{
-        mode: "javascript",
-        theme: "neo",
-        lineNumbers: true,
-        lineWrapping: true,
-        styleActiveLine: true,
-      }}
-      style={{
-        height: "auto",
-      }}
-      value={props.value}
-      ref={ref}
-    />
-  </FormGroup>
-));
-ActionArgument.displayName = "ActionArgument";
+RecipeEditor.propTypes = {
+  match: PropTypes.object,
+};
 
+const ActionArgument = React.forwardRef((props, ref) => {
+  if (!props.action) {
+    return null;
+  }
+
+  return (
+    <FormGroup>
+      <ControlLabel>Action Arguments</ControlLabel>
+      <CodeMirror
+        options={{
+          mode: "javascript",
+          lineNumbers: true,
+        }}
+        style={{
+          height: "auto",
+        }}
+        value={props.value}
+        ref={ref}
+        uncontrolled
+      />
+    </FormGroup>
+  );
+});
+
+ActionArgument.displayName = "ActionArgument";
 ActionArgument.propTypes = {
   name: PropTypes.string,
   action: PropTypes.integer,
   value: PropTypes.object,
   handleChange: PropTypes.func,
-};
-
-RecipeEditor.propTypes = {
-  match: PropTypes.object,
 };
