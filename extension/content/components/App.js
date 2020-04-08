@@ -70,7 +70,7 @@ export default function App(props) {
                   <Route path="/pref-studies" component={PrefStudiesPage} />
                   <Route path="/addon-studies" component={AddonStudiesPage} />
                   <Route
-                    render={args => (
+                    render={(args) => (
                       <>
                         <span>404</span>
                         <pre>

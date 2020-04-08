@@ -32,14 +32,14 @@ export default class PrefStudiesPage extends React.PureComponent {
         <React.Fragment>
           <h3>Active</h3>
           {studies
-            .filter(study => !study.expired)
-            .map(study => (
+            .filter((study) => !study.expired)
+            .map((study) => (
               <AddonStudy key={study.id} study={study} />
             ))}
           <h3>Expired</h3>
           {studies
-            .filter(study => study.expired)
-            .map(study => (
+            .filter((study) => study.expired)
+            .map((study) => (
               <AddonStudy key={study.id} study={study} />
             ))}
         </React.Fragment>

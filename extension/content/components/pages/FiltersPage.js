@@ -141,7 +141,7 @@ class FiltersPage extends React.PureComponent {
         </div>
         <div className="col">
           <JexlColumn
-            ref={ref => {
+            ref={(ref) => {
               this.jexlColumn = ref;
             }}
             filterExpression={filterExpression}

@@ -25,7 +25,7 @@ class JexlColumn extends React.PureComponent {
   handleBlur() {
     document
       .querySelectorAll(".filter-column .CodeMirror-cursors")
-      .forEach(node => {
+      .forEach((node) => {
         node.style.visibility = "visible";
       });
   }

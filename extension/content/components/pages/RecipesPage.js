@@ -41,7 +41,7 @@ class RecipesPage extends React.PureComponent {
     super(props);
 
     const recipePages = {};
-    Object.keys(props.environments).forEach(v => {
+    Object.keys(props.environments).forEach((v) => {
       recipePages[v] = {};
     });
 
@@ -131,7 +131,7 @@ class RecipesPage extends React.PureComponent {
         </div>
       );
     } else if (recipes) {
-      return recipes.map(recipe => (
+      return recipes.map((recipe) => (
         <RecipeListing
           key={recipe.id}
           recipe={recipe}

@@ -83,7 +83,7 @@ function AddressBar() {
       <Input
         type="text"
         value={address}
-        onChange={value => setAddress(value)}
+        onChange={(value) => setAddress(value)}
         onKeyPress={handleKeyPress}
       />
       <InputGroup.Button>
@@ -97,7 +97,7 @@ function EnvironmentConfigurator() {
   const [showEnvironmentModal, setShowEnvironmentModal] = React.useState(false);
 
   const environments = useEnvironments();
-  const envOptions = Object.keys(environments).map(key => ({
+  const envOptions = Object.keys(environments).map((key) => ({
     label: upperCaseFirst(key),
     value: key,
   }));
@@ -135,7 +135,7 @@ function EnvironmentConfigurator() {
                 defaultValue={selectedKey}
                 searchable={false}
                 cleanable={false}
-                onChange={key => {
+                onChange={(key) => {
                   dispatch({
                     type: ACTION_SELECT_ENVIRONMENT,
                     key,

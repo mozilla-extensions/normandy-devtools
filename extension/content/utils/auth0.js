@@ -36,7 +36,7 @@ export function generateNonce(length) {
     const bytes = new Uint8Array(16);
     const random = window.crypto.getRandomValues(bytes);
 
-    random.forEach(function(c) {
+    random.forEach(function (c) {
       if (length == 0) {
         return;
       }

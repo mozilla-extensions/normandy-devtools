@@ -199,7 +199,7 @@ var normandy = class extends ExtensionAPI {
           onManualMode: new EventManager({
             context,
             name: "normandy.onManualMode",
-            register: fire => {
+            register: (fire) => {
               const observer = {
                 observe(subject, topic) {
                   switch (topic) {
@@ -221,7 +221,7 @@ var normandy = class extends ExtensionAPI {
           onNormandyLog: new EventManager({
             context,
             name: "normandy.onNormandyLog",
-            register: fire => {
+            register: (fire) => {
               const messageLevels = ["debug", "info", "warn", "error"];
 
               const observer = {

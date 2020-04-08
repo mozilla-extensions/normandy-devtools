@@ -26,7 +26,7 @@ export default class Highlight extends Component {
       <pre className={className} style={style}>
         <code
           className={language}
-          ref={ref => {
+          ref={(ref) => {
             this.codeRef = ref;
           }}
         >

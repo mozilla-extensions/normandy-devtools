@@ -19,7 +19,7 @@ const AUTH_EXPIRES_AT_KEY_RE = /^environment\.([^.]+?)\.auth.expiresAt$/;
 const initialEnvironments = ENVIRONMENTS;
 const initialAuth = {};
 
-Object.keys(localStorage).forEach(k => {
+Object.keys(localStorage).forEach((k) => {
   const match = k.match(ENV_CONFIG_KEY_RE);
   if (match) {
     const key = match[1];
@@ -27,7 +27,7 @@ Object.keys(localStorage).forEach(k => {
   }
 });
 
-Object.keys(initialEnvironments).forEach(k => {
+Object.keys(initialEnvironments).forEach((k) => {
   initialAuth[k] = {
     result: JSON.parse(localStorage.getItem(`environment.${k}.auth.result`)),
     expiresAt: JSON.parse(
@@ -134,7 +134,7 @@ export function EnvironmentProvider({ children }) {
 
   // Add event listener for changes to local storage
   React.useEffect(() => {
-    window.addEventListener("storage", ev => {
+    window.addEventListener("storage", (ev) => {
       [
         [ENV_CONFIG_KEY_RE, ACTION_UPDATE_ENVIRONMENT, "config"],
         [AUTH_EXPIRES_AT_KEY_RE, ACTION_UPDATE_AUTH_EXPIRES_AT, "expiresAt"],
@@ -202,7 +202,7 @@ export function updateEnvironment(dispatch, key, config) {
     localStorage.setItem(storageKey, JSON.stringify(config));
   } else {
     localStorage.removeItem(storageKey);
-    Object.keys(localStorage).forEach(k => {
+    Object.keys(localStorage).forEach((k) => {
       if (k.startsWith(`environment.${key}.`)) {
         localStorage.removeItem(k);
       }
@@ -265,10 +265,7 @@ export async function login(dispatch, selectedKey, environment) {
     }),
   });
 
-  const hash = redirectUri
-    .split("#")
-    .splice(1)
-    .join("#");
+  const hash = redirectUri.split("#").splice(1).join("#");
 
   return new Promise((resolve, reject) => {
     webAuth.parseHash(
