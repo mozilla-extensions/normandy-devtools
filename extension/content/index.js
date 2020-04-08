@@ -32,7 +32,7 @@ if (!root) {
   style.innerHTML = "#root { display: none }";
   document.body.appendChild(style);
 
-  ["light", "dark"].forEach(theme => {
+  ["light", "dark"].forEach((theme) => {
     const styleLink = document.createElement("link");
     styleLink.setAttribute("href", `${theme}-theme.css`);
     styleLink.setAttribute("rel", "stylesheet");

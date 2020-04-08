@@ -26,7 +26,7 @@ export default function RecipeEditor(props) {
 
   async function getActionsOptions() {
     const res = await api.fetchActions();
-    const actions = res.results.map(action => ({
+    const actions = res.results.map((action) => ({
       label: action.name,
       value: action.id,
     }));
@@ -46,7 +46,7 @@ export default function RecipeEditor(props) {
     }
   }, []);
 
-  const handleActionIDChange = value => {
+  const handleActionIDChange = (value) => {
     setData({
       ...data,
       action: {
@@ -71,7 +71,7 @@ export default function RecipeEditor(props) {
           location.replace("/content.html#");
           Alert.success("Changes Saved");
         })
-        .catch(err => {
+        .catch((err) => {
           Alert.error(`An Error Occurred: ${JSON.stringify(err.data)}`, 5000);
         });
     } catch (err) {
@@ -96,7 +96,7 @@ export default function RecipeEditor(props) {
 
   return (
     <div className="page-wrapper">
-      <Form fluid formValue={data} onChange={data => setData(data)}>
+      <Form fluid formValue={data} onChange={(data) => setData(data)}>
         <FormGroup>
           <ControlLabel>Name</ControlLabel>
           <FormControl name="name" data-testid="recipeName" />
@@ -134,7 +134,7 @@ export default function RecipeEditor(props) {
             data={actions}
             block
             value={data.action ? data.action.id : null}
-            onChange={value => handleActionIDChange(value)}
+            onChange={(value) => handleActionIDChange(value)}
           />
         </FormGroup>
         <ActionArgument

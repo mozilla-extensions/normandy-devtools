@@ -99,7 +99,7 @@ class RecipeListing extends React.PureComponent {
     let hoverText = "loading...";
     if (recipeSuitabilities) {
       hoverText = recipeSuitabilities
-        .map(s => s.replace("RECIPE_SUITABILITY_", ""))
+        .map((s) => s.replace("RECIPE_SUITABILITY_", ""))
         .join("\n");
     }
 
