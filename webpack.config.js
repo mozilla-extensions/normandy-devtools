@@ -46,7 +46,11 @@ module.exports = async (env, argv = {}) => {
       title: "Normandy Devtools",
       favicon: path.resolve(__dirname, "extension/images/favicon.png"),
       filename: "content.html",
-      chunks: ["content"],
+      chunks: ["content", ...(development ? ["react-devtools"] : [])],
+      chunksSortMode(a, b) {
+        const order = ["react-devtools", "content"];
+        return order.indexOf(a) - order.indexOf(b);
+      },
     }),
     new HtmlWebpackPlugin({
       title: "Redirect",
@@ -77,6 +81,7 @@ module.exports = async (env, argv = {}) => {
   ];
 
   if (development) {
+    entry["react-devtools"] = "react-devtools";
     entry.restore = "./extension/content/restore.ts";
 
     plugins.push(
