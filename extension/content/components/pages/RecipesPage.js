@@ -258,6 +258,8 @@ class RecipesPage extends React.PureComponent {
 
   render() {
     const { page, count } = this.state;
+    const { environmentKey } = this.props;
+
     return (
       <React.Fragment>
         <Header>
@@ -265,7 +267,7 @@ class RecipesPage extends React.PureComponent {
             <Nav pullRight>
               <Nav.Item
                 componentClass={Link}
-                to={"recipes/new"}
+                to={`/${environmentKey}/recipes/new`}
                 icon={<Icon icon="edit" />}
               >
                 Create Recipe
