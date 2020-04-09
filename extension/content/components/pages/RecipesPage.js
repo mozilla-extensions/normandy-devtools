@@ -3,8 +3,6 @@ import PropTypes from "prop-types";
 import React from "react";
 import { Link } from "react-router-dom";
 
-import { Controlled as CodeMirror } from "react-codemirror2";
-import Highlight from "devtools/components/common/Highlight";
 import {
   Button,
   Header,
@@ -16,6 +14,8 @@ import {
   Pagination,
 } from "rsuite";
 
+import CodeMirror from "devtools/components/common/CodeMirror";
+import Highlight from "devtools/components/common/Highlight";
 import RecipeListing from "devtools/components/recipes/RecipeListing";
 import {
   useEnvironments,
@@ -115,7 +115,7 @@ class RecipesPage extends React.PureComponent {
     const { environmentKey } = this.props;
     const v1Recipe = convertToV1Recipe(v3Recipe, environmentKey);
     this.setState({
-      arbitraryRecipe: JSON.stringify(v1Recipe, null, 4),
+      arbitraryRecipe: JSON.stringify(v1Recipe, null, 2),
       showWriteRecipes: true,
     });
   }
@@ -217,14 +217,9 @@ class RecipesPage extends React.PureComponent {
           <CodeMirror
             options={{
               mode: "javascript",
-              theme: "neo",
               lineNumbers: true,
-              styleActiveLine: true,
             }}
             value={arbitraryRecipe}
-            style={{
-              height: "auto",
-            }}
             onBeforeChange={this.handleArbitraryRecipeChange}
           />
         </Modal.Body>
