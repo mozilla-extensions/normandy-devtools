@@ -12,41 +12,48 @@ Object.keys(ENVIRONMENTS).forEach((k) => {
   }
 });
 
-const injectionSite = document.getElementById(
-  "ndt-export-button-injection-site",
-);
+function injectImportLink(element, environment) {
+  const { environmentKey } = environment;
+  element.setAttribute(
+    "href",
+    `ext+normandy://${environmentKey}/recipes/import/${element.dataset.slug}`,
+  );
+}
 
-// If an injection site exists we must be on Experimenter so attempt to inject the button
-if (injectionSite) {
+function injectRecipeDetailsLinks(element, environment) {
+  const { environmentKey } = environment;
+  element.setAttribute(
+    "href",
+    `ext+normandy://${environmentKey}/recipes/${element.dataset.recipeId}`,
+  );
+}
+
+if (document.body.dataset.ndt === "experimenter") {
+  document.querySelectorAll("[data-ndt-add-class]").forEach((el) => {
+    el.classList.add(el.dataset.ndtAddClass);
+  });
+
+  document.querySelectorAll("[data-ndt-remove-class]").forEach((el) => {
+    el.classList.remove(el.dataset.ndtRemoveClass);
+  });
+
   Object.keys(experimenterUrls).forEach((url) => {
     if (window.location.href.startsWith(url)) {
-      injectionSite.innerHTML = ""; // Make sure the injection site is clear
+      document.querySelectorAll("[data-ndt-inject]").forEach((el) => {
+        let injector;
+        switch (el.dataset.ndtInject) {
+          case "recipe-details-link":
+            injector = injectRecipeDetailsLinks;
+            break;
 
-      // Hide the existing export button
-      const oldButton = document.querySelector(
-        '[data-target="#normandyModal"]',
-      );
-      if (oldButton) {
-        oldButton.classList.add("d-none");
-      }
-
-      // Create the new button
-      const experimenterSlug = injectionSite.dataset.slug;
-      const { environmentKey } = experimenterUrls[url];
-      const exportButton = document.createElement("a");
-      exportButton.classList.add("col", "btn", "btn-primary", "mb-3");
-      exportButton.setAttribute("target", "_blank");
-      exportButton.setAttribute(
-        "href",
-        `ext+normandy://${environmentKey}/recipes/import/${experimenterSlug}`,
-      );
-      exportButton.textContent = "Export to Normandy";
-
-      const exportButtonIcon = document.createElement("span");
-      exportButtonIcon.classList.add("fas", "fa-file-import", "mr-2");
-      exportButton.prepend(exportButtonIcon);
-
-      injectionSite.appendChild(exportButton);
+          case "import-link":
+            injector = injectImportLink;
+            break;
+        }
+        if (injector) {
+          injector(el, experimenterUrls[url]);
+        }
+      });
     }
   });
 }
