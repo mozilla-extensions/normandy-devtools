@@ -14,12 +14,14 @@ import {
 
 import { useSelectedEnvironmentAPI } from "devtools/contexts/environment";
 import CodeMirror from "devtools/components/common/CodeMirror";
+import FilterObjects from "devtools/components/recipes/FilterObjects";
 
 export default function RecipeEditor(props) {
   const { match } = props;
   const api = useSelectedEnvironmentAPI();
   const [data, setData] = useState({ arguments: {} });
   const [actions, setActions] = useState([]);
+  const [filters, setFilters] = useState({});
   const argumentsRef = createRef();
 
   async function getActionsOptions() {
@@ -32,6 +34,18 @@ export default function RecipeEditor(props) {
     setActions(actions);
   }
 
+  async function getFilterOptions() {
+    const res = await api.fetchFilters();
+    const filters = {
+      countries: res.countries.map((entry) => {
+        return { label: `${entry.key}(${entry.value})`, value: `${entry.key}` };
+      }),
+      locales: res.locales.map((entry) => {
+        return { label: `${entry.key}(${entry.value})`, value: `${entry.key}` };
+      }),
+    };
+    setFilters(filters);
+  }
   async function getRecipe(id) {
     const recipe = await api.fetchRecipe(id);
     setData(recipe.latest_revision);
@@ -39,6 +53,7 @@ export default function RecipeEditor(props) {
 
   useEffect(() => {
     getActionsOptions();
+    getFilterOptions();
     if (match.params.id) {
       getRecipe(match.params.id);
     }
@@ -104,6 +119,12 @@ export default function RecipeEditor(props) {
           <ControlLabel>Experimenter Slug</ControlLabel>
           <FormControl name="experimenter_slug" data-testid="experimentSlug" />
         </FormGroup>
+        <FilterObjects
+          filterObjectData={data.filter_object ? data.filter_object : []}
+          countryOptions={filters ? filters.countries : []}
+          localeOptions={filters ? filters.locales : []}
+          handleChange={handleChange}
+        />
         <FormGroup>
           <ControlLabel>Extra Filter Expression</ControlLabel>
           <CodeMirror

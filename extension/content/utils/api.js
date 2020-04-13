@@ -123,6 +123,10 @@ export default class NormandyAPI {
       url: "action/",
     });
   }
+
+  async fetchFilters() {
+    return this.request({ url: "filters/" });
+  }
 }
 
 export class RequestError extends Error {
