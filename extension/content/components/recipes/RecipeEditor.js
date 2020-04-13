@@ -14,6 +14,8 @@ import {
 
 import { useSelectedEnvironmentAPI } from "devtools/contexts/environment";
 import CodeMirror from "devtools/components/common/CodeMirror";
+import ConsoleLog from "devtools/components/recipes/arguments/ConsoleLog";
+import { JsonArgs } from "devtools/components/recipes/arguments/JsonArgs";
 
 export default function RecipeEditor(props) {
   const { match } = props;
@@ -82,14 +84,39 @@ export default function RecipeEditor(props) {
     const { comment: _omitComment, ...cleanedData } = data;
     /* eslint-enable no-unused-vars */
     cleanedData.action_id = data.action.id;
-    try {
-      cleanedData.arguments = JSON.parse(
-        argumentsRef.current.editor.getValue(),
-      );
-    } catch {
-      throw new Error("Action arguments is not valid JSON");
-    }
+    handleArguments(cleanedData);
     return cleanedData;
+  };
+
+  const handleArguments = (cleanedData) => {
+    if (argumentsRef.current) {
+      try {
+        cleanedData.arguments = JSON.parse(
+          argumentsRef.current.editor.getValue(),
+        );
+      } catch {
+        throw new Error("Action arguments is not valid JSON");
+      }
+    }
+  };
+
+  const argumentOption = () => {
+    const actionType = { CONSOLE_LOG: 4 };
+    if (!data.action) {
+      return null;
+    }
+
+    let ArgField;
+    let argProps = { value: data.arguments, handleChange };
+    switch (data.action.id) {
+      case actionType.CONSOLE_LOG:
+        ArgField = ConsoleLog;
+        break;
+      default:
+        ArgField = JsonArgs;
+        argProps = { value: data.arguments, ref: argumentsRef };
+    }
+    return <ArgField {...argProps} />;
   };
 
   return (
@@ -128,11 +155,7 @@ export default function RecipeEditor(props) {
             onChange={(value) => handleActionIDChange(value)}
           />
         </FormGroup>
-        <ActionArgument
-          value={JSON.stringify(data.arguments, null, 2)}
-          action={data.action ? data.action.id : null}
-          ref={argumentsRef}
-        />
+        {argumentOption()}
         <ButtonToolbar>
           <Button appearance="primary" onClick={handleSubmit}>
             Submit
@@ -148,36 +171,4 @@ export default function RecipeEditor(props) {
 
 RecipeEditor.propTypes = {
   match: PropTypes.object,
-};
-
-const ActionArgument = React.forwardRef((props, ref) => {
-  if (!props.action) {
-    return null;
-  }
-
-  return (
-    <FormGroup>
-      <ControlLabel>Action Arguments</ControlLabel>
-      <CodeMirror
-        options={{
-          mode: "javascript",
-          lineNumbers: true,
-        }}
-        style={{
-          height: "auto",
-        }}
-        value={props.value}
-        ref={ref}
-        uncontrolled
-      />
-    </FormGroup>
-  );
-});
-
-ActionArgument.displayName = "ActionArgument";
-ActionArgument.propTypes = {
-  name: PropTypes.string,
-  action: PropTypes.integer,
-  value: PropTypes.object,
-  handleChange: PropTypes.func,
 };
