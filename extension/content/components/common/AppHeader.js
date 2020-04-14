@@ -18,7 +18,6 @@ import {
 
 import Logo from "devtools/components/svg/Logo";
 import {
-  ACTION_SELECT_ENVIRONMENT,
   login,
   logout,
   useEnvironmentDispatch,
@@ -56,24 +55,36 @@ export default function AppHeader() {
 }
 
 function AddressBar() {
-  function showLocation(location) {
-    return `ext+normandy:/${location.pathname}${location.search}`;
-  }
-
-  function handleKeyPress(ev) {
-    if (ev.key == "Enter") {
-      const internalLocation = address.replaceAll(
-        /^(ext\+normandy:\/*)/gi,
-        "/",
-      );
-      history.push(internalLocation);
-    }
-  }
-
   const location = useLocation();
   const history = useHistory();
   const [address, setAddress] = React.useState("");
-  React.useEffect(() => setAddress(showLocation(location)), [location]);
+  let inputRef;
+  let triggerRef;
+
+  React.useEffect(() => {
+    const newAddress = `ext+normandy:/${location.pathname}${location.search}`;
+    setAddress(newAddress);
+  }, [location]);
+
+  const handleKeyPress = (ev) => {
+    if (ev.key == "Enter") {
+      const addressMatch = address.match(/ext\+normandy:\/(.+?)$/);
+      history.push(addressMatch[1]);
+    }
+  };
+
+  const handleCopyClick = () => {
+    inputRef.select();
+    document.execCommand("copy");
+    inputRef.setSelectionRange(0, 0);
+    inputRef.blur();
+    triggerRef.show();
+    setTimeout(() => {
+      triggerRef.hide();
+    }, 2000);
+  };
+
+  const copyTooltip = <Popover>URL copied to clipboard</Popover>;
 
   return (
     <InputGroup>
@@ -81,14 +92,26 @@ function AddressBar() {
         <Icon icon="link" />
       </InputGroup.Addon>
       <Input
+        inputRef={(ref) => {
+          inputRef = ref;
+        }}
         type="text"
         value={address}
         onChange={(value) => setAddress(value)}
         onKeyPress={handleKeyPress}
       />
-      <InputGroup.Button>
-        <Icon icon="copy" />
-      </InputGroup.Button>
+      <Whisper
+        speaker={copyTooltip}
+        placement="bottom"
+        triggerRef={(ref) => {
+          triggerRef = ref;
+        }}
+        trigger={[]}
+      >
+        <InputGroup.Button onClick={handleCopyClick}>
+          <Icon icon="copy" />
+        </InputGroup.Button>
+      </Whisper>
     </InputGroup>
   );
 }
@@ -103,7 +126,12 @@ function EnvironmentConfigurator() {
   }));
 
   const { selectedKey } = useEnvironmentState();
-  const dispatch = useEnvironmentDispatch();
+  const history = useHistory();
+  const location = useLocation();
+
+  const onEnvironmentChange = (key) => {
+    history.push(location.pathname.replace(/^\/.+?\/(.+?)$/, `/${key}/$1`));
+  };
 
   return (
     <>
@@ -135,12 +163,7 @@ function EnvironmentConfigurator() {
                 defaultValue={selectedKey}
                 searchable={false}
                 cleanable={false}
-                onChange={(key) => {
-                  dispatch({
-                    type: ACTION_SELECT_ENVIRONMENT,
-                    key,
-                  });
-                }}
+                onChange={onEnvironmentChange}
               />
             </FormGroup>
           </Modal.Body>
