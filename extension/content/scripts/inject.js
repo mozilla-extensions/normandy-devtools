@@ -20,7 +20,7 @@ function injectImportLink(element, environment) {
   );
 }
 
-function injectRecipeDetailsLinks(element, environment) {
+function injectRecipeDetailsLink(element, environment) {
   const { environmentKey } = environment;
   element.setAttribute(
     "href",
@@ -43,7 +43,7 @@ if (document.body.dataset.ndt === "experimenter") {
         let injector;
         switch (el.dataset.ndtInject) {
           case "recipe-details-link":
-            injector = injectRecipeDetailsLinks;
+            injector = injectRecipeDetailsLink;
             break;
 
           case "import-link":
