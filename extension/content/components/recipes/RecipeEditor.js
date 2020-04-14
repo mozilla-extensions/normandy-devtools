@@ -46,12 +46,13 @@ export default function RecipeEditor(props) {
     }
   }, []);
 
-  const handleActionIDChange = (value) => {
+  const handleActionIDChange = (value, event) => {
     setData({
       ...data,
       action: {
         ...data.action,
         id: value,
+        name: event.target.innerText,
       },
     });
   };
@@ -101,20 +102,17 @@ export default function RecipeEditor(props) {
   };
 
   const argumentOption = () => {
-    const actionType = { CONSOLE_LOG: 4 };
+    const actionFieldsMapping = { "console-log": ConsoleLog };
     if (!data.action) {
       return null;
     }
 
-    let ArgField;
+    let ArgField = actionFieldsMapping[data.action.name];
     let argProps = { value: data.arguments, handleChange };
-    switch (data.action.id) {
-      case actionType.CONSOLE_LOG:
-        ArgField = ConsoleLog;
-        break;
-      default:
-        ArgField = JsonArgs;
-        argProps = { value: data.arguments, ref: argumentsRef };
+
+    if (!ArgField) {
+      ArgField = JsonArgs;
+      argProps = { value: data.arguments, ref: argumentsRef };
     }
     return <ArgField {...argProps} />;
   };
@@ -152,7 +150,7 @@ export default function RecipeEditor(props) {
             data={actions}
             block
             value={data.action ? data.action.id : null}
-            onChange={(value) => handleActionIDChange(value)}
+            onChange={(value, event) => handleActionIDChange(value, event)}
           />
         </FormGroup>
         {argumentOption()}
