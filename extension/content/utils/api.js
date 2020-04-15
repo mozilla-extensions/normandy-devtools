@@ -1,67 +1,26 @@
-export default class NormandyAPI {
-  constructor(environment, auth) {
+export default class Api {
+  constructor(environment) {
     this.environment = environment;
-    this.auth = auth;
+  }
+  getBaseUrl() {
+    throw new Error("getBaseURL() needs to be implemented");
   }
 
-  getBaseUrl({ version = 3, mode }) {
-    const base =
-      mode.toLowerCase() === "w"
-        ? this.environment.writeableUrl
-        : this.environment.readOnlyUrl;
-
-    return new URL(`api/v${version}/`, base).href;
-  }
-
-  async request({ version = 3, url, extraHeaders, ...options }) {
+  formatHeaders({ extraHeaders, ...options }) {
     const headers = new Headers();
     headers.append("Accept", "application/json");
     if (!(options.body && options.body instanceof FormData)) {
       headers.append("Content-Type", "application/json");
     }
-
-    for (let headerName in extraHeaders) {
-      headers.append(headerName, extraHeaders[headerName]);
-    }
-
-    const settings = {
+    return {
       headers,
       method: "GET",
       ...options,
     };
+  }
 
-    const isReadOperation = ["GET", "HEAD"].includes(
-      settings.method.toUpperCase(),
-    );
-    const mode = isReadOperation ? "r" : "w";
-    const apiUrl = new URL(url, this.getBaseUrl({ version, mode }));
-
-    if (!isReadOperation) {
-      settings.headers.append(
-        "Authorization",
-        `Bearer  ${this.auth.result.accessToken}`,
-      );
-    }
-
-    if ("data" in settings) {
-      if ("body" in settings) {
-        throw new Error(
-          "Only pass one of `settings.data` and `settings.body`.",
-        );
-      }
-
-      if (isReadOperation) {
-        Object.entries(settings.data).forEach(([key, value]) => {
-          apiUrl.searchParams.append(key, value);
-        });
-      } else {
-        settings.body = JSON.stringify(settings.data);
-      }
-
-      delete settings.data;
-    }
-
-    const response = await fetch(apiUrl, settings);
+  async request(url, settings) {
+    const response = await fetch(url, settings);
 
     if (!response.ok) {
       let message;
@@ -86,42 +45,6 @@ export default class NormandyAPI {
     }
 
     return null;
-  }
-
-  fetchRecipePage(page, searchParams = {}) {
-    return this.request({
-      url: "recipe/",
-      data: {
-        ...searchParams,
-        page,
-      },
-    });
-  }
-
-  async fetchRecipe(id) {
-    return this.request({
-      url: `recipe/${id}/`,
-    });
-  }
-
-  async saveRecipe(id, data) {
-    let url = "recipe/";
-    let method = "POST";
-    if (id) {
-      url = `recipe/${id}/`;
-      method = "PUT";
-    }
-    return this.request({
-      url,
-      method,
-      data,
-    });
-  }
-
-  async fetchActions() {
-    return this.request({
-      url: "action/",
-    });
   }
 }
 
