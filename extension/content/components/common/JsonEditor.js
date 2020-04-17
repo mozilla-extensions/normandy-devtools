@@ -24,9 +24,6 @@ export default function JsonEditor({ value, onChange }) {
         mode: "javascript",
         lineNumbers: true,
       }}
-      style={{
-        height: "auto",
-      }}
       value={internalState}
       onBeforeChange={handleNewValue}
     />

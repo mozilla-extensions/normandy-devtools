@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createRef } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   Alert,
@@ -121,9 +121,6 @@ export default function RecipeEditor(props) {
             onChange={(value) => handleActionIDChange(value)}
           />
         </FormGroup>
-        <pre>
-          <code>{JSON.stringify(data.arguments, null, 8)}</code>
-        </pre>
         <ActionArgument
           value={data.arguments}
           action={data.action ? data.action.id : null}
