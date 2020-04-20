@@ -15,6 +15,7 @@ module.exports = {
   devtool: "source-map",
   entry: {
     content: "./extension/content/index.js",
+    "content-scripts": "./extension/content/scripts/inject.js",
     redirect: "./extension/content/redirect.js",
     "dark-theme": "./extension/content/less/dark.less",
     "light-theme": "./extension/content/less/light.less",
@@ -42,7 +43,6 @@ module.exports = {
       favicon: path.resolve(__dirname, "extension/images/favicon.png"),
       filename: "content.html",
       chunks: ["content"],
-      excludeChunks: ["dark-theme", "light-theme"],
     }),
     new HtmlWebpackPlugin({
       title: "Redirect",

@@ -70,7 +70,7 @@
     "webpack-fix-style-only-entries": "0.4.0"
   },
   "dependencies": {
-    "auth0-js": "9.13.1",
+    "auth0-js": "9.13.2",
     "autobind-decorator": "2.4.0",
     "codemirror": "5.52.2",
     "highlight.js": "9.18.1",

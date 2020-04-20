@@ -15,6 +15,9 @@ const CodeMirror = React.forwardRef((props, ref) => {
       options={{
         mode: "json",
         theme: "ndt",
+        indentWithTabs: false,
+        indentUnit: 2,
+        tabSize: 2,
         ...options,
       }}
       {...cmProps}
