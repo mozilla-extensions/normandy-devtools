@@ -21,9 +21,11 @@ export default function SamplingOptions(props) {
     if (filterValues.stableSample) {
       return "stableSample";
     }
+
     if (filterValues.bucketSample) {
       return "bucketSample";
     }
+
     return null;
   };
 
@@ -36,6 +38,7 @@ export default function SamplingOptions(props) {
         />
       );
     }
+
     if (filterValues && filterValues.bucketSample) {
       return (
         <BucketSampleOptions
@@ -44,6 +47,7 @@ export default function SamplingOptions(props) {
         />
       );
     }
+
     return null;
   };
 
@@ -180,6 +184,7 @@ function SamplingInput(props) {
     </FormGroup>
   );
 }
+
 BucketSamplingNumberPicker.propTypes = {
   sampleField: PropTypes.string,
   filterValues: PropTypes.object,

@@ -32,6 +32,7 @@ export const GeoOptions = (props) => {
     </Row>
   );
 };
+
 GeoOptions.propTypes = {
   countries: PropTypes.array,
   locales: PropTypes.array,

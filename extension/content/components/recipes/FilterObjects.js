@@ -79,6 +79,7 @@ export default function FilterObjects(props) {
     </FormGroup>
   );
 }
+
 FilterObjects.propTypes = {
   filterObjectData: PropTypes.array,
   handleChange: PropTypes.func,

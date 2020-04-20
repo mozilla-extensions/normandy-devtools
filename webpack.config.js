@@ -56,8 +56,10 @@ module.exports = {
         while (parts.length) {
           object = object[parts.pop()];
         }
+
         return object;
       }
+
       return value;
     }),
   ],

@@ -21,6 +21,7 @@ export default class DataTree extends React.PureComponent {
     if (obj.isLeaf) {
       return null;
     }
+
     return (
       <Icon
         icon={obj.expanded ? "minus-square" : "plus-square"}
@@ -46,6 +47,7 @@ export default class DataTree extends React.PureComponent {
         </Tree>
       );
     }
+
     return null;
   }
 }
@@ -86,6 +88,7 @@ function makeTreeNodes({ data, title, key = null }) {
             <TreeNode title={`${title}: []`} key={fullKey} value={fullKey} />
           );
         }
+
         return (
           <TreeNode title={title} key={fullKey} value={fullKey}>
             {data.map((value, idx) => {
@@ -137,16 +140,19 @@ function makeTreeNodes({ data, title, key = null }) {
         </TreeNode>
       );
     }
+
     case "string": {
       return (
         <TreeNode title={`${title}: ${data}`} key={fullKey} value={fullKey} />
       );
     }
+
     case "number": {
       return (
         <TreeNode title={`${title}: ${data}`} key={fullKey} value={fullKey} />
       );
     }
+
     case "boolean": {
       return (
         <TreeNode
@@ -156,6 +162,7 @@ function makeTreeNodes({ data, title, key = null }) {
         />
       );
     }
+
     case "undefined": {
       return (
         <TreeNode
@@ -165,6 +172,7 @@ function makeTreeNodes({ data, title, key = null }) {
         />
       );
     }
+
     default: {
       throw new Error(`Unexpected data type ${typeof data}: ${data}`);
     }

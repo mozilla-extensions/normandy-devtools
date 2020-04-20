@@ -46,6 +46,7 @@ export default function RecipeEditor(props) {
     };
     setFilters(filters);
   }
+
   async function getRecipe(id) {
     const recipe = await api.fetchRecipe(id);
     setData(recipe.latest_revision);
@@ -68,6 +69,7 @@ export default function RecipeEditor(props) {
       },
     });
   };
+
   const handleChange = (key, value) => {
     setData({ ...data, [key]: value });
   };

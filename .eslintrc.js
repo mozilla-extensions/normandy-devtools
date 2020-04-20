@@ -16,5 +16,14 @@ module.exports = {
   rules: {
     "mozilla/no-define-cc-etc": "off",
     "prefer-const": "error",
+    "lines-between-class-members": ["error", "always"],
+    "padding-line-between-statements": [
+      "error",
+      {
+        blankLine: "always",
+        prev: "multiline-block-like",
+        next: "*",
+      },
+    ],
   },
 };

@@ -244,6 +244,7 @@ class RecipesPage extends React.PureComponent {
     if (environmentKey !== "prod") {
       return null;
     }
+
     return (
       <Nav.Item icon={<Icon icon="play" />} onClick={this.runNormandy}>
         Run Normandy

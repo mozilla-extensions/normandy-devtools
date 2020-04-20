@@ -23,6 +23,7 @@ export default class Logo extends React.PureComponent {
         "transparent",
       ];
     }
+
     const styles = {
       st0: { fill: fill0 },
       st1: { fill: fill1 },

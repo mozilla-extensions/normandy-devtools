@@ -29,6 +29,7 @@ export default class OutputColumn extends React.PureComponent {
     if (error) {
       return <Message showIcon type="error" description={error.toString()} />;
     }
+
     return null;
   }
 
@@ -37,6 +38,7 @@ export default class OutputColumn extends React.PureComponent {
     if (running) {
       return <Icon icon="refresh" spin />;
     }
+
     return null;
   }
 

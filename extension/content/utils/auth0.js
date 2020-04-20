@@ -40,11 +40,13 @@ export function generateNonce(length) {
       if (length == 0) {
         return;
       }
+
       if (c < charset.length) {
         result += charset[c];
         length--;
       }
     });
   }
+
   return result;
 }

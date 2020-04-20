@@ -39,6 +39,7 @@ var normandy = class extends ExtensionAPI {
             if (!recipe) {
               recipe = { id: 1, arguments: {} };
             }
+
             const context = RecipeRunner.getFilterContext(recipe);
 
             // context.normandy is a proxy object that can't be sent to the
@@ -65,6 +66,7 @@ var normandy = class extends ExtensionAPI {
                   keys.add(name);
                 }
               }
+
               // Check for the next parent
               env = Object.getPrototypeOf(env);
             }
@@ -121,6 +123,7 @@ var normandy = class extends ExtensionAPI {
                 console.warn(`Could not get context key ${key}: ${err}`);
               }
             }
+
             return builtContext;
           },
 
@@ -152,6 +155,7 @@ var normandy = class extends ExtensionAPI {
                 if (value != "RECIPE_SUITABILITY_SIGNATURE_ERROR") {
                   suitabilities.push(value);
                 }
+
                 const next = await generator.next();
                 done = next.done;
                 value = next.value;
@@ -162,11 +166,13 @@ var normandy = class extends ExtensionAPI {
               if (RecipeRunner.checkFilter(recipe)) {
                 return [FILTER_MATCH];
               }
+
               return [FILTER_MISMATCH];
             } else if (RecipeRunner.checkFilter) {
               if (RecipeRunner.checkFilter(recipe)) {
                 return [FILTER_MATCH];
               }
+
               return [FILTER_MISMATCH];
             }
 
@@ -181,10 +187,12 @@ var normandy = class extends ExtensionAPI {
               // This is deprecated so only run if it exists
               await actions.fetchRemoteActions();
             }
+
             if (actions.preExecution) {
               // This is deprecated so only run if it exists
               await actions.preExecution();
             }
+
             if (actions.processRecipe) {
               await actions.processRecipe(
                 recipe,
@@ -235,6 +243,7 @@ var normandy = class extends ExtensionAPI {
                         (_, mod) => `${mod}: `,
                       );
                     }
+
                     fire.async({
                       message: cleanMessage,
                       level: messageLevels[message.logLevel],

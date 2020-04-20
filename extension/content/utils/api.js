@@ -111,6 +111,7 @@ export default class NormandyAPI {
       url = `recipe/${id}/`;
       method = "PUT";
     }
+
     return this.request({
       url,
       method,

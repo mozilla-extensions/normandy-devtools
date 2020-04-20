@@ -71,6 +71,7 @@ function reducer(state, action) {
           },
         };
       }
+
       /* eslint-disable no-unused-vars */
       const { [action.key]: _omitEnv, ...newEnvironments } = state.environments;
       const { [action.key]: _omitAuth, ...newAuth } = state.auth;
@@ -250,6 +251,7 @@ export function updateEnvironment(dispatch, key, config) {
       }
     });
   }
+
   dispatch({
     type: ACTION_UPDATE_ENVIRONMENT,
     key,
