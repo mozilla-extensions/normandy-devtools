@@ -1,4 +1,5 @@
 import API from "devtools/utils/api";
+
 export default class NormandyAPI extends API {
   constructor(environment, auth) {
     super(environment);
