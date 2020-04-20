@@ -51,7 +51,7 @@ module.exports = {
     }),
     new GenerateJsonPlugin("manifest.json", manifest, (key, value) => {
       if (typeof value === "string" && value.startsWith("$")) {
-        let parts = value.slice(1).split(".");
+        const parts = value.slice(1).split(".");
         let object = packageData;
         while (parts.length) {
           object = object[parts.pop()];

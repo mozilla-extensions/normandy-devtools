@@ -20,7 +20,7 @@ export default class NormandyAPI {
       headers.append("Content-Type", "application/json");
     }
 
-    for (let headerName in extraHeaders) {
+    for (const headerName in extraHeaders) {
       headers.append(headerName, extraHeaders[headerName]);
     }
 

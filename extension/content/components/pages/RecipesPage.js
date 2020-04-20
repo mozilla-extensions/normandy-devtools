@@ -88,7 +88,7 @@ class RecipesPage extends React.PureComponent {
 
     // cache miss
     this.setState({ loading: true });
-    let data = await api.fetchRecipePage(page, {
+    const data = await api.fetchRecipePage(page, {
       ordering: "-id",
     });
 
