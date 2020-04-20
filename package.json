@@ -18,7 +18,7 @@
     "lint:eslint-fix": "yarn run lint:eslint --fix",
     "test": "jest",
     "watch": "npm-run-all build:webpack-dev --parallel --race watch:*",
-    "watch:extension": "web-ext run -s dist",
+    "watch:extension": "web-ext run -s dist --firefox=\"/Applications/Firefox Nightly 2.app/Contents/MacOS/firefox-bin\"",
     "watch:webpack": "webpack --progress --mode development --watch"
   },
   "devDependencies": {

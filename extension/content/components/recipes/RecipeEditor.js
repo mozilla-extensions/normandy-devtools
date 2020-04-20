@@ -144,6 +144,23 @@ export default function RecipeEditor(props) {
     return cleanedData;
   };
 
+  const getImportInstructionsInfo = () => {
+    if (match.params.slug) {
+      return (
+        <FormGroup hidden={!match.params.slug}>
+          <ControlLabel>Import Instuctions</ControlLabel>
+          <Input
+            componentClass="textarea"
+            rows={3}
+            value={importInstructions}
+            onChange={(value) => setImportInstructions(value)}
+          />
+        </FormGroup>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="page-wrapper">
       <Form fluid formValue={data} onChange={(data) => setData(data)}>
@@ -175,15 +192,7 @@ export default function RecipeEditor(props) {
             }
           />
         </FormGroup>
-        <FormGroup hidden={!match.params.slug}>
-          <ControlLabel>Import Instuctions</ControlLabel>
-          <Input
-            componentClass="textarea"
-            rows={3}
-            value={importInstructions}
-            onChange={(value) => setImportInstructions(value)}
-          />
-        </FormGroup>
+        {getImportInstructionsInfo()}
         <FormGroup>
           <ControlLabel>Actions</ControlLabel>
           <InputPicker
