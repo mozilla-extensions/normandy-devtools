@@ -166,6 +166,7 @@ function SamplingInput(props) {
       handleChange(sampleType, "input", value);
     }
   };
+
   return (
     <FormGroup>
       <ControlLabel>Input</ControlLabel>

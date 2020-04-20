@@ -13,6 +13,7 @@ import {
 } from "rsuite";
 
 import { useSelectedEnvironmentAPI } from "devtools/contexts/environment";
+import CodeMirror from "devtools/components/common/CodeMirror";
 import FilterObjects from "devtools/components/recipes/FilterObjects";
 import JsonEditor from "devtools/components/common/JsonEditor";
 
@@ -21,6 +22,7 @@ export default function RecipeEditor(props) {
   const api = useSelectedEnvironmentAPI();
   const [data, setData] = useState({ arguments: {} });
   const [actions, setActions] = useState([]);
+  const [filters, setFilters] = useState({});
 
   async function getActionsOptions() {
     const res = await api.fetchActions();
