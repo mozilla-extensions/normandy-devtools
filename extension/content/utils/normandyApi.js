@@ -8,27 +8,28 @@ export default class NormandyAPI extends API {
 
   getBaseUrl({ version = 3, method }) {
     const isReadOperation = ["GET", "HEAD"].includes(method.toUpperCase());
-
     const base = isReadOperation
       ? this.environment.readOnlyUrl
-      : this.environment.writeOnlyUrl;
-
+      : this.environment.writeableUrl;
     return new URL(`api/v${version}/`, base).href;
   }
 
   async request(options) {
-    const { extraHeaders = [], method = "GET" } = options;
-
+    const { method = "GET" } = options;
     const isReadOperation = ["GET", "HEAD"].includes(method.toUpperCase());
 
+    const normandyHeaders = {};
     if (!isReadOperation) {
-      extraHeaders.append(
-        "Authorization",
-        `Bearer  ${this.auth.result.accessToken}`,
-      );
+      normandyHeaders.Authorization = `Bearer ${this.auth.result.accessToken}`;
     }
 
-    return super.request({ ...options, extraHeaders });
+    return super.request({
+      ...options,
+      extraHeaders: {
+        ...options.extraHeaders,
+        ...normandyHeaders,
+      },
+    });
   }
 
   fetchRecipePage(page, searchParams = {}) {
@@ -65,5 +66,9 @@ export default class NormandyAPI extends API {
     return this.request({
       url: "action/",
     });
+  }
+
+  async fetchFilters() {
+    return this.request({ url: "filters/" });
   }
 }

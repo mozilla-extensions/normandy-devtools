@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createRef } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   Alert,
@@ -18,6 +18,8 @@ import {
   useSelectedExperimenterEnvironmentAPI,
 } from "devtools/contexts/environment";
 import CodeMirror from "devtools/components/common/CodeMirror";
+import FilterObjects from "devtools/components/recipes/FilterObjects";
+import JsonEditor from "devtools/components/common/JsonEditor";
 
 export default function RecipeEditor(props) {
   const { match } = props;
@@ -26,7 +28,7 @@ export default function RecipeEditor(props) {
   const [data, setData] = useState({ arguments: {} });
   const [importInstructions, setImportInstructions] = useState();
   const [actions, setActions] = useState([]);
-  const argumentsRef = createRef();
+  const [filters, setFilters] = useState({});
 
   async function getActionsOptions() {
     const res = await normandyApi.fetchActions();
@@ -49,18 +51,35 @@ export default function RecipeEditor(props) {
     setImportInstructions(comment);
     setData(cleanedRecipe);
   }
+
   async function getRecipe(match) {
     if (match.params.id) {
+      getRecipe(match.params.id);
       return getNormandyRecipe(match.params.id);
     }
     if (match.params.slug) {
       return getExperimentRecipe(match.params.slug);
     }
+
     return null;
+  }
+
+  async function getFilterOptions() {
+    const res = await normandyApi.fetchFilters();
+    const filters = {
+      countries: res.countries.map((entry) => {
+        return { label: `${entry.key}(${entry.value})`, value: `${entry.key}` };
+      }),
+      locales: res.locales.map((entry) => {
+        return { label: `${entry.key}(${entry.value})`, value: `${entry.key}` };
+      }),
+    };
+    setFilters(filters);
   }
 
   useEffect(() => {
     getActionsOptions();
+    getFilterOptions();
     getRecipe(match);
   }, []);
 
@@ -73,6 +92,7 @@ export default function RecipeEditor(props) {
       },
     });
   };
+
   const handleChange = (key, value) => {
     setData({ ...data, [key]: value });
   };
@@ -121,13 +141,6 @@ export default function RecipeEditor(props) {
     const { comment: _omitComment, ...cleanedData } = data;
     /* eslint-enable no-unused-vars */
     cleanedData.action_id = data.action.id;
-    try {
-      cleanedData.arguments = JSON.parse(
-        argumentsRef.current.editor.getValue(),
-      );
-    } catch {
-      throw new Error("Action arguments is not valid JSON");
-    }
     return cleanedData;
   };
 
@@ -143,6 +156,12 @@ export default function RecipeEditor(props) {
           <ControlLabel>Experimenter Slug</ControlLabel>
           <FormControl name="experimenter_slug" data-testid="experimentSlug" />
         </FormGroup>
+        <FilterObjects
+          filterObjectData={data.filter_object ? data.filter_object : []}
+          countryOptions={filters ? filters.countries : []}
+          localeOptions={filters ? filters.locales : []}
+          handleChange={handleChange}
+        />
         <FormGroup>
           <ControlLabel>Extra Filter Expression</ControlLabel>
           <CodeMirror
@@ -177,9 +196,9 @@ export default function RecipeEditor(props) {
           />
         </FormGroup>
         <ActionArgument
-          value={JSON.stringify(data.arguments, null, 2)}
+          value={data.arguments}
           action={data.action ? data.action.id : null}
-          ref={argumentsRef}
+          onChange={(newValue) => handleChange("arguments", newValue)}
         />
         <ButtonToolbar>
           <Button appearance="primary" onClick={handleSubmit}>
@@ -198,34 +217,22 @@ RecipeEditor.propTypes = {
   match: PropTypes.object,
 };
 
-const ActionArgument = React.forwardRef((props, ref) => {
-  if (!props.action) {
+function ActionArgument({ value, onChange, action }) {
+  if (!action) {
     return null;
   }
 
   return (
     <FormGroup>
       <ControlLabel>Action Arguments</ControlLabel>
-      <CodeMirror
-        options={{
-          mode: "javascript",
-          lineNumbers: true,
-        }}
-        style={{
-          height: "auto",
-        }}
-        value={props.value}
-        ref={ref}
-        uncontrolled
-      />
+      <JsonEditor value={value} onChange={(newValue) => onChange(newValue)} />
     </FormGroup>
   );
-});
+}
 
 ActionArgument.displayName = "ActionArgument";
 ActionArgument.propTypes = {
-  name: PropTypes.string,
-  action: PropTypes.integer,
+  action: PropTypes.number,
   value: PropTypes.object,
-  handleChange: PropTypes.func,
+  onChange: PropTypes.func.required,
 };

@@ -16,13 +16,17 @@ export default class API {
     for (let headerName in extraHeaders) {
       headers.append(headerName, extraHeaders[headerName]);
     }
+
     const settings = {
       headers,
       method: "GET",
       ...options,
     };
 
-    const apiUrl = new URL(url, this.getBaseUrl({ version, ...settings }));
+    const apiUrl = new URL(
+      url,
+      this.getBaseUrl({ version, method: settings.method }),
+    );
 
     if ("data" in settings) {
       if ("body" in settings) {
