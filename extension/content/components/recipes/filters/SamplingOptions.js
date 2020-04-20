@@ -159,7 +159,7 @@ function SamplingInput(props) {
 
   const handleInputChange = (value) => {
     const diff = value.filter((entry) => !totalInputs.includes(entry));
-    if (diff.length > 0) {
+    if (diff.length) {
       const inputs = [...currentInputs, `"${diff}"`];
       handleChange(sampleType, "input", inputs);
     } else {
