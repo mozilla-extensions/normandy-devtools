@@ -1,4 +1,4 @@
-export default class Api {
+export default class API {
   constructor(environment) {
     this.environment = environment;
   }
@@ -6,21 +6,43 @@ export default class Api {
     throw new Error("getBaseURL() needs to be implemented");
   }
 
-  formatHeaders({ extraHeaders, ...options }) {
+  async request({ url, extraHeaders, version, ...options }) {
     const headers = new Headers();
     headers.append("Accept", "application/json");
     if (!(options.body && options.body instanceof FormData)) {
       headers.append("Content-Type", "application/json");
     }
-    return {
+
+    for (let headerName in extraHeaders) {
+      headers.append(headerName, extraHeaders[headerName]);
+    }
+    const settings = {
       headers,
       method: "GET",
       ...options,
     };
-  }
 
-  async request(url, settings) {
-    const response = await fetch(url, settings);
+    const apiUrl = new URL(url, this.getBaseUrl({ version, ...settings }));
+
+    if ("data" in settings) {
+      if ("body" in settings) {
+        throw new Error(
+          "Only pass one of `settings.data` and `settings.body`.",
+        );
+      }
+
+      if (["GET", "HEAD"].includes(settings.method.toUpperCase())) {
+        Object.entries(settings.data).forEach(([key, value]) => {
+          apiUrl.searchParams.append(key, value);
+        });
+      } else {
+        settings.body = JSON.stringify(settings.data);
+      }
+
+      delete settings.data;
+    }
+
+    const response = await fetch(apiUrl, settings);
 
     if (!response.ok) {
       let message;

@@ -1,12 +1,8 @@
-import Api from "devtools/utils/api";
-export default class ExperimenterAPI extends Api {
-  getBaseUrl() {
-    return new URL("api/v1/", this.environment.experimenterUrl).href;
-  }
-  async request({ url, extraHeaders, ...options }) {
-    const apiUrl = new URL(url, this.getBaseUrl());
-    const settings = super.formatHeaders({ extraHeaders, ...options });
-    return super.request(apiUrl, settings);
+import API from "devtools/utils/api";
+
+export default class ExperimenterAPI extends API {
+  getBaseUrl({ version = 1 }) {
+    return new URL(`api/v${version}/`, this.environment.experimenterUrl).href;
   }
 
   async fetchRecipe(slug) {
