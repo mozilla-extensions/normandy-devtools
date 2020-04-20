@@ -60,7 +60,7 @@ export default function SamplingOptions(props) {
   );
 }
 
-const StableSampleOptions = (props) => {
+function StableSampleOptions(props) {
   const { handleChange, filterValues } = props;
 
   return (
@@ -91,9 +91,9 @@ const StableSampleOptions = (props) => {
       </Col>
     </Row>
   );
-};
+}
 
-const BucketSampleOptions = (props) => {
+function BucketSampleOptions(props) {
   const { handleChange, filterValues } = props;
 
   return (
@@ -122,9 +122,9 @@ const BucketSampleOptions = (props) => {
       </Col>
     </Row>
   );
-};
+}
 
-const BucketSamplingNumberPicker = (props) => {
+function BucketSamplingNumberPicker(props) {
   const { sampleField, filterValues, handleChange } = props;
   return (
     <Col xs={4}>
@@ -146,29 +146,39 @@ const BucketSamplingNumberPicker = (props) => {
       </FormGroup>
     </Col>
   );
-};
+}
 
-const SamplingInput = (props) => {
+function SamplingInput(props) {
   const { handleChange, inputValues, sampleType } = props;
-  const defaultInputs = ["normandy.recipe.id", "normandy.user.id"];
+  const defaultInputs = ["normandy.recipe.id", "normandy.userId"];
   const currentInputs = inputValues ? inputValues : [];
   const totalInputs = [...new Set([...currentInputs, ...defaultInputs])];
   const inputOptions = totalInputs.map((entry) => {
     return { label: entry, value: entry };
   });
+
+  const handleInputChange = (value) => {
+    const diff = value.filter((entry) => !totalInputs.includes(entry));
+    if (diff.length > 0) {
+      const inputs = [...currentInputs, `"${diff}"`];
+      handleChange(sampleType, "input", inputs);
+    } else {
+      handleChange(sampleType, "input", value);
+    }
+  };
   return (
     <FormGroup>
       <ControlLabel>Input</ControlLabel>
       <TagPicker
         data={inputOptions}
         value={currentInputs}
-        onChange={(value) => handleChange(sampleType, "input", value)}
+        onChange={handleInputChange}
         creatable
         block
       />
     </FormGroup>
   );
-};
+}
 BucketSamplingNumberPicker.propTypes = {
   sampleField: PropTypes.string,
   filterValues: PropTypes.object,

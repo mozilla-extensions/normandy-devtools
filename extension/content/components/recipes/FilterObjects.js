@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { Divider, FormGroup, ControlLabel, Panel } from "rsuite";
 import { BrowserOptions } from "devtools/components/recipes/filters/BrowserOptions";
@@ -11,7 +11,6 @@ export default function FilterObjects(props) {
     (obj, item) => Object.assign(obj, { [item.type]: item }),
     {},
   );
-  const [collapsed, setCollapsed] = useState(false);
 
   const handleFOChange = (key, value) => {
     const pluralMapping = {
@@ -54,11 +53,8 @@ export default function FilterObjects(props) {
   return (
     <FormGroup>
       <ControlLabel>Filter Objects</ControlLabel>
-      <a onClick={() => setCollapsed(!collapsed)}>
-        {collapsed ? "Show" : "Hide"}
-      </a>
 
-      <Panel hidden={collapsed} bordered>
+      <Panel bordered>
         <SamplingOptions
           filterValues={filterValues}
           handleTypeChange={handleSamplingTypeChange}
@@ -84,8 +80,8 @@ export default function FilterObjects(props) {
   );
 }
 FilterObjects.propTypes = {
-  filterObjectData: PropTypes.object,
+  filterObjectData: PropTypes.array,
   handleChange: PropTypes.func,
-  countryOptions: PropTypes.object,
-  localeOptions: PropTypes.object,
+  countryOptions: PropTypes.array,
+  localeOptions: PropTypes.array,
 };
