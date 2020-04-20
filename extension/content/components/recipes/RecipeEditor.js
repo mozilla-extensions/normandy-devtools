@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createRef } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   Alert,
@@ -14,13 +14,13 @@ import {
 
 import { useSelectedEnvironmentAPI } from "devtools/contexts/environment";
 import CodeMirror from "devtools/components/common/CodeMirror";
+import JsonEditor from "devtools/components/common/JsonEditor";
 
 export default function RecipeEditor(props) {
   const { match } = props;
   const api = useSelectedEnvironmentAPI();
   const [data, setData] = useState({ arguments: {} });
   const [actions, setActions] = useState([]);
-  const argumentsRef = createRef();
 
   async function getActionsOptions() {
     const res = await api.fetchActions();
@@ -82,13 +82,6 @@ export default function RecipeEditor(props) {
     const { comment: _omitComment, ...cleanedData } = data;
     /* eslint-enable no-unused-vars */
     cleanedData.action_id = data.action.id;
-    try {
-      cleanedData.arguments = JSON.parse(
-        argumentsRef.current.editor.getValue(),
-      );
-    } catch {
-      throw new Error("Action arguments is not valid JSON");
-    }
     return cleanedData;
   };
 
@@ -129,9 +122,9 @@ export default function RecipeEditor(props) {
           />
         </FormGroup>
         <ActionArgument
-          value={JSON.stringify(data.arguments, null, 2)}
+          value={data.arguments}
           action={data.action ? data.action.id : null}
-          ref={argumentsRef}
+          onChange={(newValue) => handleChange("arguments", newValue)}
         />
         <ButtonToolbar>
           <Button appearance="primary" onClick={handleSubmit}>
@@ -150,34 +143,22 @@ RecipeEditor.propTypes = {
   match: PropTypes.object,
 };
 
-const ActionArgument = React.forwardRef((props, ref) => {
-  if (!props.action) {
+function ActionArgument({ value, onChange, action }) {
+  if (!action) {
     return null;
   }
 
   return (
     <FormGroup>
       <ControlLabel>Action Arguments</ControlLabel>
-      <CodeMirror
-        options={{
-          mode: "javascript",
-          lineNumbers: true,
-        }}
-        style={{
-          height: "auto",
-        }}
-        value={props.value}
-        ref={ref}
-        uncontrolled
-      />
+      <JsonEditor value={value} onChange={(newValue) => onChange(newValue)} />
     </FormGroup>
   );
-});
+}
 
 ActionArgument.displayName = "ActionArgument";
 ActionArgument.propTypes = {
-  name: PropTypes.string,
-  action: PropTypes.integer,
+  action: PropTypes.number,
   value: PropTypes.object,
-  handleChange: PropTypes.func,
+  onChange: PropTypes.func.required,
 };
