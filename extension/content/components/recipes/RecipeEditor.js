@@ -201,8 +201,8 @@ export default function RecipeEditor(props) {
         <FormGroup>
           <ControlLabel>Actions</ControlLabel>
           <InputPicker
-            name={"actionId"}
-            placeholder={"Select an action"}
+            name="actionId"
+            placeholder="Select an action"
             data={actions}
             block
             value={getRecipeAction(data)}

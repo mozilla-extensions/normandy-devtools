@@ -82,7 +82,7 @@ function StableSampleOptions(props) {
                 : null
             }
             defaultValue={filterValues.rate ? filterValues.rate * 100 : null}
-            postfix={"%"}
+            postfix="%"
           />
         </FormGroup>
       </Col>
