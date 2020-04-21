@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
 
-set -eu
-
-BASE_DIR="$(dirname "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )")"
-CONFIG_PATH="$BASE_DIR/.nightly-path"
+# No -u because we're about to check a potentially unset variable.
+set -e
 
 # First check the environment variable
-if [[ -v WEB_EXT_BROWSER ]]; then
+if [[ ! -z "$WEB_EXT_BROWSER" ]]; then
     echo $WEB_EXT_BROWSER
     exit 0
 fi
+
+# Now set -u, we're done with unset variables.
+set -u
+
+BASE_DIR="$(dirname "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )")"
+CONFIG_PATH="$BASE_DIR/.nightly-path"
 
 # Then check the file
 if [[ -f "$CONFIG_PATH" ]]; then
