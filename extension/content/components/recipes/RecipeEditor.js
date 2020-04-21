@@ -9,23 +9,29 @@ import {
   FormControl,
   ControlLabel,
   HelpBlock,
+  Input,
   InputPicker,
 } from "rsuite";
 
-import { useSelectedEnvironmentAPI } from "devtools/contexts/environment";
+import {
+  useSelectedNormandyEnvironmentAPI,
+  useSelectedExperimenterEnvironmentAPI,
+} from "devtools/contexts/environment";
 import CodeMirror from "devtools/components/common/CodeMirror";
 import FilterObjects from "devtools/components/recipes/FilterObjects";
 import JsonEditor from "devtools/components/common/JsonEditor";
 
 export default function RecipeEditor(props) {
   const { match } = props;
-  const api = useSelectedEnvironmentAPI();
+  const normandyApi = useSelectedNormandyEnvironmentAPI();
+  const experimenterAPI = useSelectedExperimenterEnvironmentAPI();
   const [data, setData] = useState({ arguments: {} });
+  const [importInstructions, setImportInstructions] = useState();
   const [actions, setActions] = useState([]);
   const [filters, setFilters] = useState({});
 
   async function getActionsOptions() {
-    const res = await api.fetchActions();
+    const res = await normandyApi.fetchActions();
     const actions = res.results.map((action) => ({
       label: action.name,
       value: action.id,
@@ -34,8 +40,32 @@ export default function RecipeEditor(props) {
     setActions(actions);
   }
 
+  async function getNormandyRecipe(id) {
+    const recipe = await normandyApi.fetchRecipe(id);
+    setData(recipe.latest_revision);
+  }
+
+  async function getExperimentRecipe(slug) {
+    const recipe = await experimenterAPI.fetchRecipe(slug);
+    const { comment, ...cleanedRecipe } = recipe;
+    setImportInstructions(comment);
+    setData(cleanedRecipe);
+  }
+
+  async function getRecipe(match) {
+    if (match.params.id) {
+      getRecipe(match.params.id);
+      return getNormandyRecipe(match.params.id);
+    }
+    if (match.params.slug) {
+      return getExperimentRecipe(match.params.slug);
+    }
+
+    return null;
+  }
+
   async function getFilterOptions() {
-    const res = await api.fetchFilters();
+    const res = await normandyApi.fetchFilters();
     const filters = {
       countries: res.countries.map((entry) => {
         return { label: `${entry.key}(${entry.value})`, value: `${entry.key}` };
@@ -46,17 +76,11 @@ export default function RecipeEditor(props) {
     };
     setFilters(filters);
   }
-  async function getRecipe(id) {
-    const recipe = await api.fetchRecipe(id);
-    setData(recipe.latest_revision);
-  }
 
   useEffect(() => {
     getActionsOptions();
     getFilterOptions();
-    if (match.params.id) {
-      getRecipe(match.params.id);
-    }
+    getRecipe(match);
   }, []);
 
   const handleActionIDChange = (value) => {
@@ -68,16 +92,36 @@ export default function RecipeEditor(props) {
       },
     });
   };
+
   const handleChange = (key, value) => {
     setData({ ...data, [key]: value });
+  };
+
+  const getRecipeAction = (data) => {
+    if (data.action) {
+      return data.action.id;
+    }
+    if (data.action_name) {
+      const action = actions.find((entry) => {
+        return entry.label === data.action_name;
+      });
+      if (action) {
+        handleActionIDChange(action.value);
+        return action.value;
+      }
+    }
+    return null;
   };
 
   const handleSubmit = () => {
     const id = match.params.id;
     try {
+      if (importInstructions) {
+        throw Error("Import Instructions not empty!");
+      }
       const requestBody = formatRequestBody();
 
-      const requestSave = api.saveRecipe(id, requestBody);
+      const requestSave = normandyApi.saveRecipe(id, requestBody);
 
       requestSave
         .then(() => {
@@ -98,6 +142,23 @@ export default function RecipeEditor(props) {
     /* eslint-enable no-unused-vars */
     cleanedData.action_id = data.action.id;
     return cleanedData;
+  };
+
+  const getImportInstructionsInfo = () => {
+    if (match.params.slug) {
+      return (
+        <FormGroup hidden={!match.params.slug}>
+          <ControlLabel>Import Instuctions</ControlLabel>
+          <Input
+            componentClass="textarea"
+            rows={3}
+            value={importInstructions}
+            onChange={(value) => setImportInstructions(value)}
+          />
+        </FormGroup>
+      );
+    }
+    return null;
   };
 
   return (
@@ -131,6 +192,7 @@ export default function RecipeEditor(props) {
             }
           />
         </FormGroup>
+        {getImportInstructionsInfo()}
         <FormGroup>
           <ControlLabel>Actions</ControlLabel>
           <InputPicker
@@ -138,7 +200,7 @@ export default function RecipeEditor(props) {
             placeholder={"Select an action"}
             data={actions}
             block
-            value={data.action ? data.action.id : null}
+            value={getRecipeAction(data)}
             onChange={(value) => handleActionIDChange(value)}
           />
         </FormGroup>

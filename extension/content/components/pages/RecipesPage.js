@@ -21,7 +21,7 @@ import {
   useEnvironments,
   useEnvironmentState,
   useSelectedEnvironment,
-  useSelectedEnvironmentAPI,
+  useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
 import { convertToV1Recipe } from "devtools/utils/recipes";
 
@@ -308,7 +308,7 @@ export default function WrappedRecipePage(props) {
   const { selectedKey } = useEnvironmentState();
   const environment = useSelectedEnvironment();
   const environments = useEnvironments();
-  const api = useSelectedEnvironmentAPI();
+  const api = useSelectedNormandyEnvironmentAPI();
   return (
     <RecipesPage
       {...props}

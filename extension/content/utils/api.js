@@ -1,19 +1,12 @@
-export default class NormandyAPI {
-  constructor(environment, auth) {
+export default class API {
+  constructor(environment) {
     this.environment = environment;
-    this.auth = auth;
+  }
+  getBaseUrl() {
+    throw new Error("getBaseURL() needs to be implemented");
   }
 
-  getBaseUrl({ version = 3, mode }) {
-    const base =
-      mode.toLowerCase() === "w"
-        ? this.environment.writeableUrl
-        : this.environment.readOnlyUrl;
-
-    return new URL(`api/v${version}/`, base).href;
-  }
-
-  async request({ version = 3, url, extraHeaders, ...options }) {
+  async request({ url, extraHeaders, version, ...options }) {
     const headers = new Headers();
     headers.append("Accept", "application/json");
     if (!(options.body && options.body instanceof FormData)) {
@@ -30,18 +23,10 @@ export default class NormandyAPI {
       ...options,
     };
 
-    const isReadOperation = ["GET", "HEAD"].includes(
-      settings.method.toUpperCase(),
+    const apiUrl = new URL(
+      url,
+      this.getBaseUrl({ version, method: settings.method }),
     );
-    const mode = isReadOperation ? "r" : "w";
-    const apiUrl = new URL(url, this.getBaseUrl({ version, mode }));
-
-    if (!isReadOperation) {
-      settings.headers.append(
-        "Authorization",
-        `Bearer  ${this.auth.result.accessToken}`,
-      );
-    }
 
     if ("data" in settings) {
       if ("body" in settings) {
@@ -50,7 +35,7 @@ export default class NormandyAPI {
         );
       }
 
-      if (isReadOperation) {
+      if (["GET", "HEAD"].includes(settings.method.toUpperCase())) {
         Object.entries(settings.data).forEach(([key, value]) => {
           apiUrl.searchParams.append(key, value);
         });
@@ -86,46 +71,6 @@ export default class NormandyAPI {
     }
 
     return null;
-  }
-
-  fetchRecipePage(page, searchParams = {}) {
-    return this.request({
-      url: "recipe/",
-      data: {
-        ...searchParams,
-        page,
-      },
-    });
-  }
-
-  async fetchRecipe(id) {
-    return this.request({
-      url: `recipe/${id}/`,
-    });
-  }
-
-  async saveRecipe(id, data) {
-    let url = "recipe/";
-    let method = "POST";
-    if (id) {
-      url = `recipe/${id}/`;
-      method = "PUT";
-    }
-    return this.request({
-      url,
-      method,
-      data,
-    });
-  }
-
-  async fetchActions() {
-    return this.request({
-      url: "action/",
-    });
-  }
-
-  async fetchFilters() {
-    return this.request({ url: "filters/" });
   }
 }
 
