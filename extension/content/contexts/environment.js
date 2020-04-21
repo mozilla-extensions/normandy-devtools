@@ -4,7 +4,8 @@ import { Route, Redirect, Switch, useParams } from "react-router-dom";
 import auth0 from "auth0-js";
 
 import { DEFAULT_ENV, ENVIRONMENTS } from "devtools/config";
-import NormandyAPI from "devtools/utils/api";
+import NormandyAPI from "devtools/utils/normandyApi";
+import ExperimenterAPI from "devtools/utils/experimenterApi";
 import { generateNonce, normalizeErrorObject } from "devtools/utils/auth0";
 
 const LOGIN_FAILED_CODES = [
@@ -233,10 +234,15 @@ export function useSelectedEnvironmentAuth() {
   return state.auth[state.selectedKey];
 }
 
-export function useSelectedEnvironmentAPI() {
+export function useSelectedNormandyEnvironmentAPI() {
   const environment = useSelectedEnvironment();
   const auth = useSelectedEnvironmentAuth();
   return new NormandyAPI(environment, auth);
+}
+
+export function useSelectedExperimenterEnvironmentAPI() {
+  const environment = useSelectedEnvironment();
+  return new ExperimenterAPI(environment);
 }
 
 export function updateEnvironment(dispatch, key, config) {

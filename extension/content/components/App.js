@@ -95,6 +95,10 @@ function Page() {
             path={`${match.path}/recipes/edit/:id`}
             component={RecipeEditor}
           />
+          <Route
+            path={`${match.path}/recipes/import/:slug`}
+            component={RecipeEditor}
+          />
           <Route path={`${match.path}/recipes/new`} component={RecipeEditor} />
           <Route path={`${match.path}/recipes`} component={RecipesPage} />
           <Route path={`${match.path}/filters`} component={FiltersPage} />
