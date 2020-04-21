@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createRef } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   Alert,
@@ -9,23 +9,29 @@ import {
   FormControl,
   ControlLabel,
   HelpBlock,
+  Input,
   InputPicker,
 } from "rsuite";
 
-import { useSelectedEnvironmentAPI } from "devtools/contexts/environment";
+import {
+  useSelectedNormandyEnvironmentAPI,
+  useSelectedExperimenterEnvironmentAPI,
+} from "devtools/contexts/environment";
 import CodeMirror from "devtools/components/common/CodeMirror";
-import ConsoleLog from "devtools/components/recipes/arguments/ConsoleLog";
-import { JsonArgs } from "devtools/components/recipes/arguments/JsonArgs";
+import FilterObjects from "devtools/components/recipes/FilterObjects";
+import JsonEditor from "devtools/components/common/JsonEditor";
 
 export default function RecipeEditor(props) {
   const { match } = props;
-  const api = useSelectedEnvironmentAPI();
+  const normandyApi = useSelectedNormandyEnvironmentAPI();
+  const experimenterAPI = useSelectedExperimenterEnvironmentAPI();
   const [data, setData] = useState({ arguments: {} });
+  const [importInstructions, setImportInstructions] = useState();
   const [actions, setActions] = useState([]);
-  const argumentsRef = createRef();
+  const [filters, setFilters] = useState({});
 
   async function getActionsOptions() {
-    const res = await api.fetchActions();
+    const res = await normandyApi.fetchActions();
     const actions = res.results.map((action) => ({
       label: action.name,
       value: action.id,
@@ -34,16 +40,47 @@ export default function RecipeEditor(props) {
     setActions(actions);
   }
 
-  async function getRecipe(id) {
-    const recipe = await api.fetchRecipe(id);
+  async function getNormandyRecipe(id) {
+    const recipe = await normandyApi.fetchRecipe(id);
     setData(recipe.latest_revision);
+  }
+
+  async function getExperimentRecipe(slug) {
+    const recipe = await experimenterAPI.fetchRecipe(slug);
+    const { comment, ...cleanedRecipe } = recipe;
+    setImportInstructions(comment);
+    setData(cleanedRecipe);
+  }
+
+  async function getRecipe(match) {
+    if (match.params.id) {
+      getRecipe(match.params.id);
+      return getNormandyRecipe(match.params.id);
+    }
+    if (match.params.slug) {
+      return getExperimentRecipe(match.params.slug);
+    }
+
+    return null;
+  }
+
+  async function getFilterOptions() {
+    const res = await normandyApi.fetchFilters();
+    const filters = {
+      countries: res.countries.map((entry) => {
+        return { label: `${entry.key}(${entry.value})`, value: `${entry.key}` };
+      }),
+      locales: res.locales.map((entry) => {
+        return { label: `${entry.key}(${entry.value})`, value: `${entry.key}` };
+      }),
+    };
+    setFilters(filters);
   }
 
   useEffect(() => {
     getActionsOptions();
-    if (match.params.id) {
-      getRecipe(match.params.id);
-    }
+    getFilterOptions();
+    getRecipe(match);
   }, []);
 
   const handleActionIDChange = (value, event) => {
@@ -56,16 +93,36 @@ export default function RecipeEditor(props) {
       },
     });
   };
+
   const handleChange = (key, value) => {
     setData({ ...data, [key]: value });
+  };
+
+  const getRecipeAction = (data) => {
+    if (data.action) {
+      return data.action.id;
+    }
+    if (data.action_name) {
+      const action = actions.find((entry) => {
+        return entry.label === data.action_name;
+      });
+      if (action) {
+        handleActionIDChange(action.value);
+        return action.value;
+      }
+    }
+    return null;
   };
 
   const handleSubmit = () => {
     const id = match.params.id;
     try {
+      if (importInstructions) {
+        throw Error("Import Instructions not empty!");
+      }
       const requestBody = formatRequestBody();
 
-      const requestSave = api.saveRecipe(id, requestBody);
+      const requestSave = normandyApi.saveRecipe(id, requestBody);
 
       requestSave
         .then(() => {
@@ -85,36 +142,24 @@ export default function RecipeEditor(props) {
     const { comment: _omitComment, ...cleanedData } = data;
     /* eslint-enable no-unused-vars */
     cleanedData.action_id = data.action.id;
-    handleArguments(cleanedData);
     return cleanedData;
   };
 
-  const handleArguments = (cleanedData) => {
-    if (argumentsRef.current) {
-      try {
-        cleanedData.arguments = JSON.parse(
-          argumentsRef.current.editor.getValue(),
-        );
-      } catch {
-        throw new Error("Action arguments is not valid JSON");
-      }
+  const getImportInstructionsInfo = () => {
+    if (match.params.slug) {
+      return (
+        <FormGroup hidden={!match.params.slug}>
+          <ControlLabel>Import Instuctions</ControlLabel>
+          <Input
+            componentClass="textarea"
+            rows={3}
+            value={importInstructions}
+            onChange={(value) => setImportInstructions(value)}
+          />
+        </FormGroup>
+      );
     }
-  };
-
-  const argumentOption = () => {
-    const actionFieldsMapping = { "console-log": ConsoleLog };
-    if (!data.action) {
-      return null;
-    }
-
-    let ArgField = actionFieldsMapping[data.action.name];
-    let argProps = { value: data.arguments, handleChange };
-
-    if (!ArgField) {
-      ArgField = JsonArgs;
-      argProps = { value: data.arguments, ref: argumentsRef };
-    }
-    return <ArgField {...argProps} />;
+    return null;
   };
 
   return (
@@ -129,6 +174,12 @@ export default function RecipeEditor(props) {
           <ControlLabel>Experimenter Slug</ControlLabel>
           <FormControl name="experimenter_slug" data-testid="experimentSlug" />
         </FormGroup>
+        <FilterObjects
+          filterObjectData={data.filter_object ? data.filter_object : []}
+          countryOptions={filters ? filters.countries : []}
+          localeOptions={filters ? filters.locales : []}
+          handleChange={handleChange}
+        />
         <FormGroup>
           <ControlLabel>Extra Filter Expression</ControlLabel>
           <CodeMirror
@@ -142,6 +193,7 @@ export default function RecipeEditor(props) {
             }
           />
         </FormGroup>
+        {getImportInstructionsInfo()}
         <FormGroup>
           <ControlLabel>Actions</ControlLabel>
           <InputPicker
@@ -149,11 +201,15 @@ export default function RecipeEditor(props) {
             placeholder={"Select an action"}
             data={actions}
             block
-            value={data.action ? data.action.id : null}
+            value={getRecipeAction(data)}
             onChange={(value, event) => handleActionIDChange(value, event)}
           />
         </FormGroup>
-        {argumentOption()}
+        <ActionArgument
+          value={data.arguments}
+          action={data.action ? data.action.id : null}
+          onChange={(newValue) => handleChange("arguments", newValue)}
+        />
         <ButtonToolbar>
           <Button appearance="primary" onClick={handleSubmit}>
             Submit
@@ -169,4 +225,24 @@ export default function RecipeEditor(props) {
 
 RecipeEditor.propTypes = {
   match: PropTypes.object,
+};
+
+function ActionArgument({ value, onChange, action }) {
+  if (!action) {
+    return null;
+  }
+
+  return (
+    <FormGroup>
+      <ControlLabel>Action Arguments</ControlLabel>
+      <JsonEditor value={value} onChange={(newValue) => onChange(newValue)} />
+    </FormGroup>
+  );
+}
+
+ActionArgument.displayName = "ActionArgument";
+ActionArgument.propTypes = {
+  action: PropTypes.number,
+  value: PropTypes.object,
+  onChange: PropTypes.func.required,
 };

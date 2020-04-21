@@ -1,9 +1,11 @@
 import PropTypes from "prop-types";
 import React from "react";
+import { Route, Redirect, Switch, useParams } from "react-router-dom";
 import auth0 from "auth0-js";
 
 import { DEFAULT_ENV, ENVIRONMENTS } from "devtools/config";
-import NormandyAPI from "devtools/utils/api";
+import NormandyAPI from "devtools/utils/normandyApi";
+import ExperimenterAPI from "devtools/utils/experimenterApi";
 import { generateNonce, normalizeErrorObject } from "devtools/utils/auth0";
 
 const LOGIN_FAILED_CODES = [
@@ -129,6 +131,43 @@ function reducer(state, action) {
   }
 }
 
+function EnvironmentSelector({ children }) {
+  const { envKey } = useParams();
+  const environments = useEnvironments();
+  const dispatch = useEnvironmentDispatch();
+
+  const allKeys = Object.keys(environments);
+  if (!allKeys.includes(envKey)) {
+    return <Redirect to={`/${DEFAULT_ENV}`} />;
+  }
+
+  React.useEffect(() => {
+    dispatch({
+      type: ACTION_SELECT_ENVIRONMENT,
+      key: envKey,
+    });
+  }, [envKey]);
+
+  return children;
+}
+
+function EnvironmentRouter({ children }) {
+  return (
+    <Switch>
+      <Route path="/" exact>
+        <Redirect to={`/${DEFAULT_ENV}`} />
+      </Route>
+      <Route path="/:envKey">
+        <EnvironmentSelector>{children}</EnvironmentSelector>
+      </Route>
+    </Switch>
+  );
+}
+
+EnvironmentRouter.propTypes = {
+  children: PropTypes.any,
+};
+
 export function EnvironmentProvider({ children }) {
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
@@ -153,7 +192,11 @@ export function EnvironmentProvider({ children }) {
     });
   }, []);
 
-  return <Provider value={{ state, dispatch }}>{children}</Provider>;
+  return (
+    <Provider value={{ state, dispatch }}>
+      <EnvironmentRouter>{children}</EnvironmentRouter>
+    </Provider>
+  );
 }
 
 EnvironmentProvider.propTypes = {
@@ -190,12 +233,16 @@ export function useSelectedEnvironmentAuth() {
   return state.auth[state.selectedKey];
 }
 
-export function useSelectedEnvironmentAPI() {
+export function useSelectedNormandyEnvironmentAPI() {
   const environment = useSelectedEnvironment();
   const auth = useSelectedEnvironmentAuth();
   return new NormandyAPI(environment, auth);
 }
 
+export function useSelectedExperimenterEnvironmentAPI() {
+  const environment = useSelectedEnvironment();
+  return new ExperimenterAPI(environment);
+}
 export function updateEnvironment(dispatch, key, config) {
   const storageKey = `environment.${key}.config`;
   if (config) {
