@@ -19,7 +19,7 @@ export default function FilterObjects(props) {
       channel: "channels",
       version: "versions",
     };
-    let changedFilterValues = filterObjectData.filter((entry) => {
+    const changedFilterValues = filterObjectData.filter((entry) => {
       return entry.type !== key;
     });
     const pluralKey = pluralMapping[key];
@@ -30,7 +30,7 @@ export default function FilterObjects(props) {
   };
 
   const handleSamplingTypeChange = (type) => {
-    let changedFilterValues = filterObjectData.filter((entry) => {
+    const changedFilterValues = filterObjectData.filter((entry) => {
       return !entry.type.includes("Sample");
     });
     if (type !== null) {
@@ -41,7 +41,7 @@ export default function FilterObjects(props) {
   };
 
   const handleSamplingFieldChange = (type, key, value) => {
-    let changedFilterValues = filterObjectData.filter((entry) => {
+    const changedFilterValues = filterObjectData.filter((entry) => {
       return !entry.type.includes("Sample");
     });
     props.handleChange("filter_object", [
@@ -57,28 +57,29 @@ export default function FilterObjects(props) {
       <Panel bordered>
         <SamplingOptions
           filterValues={filterValues}
-          handleTypeChange={handleSamplingTypeChange}
           handleFieldChange={handleSamplingFieldChange}
+          handleTypeChange={handleSamplingTypeChange}
         />
         <Divider />
         <BrowserOptions
           channelFO={filterValues.channel}
-          versionFO={filterValues.version}
           handleFOChange={handleFOChange}
+          versionFO={filterValues.version}
         />
         <Divider />
         <GeoOptions
           countries={countryOptions}
-          locales={localeOptions}
           countryFO={filterValues.country}
-          localeFO={filterValues.locale}
           filterValues={filterValues}
           handleFOChange={handleFOChange}
+          localeFO={filterValues.locale}
+          locales={localeOptions}
         />
       </Panel>
     </FormGroup>
   );
 }
+
 FilterObjects.propTypes = {
   filterObjectData: PropTypes.array,
   handleChange: PropTypes.func,

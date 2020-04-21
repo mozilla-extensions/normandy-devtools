@@ -57,6 +57,7 @@ export default function RecipeEditor(props) {
       getRecipe(match.params.id);
       return getNormandyRecipe(match.params.id);
     }
+
     if (match.params.slug) {
       return getExperimentRecipe(match.params.slug);
     }
@@ -101,6 +102,7 @@ export default function RecipeEditor(props) {
     if (data.action) {
       return data.action.id;
     }
+
     if (data.action_name) {
       const action = actions.find((entry) => {
         return entry.label === data.action_name;
@@ -110,6 +112,7 @@ export default function RecipeEditor(props) {
         return action.value;
       }
     }
+
     return null;
   };
 
@@ -119,6 +122,7 @@ export default function RecipeEditor(props) {
       if (importInstructions) {
         throw Error("Import Instructions not empty!");
       }
+
       const requestBody = formatRequestBody();
 
       const requestSave = normandyApi.saveRecipe(id, requestBody);
@@ -158,6 +162,7 @@ export default function RecipeEditor(props) {
         </FormGroup>
       );
     }
+
     return null;
   };
 
@@ -166,18 +171,18 @@ export default function RecipeEditor(props) {
       <Form fluid formValue={data} onChange={(data) => setData(data)}>
         <FormGroup>
           <ControlLabel>Name</ControlLabel>
-          <FormControl name="name" data-testid="recipeName" />
+          <FormControl data-testid="recipeName" name="name" />
           <HelpBlock>Required</HelpBlock>
         </FormGroup>
         <FormGroup>
           <ControlLabel>Experimenter Slug</ControlLabel>
-          <FormControl name="experimenter_slug" data-testid="experimentSlug" />
+          <FormControl data-testid="experimentSlug" name="experimenter_slug" />
         </FormGroup>
         <FilterObjects
-          filterObjectData={data.filter_object ? data.filter_object : []}
           countryOptions={filters ? filters.countries : []}
-          localeOptions={filters ? filters.locales : []}
+          filterObjectData={data.filter_object ? data.filter_object : []}
           handleChange={handleChange}
+          localeOptions={filters ? filters.locales : []}
         />
         <FormGroup>
           <ControlLabel>Extra Filter Expression</ControlLabel>
@@ -196,17 +201,17 @@ export default function RecipeEditor(props) {
         <FormGroup>
           <ControlLabel>Actions</ControlLabel>
           <InputPicker
-            name={"actionId"}
-            placeholder={"Select an action"}
-            data={actions}
             block
+            data={actions}
+            name="actionId"
+            placeholder="Select an action"
             value={getRecipeAction(data)}
             onChange={(value) => handleActionIDChange(value)}
           />
         </FormGroup>
         <ActionArgument
-          value={data.arguments}
           action={data.action ? data.action.id : null}
+          value={data.arguments}
           onChange={(newValue) => handleChange("arguments", newValue)}
         />
         <ButtonToolbar>

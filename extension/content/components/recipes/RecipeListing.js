@@ -60,8 +60,8 @@ class RecipeListing extends React.PureComponent {
     const { running } = this.state;
 
     return (
-      <Button onClick={this.handleRunButtonClick} disabled={running}>
-        {running ? <Icon icon="reload" spin /> : <Icon icon="play" />} Run
+      <Button disabled={running} onClick={this.handleRunButtonClick}>
+        {running ? <Icon spin icon="reload" /> : <Icon icon="play" />} Run
       </Button>
     );
   }
@@ -75,9 +75,9 @@ class RecipeListing extends React.PureComponent {
     if (enabled) {
       return (
         <Icon
+          className="text-success"
           icon="check-circle"
           size="lg"
-          className="text-success"
           title="Recipe enabled"
         />
       );
@@ -85,9 +85,9 @@ class RecipeListing extends React.PureComponent {
 
     return (
       <Icon
+        className="text-danger"
         icon="close-circle"
         size="lg"
-        className="text-danger"
         title="Recipe disabled"
       />
     );
@@ -123,9 +123,9 @@ class RecipeListing extends React.PureComponent {
 
     return (
       <Icon
+        className={`text-${textColor}`}
         icon="filter"
         size="lg"
-        className={`text-${textColor}`}
         title={hoverText}
       />
     );
@@ -178,10 +178,10 @@ class RecipeListing extends React.PureComponent {
 
     return (
       <Panel
+        bordered
+        collapsible
         className="recipe-listing"
         header={this.renderHeader()}
-        collapsible
-        bordered
       >
         {this.renderRecipeButtonToolBar()}
 

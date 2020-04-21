@@ -55,6 +55,7 @@ export default class NormandyAPI extends API {
       url = `recipe/${id}/`;
       method = "PUT";
     }
+
     return this.request({
       url,
       method,

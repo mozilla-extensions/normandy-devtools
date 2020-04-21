@@ -25,7 +25,7 @@ export default class PrefStudiesPage extends React.PureComponent {
 
     if (loading) {
       return (
-        <Loader size="md" speed="slow" content="Loading studies&hellip;" />
+        <Loader content="Loading studies&hellip;" size="md" speed="slow" />
       );
     } else if (studies) {
       return (

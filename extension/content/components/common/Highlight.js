@@ -25,10 +25,10 @@ export default class Highlight extends Component {
     return (
       <pre className={className} style={style}>
         <code
-          className={language}
           ref={(ref) => {
             this.codeRef = ref;
           }}
+          className={language}
         >
           {children}
         </code>

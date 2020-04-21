@@ -72,6 +72,7 @@ function reducer(state, action) {
           },
         };
       }
+
       /* eslint-disable no-unused-vars */
       const { [action.key]: _omitEnv, ...newEnvironments } = state.environments;
       const { [action.key]: _omitAuth, ...newAuth } = state.auth;
@@ -154,7 +155,7 @@ function EnvironmentSelector({ children }) {
 function EnvironmentRouter({ children }) {
   return (
     <Switch>
-      <Route path="/" exact>
+      <Route exact path="/">
         <Redirect to={`/${DEFAULT_ENV}`} />
       </Route>
       <Route path="/:envKey">
@@ -243,6 +244,7 @@ export function useSelectedExperimenterEnvironmentAPI() {
   const environment = useSelectedEnvironment();
   return new ExperimenterAPI(environment);
 }
+
 export function updateEnvironment(dispatch, key, config) {
   const storageKey = `environment.${key}.config`;
   if (config) {
@@ -255,6 +257,7 @@ export function updateEnvironment(dispatch, key, config) {
       }
     });
   }
+
   dispatch({
     type: ACTION_UPDATE_ENVIRONMENT,
     key,

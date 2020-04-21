@@ -38,7 +38,7 @@ class JexlColumn extends React.PureComponent {
           <strong>JEXL Filter Expression</strong>
         </header>
         <CodeMirror
-          value={filterExpression}
+          editorDidMount={this.handleEditorMounted}
           options={{
             mode: "javascript",
             lineNumbers: false,
@@ -48,9 +48,9 @@ class JexlColumn extends React.PureComponent {
           style={{
             height: "auto",
           }}
-          editorDidMount={this.handleEditorMounted}
-          onBlur={this.handleBlur}
+          value={filterExpression}
           onBeforeChange={onBeforeChange}
+          onBlur={this.handleBlur}
           onCursorActivity={onCursorActivity}
         />
       </div>
