@@ -44,7 +44,8 @@ HERE
 
 
 while true; do
-    read -p '> ' NIGHTLY_PATH
+    echo -n '> '
+    read NIGHTLY_PATH
     if which "$NIGHTLY_PATH" > /dev/null; then
         if "$NIGHTLY_PATH" --version | grep 'Mozilla Firefox [0-9]\+\.0a1' > /dev/null; then
             echo $(which $NIGHTLY_PATH) > "$CONFIG_PATH"
