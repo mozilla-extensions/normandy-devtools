@@ -171,18 +171,18 @@ export default function RecipeEditor(props) {
       <Form fluid formValue={data} onChange={(data) => setData(data)}>
         <FormGroup>
           <ControlLabel>Name</ControlLabel>
-          <FormControl name="name" data-testid="recipeName" />
+          <FormControl data-testid="recipeName" name="name" />
           <HelpBlock>Required</HelpBlock>
         </FormGroup>
         <FormGroup>
           <ControlLabel>Experimenter Slug</ControlLabel>
-          <FormControl name="experimenter_slug" data-testid="experimentSlug" />
+          <FormControl data-testid="experimentSlug" name="experimenter_slug" />
         </FormGroup>
         <FilterObjects
-          filterObjectData={data.filter_object ? data.filter_object : []}
           countryOptions={filters ? filters.countries : []}
-          localeOptions={filters ? filters.locales : []}
+          filterObjectData={data.filter_object ? data.filter_object : []}
           handleChange={handleChange}
+          localeOptions={filters ? filters.locales : []}
         />
         <FormGroup>
           <ControlLabel>Extra Filter Expression</ControlLabel>
@@ -201,17 +201,17 @@ export default function RecipeEditor(props) {
         <FormGroup>
           <ControlLabel>Actions</ControlLabel>
           <InputPicker
+            block
+            data={actions}
             name="actionId"
             placeholder="Select an action"
-            data={actions}
-            block
             value={getRecipeAction(data)}
             onChange={(value) => handleActionIDChange(value)}
           />
         </FormGroup>
         <ActionArgument
-          value={data.arguments}
           action={data.action ? data.action.id : null}
+          value={data.arguments}
           onChange={(newValue) => handleChange("arguments", newValue)}
         />
         <ButtonToolbar>

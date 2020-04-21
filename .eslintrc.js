@@ -16,6 +16,15 @@ module.exports = {
   rules: {
     "mozilla/no-define-cc-etc": "off",
     "react/jsx-curly-brace-presence": ["error", "never"],
+    "react/jsx-sort-props": [
+      "error",
+      {
+        callbacksLast: true,
+        shorthandFirst: true,
+        ignoreCase: true,
+        reservedFirst: true,
+      }
+    ],
     "prefer-const": "error",
     "lines-between-class-members": ["error", "always"],
     "padding-line-between-statements": [

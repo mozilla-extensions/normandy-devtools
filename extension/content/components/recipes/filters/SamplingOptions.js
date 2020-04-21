@@ -33,8 +33,8 @@ export default function SamplingOptions(props) {
     if (filterValues && filterValues.stableSample) {
       return (
         <StableSampleOptions
-          handleChange={handleFieldChange}
           filterValues={filterValues.stableSample}
+          handleChange={handleFieldChange}
         />
       );
     }
@@ -42,8 +42,8 @@ export default function SamplingOptions(props) {
     if (filterValues && filterValues.bucketSample) {
       return (
         <BucketSampleOptions
-          handleChange={handleFieldChange}
           filterValues={filterValues.bucketSample}
+          handleChange={handleFieldChange}
         />
       );
     }
@@ -56,8 +56,8 @@ export default function SamplingOptions(props) {
       <ControlLabel>Sampling Type</ControlLabel>
       <InputPicker
         data={options}
-        onChange={(value, _) => handleTypeChange(value)}
         value={getSelectedOption()}
+        onChange={(value, _) => handleTypeChange(value)}
       />
       <SampleMethodOptions filterValues={filterValues} />
     </FormGroup>
@@ -73,6 +73,8 @@ function StableSampleOptions(props) {
         <FormGroup>
           <ControlLabel>Rate</ControlLabel>
           <InputNumber
+            defaultValue={filterValues.rate ? filterValues.rate * 100 : null}
+            postfix="%"
             onBlur={(event) => {
               handleChange("stableSample", "rate", event.target.value / 100);
             }}
@@ -81,8 +83,6 @@ function StableSampleOptions(props) {
                 ? handleChange("stableSample", "rate", value)
                 : null
             }
-            defaultValue={filterValues.rate ? filterValues.rate * 100 : null}
-            postfix="%"
           />
         </FormGroup>
       </Col>
@@ -103,19 +103,19 @@ function BucketSampleOptions(props) {
   return (
     <Row>
       <BucketSamplingNumberPicker
+        filterValues={filterValues}
+        handleChange={handleChange}
         sampleField="start"
-        filterValues={filterValues}
-        handleChange={handleChange}
       />
       <BucketSamplingNumberPicker
+        filterValues={filterValues}
+        handleChange={handleChange}
         sampleField="count"
-        filterValues={filterValues}
-        handleChange={handleChange}
       />
       <BucketSamplingNumberPicker
-        sampleField="total"
         filterValues={filterValues}
         handleChange={handleChange}
+        sampleField="total"
       />
       <Col xs={8}>
         <SamplingInput
@@ -137,6 +137,7 @@ function BucketSamplingNumberPicker(props) {
           {sampleField}
         </ControlLabel>
         <InputNumber
+          defaultValue={filterValues ? filterValues[sampleField] : null}
           onBlur={(event) =>
             handleChange("bucketSample", sampleField, event.target.value)
           }
@@ -145,7 +146,6 @@ function BucketSamplingNumberPicker(props) {
               ? handleChange("bucketSample", sampleField, value)
               : null
           }
-          defaultValue={filterValues ? filterValues[sampleField] : null}
         />
       </FormGroup>
     </Col>
@@ -175,11 +175,11 @@ function SamplingInput(props) {
     <FormGroup>
       <ControlLabel>Input</ControlLabel>
       <TagPicker
+        block
+        creatable
         data={inputOptions}
         value={currentInputs}
         onChange={handleInputChange}
-        creatable
-        block
       />
     </FormGroup>
   );

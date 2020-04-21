@@ -27,7 +27,7 @@ export default class OutputColumn extends React.PureComponent {
   renderErrorMessage() {
     const { error } = this.props;
     if (error) {
-      return <Message showIcon type="error" description={error.toString()} />;
+      return <Message showIcon description={error.toString()} type="error" />;
     }
 
     return null;
@@ -36,7 +36,7 @@ export default class OutputColumn extends React.PureComponent {
   renderRunningIcon() {
     const { running } = this.props;
     if (running) {
-      return <Icon icon="refresh" spin />;
+      return <Icon spin icon="refresh" />;
     }
 
     return null;
@@ -53,7 +53,7 @@ export default class OutputColumn extends React.PureComponent {
         <header>
           <div className="pull-right">
             {this.renderRunningIcon()}
-            <Icon icon={icon} className={className} title={title} />
+            <Icon className={className} icon={icon} title={title} />
           </div>
           <strong>Output</strong>
         </header>

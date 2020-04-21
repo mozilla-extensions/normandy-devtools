@@ -11,10 +11,10 @@ export const GeoOptions = (props) => {
         <FormGroup>
           <ControlLabel>Countries</ControlLabel>
           <TagPicker
+            block
             data={countries}
             value={countryFO ? countryFO.countries : []}
             onChange={(value) => handleFOChange("country", value)}
-            block
           />
         </FormGroup>
       </Col>
@@ -22,10 +22,10 @@ export const GeoOptions = (props) => {
         <FormGroup>
           <ControlLabel>Locales</ControlLabel>
           <TagPicker
+            block
             data={locales}
             value={localeFO ? localeFO.locales : []}
             onChange={(value) => handleFOChange("locale", value)}
-            block
           />
         </FormGroup>
       </Col>

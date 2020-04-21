@@ -155,7 +155,7 @@ function EnvironmentSelector({ children }) {
 function EnvironmentRouter({ children }) {
   return (
     <Switch>
-      <Route path="/" exact>
+      <Route exact path="/">
         <Redirect to={`/${DEFAULT_ENV}`} />
       </Route>
       <Route path="/:envKey">

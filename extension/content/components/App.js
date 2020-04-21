@@ -47,29 +47,29 @@ function AppSidebar() {
           <Nav vertical>
             <Nav.Item
               componentClass={NavLink}
-              to={`/${selectedKey}/recipes`}
               icon={<Icon icon="book" />}
+              to={`/${selectedKey}/recipes`}
             >
               Recipes
             </Nav.Item>
             <Nav.Item
               componentClass={NavLink}
-              to={`/${selectedKey}/filters`}
               icon={<Icon icon="filter" />}
+              to={`/${selectedKey}/filters`}
             >
               Filters
             </Nav.Item>
             <Nav.Item
               componentClass={NavLink}
-              to={`/${selectedKey}/pref-studies`}
               icon={<Icon icon="table" />}
+              to={`/${selectedKey}/pref-studies`}
             >
               Pref Studies
             </Nav.Item>
             <Nav.Item
               componentClass={NavLink}
-              to={`/${selectedKey}/addon-studies`}
               icon={<Icon icon="puzzle-piece" />}
+              to={`/${selectedKey}/addon-studies`}
             >
               Add-on Studies
             </Nav.Item>
@@ -87,28 +87,28 @@ function Page() {
     <div className="page-container">
       <ErrorBoundary>
         <Switch>
-          <Route path={`${match.path}/`} exact>
+          <Route exact path={`${match.path}/`}>
             <Redirect to={`${match.url}/recipes`} />
           </Route>
 
           <Route
+            component={RecipeEditor}
             path={`${match.path}/recipes/edit/:id`}
-            component={RecipeEditor}
           />
           <Route
+            component={RecipeEditor}
             path={`${match.path}/recipes/import/:slug`}
-            component={RecipeEditor}
           />
-          <Route path={`${match.path}/recipes/new`} component={RecipeEditor} />
-          <Route path={`${match.path}/recipes`} component={RecipesPage} />
-          <Route path={`${match.path}/filters`} component={FiltersPage} />
+          <Route component={RecipeEditor} path={`${match.path}/recipes/new`} />
+          <Route component={RecipesPage} path={`${match.path}/recipes`} />
+          <Route component={FiltersPage} path={`${match.path}/filters`} />
           <Route
-            path={`${match.path}/pref-studies`}
             component={PrefStudiesPage}
+            path={`${match.path}/pref-studies`}
           />
           <Route
-            path={`${match.path}/addon-studies`}
             component={AddonStudiesPage}
+            path={`${match.path}/addon-studies`}
           />
 
           <Route

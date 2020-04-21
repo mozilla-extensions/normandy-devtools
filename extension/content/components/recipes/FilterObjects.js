@@ -57,23 +57,23 @@ export default function FilterObjects(props) {
       <Panel bordered>
         <SamplingOptions
           filterValues={filterValues}
-          handleTypeChange={handleSamplingTypeChange}
           handleFieldChange={handleSamplingFieldChange}
+          handleTypeChange={handleSamplingTypeChange}
         />
         <Divider />
         <BrowserOptions
           channelFO={filterValues.channel}
-          versionFO={filterValues.version}
           handleFOChange={handleFOChange}
+          versionFO={filterValues.version}
         />
         <Divider />
         <GeoOptions
           countries={countryOptions}
-          locales={localeOptions}
           countryFO={filterValues.country}
-          localeFO={filterValues.locale}
           filterValues={filterValues}
           handleFOChange={handleFOChange}
+          localeFO={filterValues.locale}
+          locales={localeOptions}
         />
       </Panel>
     </FormGroup>

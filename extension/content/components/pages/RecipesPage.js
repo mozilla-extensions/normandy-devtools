@@ -134,11 +134,11 @@ class RecipesPage extends React.PureComponent {
       return recipes.map((recipe) => (
         <RecipeListing
           key={recipe.id}
-          recipe={recipe}
-          environmentName={environmentKey}
           copyRecipeToArbitrary={this.copyRecipeToArbitrary}
-          showRecipe={this.showRecipe}
+          environmentName={environmentKey}
           match={match}
+          recipe={recipe}
+          showRecipe={this.showRecipe}
         />
       ));
     }
@@ -185,8 +185,8 @@ class RecipesPage extends React.PureComponent {
     return (
       <Modal
         show={this.state.showReadRecipe}
-        onHide={this.hideRecipeModal}
         size="lg"
+        onHide={this.hideRecipeModal}
       >
         <Modal.Header>
           <Modal.Title>Recipe View</Modal.Title>
@@ -207,8 +207,8 @@ class RecipesPage extends React.PureComponent {
     return (
       <Modal
         show={this.state.showWriteRecipes}
-        onHide={this.hideWriteRecipePopup}
         size="lg"
+        onHide={this.hideWriteRecipePopup}
       >
         <Modal.Header>
           <Modal.Title>Write a recipe</Modal.Title>
@@ -225,13 +225,13 @@ class RecipesPage extends React.PureComponent {
         </Modal.Body>
         <Modal.Footer>
           <Button
-            onClick={this.runArbitraryRecipe}
             appearance="primary"
             disabled={runningArbitrary}
+            onClick={this.runArbitraryRecipe}
           >
             Run
           </Button>
-          <Button onClick={this.hideWriteRecipePopup} appearance="subtle">
+          <Button appearance="subtle" onClick={this.hideWriteRecipePopup}>
             Cancel
           </Button>
         </Modal.Footer>
@@ -263,8 +263,8 @@ class RecipesPage extends React.PureComponent {
             <Nav pullRight>
               <Nav.Item
                 componentClass={Link}
-                to={`/${environmentKey}/recipes/new`}
                 icon={<Icon icon="edit" />}
+                to={`/${environmentKey}/recipes/new`}
               >
                 Create Recipe
               </Nav.Item>
@@ -283,17 +283,17 @@ class RecipesPage extends React.PureComponent {
           {this.renderRecipeList()}
           <div>
             <Pagination
+              boundaryLinks
+              ellipsis
+              first
+              last
+              next
+              prev
               activePage={page}
               maxButtons={5}
               pages={Math.ceil(count / 25)}
-              onSelect={this.handlePageChange}
               size="lg"
-              prev
-              next
-              first
-              last
-              ellipsis
-              boundaryLinks
+              onSelect={this.handlePageChange}
             />
           </div>
         </div>
@@ -313,10 +313,10 @@ export default function WrappedRecipePage(props) {
   return (
     <RecipesPage
       {...props}
-      environmentKey={selectedKey}
-      environment={environment}
-      environments={environments}
       api={api}
+      environment={environment}
+      environmentKey={selectedKey}
+      environments={environments}
     />
   );
 }

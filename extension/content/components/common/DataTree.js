@@ -37,11 +37,11 @@ export default class DataTree extends React.PureComponent {
     if (data) {
       return (
         <Tree
-          defaultExpandedKeys={defaultExpanded ? [title] : []}
-          switcherIcon={this.getSwitcherIcon}
-          selectable={false}
-          onDoubleClick={onDoubleClick}
           showLine
+          defaultExpandedKeys={defaultExpanded ? [title] : []}
+          selectable={false}
+          switcherIcon={this.getSwitcherIcon}
+          onDoubleClick={onDoubleClick}
         >
           {makeTreeNodes({ data, title })}
         </Tree>
@@ -68,15 +68,15 @@ function makeTreeNodes({ data, title, key = null }) {
     case "object": {
       if (data === null) {
         return (
-          <TreeNode title={`${title}: null`} key={fullKey} value={fullKey} />
+          <TreeNode key={fullKey} title={`${title}: null`} value={fullKey} />
         );
       }
 
       if (data === undefined) {
         return (
           <TreeNode
-            title={`${title}: undefined`}
             key={fullKey}
+            title={`${title}: undefined`}
             value={fullKey}
           />
         );
@@ -85,12 +85,12 @@ function makeTreeNodes({ data, title, key = null }) {
       if (Array.isArray(data)) {
         if (data.length === 0) {
           return (
-            <TreeNode title={`${title}: []`} key={fullKey} value={fullKey} />
+            <TreeNode key={fullKey} title={`${title}: []`} value={fullKey} />
           );
         }
 
         return (
-          <TreeNode title={title} key={fullKey} value={fullKey}>
+          <TreeNode key={fullKey} title={title} value={fullKey}>
             {data.map((value, idx) => {
               return makeTreeNodes({
                 data: value,
@@ -106,16 +106,16 @@ function makeTreeNodes({ data, title, key = null }) {
         try {
           return (
             <TreeNode
-              title={`${title}: ${data.toISOString()}`}
               key={fullKey}
+              title={`${title}: ${data.toISOString()}`}
               value={fullKey}
             />
           );
         } catch (e) {
           return (
             <TreeNode
-              title={`${title}: Invalid date (${e})`}
               key={fullKey}
+              title={`${title}: Invalid date (${e})`}
               value={fullKey}
             />
           );
@@ -124,12 +124,12 @@ function makeTreeNodes({ data, title, key = null }) {
 
       if (JSON.stringify(data) === "{}") {
         return (
-          <TreeNode title={`${title}: {}`} key={fullKey} value={fullKey} />
+          <TreeNode key={fullKey} title={`${title}: {}`} value={fullKey} />
         );
       }
 
       return (
-        <TreeNode title={title} key={fullKey} value={fullKey}>
+        <TreeNode key={fullKey} title={title} value={fullKey}>
           {Object.entries(data).map(([valueKey, value], idx) =>
             makeTreeNodes({
               data: value,
@@ -143,21 +143,21 @@ function makeTreeNodes({ data, title, key = null }) {
 
     case "string": {
       return (
-        <TreeNode title={`${title}: ${data}`} key={fullKey} value={fullKey} />
+        <TreeNode key={fullKey} title={`${title}: ${data}`} value={fullKey} />
       );
     }
 
     case "number": {
       return (
-        <TreeNode title={`${title}: ${data}`} key={fullKey} value={fullKey} />
+        <TreeNode key={fullKey} title={`${title}: ${data}`} value={fullKey} />
       );
     }
 
     case "boolean": {
       return (
         <TreeNode
-          title={`${title}: ${data ? "true" : "false"}`}
           key={fullKey}
+          title={`${title}: ${data ? "true" : "false"}`}
           value={fullKey}
         />
       );
@@ -166,8 +166,8 @@ function makeTreeNodes({ data, title, key = null }) {
     case "undefined": {
       return (
         <TreeNode
-          title={`${title}: <undefined>`}
           key={fullKey}
+          title={`${title}: <undefined>`}
           value={fullKey}
         />
       );
