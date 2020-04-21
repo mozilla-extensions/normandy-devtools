@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 import { Input, FormGroup, ControlLabel } from "rsuite";
 
 export default function ConsoleLog(props) {
-  const onChange = (value) => {
+  const handleChange = (value) => {
     const message = { message: value };
-    props.handleChange("arguments", message);
+    props.onChange(message);
   };
   return (
     <FormGroup>
@@ -13,13 +13,13 @@ export default function ConsoleLog(props) {
       <Input
         name={"consoleLogArgument"}
         value={props.value ? props.value.message : null}
-        onChange={(value) => onChange(value)}
+        onChange={(value) => handleChange(value)}
       />
     </FormGroup>
   );
 }
 
 ConsoleLog.propTypes = {
-  handleChange: PropTypes.func,
+  onChange: PropTypes.func,
   value: PropTypes.object,
 };

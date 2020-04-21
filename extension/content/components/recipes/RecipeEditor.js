@@ -19,7 +19,7 @@ import {
 } from "devtools/contexts/environment";
 import CodeMirror from "devtools/components/common/CodeMirror";
 import FilterObjects from "devtools/components/recipes/FilterObjects";
-import JsonEditor from "devtools/components/common/JsonEditor";
+import ActionArgument from "devtools/components/recipes/arguments/ActionArgument";
 
 export default function RecipeEditor(props) {
   const { match } = props;
@@ -207,7 +207,7 @@ export default function RecipeEditor(props) {
         </FormGroup>
         <ActionArgument
           value={data.arguments}
-          action={data.action ? data.action.id : null}
+          action={data.action ? data.action : null}
           onChange={(newValue) => handleChange("arguments", newValue)}
         />
         <ButtonToolbar>
@@ -225,24 +225,4 @@ export default function RecipeEditor(props) {
 
 RecipeEditor.propTypes = {
   match: PropTypes.object,
-};
-
-function ActionArgument({ value, onChange, action }) {
-  if (!action) {
-    return null;
-  }
-
-  return (
-    <FormGroup>
-      <ControlLabel>Action Arguments</ControlLabel>
-      <JsonEditor value={value} onChange={(newValue) => onChange(newValue)} />
-    </FormGroup>
-  );
-}
-
-ActionArgument.displayName = "ActionArgument";
-ActionArgument.propTypes = {
-  action: PropTypes.number,
-  value: PropTypes.object,
-  onChange: PropTypes.func.required,
 };
