@@ -83,18 +83,11 @@ $ cd normandy-devtools
 $ yarn install
 ```
 
-To run the extension in development mode, you'll need two commands in two separate terminals:
-
-First automatically rebuild the extension files
-
-```
-$ yarn watch:webpack
-```
-
-Second, automatically rebuild the XPI file and update it in a Nightly temporary profile
+To run the extension in development mode, you can simply use the `watch` command to
+build the extension, package it and install it into a Nightly temporary profile:
 
 ```
-$ yarn watch:extension
+$ yarn watch
 ```
 
 > NOTE: If you are seeing an error while trying to run `watch` make sure that Nightly
