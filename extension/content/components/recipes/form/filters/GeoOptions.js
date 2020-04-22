@@ -4,9 +4,9 @@ import { Col, ControlLabel, FormGroup, Row, TagPicker } from "rsuite";
 
 import {
   ACTION_UPDATE_DATA,
-  useRecipeFormData,
-  useRecipeFormDispatch,
-} from "devtools/contexts/recipeForm";
+  useRecipeDetailsData,
+  useRecipeDetailsDispatch,
+} from "devtools/contexts/recipeDetails";
 import { useSelectedNormandyEnvironmentAPI } from "devtools/contexts/environment";
 
 export default function GeoOptions() {
@@ -45,8 +45,8 @@ export default function GeoOptions() {
 }
 
 function GeoFilterField({ label, name, dataKey, options }) {
-  const data = useRecipeFormData();
-  const dispatch = useRecipeFormDispatch();
+  const data = useRecipeDetailsData();
+  const dispatch = useRecipeDetailsDispatch();
 
   let filterObject;
   if (data.filter_object) {

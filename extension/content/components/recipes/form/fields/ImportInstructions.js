@@ -4,14 +4,14 @@ import { ControlLabel, FormGroup, HelpBlock, Input } from "rsuite";
 
 import {
   ACTION_UPDATE_IMPORT_INSTRUCTIONS,
-  useRecipeFormDispatch,
-  useRecipeFormImportInstructions,
-} from "devtools/contexts/recipeForm";
+  useRecipeDetailsDispatch,
+  useRecipeDetailsImportInstructions,
+} from "devtools/contexts/recipeDetails";
 
 export default function ImportInstructions() {
   const { experimenterSlug } = useParams();
-  const importInstructions = useRecipeFormImportInstructions();
-  const dispatch = useRecipeFormDispatch();
+  const importInstructions = useRecipeDetailsImportInstructions();
+  const dispatch = useRecipeDetailsDispatch();
 
   if (!experimenterSlug) {
     return null;

@@ -4,13 +4,13 @@ import { ControlLabel, FormGroup } from "rsuite";
 import JsonEditor from "devtools/components/common/JsonEditor";
 import {
   ACTION_UPDATE_DATA,
-  useRecipeFormData,
-  useRecipeFormDispatch,
-} from "devtools/contexts/recipeForm";
+  useRecipeDetailsData,
+  useRecipeDetailsDispatch,
+} from "devtools/contexts/recipeDetails";
 
 export default function ActionArguments() {
-  const data = useRecipeFormData();
-  const dispatch = useRecipeFormDispatch();
+  const data = useRecipeDetailsData();
+  const dispatch = useRecipeDetailsDispatch();
 
   const handleChange = (value) => {
     dispatch({
@@ -22,7 +22,7 @@ export default function ActionArguments() {
     });
   };
 
-  if (!data.action || !data.action.id) {
+  if (!data.action || !data.action.name) {
     return null;
   }
 

@@ -14,9 +14,9 @@ import {
 
 import {
   ACTION_UPDATE_DATA,
-  useRecipeFormData,
-  useRecipeFormDispatch,
-} from "devtools/contexts/recipeForm";
+  useRecipeDetailsData,
+  useRecipeDetailsDispatch,
+} from "devtools/contexts/recipeDetails";
 
 const MIN_VERSION = 40;
 
@@ -36,8 +36,8 @@ export default function BrowserOptions() {
 }
 
 function ChannelFilter() {
-  const data = useRecipeFormData();
-  const dispatch = useRecipeFormDispatch();
+  const data = useRecipeDetailsData();
+  const dispatch = useRecipeDetailsDispatch();
 
   let filterObject;
   if (data.filter_object) {
@@ -88,8 +88,8 @@ function ChannelFilter() {
 
 function VersionFilter() {
   const [versionNumber, setVersionNumber] = React.useState();
-  const data = useRecipeFormData();
-  const dispatch = useRecipeFormDispatch();
+  const data = useRecipeDetailsData();
+  const dispatch = useRecipeDetailsDispatch();
 
   let filterObject;
   if (data.filter_object) {

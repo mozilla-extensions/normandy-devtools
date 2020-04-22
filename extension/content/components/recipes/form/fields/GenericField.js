@@ -4,13 +4,13 @@ import { ControlLabel, FormGroup, HelpBlock, Input } from "rsuite";
 
 import {
   ACTION_UPDATE_DATA,
-  useRecipeFormData,
-  useRecipeFormDispatch,
-} from "devtools/contexts/recipeForm";
+  useRecipeDetailsData,
+  useRecipeDetailsDispatch,
+} from "devtools/contexts/recipeDetails";
 
 export default function GenericField({ name, label, required }) {
-  const data = useRecipeFormData();
-  const dispatch = useRecipeFormDispatch();
+  const data = useRecipeDetailsData();
+  const dispatch = useRecipeDetailsDispatch();
   const value = data[name] || "";
 
   let helpBlock = null;

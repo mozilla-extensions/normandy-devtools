@@ -4,14 +4,14 @@ import { ControlLabel, FormGroup, HelpBlock } from "rsuite";
 
 import {
   ACTION_UPDATE_DATA,
-  useRecipeFormData,
-  useRecipeFormDispatch,
-} from "devtools/contexts/recipeForm";
+  useRecipeDetailsData,
+  useRecipeDetailsDispatch,
+} from "devtools/contexts/recipeDetails";
 import CodeMirror from "devtools/components/common/CodeMirror";
 
 export default function CodeMirrorField({ name, label, options, required }) {
-  const data = useRecipeFormData();
-  const dispatch = useRecipeFormDispatch();
+  const data = useRecipeDetailsData();
+  const dispatch = useRecipeDetailsDispatch();
   const value = data[name];
 
   let helpBlock = null;

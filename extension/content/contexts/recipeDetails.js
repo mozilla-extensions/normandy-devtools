@@ -1,13 +1,19 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+export const INITIAL_RECIPE_DATA = {
+  filter_object: [],
+  action: {},
+  arguments: [],
+};
+
 const initialState = {
-  data: {},
+  data: INITIAL_RECIPE_DATA,
   importInstructions: "",
 };
 
-export const recipeFormContext = React.createContext(initialState);
-const { Provider } = recipeFormContext;
+export const recipeDetailsContext = React.createContext(initialState);
+const { Provider } = recipeDetailsContext;
 
 export const ACTION_UPDATE_DATA = "UPDATE_DATA";
 export const ACTION_UPDATE_IMPORT_INSTRUCTIONS = "UPDATE_IMPORT_INSTRUCTIONS";
@@ -31,7 +37,7 @@ function reducer(state, action) {
   }
 }
 
-export function RecipeFormProvider({ children, data, importInstructions }) {
+export function RecipeDetailsProvider({ children, data, importInstructions }) {
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
   React.useEffect(() => {
@@ -51,28 +57,28 @@ export function RecipeFormProvider({ children, data, importInstructions }) {
   return <Provider value={{ state, dispatch }}>{children}</Provider>;
 }
 
-RecipeFormProvider.propTypes = {
+RecipeDetailsProvider.propTypes = {
   children: PropTypes.any,
   data: PropTypes.object.isRequired,
   importInstructions: PropTypes.string,
 };
 
-export function useRecipeFormDispatch() {
-  const { dispatch } = React.useContext(recipeFormContext);
+export function useRecipeDetailsDispatch() {
+  const { dispatch } = React.useContext(recipeDetailsContext);
   return dispatch;
 }
 
-export function useRecipeFormState() {
-  const { state } = React.useContext(recipeFormContext);
+export function useRecipeDetailsState() {
+  const { state } = React.useContext(recipeDetailsContext);
   return state;
 }
 
-export function useRecipeFormData() {
-  const { state } = React.useContext(recipeFormContext);
+export function useRecipeDetailsData() {
+  const { state } = React.useContext(recipeDetailsContext);
   return state.data;
 }
 
-export function useRecipeFormImportInstructions() {
-  const { state } = React.useContext(recipeFormContext);
+export function useRecipeDetailsImportInstructions() {
+  const { state } = React.useContext(recipeDetailsContext);
   return state.importInstructions;
 }

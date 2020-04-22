@@ -4,16 +4,16 @@ import { ControlLabel, FormGroup, InputPicker } from "rsuite";
 import { useSelectedNormandyEnvironmentAPI } from "devtools/contexts/environment";
 import {
   ACTION_UPDATE_DATA,
-  useRecipeFormData,
-  useRecipeFormDispatch,
-} from "devtools/contexts/recipeForm";
+  useRecipeDetailsData,
+  useRecipeDetailsDispatch,
+} from "devtools/contexts/recipeDetails";
 
 export default function ActionPicker() {
-  const data = useRecipeFormData();
-  const dispatch = useRecipeFormDispatch();
+  const data = useRecipeDetailsData();
+  const dispatch = useRecipeDetailsDispatch();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
   const [actions, setActions] = React.useState([]);
-  const value = data.action && data.action.id;
+  const value = data.action && data.action.name;
 
   React.useEffect(() => {
     normandyApi.fetchAllActions().then((allActions) => {
@@ -26,7 +26,7 @@ export default function ActionPicker() {
       type: ACTION_UPDATE_DATA,
       data: {
         ...data,
-        action: actions.find((action) => action.id === value),
+        action: actions.find((action) => action.name === value),
       },
     });
   };
@@ -43,7 +43,7 @@ export default function ActionPicker() {
     })
     .map((action) => ({
       label: action.name,
-      value: action.id,
+      value: action.name,
     }));
 
   return (

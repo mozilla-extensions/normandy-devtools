@@ -13,9 +13,9 @@ import {
 
 import {
   ACTION_UPDATE_DATA,
-  useRecipeFormData,
-  useRecipeFormDispatch,
-} from "devtools/contexts/recipeForm";
+  useRecipeDetailsData,
+  useRecipeDetailsDispatch,
+} from "devtools/contexts/recipeDetails";
 
 const BUCKET_SAMPLE = "bucketSample";
 const STABLE_SAMPLE = "stableSample";
@@ -29,8 +29,8 @@ const SAMPLING_OPTIONS = [
 ];
 
 export default function SamplingOptions() {
-  const data = useRecipeFormData();
-  const dispatch = useRecipeFormDispatch();
+  const data = useRecipeDetailsData();
+  const dispatch = useRecipeDetailsDispatch();
 
   const filterObject = getFilterObjectFromData();
   const typeValue = filterObject ? filterObject.type : null;
@@ -243,7 +243,7 @@ SamplingInputInput.propTypes = {
 };
 
 function getFilterObjectFromData() {
-  const data = useRecipeFormData();
+  const data = useRecipeDetailsData();
 
   let filterObject;
   if (data.filter_object) {

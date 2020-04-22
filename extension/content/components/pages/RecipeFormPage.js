@@ -1,7 +1,10 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 
-import { RecipeFormProvider } from "devtools/contexts/recipeForm";
+import {
+  INITIAL_RECIPE_DATA,
+  RecipeDetailsProvider,
+} from "devtools/contexts/recipeDetails";
 import {
   useSelectedExperimenterEnvironmentAPI,
   useSelectedNormandyEnvironmentAPI,
@@ -25,12 +28,17 @@ export default function RecipeFormPage() {
     } else if (experimenterSlug) {
       experimenterApi
         .fetchRecipe(experimenterSlug)
-        .then(({ comment, ...recipeData }) => {
-          setData(recipeData);
+        .then(({ comment, action_name, ...recipeData }) => {
+          setData({
+            ...recipeData,
+            action: {
+              name: action_name,
+            },
+          });
           setImportInstructions(comment);
         });
     } else {
-      setData({});
+      setData(INITIAL_RECIPE_DATA);
       setImportInstructions("");
     }
   }, [recipeId, experimenterSlug]);
@@ -45,9 +53,12 @@ export default function RecipeFormPage() {
   return (
     <div className="page-wrapper">
       <h4>{title}</h4>
-      <RecipeFormProvider data={data} importInstructions={importInstructions}>
+      <RecipeDetailsProvider
+        data={data}
+        importInstructions={importInstructions}
+      >
         <RecipeForm />
-      </RecipeFormProvider>
+      </RecipeDetailsProvider>
     </div>
   );
 }

@@ -12,13 +12,13 @@ import {
   useEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
-import { useRecipeFormState } from "devtools/contexts/recipeForm";
+import { useRecipeDetailsState } from "devtools/contexts/recipeDetails";
 
 export default function RecipeForm() {
   const history = useHistory();
   const { recipeId } = useParams();
   const { environmentKey } = useEnvironmentState();
-  const { data, importInstructions } = useRecipeFormState();
+  const { data, importInstructions } = useRecipeDetailsState();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
 
   const handleSubmitClick = () => {
@@ -42,6 +42,7 @@ export default function RecipeForm() {
           Alert.success("Changes Saved");
         })
         .catch((err) => {
+          console.warn(err.message, err.data);
           Alert.error(`An Error Occurred: ${JSON.stringify(err.data)}`, 5000);
         });
     } catch (err) {
