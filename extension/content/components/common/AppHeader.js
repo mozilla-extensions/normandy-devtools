@@ -101,12 +101,12 @@ function AddressBar() {
         onKeyPress={handleKeyPress}
       />
       <Whisper
-        speaker={copyTooltip}
         placement="bottom"
+        speaker={copyTooltip}
+        trigger={[]}
         triggerRef={(ref) => {
           triggerRef = ref;
         }}
-        trigger={[]}
       >
         <InputGroup.Button onClick={handleCopyClick}>
           <Icon icon="copy" />
@@ -159,10 +159,10 @@ function EnvironmentConfigurator() {
             <FormGroup>
               <ControlLabel>Current Environment</ControlLabel>
               <SelectPicker
+                cleanable={false}
                 data={envOptions}
                 defaultValue={selectedKey}
                 searchable={false}
-                cleanable={false}
                 onChange={onEnvironmentChange}
               />
             </FormGroup>
@@ -191,7 +191,6 @@ function Authenticator() {
     const { idTokenPayload: profile } = auth.result;
     return (
       <Whisper
-        trigger="click"
         placement="bottomEnd"
         speaker={
           <Popover>
@@ -205,13 +204,14 @@ function Authenticator() {
             </ul>
           </Popover>
         }
+        trigger="click"
       >
         <div className="d-flex">
           <Avatar
-            alt={profile.email.substring(0, 1)}
-            src={profile.picture}
-            size="sm"
             circle
+            alt={profile.email.substring(0, 1)}
+            size="sm"
+            src={profile.picture}
           />
           <Icon icon="caret-down" />
         </div>

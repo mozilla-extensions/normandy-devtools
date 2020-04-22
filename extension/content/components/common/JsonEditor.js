@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import CodeMirror from "devtools/components/common/CodeMirror";
 
 export default function JsonEditor({ value, onChange }) {
-  let [internalState, setInternalState] = useState(() =>
+  const [internalState, setInternalState] = useState(() =>
     JSON.stringify(value, null, 2),
   );
 

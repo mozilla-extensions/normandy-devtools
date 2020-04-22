@@ -1,4 +1,4 @@
-import highlightjs from "highlight.js/lib/highlight";
+import highlightjs from "highlight.js/lib/core";
 import React from "react";
 import ReactDOM from "react-dom";
 

@@ -10,9 +10,14 @@ const FixStyleOnlyEntriesPlugin = require("webpack-fix-style-only-entries");
 const packageData = require("./package.json");
 const manifest = require("./extension/manifest.json");
 
-module.exports = {
-  mode: "development",
-  devtool: "source-map",
+const cacheLoader = {
+  loader: "cache-loader",
+  options: { cacheDirectory: ".webpack-cache" },
+};
+
+module.exports = (env, argv) => ({
+  mode: argv.mode || "development",
+  devtool: argv.mode == "production" ? "source-map" : "eval-source-map",
   entry: {
     content: "./extension/content/index.js",
     "content-scripts": "./extension/content/scripts/inject.js",
@@ -51,13 +56,15 @@ module.exports = {
     }),
     new GenerateJsonPlugin("manifest.json", manifest, (key, value) => {
       if (typeof value === "string" && value.startsWith("$")) {
-        let parts = value.slice(1).split(".");
+        const parts = value.slice(1).split(".");
         let object = packageData;
         while (parts.length) {
           object = object[parts.pop()];
         }
+
         return object;
       }
+
       return value;
     }),
   ],
@@ -66,11 +73,12 @@ module.exports = {
       {
         test: /\.js$/,
         include: [path.resolve(__dirname, "./extension")],
-        use: "babel-loader",
+        use: [cacheLoader, "babel-loader"],
       },
       {
         test: /\.less/,
         use: [
+          cacheLoader,
           MiniCssExtractPlugin.loader,
           "css-loader",
           {
@@ -83,12 +91,12 @@ module.exports = {
       },
       {
         test: /\.css/,
-        use: ["style-loader", "css-loader"],
+        use: [cacheLoader, "style-loader", "css-loader"],
       },
       {
         test: /\.(png|ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/,
-        loader: "file-loader",
+        loader: [cacheLoader, "file-loader"],
       },
     ],
   },
-};
+});

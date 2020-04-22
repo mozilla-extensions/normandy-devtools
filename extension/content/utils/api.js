@@ -2,6 +2,7 @@ export default class API {
   constructor(environment) {
     this.environment = environment;
   }
+
   getBaseUrl() {
     throw new Error("getBaseURL() needs to be implemented");
   }
@@ -13,7 +14,7 @@ export default class API {
       headers.append("Content-Type", "application/json");
     }
 
-    for (let headerName in extraHeaders) {
+    for (const headerName in extraHeaders) {
       headers.append(headerName, extraHeaders[headerName]);
     }
 

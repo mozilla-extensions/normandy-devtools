@@ -39,13 +39,14 @@ var normandy = class extends ExtensionAPI {
             if (!recipe) {
               recipe = { id: 1, arguments: {} };
             }
-            let context = RecipeRunner.getFilterContext(recipe);
+
+            const context = RecipeRunner.getFilterContext(recipe);
 
             // context.normandy is a proxy object that can't be sent to the
             // webextension directly. Instead, manually copy relevant keys to a
             // simple object, and return that.
 
-            let builtContext = { normandy: {}, env: {} };
+            const builtContext = { normandy: {}, env: {} };
 
             // Walk up the class chain for ClientEnvironment, collecting
             // applicable keys as we go. Stop when we get to an unnamed object,
@@ -53,7 +54,7 @@ var normandy = class extends ExtensionAPI {
             // class that doesn't extend anything. Also stop if we get to an
             // undefined object, just in case.
             let env = ClientEnvironment;
-            let keys = new Set();
+            const keys = new Set();
             while (env && env.name) {
               for (const [name, descriptor] of Object.entries(
                 Object.getOwnPropertyDescriptors(env),
@@ -65,6 +66,7 @@ var normandy = class extends ExtensionAPI {
                   keys.add(name);
                 }
               }
+
               // Check for the next parent
               env = Object.getPrototypeOf(env);
             }
@@ -82,8 +84,8 @@ var normandy = class extends ExtensionAPI {
                   };
                 } else if (key == "appinfo") {
                   // appinfo can't be directly cloned, but we can manually clone most of it
-                  let appinfo = context.env.appinfo;
-                  let appinfoCopy = {};
+                  const appinfo = context.env.appinfo;
+                  const appinfoCopy = {};
                   for (const name of Object.keys(
                     Object.getOwnPropertyDescriptors(appinfo),
                   )) {
@@ -121,6 +123,7 @@ var normandy = class extends ExtensionAPI {
                 console.warn(`Could not get context key ${key}: ${err}`);
               }
             }
+
             return builtContext;
           },
 
@@ -137,7 +140,7 @@ var normandy = class extends ExtensionAPI {
             const FILTER_MISMATCH = "RECIPE_SUITABILITY_FILTER_MISMATCH";
 
             if (RecipeRunner.getRecipeSuitability) {
-              let suitabilities = [];
+              const suitabilities = [];
               // for (const suitability of RecipeRunner.getAllSuitabilities(
               //   recipe,
               //   null,
@@ -145,14 +148,15 @@ var normandy = class extends ExtensionAPI {
               //   suitabilities.push(suitability);
               // }
 
-              let generator = RecipeRunner.getAllSuitabilities(recipe, null);
+              const generator = RecipeRunner.getAllSuitabilities(recipe, null);
               let { value, done } = await generator.next();
               while (!done) {
                 // We know that the signature won't match, we didn't pass one. Ignore this
                 if (value != "RECIPE_SUITABILITY_SIGNATURE_ERROR") {
                   suitabilities.push(value);
                 }
-                let next = await generator.next();
+
+                const next = await generator.next();
                 done = next.done;
                 value = next.value;
               }
@@ -162,11 +166,13 @@ var normandy = class extends ExtensionAPI {
               if (RecipeRunner.checkFilter(recipe)) {
                 return [FILTER_MATCH];
               }
+
               return [FILTER_MISMATCH];
             } else if (RecipeRunner.checkFilter) {
               if (RecipeRunner.checkFilter(recipe)) {
                 return [FILTER_MATCH];
               }
+
               return [FILTER_MISMATCH];
             }
 
@@ -181,10 +187,12 @@ var normandy = class extends ExtensionAPI {
               // This is deprecated so only run if it exists
               await actions.fetchRemoteActions();
             }
+
             if (actions.preExecution) {
               // This is deprecated so only run if it exists
               await actions.preExecution();
             }
+
             if (actions.processRecipe) {
               await actions.processRecipe(
                 recipe,
@@ -235,6 +243,7 @@ var normandy = class extends ExtensionAPI {
                         (_, mod) => `${mod}: `,
                       );
                     }
+
                     fire.async({
                       message: cleanMessage,
                       level: messageLevels[message.logLevel],

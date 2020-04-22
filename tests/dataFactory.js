@@ -7,6 +7,7 @@ export class ConsoleLogRecipeFactory extends Factory {
       latest_revision: {},
     };
   }
+
   postGeneration() {
     super.postGeneration();
     this.data.latest_revision = RevisionFactory.build();
@@ -22,6 +23,7 @@ export class RevisionFactory extends Factory {
       extra_filter_expression: new Field(faker.lorem.words),
     };
   }
+
   postGeneration() {
     super.postGeneration();
     this.data.arguments = ArgumentsFactory.build();

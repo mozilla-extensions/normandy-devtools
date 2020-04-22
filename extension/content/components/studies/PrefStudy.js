@@ -11,7 +11,7 @@ export default class PrefStudy extends React.PureComponent {
     const { study } = this.props;
 
     return (
-      <Panel header={study.name} key={study.name} collapsible bordered>
+      <Panel key={study.name} bordered collapsible header={study.name}>
         <dl>
           <dt>Preference Name</dt>
           <dd>

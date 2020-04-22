@@ -109,7 +109,7 @@ class FiltersPage extends React.PureComponent {
   render() {
     const { filterExpression, lastValue, error, context, running } = this.state;
     return (
-      <Split sizes={[33, 34, 33]} gutterSize={1} className="split">
+      <Split className="split" gutterSize={1} sizes={[33, 34, 33]}>
         <div className="col">
           <div className="filter-column">
             <header>
@@ -122,18 +122,18 @@ class FiltersPage extends React.PureComponent {
             )}
             {context.env && (
               <DataTree
-                data={context.env}
-                title="env"
                 key="env"
-                onDoubleClick={this.handleDoubleClickTreeNode}
+                data={context.env}
                 defaultExpanded={false}
+                title="env"
+                onDoubleClick={this.handleDoubleClickTreeNode}
               />
             )}
             {context.normandy && (
               <DataTree
+                key="normandy"
                 data={context.normandy}
                 title="normandy"
-                key="normandy"
                 onDoubleClick={this.handleDoubleClickTreeNode}
               />
             )}
@@ -150,7 +150,7 @@ class FiltersPage extends React.PureComponent {
           />
         </div>
         <div className="col">
-          <OutputColumn value={lastValue} error={error} running={running} />
+          <OutputColumn error={error} running={running} value={lastValue} />
         </div>
       </Split>
     );
