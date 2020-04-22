@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import highlight from "highlight.js/lib/highlight";
+import highlight from "highlight.js/lib/core";
 
 export default class Highlight extends Component {
   static propTypes = {
