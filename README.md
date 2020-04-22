@@ -94,8 +94,12 @@ $ yarn watch:webpack
 Second, automatically rebuild the XPI file and update it in a Nightly temporary profile
 
 ```
-$ yarn watch:extension --firefox path/to/nightly
+$ yarn watch:extension
 ```
+
+> NOTE: If you are seeing an error while trying to run `watch` make sure that Nightly
+> is installed on your system and if you are on Linux make sure that `firefox-nightly`
+> is on your PATH.
 
 # Release
 
