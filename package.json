@@ -9,9 +9,9 @@
     "build": "npm-run-all clean build:webpack build:extension build:finalize",
     "build:extension": "web-ext build -s dist --overwrite-dest",
     "build:webpack": "webpack --mode production --progress",
-    "build:webpack-dev": "webpack --mode development --progress",
+    "build:webpack-dev": "webpack --mode development --progress --hide-modules",
     "build:finalize": "mv web-ext-artifacts/*.zip web-ext-artifacts/normandy-devtools.zip",
-    "clean": "rimraf dist web-ext-artifacts",
+    "clean": "rimraf dist web-ext-artifacts .webpack-cache",
     "lint": "npm-run-all lint:eslint",
     "lint-fix": "npm-run-all lint:eslint-fix",
     "lint:eslint": "eslint webpack.config.js extension",
@@ -19,7 +19,8 @@
     "test": "jest",
     "watch": "npm-run-all build:webpack-dev --parallel --race watch:*",
     "watch:extension": "web-ext run -s dist -f nightly",
-    "watch:webpack": "webpack --progress --mode development --watch"
+    "watch:webpack": "webpack --progress --mode development --watch",
+    "postinstall": "yarn clean"
   },
   "devDependencies": {
     "@babel/core": "7.9.0",
@@ -72,6 +73,7 @@
   "dependencies": {
     "auth0-js": "9.13.2",
     "autobind-decorator": "2.4.0",
+    "cache-loader": "^4.1.0",
     "codemirror": "5.53.2",
     "highlight.js": "10.0.0",
     "js-yaml": "3.13.1",
