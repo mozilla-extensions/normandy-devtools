@@ -160,7 +160,7 @@ class RecipeListing extends React.PureComponent {
 
     return (
       <ButtonToolbar>
-        <Button componentClass={Link} to={`recipes/edit/${recipe.id}`}>
+        <Button componentClass={Link} to={`recipes/${recipe.id}/edit`}>
           Edit Recipe
         </Button>
 

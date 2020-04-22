@@ -12,7 +12,6 @@ import { Icon, Nav, Sidenav } from "rsuite";
 
 import AppHeader from "devtools/components/common/AppHeader";
 import RecipesPage from "devtools/components/pages/RecipesPage";
-import RecipeEditor from "devtools/components/recipes/RecipeEditor";
 import FiltersPage from "devtools/components/pages/FiltersPage";
 import PrefStudiesPage from "devtools/components/pages/PrefStudiesPage";
 import AddonStudiesPage from "devtools/components/pages/AddonStudiesPage";
@@ -20,6 +19,7 @@ import {
   EnvironmentProvider,
   useEnvironmentState,
 } from "devtools/contexts/environment";
+import RecipeFormPage from "devtools/components/pages/RecipeFormPage";
 
 export default function App(props) {
   return (
@@ -92,14 +92,17 @@ function Page() {
           </Route>
 
           <Route
-            component={RecipeEditor}
-            path={`${match.path}/recipes/edit/:id`}
+            component={RecipeFormPage}
+            path={`${match.path}/recipes/:recipeId/edit`}
           />
           <Route
-            component={RecipeEditor}
-            path={`${match.path}/recipes/import/:slug`}
+            component={RecipeFormPage}
+            path={`${match.path}/recipes/import/:experimenterSlug`}
           />
-          <Route component={RecipeEditor} path={`${match.path}/recipes/new`} />
+          <Route
+            component={RecipeFormPage}
+            path={`${match.path}/recipes/new`}
+          />
           <Route component={RecipesPage} path={`${match.path}/recipes`} />
           <Route component={FiltersPage} path={`${match.path}/filters`} />
           <Route

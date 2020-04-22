@@ -1,4 +1,4 @@
-import API from "devtools/utils/api";
+import API, { RequestError } from "devtools/utils/api";
 
 export default class NormandyAPI extends API {
   constructor(environment, auth) {
@@ -20,6 +20,12 @@ export default class NormandyAPI extends API {
 
     const normandyHeaders = {};
     if (!isReadOperation) {
+      if (!this.auth || !this.auth.result) {
+        throw new RequestError(
+          "You must be authenticated to complete this request.",
+        );
+      }
+
       normandyHeaders.Authorization = `Bearer ${this.auth.result.accessToken}`;
     }
 
@@ -63,10 +69,20 @@ export default class NormandyAPI extends API {
     });
   }
 
-  async fetchActions() {
-    return this.request({
+  async fetchAllActions() {
+    let response = await this.request({
       url: "action/",
     });
+    let actions = response.results;
+
+    while (response.next) {
+      response = await this.request({
+        url: response.next,
+      });
+      actions = [...actions, ...response.results];
+    }
+
+    return actions;
   }
 
   async fetchFilters() {
