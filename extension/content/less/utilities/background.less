@@ -1,0 +1,15 @@
+/* stylelint-disable indentation, selector-max-empty-lines */
+each(@colors, {
+  .bg-@{value} {
+    background-color: @@value !important;
+  }
+})
+/* stylelint-enable indentation, selector-max-empty-lines */
+
+.bg-white {
+  background-color: #FFF !important;
+}
+
+.bg-transparent {
+  background-color: transparent !important;
+}

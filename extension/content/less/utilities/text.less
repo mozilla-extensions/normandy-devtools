@@ -1,0 +1,95 @@
+//
+// Text
+//
+
+// Alignment
+
+.text-justify { text-align: justify !important; }
+.text-wrap { white-space: normal !important; }
+.text-nowrap { white-space: nowrap !important; }
+.text-left { text-align: left !important; }
+.text-right { text-align: right !important; }
+.text-center { text-align: center !important; }
+
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+// Transformation
+
+.text-lowercase { text-transform: lowercase !important; }
+.text-uppercase { text-transform: uppercase !important; }
+.text-capitalize { text-transform: capitalize !important; }
+
+// Weight and italics
+
+.font-weight-light { font-weight: 300 !important; }
+.font-weight-lighter { font-weight: lighter !important; }
+.font-weight-normal { font-weight: 400 !important; }
+.font-weight-bold { font-weight: 700 !important; }
+.font-weight-bolder { font-weight: bolder !important; }
+.font-italic { font-style: italic !important; }
+
+// Contextual colors
+
+.text-white { color: #FFF !important; }
+
+.text-primary {
+  color: @primary-color !important;
+}
+
+.text-success {
+  color: @success-color !important;
+}
+
+.text-danger {
+  color: @error-color !important;
+}
+
+.text-info {
+  color: @info-color !important;
+}
+
+.text-warning {
+  color: @warning-color !important;
+}
+
+/* stylelint-disable indentation, selector-max-empty-lines */
+each(@colors, {
+  .text-@{value} {
+    color: @@value !important;
+  }
+})
+/* stylelint-enable indentation, selector-max-empty-lines */
+
+.text-body {
+  color: @text-color !important;
+}
+
+.text-muted {
+  color: @help-block-color !important;
+}
+
+.text-black-50 {
+  color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.text-white-50 {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+// Misc
+
+.text-decoration-none { text-decoration: none !important; }
+
+.text-break {
+  overflow-wrap: break-word !important;
+  word-break: break-word !important; // IE & < Edge 18
+}
+
+// Reset
+
+.text-reset { color: inherit !important; }
