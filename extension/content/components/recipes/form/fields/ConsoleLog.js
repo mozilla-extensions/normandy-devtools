@@ -1,11 +1,26 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Input, FormGroup, ControlLabel } from "rsuite";
+import {
+  ACTION_UPDATE_DATA,
+  useRecipeDetailsData,
+  useRecipeDetailsDispatch,
+} from "devtools/contexts/recipeDetails";
 
-export default function ConsoleLog(props) {
-  const { value: actionArgs, onChange } = props;
+export default function ConsoleLog() {
+  const data = useRecipeDetailsData();
+  const dispatch = useRecipeDetailsDispatch();
   const handleChange = (value) => {
-    onChange({ ...actionArgs, message: value });
+    dispatch({
+      type: ACTION_UPDATE_DATA,
+      data: {
+        ...data,
+        arguments: {
+          ...data.arguments,
+          message: value,
+        },
+      },
+    });
   };
 
   return (
@@ -13,8 +28,8 @@ export default function ConsoleLog(props) {
       <ControlLabel>Message</ControlLabel>
       <Input
         name="consoleLogArgument"
-        value={actionArgs ? actionArgs.message : null}
-        onChange={(newValue) => handleChange(newValue)}
+        value={data.arguments.message}
+        onChange={handleChange}
       />
     </FormGroup>
   );
