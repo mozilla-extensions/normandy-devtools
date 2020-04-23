@@ -1,41 +1,6 @@
 import React from "react";
-import PropTypes from "prop-types";
-import { Input, FormGroup, ControlLabel } from "rsuite";
-import {
-  ACTION_UPDATE_DATA,
-  useRecipeDetailsData,
-  useRecipeDetailsDispatch,
-} from "devtools/contexts/recipeDetails";
+import InputField from "devtools/components/recipes/form/arguments/fields/InputField";
 
 export default function ConsoleLog() {
-  const data = useRecipeDetailsData();
-  const dispatch = useRecipeDetailsDispatch();
-  const handleChange = (value) => {
-    dispatch({
-      type: ACTION_UPDATE_DATA,
-      data: {
-        ...data,
-        arguments: {
-          ...data.arguments,
-          message: value,
-        },
-      },
-    });
-  };
-
-  return (
-    <FormGroup>
-      <ControlLabel>Message</ControlLabel>
-      <Input
-        name="consoleLogArgument"
-        value={data.arguments.message}
-        onChange={handleChange}
-      />
-    </FormGroup>
-  );
+  return <InputField label="Message" name="message" />;
 }
-
-ConsoleLog.propTypes = {
-  onChange: PropTypes.func,
-  value: PropTypes.object,
-};
