@@ -74,7 +74,7 @@ var normandy = class extends ExtensionAPI {
             // it is generally safe to await values that aren't promises, just a bit inefficient
             for (const key of keys) {
               try {
-                if (key == "liveTelemetry") {
+                if (key === "liveTelemetry") {
                   // Live Telemetry is a weird proxy object. Unpack it.
                   builtContext.normandy.liveTelemetry = {
                     main: await context.normandy.liveTelemetry.main,
@@ -82,7 +82,7 @@ var normandy = class extends ExtensionAPI {
                   builtContext.env.liveTelemetry = {
                     main: await context.env.liveTelemetry.main,
                   };
-                } else if (key == "appinfo") {
+                } else if (key === "appinfo") {
                   // appinfo can't be directly cloned, but we can manually clone most of it
                   const appinfo = context.env.appinfo;
                   const appinfoCopy = {};
@@ -93,11 +93,11 @@ var normandy = class extends ExtensionAPI {
                     try {
                       const value = appinfo[name];
                       if (
-                        typeof value != "function" &&
-                        typeof value != "object"
+                        typeof value !== "function" &&
+                        typeof value !== "object"
                       ) {
                         appinfoCopy[name] = value;
-                      } else if (typeof value == "object") {
+                      } else if (typeof value === "object") {
                         console.warn(
                           `Ignoring appinfo key ${name} with type ${typeof value}:`,
                           value,
@@ -152,7 +152,7 @@ var normandy = class extends ExtensionAPI {
               let { value, done } = await generator.next();
               while (!done) {
                 // We know that the signature won't match, we didn't pass one. Ignore this
-                if (value != "RECIPE_SUITABILITY_SIGNATURE_ERROR") {
+                if (value !== "RECIPE_SUITABILITY_SIGNATURE_ERROR") {
                   suitabilities.push(value);
                 }
 

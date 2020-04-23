@@ -14,8 +14,6 @@ import {
   Radio,
   RadioGroup,
   Row,
-  SelectPicker,
-  Toggle,
 } from "rsuite";
 
 import {
@@ -23,6 +21,9 @@ import {
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
+import SelectField from "devtools/components/recipes/form/arguments/fields/SelectField";
+import ToggleField from "devtools/components/recipes/form/arguments/fields/ToggleField";
+import InputField from "devtools/components/recipes/form/arguments/fields/InputField";
 
 const PREFERENCE_TYPE_OPTIONS = [
   { label: "Boolean", value: "boolean" },
@@ -36,6 +37,26 @@ const PREFERENCE_BRANCH_TYPE_OPTIONS = [
 ];
 
 export default function PreferenceExperimentArguments() {
+  const preferenceTypeChangeSideEffect = ({ data, name, value }) => {
+    return {
+      ...data,
+      arguments: {
+        ...data.arguments,
+        branches: data.arguments.branches.map((b) => {
+          if (name === "preferenceType") {
+            if (value === "boolean") {
+              return { ...b, value: false };
+            }
+
+            return { ...b, value: "" };
+          }
+
+          return b;
+        }),
+      },
+    };
+  };
+
   return (
     <>
       <FormGroup>
@@ -58,6 +79,7 @@ export default function PreferenceExperimentArguments() {
           </Col>
           <Col xs={6}>
             <SelectField
+              changeSideEffect={preferenceTypeChangeSideEffect}
               label="Preference Type"
               name="preferenceType"
               options={PREFERENCE_TYPE_OPTIONS}
@@ -103,121 +125,6 @@ export default function PreferenceExperimentArguments() {
     </>
   );
 }
-
-function InputField({ label, name }) {
-  const data = useRecipeDetailsData();
-  const dispatch = useRecipeDetailsDispatch();
-
-  const handleChange = (value) => {
-    dispatch({
-      type: ACTION_UPDATE_DATA,
-      data: {
-        ...data,
-        arguments: {
-          ...data.arguments,
-          [name]: value,
-        },
-      },
-    });
-  };
-
-  return (
-    <FormGroup>
-      <ControlLabel>{label}</ControlLabel>
-      <Input value={data.arguments[name]} onChange={handleChange} />
-    </FormGroup>
-  );
-}
-
-InputField.propTypes = {
-  label: PropTypes.string,
-  name: PropTypes.string.isRequired,
-};
-
-function ToggleField({ children, label, name }) {
-  const data = useRecipeDetailsData();
-  const dispatch = useRecipeDetailsDispatch();
-
-  const handleChange = (value) => {
-    dispatch({
-      type: ACTION_UPDATE_DATA,
-      data: {
-        ...data,
-        arguments: {
-          ...data.arguments,
-          [name]: value,
-        },
-      },
-    });
-  };
-
-  return (
-    <FormGroup>
-      <ControlLabel>{label}</ControlLabel>
-      <div className="d-flex">
-        <span className="pr-2 pt-1">
-          <Toggle checked={data.arguments[name]} onChange={handleChange} />
-        </span>
-        <HelpBlock className="flex-grow-1">{children}</HelpBlock>
-      </div>
-    </FormGroup>
-  );
-}
-
-ToggleField.propTypes = {
-  children: PropTypes.any,
-  label: PropTypes.string,
-  name: PropTypes.string.isRequired,
-};
-
-function SelectField({ label, name, options }) {
-  const data = useRecipeDetailsData();
-  const dispatch = useRecipeDetailsDispatch();
-
-  const handleChange = (value) => {
-    dispatch({
-      type: ACTION_UPDATE_DATA,
-      data: {
-        ...data,
-        arguments: {
-          ...data.arguments,
-          branches: data.arguments.branches.map((b) => {
-            if (name === "preferenceType") {
-              if (value === "boolean") {
-                return { ...b, value: false };
-              }
-
-              return { ...b, value: "" };
-            }
-
-            return b;
-          }),
-          [name]: value,
-        },
-      },
-    });
-  };
-
-  return (
-    <FormGroup>
-      <ControlLabel>{label}</ControlLabel>
-      <SelectPicker
-        block
-        cleanable={false}
-        data={options}
-        searchable={false}
-        value={data.arguments[name]}
-        onChange={handleChange}
-      />
-    </FormGroup>
-  );
-}
-
-SelectField.propTypes = {
-  options: PropTypes.array.isRequired,
-  label: PropTypes.string,
-  name: PropTypes.string.isRequired,
-};
 
 function Branches() {
   const data = useRecipeDetailsData();
