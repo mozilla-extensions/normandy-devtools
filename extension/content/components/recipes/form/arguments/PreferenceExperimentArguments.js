@@ -156,7 +156,7 @@ function ToggleField({ children, label, name }) {
       <ControlLabel>{label}</ControlLabel>
       <div className="d-flex">
         <span className="pr-2 pt-1">
-          <Toggle value={data.arguments[name]} onChange={handleChange} />
+          <Toggle checked={data.arguments[name]} onChange={handleChange} />
         </span>
         <HelpBlock className="flex-grow-1">{children}</HelpBlock>
       </div>
@@ -181,6 +181,17 @@ function SelectField({ label, name, options }) {
         ...data,
         arguments: {
           ...data.arguments,
+          branches: data.arguments.branches.map((b) => {
+            if (name === "preferenceType") {
+              if (value === "boolean") {
+                return { ...b, value: false };
+              }
+
+              return { ...b, value: "" };
+            }
+
+            return b;
+          }),
           [name]: value,
         },
       },
@@ -212,26 +223,6 @@ function Branches() {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
   const { preferenceType } = data.arguments;
-
-  React.useEffect(() => {
-    const branches = data.arguments.branches || [];
-    dispatch({
-      type: ACTION_UPDATE_DATA,
-      data: {
-        ...data,
-        arguments: {
-          ...data.arguments,
-          branches: branches.map((b) => {
-            if (preferenceType === "boolean") {
-              return { ...b, value: false };
-            }
-
-            return { ...b, value: "" };
-          }),
-        },
-      },
-    });
-  }, [preferenceType]);
 
   const handleClickAddBranch = () => {
     const newBranch = { ratio: 1, slug: "", value: "" };
