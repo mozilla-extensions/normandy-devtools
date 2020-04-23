@@ -25,6 +25,7 @@ module.exports = {
         reservedFirst: true,
       }
     ],
+    "eqeqeq": ["error", "always"],
     "prefer-const": "error",
     "lines-between-class-members": ["error", "always"],
     "padding-line-between-statements": [

@@ -17,7 +17,7 @@ const cacheLoader = {
 
 module.exports = (env, argv) => ({
   mode: argv.mode || "development",
-  devtool: argv.mode == "production" ? "source-map" : "eval-source-map",
+  devtool: argv.mode === "production" ? "source-map" : "eval-source-map",
   entry: {
     content: "./extension/content/index.js",
     "content-scripts": "./extension/content/scripts/inject.js",

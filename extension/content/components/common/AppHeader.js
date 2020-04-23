@@ -67,7 +67,7 @@ function AddressBar() {
   }, [location]);
 
   const handleKeyPress = (ev) => {
-    if (ev.key == "Enter") {
+    if (ev.key === "Enter") {
       const addressMatch = address.match(/ext\+normandy:\/(.+?)$/);
       history.push(addressMatch[1]);
     }
