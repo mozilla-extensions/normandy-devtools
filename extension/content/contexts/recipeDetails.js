@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 export const INITIAL_RECIPE_DATA = {
   filter_object: [],
   action: {},
-  arguments: [],
+  arguments: {},
 };
 
 const initialState = {

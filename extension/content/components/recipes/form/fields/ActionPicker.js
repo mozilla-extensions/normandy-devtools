@@ -7,6 +7,7 @@ import {
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
+import { INITIAL_ACTION_ARGUMENTS } from "devtools/components/recipes/form/ActionArguments";
 
 export default function ActionPicker() {
   const data = useRecipeDetailsData();
@@ -22,11 +23,13 @@ export default function ActionPicker() {
   }, []);
 
   const handleChange = (value) => {
+    const action = actions.find((a) => a.name === value);
     dispatch({
       type: ACTION_UPDATE_DATA,
       data: {
         ...data,
-        action: actions.find((action) => action.name === value),
+        arguments: INITIAL_ACTION_ARGUMENTS[action.name] || {},
+        action,
       },
     });
   };
