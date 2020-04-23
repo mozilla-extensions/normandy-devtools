@@ -3,9 +3,11 @@ import React from "react";
 import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
 import FallbackEditor from "devtools/components/recipes/form/arguments/FallbackEditor";
 import PreferenceExperimentArguments from "devtools/components/recipes/form/arguments/PreferenceExperimentArguments";
+import ConsoleLog from "devtools/components/recipes/form/arguments/ConsoleLog";
 
 const ARGUMENTS_FIELDS_MAPPING = {
   "preference-experiment": PreferenceExperimentArguments,
+  "console-log": ConsoleLog,
 };
 
 export const INITIAL_ACTION_ARGUMENTS = {
@@ -19,6 +21,7 @@ export const INITIAL_ACTION_ARGUMENTS = {
     preferenceType: "boolean",
     slug: "",
   },
+  "console-log": { message: "" },
 };
 
 export default function ActionArguments() {
