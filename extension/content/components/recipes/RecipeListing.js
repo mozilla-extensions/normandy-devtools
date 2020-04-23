@@ -104,11 +104,11 @@ class RecipeListing extends React.PureComponent {
     }
 
     let textColor = "violet";
-    if (recipeSuitabilities && recipeSuitabilities.length == 1) {
-      if (recipeSuitabilities[0] == "RECIPE_SUITABILITY_FILTER_MATCH") {
+    if (recipeSuitabilities && recipeSuitabilities.length === 1) {
+      if (recipeSuitabilities[0] === "RECIPE_SUITABILITY_FILTER_MATCH") {
         textColor = "green";
       } else if (
-        recipeSuitabilities[0] == "RECIPE_SUITABILITY_FILTER_MISMATCH"
+        recipeSuitabilities[0] === "RECIPE_SUITABILITY_FILTER_MISMATCH"
       ) {
         textColor = "red";
       } else {
