@@ -1,17 +1,21 @@
 {
-  "presets":  [
+  "presets": [
     "@babel/preset-react",
     "@babel/preset-env",
-    ["rsuite", { "style": true, "theme": "default" }]
+    ["rsuite", { "style": true, "theme": "default" }],
+    "@babel/preset-typescript"
   ],
   "plugins": [
     ["@babel/plugin-proposal-decorators", { "legacy": true, "loose": true }],
     "@babel/plugin-proposal-object-rest-spread",
     "@babel/plugin-proposal-async-generator-functions",
     "@babel/plugin-proposal-class-properties",
-    ["@babel/plugin-transform-runtime", {
-      "helpers": false,
-      "regenerator": true
-    }]
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "helpers": false,
+        "regenerator": true
+      }
+    ]
   ]
 }
