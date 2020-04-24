@@ -1,12 +1,9 @@
 import React from "react";
-
-import PropTypes from "prop-types";
 import {
   HelpBlock,
   FormGroup,
   ControlLabel,
   InputNumber,
-  Grid,
   Row,
   Col,
 } from "rsuite";
@@ -19,12 +16,11 @@ import {
 
 import InputField from "devtools/components/recipes/form/arguments/fields/InputField";
 import SelectField from "devtools/components/recipes/form/arguments/fields/SelectField";
-import CheckboxField from "devtools/components/recipes/form/arguments/fields/CheckboxField";
-import InputUrlField from "devtools/components/recipes/form/arguments/fields/InputUrlField";
+import ToggleField from "devtools/components/recipes/form/arguments/fields/ToggleField";
 
 export default function ShowHeartBeatArguments() {
   return (
-    <Grid fluid>
+    <FormGroup>
       <Row>
         <Col xs={12}>
           <InputField label="Survey ID" name="surveyID" />
@@ -38,15 +34,16 @@ export default function ShowHeartBeatArguments() {
             name="engagementButtonLabel"
           />
           <InputField label="Thanks Message" name="thanksMessage" />
-          <InputUrlField label="Post-Answer URL" name="postAnswerUrl" />
-          <CheckboxField
-            helpText="Include UUID in Post-Answer URL and Telemetry."
+          <InputField label="Post-Answer URL" name="postAnswerUrl" />
+          <ToggleField
             label="Include Telemetry UUID?"
             name="includeTelemetryUUID"
-          />
+          >
+            Include UUID in Post-Answer URL and Telemetry.
+          </ToggleField>
         </Col>
       </Row>
-    </Grid>
+    </FormGroup>
   );
 }
 
@@ -64,6 +61,21 @@ function RepeatOptionsField() {
     },
   ];
 
+  const repeatsEveryChangeSideEffect = ({ data, value }) => {
+    if (value !== "xdays") {
+      /* eslint-disable no-unused-vars */
+      const {
+        repeatEvery: _omitRepeatOption,
+        action,
+        ...cleanedArguments
+      } = data.arguments;
+      /* eslint-enable no-unused-vars */
+      return { ...data, arguments: cleanedArguments };
+    }
+
+    return data;
+  };
+
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
 
@@ -80,28 +92,39 @@ function RepeatOptionsField() {
     });
   };
 
-  const repeatEveryOption = () => {
-    if (data.arguments.repeatOption === "xdays") {
-      return (
-        <FormGroup>
-          <ControlLabel>Days before user is reprompted</ControlLabel>
-          <InputNumber
-            min={1}
-            postfix="days"
-            value={data.arguments.repeatEvery}
-            onChange={(newValue) => handleChange("repeatEvery", newValue)}
-          />
-          <HelpBlock>Required</HelpBlock>
-        </FormGroup>
-      );
+  const parseNumericInput = (value) => {
+    if (!value) {
+      return "";
     }
 
-    return null;
+    return parseInt(value, 10);
+  };
+
+  const repeatEveryOption = () => {
+    if (data.arguments.repeatOption !== "xdays") {
+      return null;
+    }
+
+    return (
+      <FormGroup>
+        <ControlLabel>Days before user is reprompted</ControlLabel>
+        <InputNumber
+          min={1}
+          postfix="days"
+          value={data.arguments.repeatEvery}
+          onChange={(value) =>
+            handleChange("repeatEvery", parseNumericInput(value))
+          }
+        />
+        <HelpBlock>Required</HelpBlock>
+      </FormGroup>
+    );
   };
 
   return (
     <React.Fragment>
       <SelectField
+        changeSideEffect={repeatsEveryChangeSideEffect}
         label="How often should the prompt be shown?"
         name="repeatOption"
         options={SHOW_PROMPT_OPTIONS}
@@ -110,9 +133,3 @@ function RepeatOptionsField() {
     </React.Fragment>
   );
 }
-
-ShowHeartBeatArguments.propTypes = {
-  handleChange: PropTypes.func,
-  name: PropTypes.name,
-  value: PropTypes.string,
-};
