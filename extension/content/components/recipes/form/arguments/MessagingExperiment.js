@@ -47,6 +47,7 @@ export default function MessagingExperiment() {
 }
 
 function Branches() {
+  const [branchesUpdated, setBranchesUpdated] = React.useState(Date.now());
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
   const { preferenceType } = data.arguments;
@@ -77,7 +78,12 @@ function Branches() {
   );
   if (data.arguments.branches && data.arguments.branches.length) {
     branchesList = data.arguments.branches.map((branch, index) => (
-      <Branch key={index} index={index} />
+      <Branch
+        key={index}
+        branchesUpdated={branchesUpdated}
+        index={index}
+        setBranchesUpdated={setBranchesUpdated}
+      />
     ));
   }
 
@@ -97,12 +103,11 @@ function Branches() {
   );
 }
 
-function Branch({ index }) {
+function Branch({ index, branchesUpdated, setBranchesUpdated }) {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
   const branch = data.arguments.branches[index];
   const { branches } = data.arguments;
-  const [branchesUpdated, setBranchesUpdated] = React.useState(Date.now());
 
   const handleClickDelete = () => {
     setBranchesUpdated(Date.now());
@@ -210,5 +215,7 @@ function Branch({ index }) {
 }
 
 Branch.propTypes = {
+  branchesUpdated: PropTypes.number.isRequired,
   index: PropTypes.number.isRequired,
+  setBranchesUpdated: PropTypes.func.isRequired,
 };
