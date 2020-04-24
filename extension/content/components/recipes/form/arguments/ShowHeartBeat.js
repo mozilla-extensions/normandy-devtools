@@ -18,7 +18,7 @@ import InputField from "devtools/components/recipes/form/arguments/fields/InputF
 import SelectField from "devtools/components/recipes/form/arguments/fields/SelectField";
 import ToggleField from "devtools/components/recipes/form/arguments/fields/ToggleField";
 
-export default function ShowHeartBeatArguments() {
+export default function ShowHeart() {
   return (
     <FormGroup>
       <Row>
@@ -79,17 +79,19 @@ function RepeatOptionsField() {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
 
-  const handleChange = (name, value) => {
-    dispatch({
-      type: ACTION_UPDATE_DATA,
-      data: {
-        ...data,
-        arguments: {
-          ...data.arguments,
-          [name]: parseInt(value),
+  const handleChange = (name) => {
+    return (value) => {
+      dispatch({
+        type: ACTION_UPDATE_DATA,
+        data: {
+          ...data,
+          arguments: {
+            ...data.arguments,
+            [name]: parseNumericInput(value),
+          },
         },
-      },
-    });
+      });
+    };
   };
 
   const parseNumericInput = (value) => {
@@ -112,9 +114,7 @@ function RepeatOptionsField() {
           min={1}
           postfix="days"
           value={data.arguments.repeatEvery}
-          onChange={(value) =>
-            handleChange("repeatEvery", parseNumericInput(value))
-          }
+          onChange={handleChange("repeatEvery")}
         />
         <HelpBlock>Required</HelpBlock>
       </FormGroup>

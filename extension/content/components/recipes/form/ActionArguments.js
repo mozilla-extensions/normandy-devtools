@@ -4,12 +4,12 @@ import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
 import FallbackEditor from "devtools/components/recipes/form/arguments/FallbackEditor";
 import PreferenceExperimentArguments from "devtools/components/recipes/form/arguments/PreferenceExperimentArguments";
 import ConsoleLog from "devtools/components/recipes/form/arguments/ConsoleLog";
-import ShowHeartBeatArguments from "devtools/components/recipes/form/arguments/ShowHeartBeatArguments";
+import ShowHeartBeat from "devtools/components/recipes/form/arguments/ShowHeartBeat";
 
 const ARGUMENTS_FIELDS_MAPPING = {
   "console-log": ConsoleLog,
   "preference-experiment": PreferenceExperimentArguments,
-  "show-heartbeat": ShowHeartBeatArguments,
+  "show-heartbeat": ShowHeartBeat,
 };
 
 export const INITIAL_ACTION_ARGUMENTS = {
