@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 import CodeMirror from "devtools/components/common/CodeMirror";
 
-export default function JsonEditor({ value, onChange }) {
+export default function JsonEditor({ value, onChange, options, ...props }) {
   const [internalState, setInternalState] = useState(() =>
     JSON.stringify(value, null, 2),
   );
@@ -23,9 +23,11 @@ export default function JsonEditor({ value, onChange }) {
       options={{
         mode: "javascript",
         lineNumbers: true,
+        ...options,
       }}
       value={internalState}
       onBeforeChange={handleNewValue}
+      {...props}
     />
   );
 }
@@ -33,4 +35,5 @@ export default function JsonEditor({ value, onChange }) {
 JsonEditor.propTypes = {
   value: PropTypes.object,
   onChange: PropTypes.func.isRequired,
+  options: PropTypes.object,
 };
