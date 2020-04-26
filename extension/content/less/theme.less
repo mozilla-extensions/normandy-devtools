@@ -13,17 +13,59 @@
 
 @avatar-sm-side-length: 32px;
 
-@base-color: @color-protocol-blue-40;
-@success-color: @color-protocol-green-60;
-@info-color: @color-protocol-blue-40;
-@warning-color: @color-protocol-yellow-40;
-@error-color: @color-protocol-red-50;
-
 @red: @color-protocol-red-50;
-@orange: @color-protocol-orange-40;
-@yellow: @color-protocol-yellow-40;
-@green: @color-protocol-green-60;
-@cyan: @color-protocol-blue-10;
+@orange: mix(@color-protocol-orange-30, @color-protocol-orange-70, 75%);
+@yellow: mix(@color-protocol-yellow-30, @color-protocol-yellow-80, 80%);
+@green: mix(@color-protocol-green-60, @color-protocol-green-70, 50%);
+@cyan: mix(@color-protocol-blue-05, @color-protocol-green-70, 70%);
 @blue: @color-protocol-blue-40;
-@violet: @color-protocol-purple-60;
+@violet: mix(@color-protocol-purple-20, @color-protocol-ink-50, 65%);
 @colors: red, orange, yellow, green, cyan, blue, violet;
+
+@base-color: @blue;
+@success-color:@green;
+@info-color: @cyan;
+@warning-color: @yellow;
+@error-color: @red;
+
+.rs-tag {
+  &:not(.rs-tag-rsuite) {
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 16px;
+    margin-top: 2px;
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.25);
+    text-transform: uppercase;
+
+    &.rs-tag-default {
+      text-shadow: none;
+    }
+
+    .rs-tag-icon-close {
+      font-size: 8px;
+    }
+
+    &.rs-tag-closeable {
+      padding-right: 23px;
+    }
+  }
+}
+
+.rs-picker-tag .rs-tag {
+  font-size: 12px;
+  font-weight: normal;
+  line-height: 20px;
+  text-transform: none;
+
+  .rs-tag-icon-close {
+    font-size: 10px;
+  }
+
+  &.rs-tag-closeable {
+    padding-right: 25px;
+  }
+}
+
+.rs-control-label {
+  font-weight: bold;
+}

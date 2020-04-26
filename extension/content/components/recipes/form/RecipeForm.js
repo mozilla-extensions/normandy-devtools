@@ -17,7 +17,7 @@ import { useRecipeDetailsState } from "devtools/contexts/recipeDetails";
 export default function RecipeForm() {
   const history = useHistory();
   const { recipeId } = useParams();
-  const { environmentKey } = useEnvironmentState();
+  const { selectedKey: environmentKey } = useEnvironmentState();
   const { data, importInstructions } = useRecipeDetailsState();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
 
@@ -37,8 +37,8 @@ export default function RecipeForm() {
       });
 
       requestSave
-        .then(() => {
-          history.push(`/${environmentKey}/recipes`);
+        .then((savedRecipe) => {
+          history.push(`/${environmentKey}/recipes/${savedRecipe.id}`);
           Alert.success("Changes Saved");
         })
         .catch((err) => {
@@ -51,8 +51,8 @@ export default function RecipeForm() {
   };
 
   const handleCancelClick = () => {
-    if (window.history.length > 1) {
-      window.history.go(-1);
+    if (recipeId) {
+      history.push(`/${environmentKey}/recipes/${recipeId}`);
     } else {
       history.push(`/${environmentKey}/recipes`);
     }

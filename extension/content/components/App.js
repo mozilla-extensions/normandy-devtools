@@ -21,6 +21,7 @@ import {
 } from "devtools/contexts/environment";
 import RecipeFormPage from "devtools/components/pages/RecipeFormPage";
 import { useHistoryRecorder } from "devtools/hooks/urls";
+import RecipeDetailsPage from "devtools/components/pages/RecipeDetailsPage";
 
 export default function App(props) {
   return (
@@ -93,20 +94,33 @@ function Page() {
             <Redirect to={`${match.url}/recipes`} />
           </Route>
 
+          <Route exact component={RecipesPage} path={`${match.path}/recipes`} />
           <Route
+            exact
+            component={RecipeFormPage}
+            path={`${match.path}/recipes/new`}
+          />
+          <Route
+            exact
+            component={RecipeDetailsPage}
+            path={`${match.path}/recipes/:recipeId`}
+          />
+          <Route
+            exact
+            component={RecipeDetailsPage}
+            path={`${match.path}/recipes/:recipeId/revision/:revisionId`}
+          />
+          <Route
+            exact
             component={RecipeFormPage}
             path={`${match.path}/recipes/:recipeId/edit`}
           />
           <Route
+            exact
             component={RecipeFormPage}
             path={`${match.path}/recipes/import/:experimenterSlug`}
           />
-          <Route
-            component={RecipeFormPage}
-            path={`${match.path}/recipes/new`}
-          />
-          <Route component={RecipesPage} path={`${match.path}/recipes`} />
-          <Route component={FiltersPage} path={`${match.path}/filters`} />
+          <Route exact component={FiltersPage} path={`${match.path}/filters`} />
           <Route
             component={PrefStudiesPage}
             path={`${match.path}/pref-studies`}

@@ -164,7 +164,9 @@ class RecipeListing extends React.PureComponent {
           Edit Recipe
         </Button>
 
-        <Button onClick={this.handleshowRecipeButton}>View Recipe</Button>
+        <Button componentClass={Link} to={`recipes/${recipe.id}`}>
+          View Recipe
+        </Button>
       </ButtonToolbar>
     );
   }
