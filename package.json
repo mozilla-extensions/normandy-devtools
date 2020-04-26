@@ -38,7 +38,7 @@
     "babel-loader": "8.1.0",
     "babel-preset-rsuite": "4.0.1",
     "copy-webpack-plugin": "5.1.1",
-    "css-loader": "3.5.2",
+    "css-loader": "3.5.3",
     "dotenv-webpack": "1.7.0",
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.11.0",
@@ -84,6 +84,6 @@
     "react-error-boundary": "1.2.5",
     "react-router-dom": "5.1.2",
     "react-split": "2.0.7",
-    "rsuite": "4.3.4"
+    "rsuite": "4.4.0"
   }
 }
