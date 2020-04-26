@@ -985,24 +985,10 @@
   dependencies:
     regenerator-runtime "^0.13.2"
 
-"@babel/runtime@7.9.2", "@babel/runtime@^7.7.4", "@babel/runtime@^7.9.2":
+"@babel/runtime@7.9.2", "@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.4.0", "@babel/runtime@^7.6.3", "@babel/runtime@^7.7.4", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
   version "7.9.2"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.9.2.tgz#d90df0583a3a252f09aaa619665367bae518db06"
   integrity sha512-NE2DtOdufG7R5vnfQUTehdTfNycfUANEtCa9PssN9O/xmTzP4E08UI797ixaei6hBEVL9BI/PsdJS5x7mWoB9Q==
-  dependencies:
-    regenerator-runtime "^0.13.4"
-
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.4.0", "@babel/runtime@^7.6.3":
-  version "7.8.4"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.8.4.tgz#d79f5a2040f7caa24d53e563aad49cbc05581308"
-  integrity sha512-neAp3zt80trRVBI1x0azq6c57aNBqYZH8KhMm3TaB7wEI5Q4A2SHfBHE8w9gOhI/lrqxtEbXZgQIrHP+wvSGwQ==
-  dependencies:
-    regenerator-runtime "^0.13.2"
-
-"@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7":
-  version "7.8.7"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.8.7.tgz#8fefce9802db54881ba59f90bb28719b4996324d"
-  integrity sha512-+AATMUFppJDw6aiR5NVPHqIQBlV/Pj8wY/EZH+lmvRdUo9xBaz/rF3alAwFJQavvKfeOlPE7oaaDHVbcySbCsg==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -9720,10 +9706,10 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^3.0.0"
     inherits "^2.0.1"
 
-rsuite-table@^3.9.5:
-  version "3.9.5"
-  resolved "https://registry.yarnpkg.com/rsuite-table/-/rsuite-table-3.9.5.tgz#405f957e3043ff7ca0e57d016a5d84f7d123d19c"
-  integrity sha512-L6YyMwRbsqm9eXokdTCiZuPzDKr9LgnHRyZNInOJ4I1Kp6+XBCz5qHE6B7NL4vsBTg9UvOOwsijSXEbG03o1WQ==
+rsuite-table@^3.12.1:
+  version "3.12.1"
+  resolved "https://registry.yarnpkg.com/rsuite-table/-/rsuite-table-3.12.1.tgz#a1b2773087fa187bed900fd1298ff52e5089b18e"
+  integrity sha512-uZTvLGDDLXeIovHb9168CoeLw1iPTJblcW7GAG9nnzRjhw1oHzSBValePxwV+C/zzexnEu/g2k2moUZrr2DG1A==
   dependencies:
     "@babel/runtime" "^7.8.4"
     classnames "^2.2.5"
@@ -9731,19 +9717,10 @@ rsuite-table@^3.9.5:
     element-resize-event "^3.0.2"
     lodash "^4.17.5"
 
-rsuite-utils@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/rsuite-utils/-/rsuite-utils-2.2.1.tgz#dbedd36f1e404b1a5befecd41d7aaea5b55c90f5"
-  integrity sha512-viDaUWDb6UtrV2YcncrJmJqinf4VmhMr73rU7xfympIBMZ3frfbnWbhxro8zrlLocMDKWbu0MgYF5SGBBIwsYA==
-  dependencies:
-    classnames "^2.2.5"
-    lodash "^4.17.5"
-    react-lifecycles-compat "^3.0.4"
-
-rsuite@4.3.4:
-  version "4.3.4"
-  resolved "https://registry.yarnpkg.com/rsuite/-/rsuite-4.3.4.tgz#4eb7878670d66dc2217baed9bccd0661428374de"
-  integrity sha512-Q4fYe4IP6Wvi1i43EdGLDLOCuacToW34XGnjk4DDnps14Iy5bUGyFvaNCEIRnt3tOz9pbYEZyFZ4VazeKdHnIQ==
+rsuite@4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/rsuite/-/rsuite-4.4.0.tgz#bf186cafc85e94502d4bc8f317837c64f4dbc30d"
+  integrity sha512-KjsNFGm1F5DAlc8IrTRavbU3cOfIr9J+t9gOUKW+Yi5ncJ2GQPrjGyg2nfxkAiHLq5012cn7heE+FGtDJ/Il2w==
   dependencies:
     "@babel/runtime" "^7.8.4"
     classnames ">=2.0.0"
@@ -9755,9 +9732,8 @@ rsuite@4.3.4:
     react-lifecycles-compat "^3.0.4"
     react-virtualized "^9.21.0"
     recompose "^0.30.0"
-    rsuite-table "^3.9.5"
-    rsuite-utils "^2.2.1"
-    schema-typed "^1.4.0"
+    rsuite-table "^3.12.1"
+    schema-typed "^1.5.1"
 
 rsvp@^4.8.4:
   version "4.8.5"
@@ -9864,10 +9840,10 @@ scheduler@^0.19.1:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
 
-schema-typed@^1.4.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/schema-typed/-/schema-typed-1.5.0.tgz#9d55aaa9ae682d0c61192d62c49c47a60fc68b1b"
-  integrity sha512-gKVmlCEUCN0QCL0Qx1VeipowuYDwEov4Trjz/Ibe/zSaq1D0XiqsvAyNowdOiko/YzLBmFfXPbxoS3LgVyJnoQ==
+schema-typed@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/schema-typed/-/schema-typed-1.5.1.tgz#37480e034800e15f82c8489e408f2bd0a9df657f"
+  integrity sha512-sx34fDSv08ubC9fTPKr3ba8YYs6nwqqRAITj6BXaxEaudJdjqtH7ZCe5wZQnQhbAGjKF4LcEwH15Oxf00pcSeg==
 
 schema-utils@^0.3.0:
   version "0.3.0"
