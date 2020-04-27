@@ -4,9 +4,11 @@ import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
 import FallbackEditor from "devtools/components/recipes/form/arguments/FallbackEditor";
 import PreferenceExperimentArguments from "devtools/components/recipes/form/arguments/PreferenceExperimentArguments";
 import ConsoleLog from "devtools/components/recipes/form/arguments/ConsoleLog";
+import PreferenceRollout from "devtools/components/recipes/form/arguments/PreferenceRollout";
 
 const ARGUMENTS_FIELDS_MAPPING = {
   "preference-experiment": PreferenceExperimentArguments,
+  "preference-rollout": PreferenceRollout,
   "console-log": ConsoleLog,
 };
 
@@ -21,6 +23,7 @@ export const INITIAL_ACTION_ARGUMENTS = {
     preferenceType: "boolean",
     slug: "",
   },
+  "preference-rollout": { slug: "", preferences: [] },
   "console-log": { message: "" },
 };
 
