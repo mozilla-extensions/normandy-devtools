@@ -20,6 +20,7 @@ import {
   useEnvironmentState,
 } from "devtools/contexts/environment";
 import RecipeFormPage from "devtools/components/pages/RecipeFormPage";
+import { useHistoryRecorder } from "devtools/hooks/urls";
 
 export default function App(props) {
   return (
@@ -82,6 +83,7 @@ function AppSidebar() {
 
 function Page() {
   const match = useRouteMatch();
+  useHistoryRecorder();
 
   return (
     <div className="page-container">

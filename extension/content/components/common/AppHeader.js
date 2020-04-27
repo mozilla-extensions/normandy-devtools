@@ -27,6 +27,7 @@ import {
   useSelectedEnvironmentAuth,
 } from "devtools/contexts/environment";
 import { upperCaseFirst } from "devtools/utils/helpers";
+import { useExtensionUrl } from "devtools/hooks/urls";
 
 export default function AppHeader() {
   return (
@@ -55,16 +56,13 @@ export default function AppHeader() {
 }
 
 function AddressBar() {
-  const location = useLocation();
+  const extensionUrl = useExtensionUrl();
   const history = useHistory();
   const [address, setAddress] = React.useState("");
   let inputRef;
   let triggerRef;
 
-  React.useEffect(() => {
-    const newAddress = `ext+normandy:/${location.pathname}${location.search}`;
-    setAddress(newAddress);
-  }, [location]);
+  React.useEffect(() => setAddress(extensionUrl.toString()), [extensionUrl]);
 
   const handleKeyPress = (ev) => {
     if (ev.key === "Enter") {

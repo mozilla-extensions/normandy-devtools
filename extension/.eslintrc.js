@@ -3,4 +3,7 @@ module.exports = {
   env: {
     webextensions: true,
   },
+  globals: {
+    DEVELOPMENT: false,
+  },
 };
