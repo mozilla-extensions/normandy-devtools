@@ -26,6 +26,7 @@ class JexlColumn extends React.PureComponent {
     document
       .querySelectorAll(".filter-column .CodeMirror-cursors")
       .forEach((node) => {
+        // @ts-ignore
         node.style.visibility = "visible";
       });
   }
@@ -38,6 +39,7 @@ class JexlColumn extends React.PureComponent {
           <strong>JEXL Filter Expression</strong>
         </header>
         <CodeMirror
+          // @ts-ignore
           editorDidMount={this.handleEditorMounted}
           options={{
             mode: "javascript",

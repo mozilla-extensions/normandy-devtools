@@ -21,6 +21,7 @@ import {
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
+
 import SelectField from "devtools/components/recipes/form/arguments/fields/SelectField";
 import ToggleField from "devtools/components/recipes/form/arguments/fields/ToggleField";
 import InputField from "devtools/components/recipes/form/arguments/fields/InputField";
@@ -132,6 +133,7 @@ function Branches() {
   const { preferenceType } = data.arguments;
 
   const handleClickAddBranch = () => {
+    /** @type {{ratio: number, slug: string, value: string | number | boolean}} */
     const newBranch = { ratio: 1, slug: "", value: "" };
     if (preferenceType === "boolean") {
       newBranch.value = false;

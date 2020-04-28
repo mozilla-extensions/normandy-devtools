@@ -5,11 +5,13 @@ import FallbackEditor from "devtools/components/recipes/form/arguments/FallbackE
 import PreferenceExperiment from "devtools/components/recipes/form/arguments/PreferenceExperiment";
 import MessagingExperiment from "devtools/components/recipes/form/arguments/MessagingExperiment";
 import ConsoleLog from "devtools/components/recipes/form/arguments/ConsoleLog";
+import ShowHeartBeat from "devtools/components/recipes/form/arguments/ShowHeartBeat";
 
 const ARGUMENTS_FIELDS_MAPPING = {
   "console-log": ConsoleLog,
   "messaging-experiment": MessagingExperiment,
   "preference-experiment": PreferenceExperiment,
+  "show-heartbeat": ShowHeartBeat,
 };
 
 export const INITIAL_ACTION_ARGUMENTS = {
@@ -28,6 +30,18 @@ export const INITIAL_ACTION_ARGUMENTS = {
     preferenceName: "",
     preferenceType: "boolean",
     slug: "",
+  },
+  "show-heartbeat": {
+    engagementButtonLabel: "",
+    includeTelemetryUUID: false,
+    learnMoreMessage: "",
+    learnMoreUrl: "",
+    message: "",
+    postAnswerUrl: "",
+    repeatOption: "once",
+    surveyID: "",
+    surveyId: "",
+    thanksMessage: "",
   },
 };
 

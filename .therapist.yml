@@ -8,11 +8,19 @@ actions:
     exclude:
       - ".eslintrc.js"
       - ".prettierrc.js"
+  typescript:
+    description: Typescript type checking
+    run: yarn tsc --noEmit --project tsconfig.json
+    include:
+      - "extension/content/*.js"
+      - "extension/content/*.ts"
+      - "extension/content/*.tsx"
   stylelint:
     run: yarn stylelint {files}
     include:
       - "*.css"
       - "*.less"
+
 shortcuts:
   lint:
     flags:

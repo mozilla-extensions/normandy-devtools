@@ -1,0 +1,63 @@
+//
+// Border
+//
+
+.border { border: @input-border-width solid @input-border !important; }
+.border-top { border-top: @input-border-width solid @input-border !important; }
+.border-right { border-right: @input-border-width solid @input-border !important; }
+.border-bottom { border-bottom: @input-border-width solid @input-border !important; }
+.border-left { border-left: @input-border-width solid @input-border !important; }
+
+.border-0 { border: 0 !important; }
+.border-top-0 { border-top: 0 !important; }
+.border-right-0 { border-right: 0 !important; }
+.border-bottom-0 { border-bottom: 0 !important; }
+.border-left-0 { border-left: 0 !important; }
+
+/* stylelint-disable indentation, selector-max-empty-lines */
+each(@colors, {
+  .border-@{value} {
+    border-color: @@value !important;
+  }
+})
+/* stylelint-enable indentation, selector-max-empty-lines */
+
+.border-white {
+  border-color: #FFF !important;
+}
+
+//
+// Border-radius
+//
+
+.rounded {
+  border-radius: @border-radius-base !important;
+}
+
+.rounded-top {
+  border-top-left-radius: @border-radius-base !important;
+  border-top-right-radius: @border-radius-base !important;
+}
+
+.rounded-right {
+  border-bottom-right-radius: @border-radius-base !important;
+  border-top-right-radius: @border-radius-base !important;
+}
+
+.rounded-bottom {
+  border-bottom-left-radius: @border-radius-base !important;
+  border-bottom-right-radius: @border-radius-base !important;
+}
+
+.rounded-left {
+  border-bottom-left-radius: @border-radius-base !important;
+  border-top-left-radius: @border-radius-base !important;
+}
+
+.rounded-circle {
+  border-radius: 50% !important;
+}
+
+.rounded-0 {
+  border-radius: 0 !important;
+}
