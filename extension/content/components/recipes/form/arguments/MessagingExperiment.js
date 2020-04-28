@@ -50,13 +50,9 @@ function Branches() {
   const [branchesUpdated, setBranchesUpdated] = React.useState(Date.now());
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
-  const { preferenceType } = data.arguments;
 
   const handleClickAddBranch = () => {
     const newBranch = { ratio: 1, slug: "", value: {}, groups: [] };
-    if (preferenceType === "boolean") {
-      newBranch.value = false;
-    }
 
     dispatch({
       type: ACTION_UPDATE_DATA,
@@ -193,7 +189,7 @@ function Branch({ index, branchesUpdated, setBranchesUpdated }) {
                 block
                 cleanable
                 creatable
-                data={[]}
+                data={branch.groups}
                 value={branch.groups}
                 onChange={handleChange("groups")}
               />
