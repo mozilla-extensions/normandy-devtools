@@ -24,7 +24,7 @@ export function normalizeErrorObject(err) {
  * Sourced from:
  * https://auth0.com/docs/api-auth/tutorials/nonce#generate-a-cryptographically-random-nonce
  *
- * @param {int} length  The length of the generated string.
+ * @param {number} length  The length of the generated string.
  * @returns {string}
  */
 export function generateNonce(length) {

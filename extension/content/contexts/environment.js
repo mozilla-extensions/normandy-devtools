@@ -170,6 +170,7 @@ EnvironmentRouter.propTypes = {
 };
 
 export function EnvironmentProvider({ children }) {
+  /** @type {[React.ReducerState<any>, React.Dispatch<React.ReducerAction<any>>]} */
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
   // Add event listener for changes to local storage
@@ -186,6 +187,7 @@ export function EnvironmentProvider({ children }) {
           dispatch({
             type: actionType,
             key: envKey,
+            // @ts-ignore
             [valueName]: JSON.parse(ev.newValue),
           });
         }
@@ -194,6 +196,7 @@ export function EnvironmentProvider({ children }) {
   }, []);
 
   return (
+    // @ts-ignore
     <Provider value={{ state, dispatch }}>
       <EnvironmentRouter>{children}</EnvironmentRouter>
     </Provider>

@@ -152,6 +152,7 @@ function VersionFilter() {
         <InputNumber
           min={MIN_VERSION}
           value={versionNumber}
+          // @ts-ignore
           onChange={setVersionNumber}
         />
         <TagGroup>

@@ -29,17 +29,23 @@ function injectRecipeDetailsLink(element, environment) {
 }
 
 if (document.body.dataset.ndt === "experimenter") {
-  document.querySelectorAll("[data-ndt-add-class]").forEach((el) => {
+  document.querySelectorAll("[data-ndt-add-class]").forEach((
+    /** @type {HTMLElement} */ el,
+  ) => {
     el.classList.add(el.dataset.ndtAddClass);
   });
 
-  document.querySelectorAll("[data-ndt-remove-class]").forEach((el) => {
+  document.querySelectorAll("[data-ndt-remove-class]").forEach((
+    /** @type {HTMLElement} */ el,
+  ) => {
     el.classList.remove(el.dataset.ndtRemoveClass);
   });
 
   Object.keys(experimenterUrls).forEach((url) => {
     if (window.location.href.startsWith(url)) {
-      document.querySelectorAll("[data-ndt-inject]").forEach((el) => {
+      document.querySelectorAll("[data-ndt-inject]").forEach((
+        /** @type {HTMLElement} */ el,
+      ) => {
         let injector;
         switch (el.dataset.ndtInject) {
           case "recipe-details-link":

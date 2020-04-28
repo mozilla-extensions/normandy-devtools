@@ -33,6 +33,7 @@ module.exports = (env, argv = {}) => ({
     alias: {
       devtools: path.resolve(__dirname, "extension/content"),
     },
+    extensions: [".js", ".ts", ".tsx"],
   },
   plugins: [
     new FixStyleOnlyEntriesPlugin(),
@@ -71,7 +72,8 @@ module.exports = (env, argv = {}) => ({
   module: {
     rules: [
       {
-        test: /\.js$/,
+        // .js, .jsx, .ts, and .tsx
+        test: /\.[jt]sx?$/,
         include: [path.resolve(__dirname, "./extension")],
         use: [cacheLoader, "babel-loader"],
       },

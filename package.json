@@ -33,6 +33,7 @@
     "@babel/preset-react": "7.9.4",
     "@testing-library/jest-dom": "5.5.0",
     "@testing-library/react": "10.0.3",
+    "@typescript-eslint/eslint-plugin": "2.29.0",
     "babel-eslint": "10.1.0",
     "babel-jest": "25.4.0",
     "babel-loader": "8.1.0",
@@ -64,6 +65,7 @@
     "stylelint": "13.3.3",
     "stylelint-config-standard": "20.0.0",
     "stylelint-order": "4.0.0",
+    "typescript": "3.8.3",
     "web-ext": "4.2.0",
     "webpack": "4.43.0",
     "webpack-bundle-analyzer": "3.7.0",
@@ -71,9 +73,14 @@
     "webpack-fix-style-only-entries": "0.4.0"
   },
   "dependencies": {
+    "@babel/preset-typescript": "7.9.0",
+    "@types/rc-tree": "1.11.3",
+    "@types/react-router": "5.1.5",
+    "@types/react-router-dom": "5.1.4",
+    "@typescript-eslint/parser": "2.29.0",
     "auth0-js": "9.13.2",
     "autobind-decorator": "2.4.0",
-    "cache-loader": "^4.1.0",
+    "cache-loader": "4.1.0",
     "codemirror": "5.53.2",
     "highlight.js": "10.0.1",
     "js-yaml": "3.13.1",
@@ -84,6 +91,7 @@
     "react-error-boundary": "1.2.5",
     "react-router-dom": "5.1.2",
     "react-split": "2.0.7",
-    "rsuite": "4.4.0"
+    "rsuite": "4.4.0",
+    "web-ext-types": "3.2.1"
   }
 }
