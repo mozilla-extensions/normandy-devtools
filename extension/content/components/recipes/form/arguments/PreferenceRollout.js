@@ -100,6 +100,11 @@ function Preference({ index }) {
     });
   };
 
+  const handlePreferenceTypeChange = (value) => {
+    setPreferenceType(value);
+    preference.value = "";
+  };
+
   const handleChange = (name, cb = (v) => v) => {
     return (value) => {
       dispatch({
@@ -170,13 +175,10 @@ function Preference({ index }) {
           </FormGroup>
         </div>
 
-        <div className="pr-1">
+        <div className="flex-grow-1 pr-1">
           <FormGroup>
             <ControlLabel>Name</ControlLabel>
             <Input
-              style={{
-                width: "400px",
-              }}
               value={preference.preferenceName}
               onChange={handleChange("preferenceName")}
             />
@@ -186,16 +188,14 @@ function Preference({ index }) {
           <FormGroup>
             <ControlLabel>Preference Type</ControlLabel>
             <InputPicker
+              cleanable={false}
               data={PREFERENCE_TYPE_OPTIONS}
               value={preferenceType}
-              onChange={(value, _) => {
-                setPreferenceType(value);
-                preference.value = "";
-              }}
+              onChange={handlePreferenceTypeChange}
             />
           </FormGroup>
         </div>
-        <div>
+        <div className={preferenceType === "string" ? "flex-grow-1" : ""}>
           <FormGroup>
             <ControlLabel>Value</ControlLabel>
             {valueField}
