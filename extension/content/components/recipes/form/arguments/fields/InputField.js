@@ -12,7 +12,7 @@ export default function InputField({
   label,
   name,
   changeSideEffect,
-  componentClass = "input",
+  ...props
 }) {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
@@ -39,11 +39,7 @@ export default function InputField({
   return (
     <FormGroup>
       <ControlLabel>{label}</ControlLabel>
-      <Input
-        componentClass={componentClass}
-        value={data.arguments[name]}
-        onChange={handleChange}
-      />
+      <Input value={data.arguments[name]} onChange={handleChange} {...props} />
     </FormGroup>
   );
 }
