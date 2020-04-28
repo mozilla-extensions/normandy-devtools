@@ -139,7 +139,7 @@ class RecipeListing extends React.PureComponent {
     } = recipe;
 
     return (
-      <React.Fragment>
+      <>
         <span className="pull-right recipe-actions">
           {this.renderCopyToArbitraryButton()}
           {this.renderRunButton()}
@@ -147,7 +147,7 @@ class RecipeListing extends React.PureComponent {
           {this.renderFilterIcon()}
         </span>
         <Tag color="blue">{id}</Tag> {name}
-      </React.Fragment>
+      </>
     );
   }
 

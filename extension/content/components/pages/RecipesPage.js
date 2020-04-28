@@ -257,7 +257,7 @@ class RecipesPage extends React.PureComponent {
     const { environmentKey } = this.props;
 
     return (
-      <React.Fragment>
+      <>
         <Header>
           <Navbar>
             <Nav pullRight>
@@ -300,7 +300,7 @@ class RecipesPage extends React.PureComponent {
 
         {this.renderWriteRecipeModal()}
         {this.renderViewRecipeModal()}
-      </React.Fragment>
+      </>
     );
   }
 }
