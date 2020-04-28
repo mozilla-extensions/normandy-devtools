@@ -56,6 +56,7 @@
   },
 
   "permissions": [
+    "<all_urls>",
     "clipboardWrite",
     "identity"
   ],

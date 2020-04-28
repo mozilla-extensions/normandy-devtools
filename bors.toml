@@ -1,6 +1,10 @@
 status = [
   "ci/circleci: lint",
-  "ci/circleci: build-extension"
+  "ci/circleci: test",
+  "ci/circleci: build-extension",
+  "t-lint-src",
+  "t-test-src",
+  "build-src"
 ]
 # Avoid including verbose details from PR bodies
 cut_body_after = "\n---\n"

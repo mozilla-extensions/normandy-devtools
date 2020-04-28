@@ -1,4 +1,4 @@
-@sizes: 0 0, 25 25%, 50 50%, 75 75%, 100 100%, auto auto;
+@sizes: 0 0, 25 25%, 50 50%, 75 75%, 100 100%, 400px 400px auto auto;
 @dimensions: w width, h height;
 // Width and height
 
@@ -24,8 +24,18 @@ each(@dimensions, .(@d) {
 
 // Viewport additional helpers
 
-.min-vw-100 { min-width: 100vw !important; }
-.min-vh-100 { min-height: 100vh !important; }
+.min-vw-100 {
+  min-width: 100vw !important;
+}
 
-.vw-100 { width: 100vw !important; }
-.vh-100 { height: 100vh !important; }
+.min-vh-100 {
+  min-height: 100vh !important;
+}
+
+.vw-100 {
+  width: 100vw !important;
+}
+
+.vh-100 {
+  height: 100vh !important;
+}

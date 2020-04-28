@@ -33,6 +33,7 @@ module.exports = (env, argv = {}) => ({
     alias: {
       devtools: path.resolve(__dirname, "extension/content"),
     },
+    extensions: [".js", ".ts", ".tsx"],
   },
   plugins: [
     new FixStyleOnlyEntriesPlugin(),
@@ -54,24 +55,30 @@ module.exports = (env, argv = {}) => ({
       filename: "redirect.html",
       chunks: ["redirect"],
     }),
-    new GenerateJsonPlugin("manifest.json", manifest, (key, value) => {
-      if (typeof value === "string" && value.startsWith("$")) {
-        const parts = value.slice(1).split(".");
-        let object = packageData;
-        while (parts.length) {
-          object = object[parts.pop()];
+    new GenerateJsonPlugin(
+      "manifest.json",
+      manifest,
+      (key, value) => {
+        if (typeof value === "string" && value.startsWith("$")) {
+          const parts = value.slice(1).split(".");
+          let object = packageData;
+          while (parts.length) {
+            object = object[parts.pop()];
+          }
+
+          return object;
         }
 
-        return object;
-      }
-
-      return value;
-    }),
+        return value;
+      },
+      2,
+    ),
   ],
   module: {
     rules: [
       {
-        test: /\.js$/,
+        // .js, .jsx, .ts, and .tsx
+        test: /\.[jt]sx?$/,
         include: [path.resolve(__dirname, "./extension")],
         use: [cacheLoader, "babel-loader"],
       },

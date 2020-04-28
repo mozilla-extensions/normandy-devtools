@@ -26,7 +26,7 @@ jobs:
           name: Lint
           command: therapist run --use-tracked-files
 
-  tests:
+  test:
     docker:
       - image: node:14-stretch
 
@@ -50,7 +50,7 @@ jobs:
 
   build-extension:
     docker:
-      - image: node:12-stretch
+      - image: node:14-stretch
 
     steps:
       - checkout
@@ -77,4 +77,5 @@ workflows:
   main:
     jobs:
       - lint
+      - test
       - build-extension
