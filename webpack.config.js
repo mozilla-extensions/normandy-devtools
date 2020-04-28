@@ -89,7 +89,9 @@ module.exports = (env, argv = {}) => ({
           {
             loader: "less-loader",
             options: {
-              javascriptEnabled: true,
+              lessOptions: {
+                javascriptEnabled: true,
+              },
             },
           },
         ],
