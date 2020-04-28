@@ -2,13 +2,15 @@ import React from "react";
 
 import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
 import FallbackEditor from "devtools/components/recipes/form/arguments/FallbackEditor";
-import PreferenceExperimentArguments from "devtools/components/recipes/form/arguments/PreferenceExperimentArguments";
 import ConsoleLog from "devtools/components/recipes/form/arguments/ConsoleLog";
+import PreferenceExperimentArguments from "devtools/components/recipes/form/arguments/PreferenceExperimentArguments";
+import PreferenceRollback from "devtools/components/recipes/form/arguments/PreferenceRollback";
 import ShowHeartBeat from "devtools/components/recipes/form/arguments/ShowHeartBeat";
 
 const ARGUMENTS_FIELDS_MAPPING = {
   "console-log": ConsoleLog,
   "preference-experiment": PreferenceExperimentArguments,
+  "preference-rollback": PreferenceRollback,
   "show-heartbeat": ShowHeartBeat,
 };
 
@@ -24,6 +26,7 @@ export const INITIAL_ACTION_ARGUMENTS = {
     preferenceType: "boolean",
     slug: "",
   },
+  "preference-rollback": { rolloutSlug: "" },
   "show-heartbeat": {
     engagementButtonLabel: "",
     includeTelemetryUUID: false,
