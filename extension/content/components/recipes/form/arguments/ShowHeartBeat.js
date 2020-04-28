@@ -73,7 +73,7 @@ function RepeatOptionsField() {
       return { ...data, arguments: cleanedArguments };
     }
 
-    return { ...data, arguments: { ...data.arguments, repeatEvery: 1 } };
+    return { ...data, arguments: { repeatEvery: 1, ...data.arguments } };
   };
 
   return (
@@ -84,12 +84,12 @@ function RepeatOptionsField() {
         name="repeatOption"
         options={SHOW_PROMPT_OPTIONS}
       />
-      {repeatEveryOption()}
+      <RepeatEveryField />
     </>
   );
 }
 
-function repeatEveryOption() {
+function RepeatEveryField() {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
 
