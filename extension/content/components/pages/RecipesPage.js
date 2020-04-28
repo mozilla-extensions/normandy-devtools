@@ -215,6 +215,7 @@ class RecipesPage extends React.PureComponent {
         </Modal.Header>
         <Modal.Body>
           <CodeMirror
+            // @ts-ignore
             options={{
               mode: "javascript",
               lineNumbers: true,

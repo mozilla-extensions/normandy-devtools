@@ -2,17 +2,20 @@ import React from "react";
 
 import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
 import FallbackEditor from "devtools/components/recipes/form/arguments/FallbackEditor";
-import PreferenceExperimentArguments from "devtools/components/recipes/form/arguments/PreferenceExperimentArguments";
 import ConsoleLog from "devtools/components/recipes/form/arguments/ConsoleLog";
+import PreferenceExperimentArguments from "devtools/components/recipes/form/arguments/PreferenceExperimentArguments";
 import PreferenceRollout from "devtools/components/recipes/form/arguments/PreferenceRollout";
+import ShowHeartBeat from "devtools/components/recipes/form/arguments/ShowHeartBeat";
 
 const ARGUMENTS_FIELDS_MAPPING = {
+  "console-log": ConsoleLog,
   "preference-experiment": PreferenceExperimentArguments,
   "preference-rollout": PreferenceRollout,
-  "console-log": ConsoleLog,
+  "show-heartbeat": ShowHeartBeat,
 };
 
 export const INITIAL_ACTION_ARGUMENTS = {
+  "console-log": { message: "" },
   "preference-experiment": {
     branches: [],
     experimentDocumentUrl: "",
@@ -24,7 +27,18 @@ export const INITIAL_ACTION_ARGUMENTS = {
     slug: "",
   },
   "preference-rollout": { slug: "", preferences: [] },
-  "console-log": { message: "" },
+  "show-heartbeat": {
+    engagementButtonLabel: "",
+    includeTelemetryUUID: false,
+    learnMoreMessage: "",
+    learnMoreUrl: "",
+    message: "",
+    postAnswerUrl: "",
+    repeatOption: "once",
+    surveyID: "",
+    surveyId: "",
+    thanksMessage: "",
+  },
 };
 
 export default function ActionArguments() {

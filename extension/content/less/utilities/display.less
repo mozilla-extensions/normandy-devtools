@@ -1,0 +1,7 @@
+@displays: none, inline, inline-block, block, table, table-row, table-cell, flex, inline-flex;
+
+each(@displays, {
+  .d-@{value} {
+    display: @value !important;
+  }
+})
