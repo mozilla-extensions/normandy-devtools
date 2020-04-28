@@ -1,5 +1,6 @@
 status = [
   "ci/circleci: lint",
+  "ci/circleci: test",
   "ci/circleci: build-extension"
 ]
 # Avoid including verbose details from PR bodies
