@@ -1,0 +1,88 @@
+@spacing-props: m margin, p padding;
+
+// Margin and Padding
+
+/* stylelint-disable indentation, selector-max-empty-lines */
+each(@spacing-props, .(@sp) {
+  @spa: extract(@sp, 1);
+  @spp: extract(@sp, 2);
+
+  each(range(0, 5), {
+    .@{spa}-@{value} {
+      @{spp}: (@padding-base-vertical * @value) (@padding-base-horizontal * @value) !important;
+    }
+
+    .@{spa}y-@{value},
+    .@{spa}t-@{value} {
+      @{spp}-top: (@padding-base-vertical * @value) !important;
+    }
+
+    .@{spa}x-@{value},
+    .@{spa}r-@{value} {
+      @{spp}-right: (@padding-base-horizontal * @value) !important;
+    }
+
+    .@{spa}y-@{value},
+    .@{spa}b-@{value} {
+      @{spp}-bottom: (@padding-base-vertical * @value) !important;
+    }
+
+    .@{spa}x-@{value},
+    .@{spa}l-@{value} {
+      @{spp}-left: (@padding-base-horizontal * @value) !important;
+    }
+  })
+
+  // Negative margins (e.g., where `.mb-n1` is negative version of `.mb-1`)
+  each(range(5), {
+    .@{spa}-n@{value} {
+      @{spp}: -(@padding-base-vertical * @value) -(@padding-base-horizontal * @value) !important;
+    }
+
+    .@{spa}y-n@{value},
+    .@{spa}t-n@{value} {
+      @{spp}-top: -(@padding-base-vertical * @value) !important;
+    }
+
+    .@{spa}x-n@{value},
+    .@{spa}r-n@{value} {
+      @{spp}-right: -(@padding-base-horizontal * @value) !important;
+    }
+
+    .@{spa}y-n@{value},
+    .@{spa}b-n@{value} {
+      @{spp}-bottom: -(@padding-base-vertical * @value) !important;
+    }
+
+    .@{spa}x-n@{value},
+    .@{spa}l-n@{value} {
+      @{spp}-left: -(@padding-base-horizontal * @value) !important;
+    }
+  })
+})
+/* stylelint-enable indentation, selector-max-empty-lines */
+
+// Some special margin utils
+.m-auto {
+  margin: auto !important;
+}
+
+.mt-auto,
+.my-auto {
+  margin-top: auto !important;
+}
+
+.mr-auto,
+.mx-auto {
+  margin-right: auto !important;
+}
+
+.mb-auto,
+.my-auto {
+  margin-bottom: auto !important;
+}
+
+.ml-auto,
+.mx-auto {
+  margin-left: auto !important;
+}

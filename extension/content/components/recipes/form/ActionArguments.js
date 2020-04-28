@@ -5,14 +5,24 @@ import FallbackEditor from "devtools/components/recipes/form/arguments/FallbackE
 import PreferenceExperimentArguments from "devtools/components/recipes/form/arguments/PreferenceExperimentArguments";
 import ConsoleLog from "devtools/components/recipes/form/arguments/ConsoleLog";
 import OptOutStudy from "devtools/components/recipes/form/arguments/OptOutStudy";
+import ShowHeartBeat from "devtools/components/recipes/form/arguments/ShowHeartBeat";
 
 const ARGUMENTS_FIELDS_MAPPING = {
-  "preference-experiment": PreferenceExperimentArguments,
   "console-log": ConsoleLog,
   "opt-out-study": OptOutStudy,
+  "preference-experiment": PreferenceExperimentArguments,
+  "show-heartbeat": ShowHeartBeat,
 };
 
 export const INITIAL_ACTION_ARGUMENTS = {
+  "console-log": { message: "" },
+  "opt-out-study": {
+    addonUrl: "",
+    description: "",
+    extensionApiId: null,
+    isEnrollmentPaused: false,
+    name: "",
+  },
   "preference-experiment": {
     branches: [],
     experimentDocumentUrl: "",
@@ -23,13 +33,17 @@ export const INITIAL_ACTION_ARGUMENTS = {
     preferenceType: "boolean",
     slug: "",
   },
-  "console-log": { message: "" },
-  "opt-out-study": {
-    addonUrl: "",
-    description: "",
-    extensionApiId: null,
-    isEnrollmentPaused: false,
-    name: "",
+  "show-heartbeat": {
+    engagementButtonLabel: "",
+    includeTelemetryUUID: false,
+    learnMoreMessage: "",
+    learnMoreUrl: "",
+    message: "",
+    postAnswerUrl: "",
+    repeatOption: "once",
+    surveyID: "",
+    surveyId: "",
+    thanksMessage: "",
   },
 };
 

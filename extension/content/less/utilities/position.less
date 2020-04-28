@@ -1,0 +1,27 @@
+@positions: static, relative, absolute, fixed, sticky;
+
+// Common values
+/* stylelint-disable indentation, selector-max-empty-lines */
+each(@positions, {
+  .position-@{value} {
+    position: @value !important;
+  }
+})
+/* stylelint-enable indentation, selector-max-empty-lines */
+
+// Shorthand
+.fixed-top {
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 1030;
+}
+
+.fixed-bottom {
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  right: 0;
+  z-index: 1030;
+}
