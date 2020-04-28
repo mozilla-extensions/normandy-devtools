@@ -190,7 +190,10 @@ function Branch({ index, branchesUpdated, setBranchesUpdated }) {
                 block
                 cleanable
                 creatable
-                data={branch.groups}
+                data={branch.groups.map((g) => ({
+                  label: g,
+                  value: g,
+                }))}
                 value={branch.groups}
                 onChange={handleChange("groups")}
               />
