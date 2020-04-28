@@ -1,13 +1,17 @@
 import React from "react";
-import { Grid, Row, Col } from "rsuite";
+import { FormGroup, Row, Col } from "rsuite";
 
 import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
-import { useSelectedNormandyEnvironmentAPI } from "devtools/contexts/environment";
+import {
+  useEnvironmentState,
+  useSelectedNormandyEnvironmentAPI,
+} from "devtools/contexts/environment";
 import InputField from "devtools/components/recipes/form/arguments/fields/InputField";
 import SelectField from "devtools/components/recipes/form/arguments/fields/SelectField";
 import ToggleField from "devtools/components/recipes/form/arguments/fields/ToggleField";
 
 export default function OptOutStudy() {
+  const { selectedKey: environmentKey } = useEnvironmentState();
   const [extensions, setExtensions] = React.useState([]);
   const normandyApi = useSelectedNormandyEnvironmentAPI();
 
@@ -15,7 +19,8 @@ export default function OptOutStudy() {
     normandyApi.fetchAllExtensions().then((allExtensions) => {
       setExtensions(allExtensions);
     });
-  }, []);
+  }, [environmentKey]);
+
   const options = extensions.map((extension) => ({
     label: extension.name,
     value: extension.id,
@@ -23,7 +28,7 @@ export default function OptOutStudy() {
 
   const data = useRecipeDetailsData();
 
-  const extensionChangeSideEffect = ({ value }) => {
+  const extensionApiIdChangeSideEffect = ({ value }) => {
     const selectedExtension = extensions.find(
       (element) => element.id === value,
     );
@@ -39,7 +44,7 @@ export default function OptOutStudy() {
   };
 
   return (
-    <Grid fluid>
+    <FormGroup>
       <Row>
         <Col xs={12}>
           <InputField label="Study Name" name="name" />
@@ -51,7 +56,7 @@ export default function OptOutStudy() {
         </Col>
         <Col xs={12}>
           <SelectField
-            changeSideEffect={extensionChangeSideEffect}
+            changeSideEffect={extensionApiIdChangeSideEffect}
             label="Extension"
             name="extensionApiId"
             options={options}
@@ -62,6 +67,6 @@ export default function OptOutStudy() {
           </ToggleField>
         </Col>
       </Row>
-    </Grid>
+    </FormGroup>
   );
 }
