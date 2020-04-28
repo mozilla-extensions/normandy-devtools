@@ -1,7 +1,10 @@
 import React from "react";
 import { ControlLabel, FormGroup, InputPicker } from "rsuite";
 
-import { useSelectedNormandyEnvironmentAPI } from "devtools/contexts/environment";
+import {
+  useEnvironmentState,
+  useSelectedNormandyEnvironmentAPI,
+} from "devtools/contexts/environment";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
@@ -12,6 +15,7 @@ import { INITIAL_ACTION_ARGUMENTS } from "devtools/components/recipes/form/Actio
 export default function ActionPicker() {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
+  const { selectedKey: environmentKey } = useEnvironmentState();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
   const [actions, setActions] = React.useState([]);
   const value = data.action && data.action.name;
@@ -20,7 +24,7 @@ export default function ActionPicker() {
     normandyApi.fetchAllActions().then((allActions) => {
       setActions(allActions);
     });
-  }, []);
+  }, [environmentKey]);
 
   const handleChange = (value) => {
     const action = actions.find((a) => a.name === value);
