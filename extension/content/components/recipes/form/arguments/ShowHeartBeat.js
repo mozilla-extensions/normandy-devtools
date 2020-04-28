@@ -61,11 +61,11 @@ function RepeatOptionsField() {
     },
   ];
 
-  const repeatsEveryChangeSideEffect = ({ data, value }) => {
+  const repeatOptionChangeSideEffect = ({ data, value }) => {
     if (value !== "xdays") {
       /* eslint-disable no-unused-vars */
       const {
-        repeatEvery: _omitRepeatOption,
+        repeatEvery: _omitRepeatEvery,
         action,
         ...cleanedArguments
       } = data.arguments;
@@ -73,9 +73,23 @@ function RepeatOptionsField() {
       return { ...data, arguments: cleanedArguments };
     }
 
-    return data;
+    return { ...data, arguments: { ...data.arguments, repeatEvery: 1 } };
   };
 
+  return (
+    <>
+      <SelectField
+        changeSideEffect={repeatOptionChangeSideEffect}
+        label="How often should the prompt be shown?"
+        name="repeatOption"
+        options={SHOW_PROMPT_OPTIONS}
+      />
+      {repeatEveryOption()}
+    </>
+  );
+}
+
+function repeatEveryOption() {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
 
@@ -102,34 +116,20 @@ function RepeatOptionsField() {
     return parseInt(value, 10);
   };
 
-  const repeatEveryOption = () => {
-    if (data.arguments.repeatOption !== "xdays") {
-      return null;
-    }
-
-    return (
-      <FormGroup>
-        <ControlLabel>Days before user is reprompted</ControlLabel>
-        <InputNumber
-          min={1}
-          postfix="days"
-          value={data.arguments.repeatEvery}
-          onChange={handleChange("repeatEvery")}
-        />
-        <HelpBlock>Required</HelpBlock>
-      </FormGroup>
-    );
-  };
+  if (data.arguments.repeatOption !== "xdays") {
+    return null;
+  }
 
   return (
-    <React.Fragment>
-      <SelectField
-        changeSideEffect={repeatsEveryChangeSideEffect}
-        label="How often should the prompt be shown?"
-        name="repeatOption"
-        options={SHOW_PROMPT_OPTIONS}
+    <FormGroup>
+      <ControlLabel>Days before user is reprompted</ControlLabel>
+      <InputNumber
+        min={1}
+        postfix="days"
+        value={data.arguments.repeatEvery}
+        onChange={handleChange("repeatEvery")}
       />
-      {repeatEveryOption()}
-    </React.Fragment>
+      <HelpBlock>Required</HelpBlock>
+    </FormGroup>
   );
 }
