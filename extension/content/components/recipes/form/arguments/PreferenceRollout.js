@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import PropTypes from "prop-types";
 import {
@@ -175,7 +176,7 @@ function Preference({ index }) {
           </FormGroup>
         </div>
 
-        <div className="flex-grow-1 pr-1">
+        <div className="pr-1 w-400px">
           <FormGroup>
             <ControlLabel>Name</ControlLabel>
             <Input
@@ -195,7 +196,7 @@ function Preference({ index }) {
             />
           </FormGroup>
         </div>
-        <div className={preferenceType === "string" ? "flex-grow-1" : ""}>
+        <div className="flex-grow-1">
           <FormGroup>
             <ControlLabel>Value</ControlLabel>
             {valueField}
