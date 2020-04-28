@@ -9028,10 +9028,10 @@ rc-animate@^2.9.2:
     rc-util "^4.15.3"
     react-lifecycles-compat "^3.0.4"
 
-rc-tree@3.1.5:
-  version "3.1.5"
-  resolved "https://registry.yarnpkg.com/rc-tree/-/rc-tree-3.1.5.tgz#eb1c0d40f34ae2ad1ab8c951174c06e6a64957a6"
-  integrity sha512-LOUfsJg5XxtA4FKgGkuVwnbBlnh3VVtySF7LMp4ko0n8oIUBYnn2vs6WG41kuH0V4tLTlQhvCFup/6JEKL01sg==
+rc-tree@3.1.6:
+  version "3.1.6"
+  resolved "https://registry.yarnpkg.com/rc-tree/-/rc-tree-3.1.6.tgz#5aca662801954be2e00609898d427f16ca9023e5"
+  integrity sha512-K43uIcLnDDoynrkcRSPzkYCrc3mh96/N3DhIDeSv8UdJXMgt0u8KonyuT4y/4GhFPENBuq45ASwcuxvH4uy0Sg==
   dependencies:
     classnames "2.x"
     prop-types "^15.5.8"
@@ -9040,22 +9040,10 @@ rc-tree@3.1.5:
     rc-virtual-list "^1.1.0"
     react-lifecycles-compat "^3.0.4"
 
-rc-util@^4.11.0, rc-util@^4.8.0:
+rc-util@^4.11.0, rc-util@^4.15.3, rc-util@^4.8.0:
   version "4.20.1"
   resolved "https://registry.yarnpkg.com/rc-util/-/rc-util-4.20.1.tgz#a5976eabfc3198ed9b8e79ffb8c53c231db36e77"
   integrity sha512-EGlDg9KPN0POzmAR2hk9ZyFc3DmJIrXwlC8NoDxJguX2LTINnVqwadLIVauLfYgYISMiFYFrSHiFW+cqUhZ5dA==
-  dependencies:
-    add-dom-event-listener "^1.1.0"
-    babel-runtime "6.x"
-    prop-types "^15.5.10"
-    react-is "^16.12.0"
-    react-lifecycles-compat "^3.0.4"
-    shallowequal "^1.1.0"
-
-rc-util@^4.15.3:
-  version "4.20.0"
-  resolved "https://registry.yarnpkg.com/rc-util/-/rc-util-4.20.0.tgz#fb601c59bb48cbee38538e0d5b628addda6a8c30"
-  integrity sha512-rUqk4RqtDe4OfTsSk2GpbvIQNVtfmmebw4Rn7ZAA1TO1zLMLfyOF78ZyrEKqs8RDwoE3S1aXp0AX0ogLfSxXrQ==
   dependencies:
     add-dom-event-listener "^1.1.0"
     babel-runtime "6.x"
