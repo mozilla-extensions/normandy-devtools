@@ -7,7 +7,7 @@ export default class ExperimenterAPI extends API {
 
   async fetchRecipe(slug) {
     return this.request({
-      url: `experiments/${slug}/recipe`,
+      url: `experiments/${slug}/recipe/`,
     });
   }
 }
