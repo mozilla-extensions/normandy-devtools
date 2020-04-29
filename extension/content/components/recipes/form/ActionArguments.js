@@ -5,12 +5,14 @@ import FallbackEditor from "devtools/components/recipes/form/arguments/FallbackE
 import PreferenceExperiment from "devtools/components/recipes/form/arguments/PreferenceExperiment";
 import MessagingExperiment from "devtools/components/recipes/form/arguments/MessagingExperiment";
 import ConsoleLog from "devtools/components/recipes/form/arguments/ConsoleLog";
+import PreferenceRollout from "devtools/components/recipes/form/arguments/PreferenceRollout";
 import ShowHeartBeat from "devtools/components/recipes/form/arguments/ShowHeartBeat";
 
 const ARGUMENTS_FIELDS_MAPPING = {
   "console-log": ConsoleLog,
   "messaging-experiment": MessagingExperiment,
   "preference-experiment": PreferenceExperiment,
+  "preference-rollout": PreferenceRollout,
   "show-heartbeat": ShowHeartBeat,
 };
 
@@ -31,6 +33,7 @@ export const INITIAL_ACTION_ARGUMENTS = {
     preferenceType: "boolean",
     slug: "",
   },
+  "preference-rollout": { slug: "", preferences: [] },
   "show-heartbeat": {
     engagementButtonLabel: "",
     includeTelemetryUUID: false,
