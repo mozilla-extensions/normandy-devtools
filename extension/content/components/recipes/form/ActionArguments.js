@@ -3,12 +3,14 @@ import React from "react";
 import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
 import FallbackEditor from "devtools/components/recipes/form/arguments/FallbackEditor";
 import ConsoleLog from "devtools/components/recipes/form/arguments/ConsoleLog";
+import OptOutStudy from "devtools/components/recipes/form/arguments/OptOutStudy";
 import PreferenceExperimentArguments from "devtools/components/recipes/form/arguments/PreferenceExperimentArguments";
 import PreferenceRollout from "devtools/components/recipes/form/arguments/PreferenceRollout";
 import ShowHeartBeat from "devtools/components/recipes/form/arguments/ShowHeartBeat";
 
 const ARGUMENTS_FIELDS_MAPPING = {
   "console-log": ConsoleLog,
+  "opt-out-study": OptOutStudy,
   "preference-experiment": PreferenceExperimentArguments,
   "preference-rollout": PreferenceRollout,
   "show-heartbeat": ShowHeartBeat,
@@ -16,6 +18,13 @@ const ARGUMENTS_FIELDS_MAPPING = {
 
 export const INITIAL_ACTION_ARGUMENTS = {
   "console-log": { message: "" },
+  "opt-out-study": {
+    addonUrl: "",
+    description: "",
+    extensionApiId: null,
+    isEnrollmentPaused: false,
+    name: "",
+  },
   "preference-experiment": {
     branches: [],
     experimentDocumentUrl: "",

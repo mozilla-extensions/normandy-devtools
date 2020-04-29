@@ -88,4 +88,20 @@ export default class NormandyAPI extends API {
   async fetchFilters() {
     return this.request({ url: "filters/" });
   }
+
+  async fetchAllExtensions() {
+    let response = await this.request({
+      url: "extension/",
+    });
+    let extensions = response.results;
+
+    while (response.next) {
+      response = await this.request({
+        url: response.next,
+      });
+      extensions = [...extensions, ...response.results];
+    }
+
+    return extensions;
+  }
 }
