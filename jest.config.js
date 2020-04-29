@@ -8,7 +8,8 @@ module.exports = {
   },
   setupFiles: ["<rootDir>/tests/conftests.js"],
   transform: {
-    "^.+\\.[jt]sx?$": "babel-jest",
+    "^.+\\.js$": "babel-jest",
+    "^.+\\.tsx?": "ts-jest",
   },
   moduleNameMapper: {
     "^devtools/(.*)$": "<rootDir>/extension/content/$1",
