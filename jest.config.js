@@ -15,5 +15,5 @@ module.exports = {
     "\\.(less|css)$": "identity-obj-proxy",
   },
   collectCoverage: true,
-  collectCoverageFrom: ["<rootDir>/extension/**/*.{js,ts}"],
+  collectCoverageFrom: ["<rootDir>/extension/content/**/*.{js,ts}"],
 };
