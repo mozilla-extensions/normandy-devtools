@@ -5,6 +5,7 @@ const Dotenv = require("dotenv-webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const GenerateJsonPlugin = require("generate-json-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const webpack = require("webpack");
 const FixStyleOnlyEntriesPlugin = require("webpack-fix-style-only-entries");
 
 const packageData = require("./package.json");
@@ -15,32 +16,23 @@ const cacheLoader = {
   options: { cacheDirectory: ".webpack-cache" },
 };
 
-module.exports = (env, argv = {}) => ({
-  mode: argv.mode || "development",
-  devtool: argv.mode === "production" ? "source-map" : "eval-source-map",
-  entry: {
+module.exports = (env, argv = {}) => {
+  const development = argv.mode === "development";
+
+  const entry = {
     content: "./extension/content/index.js",
     "content-scripts": "./extension/content/scripts/inject.js",
     redirect: "./extension/content/redirect.js",
     "dark-theme": "./extension/content/less/dark.less",
     "light-theme": "./extension/content/less/light.less",
-  },
-  output: {
-    filename: "[name].js",
-    path: path.resolve(__dirname, "dist"),
-  },
-  resolve: {
-    alias: {
-      devtools: path.resolve(__dirname, "extension/content"),
-    },
-    extensions: [".js", ".ts", ".tsx"],
-  },
-  plugins: [
+    background: "./extension/background.js",
+  };
+
+  const plugins = [
     new FixStyleOnlyEntriesPlugin(),
     new MiniCssExtractPlugin(),
     new Dotenv(),
     new CopyWebpackPlugin([
-      "extension/background.js",
       { from: "extension/experiments/", to: "experiments/" },
       { from: "extension/images/", to: "images/" },
     ]),
@@ -71,41 +63,73 @@ module.exports = (env, argv = {}) => ({
 
         return value;
       },
-      2,
+      2 /* indent width */,
     ),
-  ],
-  module: {
-    rules: [
-      {
-        // .js, .jsx, .ts, and .tsx
-        test: /\.[jt]sx?$/,
-        include: [path.resolve(__dirname, "./extension")],
-        use: [cacheLoader, "babel-loader"],
+    new webpack.DefinePlugin({
+      DEVELOPMENT: JSON.stringify(development),
+    }),
+  ];
+
+  if (development) {
+    entry.restore = "./extension/content/restore.ts";
+
+    plugins.push(
+      new HtmlWebpackPlugin({
+        title: "Restore",
+        filename: "restore.html",
+        chunks: ["restore"],
+      }),
+    );
+  }
+
+  return {
+    mode: argv.mode || "development",
+    devtool: development ? "eval-source-map" : "source-map",
+    entry,
+    output: {
+      filename: "[name].js",
+      path: path.resolve(__dirname, "dist"),
+    },
+    resolve: {
+      alias: {
+        devtools: path.resolve(__dirname, "extension/content"),
       },
-      {
-        test: /\.less/,
-        use: [
-          cacheLoader,
-          MiniCssExtractPlugin.loader,
-          "css-loader",
-          {
-            loader: "less-loader",
-            options: {
-              lessOptions: {
-                javascriptEnabled: true,
+      extensions: [".js", ".ts", ".tsx"],
+    },
+    plugins,
+    module: {
+      rules: [
+        {
+          // .js, .jsx, .ts, and .tsx
+          test: /\.[jt]sx?$/,
+          include: [path.resolve(__dirname, "./extension/content")],
+          use: [cacheLoader, "babel-loader"],
+        },
+        {
+          test: /\.less/,
+          use: [
+            cacheLoader,
+            MiniCssExtractPlugin.loader,
+            "css-loader",
+            {
+              loader: "less-loader",
+              options: {
+                lessOptions: {
+                  javascriptEnabled: true,
+                },
               },
             },
-          },
-        ],
-      },
-      {
-        test: /\.css/,
-        use: [cacheLoader, "style-loader", "css-loader"],
-      },
-      {
-        test: /\.(png|ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/,
-        loader: [cacheLoader, "file-loader"],
-      },
-    ],
-  },
-});
+          ],
+        },
+        {
+          test: /\.css/,
+          use: [cacheLoader, "style-loader", "css-loader"],
+        },
+        {
+          test: /\.(png|ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/,
+          loader: [cacheLoader, "file-loader"],
+        },
+      ],
+    },
+  };
+};
