@@ -2,6 +2,7 @@ import React from "react";
 
 import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
 import FallbackEditor from "devtools/components/recipes/form/arguments/FallbackEditor";
+import BranchedAddon from "devtools/components/recipes/form/arguments/BranchedAddon";
 import ConsoleLog from "devtools/components/recipes/form/arguments/ConsoleLog";
 import OptOutStudy from "devtools/components/recipes/form/arguments/OptOutStudy";
 import PreferenceExperimentArguments from "devtools/components/recipes/form/arguments/PreferenceExperimentArguments";
@@ -9,6 +10,7 @@ import PreferenceRollout from "devtools/components/recipes/form/arguments/Prefer
 import ShowHeartBeat from "devtools/components/recipes/form/arguments/ShowHeartBeat";
 
 const ARGUMENTS_FIELDS_MAPPING = {
+  "branched-addon-study": BranchedAddon,
   "console-log": ConsoleLog,
   "opt-out-study": OptOutStudy,
   "preference-experiment": PreferenceExperimentArguments,
@@ -17,6 +19,13 @@ const ARGUMENTS_FIELDS_MAPPING = {
 };
 
 export const INITIAL_ACTION_ARGUMENTS = {
+  "branched-addon-study": {
+    branches: [],
+    isEnrollmentPaused: false,
+    slug: "",
+    userFacingDescription: "",
+    userFacingName: "",
+  },
   "console-log": { message: "" },
   "opt-out-study": {
     addonUrl: "",
