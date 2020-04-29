@@ -31,7 +31,10 @@ module.exports = (env, argv = {}) => {
   const plugins = [
     new FixStyleOnlyEntriesPlugin(),
     new MiniCssExtractPlugin(),
-    new Dotenv(),
+    new Dotenv({
+      silent: true,
+      systemvars: true,
+    }),
     new CopyWebpackPlugin([
       { from: "extension/experiments/", to: "experiments/" },
       { from: "extension/images/", to: "images/" },
