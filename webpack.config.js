@@ -38,7 +38,10 @@ module.exports = (env, argv = {}) => ({
   plugins: [
     new FixStyleOnlyEntriesPlugin(),
     new MiniCssExtractPlugin(),
-    new Dotenv(),
+    new Dotenv({
+      silent: true,
+      systemvars: true,
+    }),
     new CopyWebpackPlugin([
       "extension/background.js",
       { from: "extension/experiments/", to: "experiments/" },
