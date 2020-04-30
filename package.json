@@ -15,6 +15,7 @@
     "lint": "npm-run-all lint:*",
     "lint:stylelint": "stylelint extension/**/*.less extension/**/*.css",
     "lint:eslint": "eslint webpack.config.js extension",
+    "lint:typecheck": "tsc --noEmit --project tsconfig.json",
     "fix": "npm-run-all fix:*",
     "fix:eslint": "yarn lint:eslint --fix",
     "fix:stylelint": "yarn lint:stylelint --fix",
