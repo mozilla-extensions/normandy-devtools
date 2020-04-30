@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import { ControlLabel, FormGroup } from "rsuite";
 
