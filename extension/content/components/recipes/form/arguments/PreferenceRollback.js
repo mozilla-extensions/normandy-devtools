@@ -13,7 +13,7 @@ export default function PreferenceRollback() {
 
   React.useEffect(() => {
     normandyApi
-      .fetchRecipeSearchParams({ action: "preference-rollout" })
+      .fetchAllRecipes({ action: "preference-rollout" })
       .then((allRollouts) => {
         setRollouts(allRollouts);
       });

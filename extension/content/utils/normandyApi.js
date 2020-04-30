@@ -48,10 +48,10 @@ export default class NormandyAPI extends API {
     });
   }
 
-  async fetchRecipeSearchParams(searchParams = {}) {
+  async fetchAllRecipes(searchParams = {}) {
     let response = await this.request({
       url: "recipe/",
-      data: { ...searchParams },
+      data: { searchParams },
     });
     let recipes = response.results;
 
