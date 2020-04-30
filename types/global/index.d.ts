@@ -1,3 +1,5 @@
+declare const DEVELOPMENT: boolean;
+
 declare namespace browser.experiments.normandy {
   type V1Recipe = {};
 

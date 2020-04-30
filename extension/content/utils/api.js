@@ -8,7 +8,14 @@ export default class API {
     throw new Error("getBaseURL() needs to be implemented");
   }
 
-  async request({ url, extraHeaders = {}, version = 3, ...options }) {
+  /**
+   * @param {Object} args
+   * @param {string} args.url
+   * @param {number} [args.version]
+   * @param {Object} [args.extraHeaders]
+   * @param {string|FormData} [args.body]
+   */
+  async request({ url, version, extraHeaders = {}, ...options }) {
     const headers = new Headers();
     headers.append("Accept", "application/json");
     if (!(options.body && options.body instanceof FormData)) {
