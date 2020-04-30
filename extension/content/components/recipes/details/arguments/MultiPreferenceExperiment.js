@@ -30,28 +30,39 @@ export default function PreferenceExperiment() {
                   { preferenceType, preferenceBranchType, preferenceValue },
                 ],
                 index,
-              ) => (
-                <tr key={index}>
-                  <td>
-                    <code>{preferenceName}</code>
-                  </td>
-                  <td>
-                    <Tag>{preferenceType}</Tag>
-                  </td>
-                  <td>
-                    {preferenceType === "boolean" ? (
-                      <Tag color={preferenceValue ? "green" : "red"}>
-                        {preferenceValue ? "True" : "False"}
-                      </Tag>
-                    ) : (
-                      <code>{preferenceValue}</code>
-                    )}
-                  </td>
-                  <td>
-                    <Tag>{preferenceBranchType}</Tag>
-                  </td>
-                </tr>
-              ),
+              ) => {
+                const prefNameParts = preferenceName.split(".");
+                const displayName = prefNameParts.map((p, i) => {
+                  return (
+                    <>
+                      {i < prefNameParts.length - 1 ? `${p}.` : p}
+                      <wbr />
+                    </>
+                  );
+                });
+                return (
+                  <tr key={index}>
+                    <td>
+                      <code>{displayName}</code>
+                    </td>
+                    <td>
+                      <Tag>{preferenceType}</Tag>
+                    </td>
+                    <td>
+                      {preferenceType === "boolean" ? (
+                        <Tag color={preferenceValue ? "green" : "red"}>
+                          {preferenceValue ? "True" : "False"}
+                        </Tag>
+                      ) : (
+                        <code>{preferenceValue}</code>
+                      )}
+                    </td>
+                    <td>
+                      <Tag>{preferenceBranchType}</Tag>
+                    </td>
+                  </tr>
+                );
+              },
             );
 
             return (
@@ -61,13 +72,17 @@ export default function PreferenceExperiment() {
                     <div className="d-flex align-items-center">
                       <div className="pr-2 font-weight-bold">Slug</div>
                     </div>
-                    <div className="my-1 text-subtle">{branch.slug}</div>
+                    <div className="my-1 text-subtle">
+                      <code>{branch.slug}</code>
+                    </div>
                   </div>
                   <div className="flex-basis-0 flex-grow-1">
                     <div className="d-flex align-items-center">
                       <div className="pr-2 font-weight-bold">Ratio</div>
                     </div>
-                    <div className="my-1 text-subtle">{branch.ratio}</div>
+                    <div className="my-1 text-subtle">
+                      <code>{branch.ratio}</code>
+                    </div>
                   </div>
                 </div>
 
