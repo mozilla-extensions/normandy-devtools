@@ -171,7 +171,7 @@ function Branch({ index, extensionOptions }) {
             onClick={handleClickDelete}
           />
         </div>
-        <div className="w-400px pr-1">
+        <div className="flex-basis-0 flex-grow-1 pr-1">
           <FormGroup>
             <ControlLabel>Slug</ControlLabel>
             <Input value={branch.slug} onChange={handleChange("slug")} />
@@ -187,7 +187,7 @@ function Branch({ index, extensionOptions }) {
             />
           </FormGroup>
         </div>
-        <div>
+        <div className="flex-basis-0 flex-grow-1">
           <FormGroup>
             <ControlLabel>Extension</ControlLabel>
             <SelectPicker
