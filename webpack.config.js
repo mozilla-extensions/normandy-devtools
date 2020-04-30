@@ -138,11 +138,20 @@ module.exports = async (env, argv = {}) => {
 };
 
 async function getBuildInfo(isDevelopment) {
-  return {
-    version: (await execOutput("git describe --dirty=-changed")).trim(),
+  const rv = {
+    version: (await execOutput("git describe --dirty=-uc")).trim(),
     commitHash: (await execOutput("git rev-parse HEAD")).trim(),
-    isDevelopment,
   };
+
+  if (isDevelopment) {
+    rv.isDevelopment = true;
+  }
+
+  if (rv.version.endsWith("-uc")) {
+    rv.hasUncommittedChanges = true;
+  }
+
+  return rv;
 }
 
 async function execOutput(command, options = {}) {
