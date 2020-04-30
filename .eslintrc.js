@@ -18,6 +18,7 @@ module.exports = {
   },
   rules: {
     "mozilla/no-define-cc-etc": "off",
+    "react/jsx-fragments": ["error", "syntax"],
     "react/jsx-curly-brace-presence": ["error", "never"],
     "react/jsx-sort-props": [
       "error",

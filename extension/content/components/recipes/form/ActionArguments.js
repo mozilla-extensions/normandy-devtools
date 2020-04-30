@@ -6,12 +6,14 @@ import ConsoleLog from "devtools/components/recipes/form/arguments/ConsoleLog";
 import OptOutStudy from "devtools/components/recipes/form/arguments/OptOutStudy";
 import PreferenceExperimentArguments from "devtools/components/recipes/form/arguments/PreferenceExperimentArguments";
 import PreferenceRollout from "devtools/components/recipes/form/arguments/PreferenceRollout";
+import PreferenceRollback from "devtools/components/recipes/form/arguments/PreferenceRollback";
 import ShowHeartBeat from "devtools/components/recipes/form/arguments/ShowHeartBeat";
 
 const ARGUMENTS_FIELDS_MAPPING = {
   "console-log": ConsoleLog,
   "opt-out-study": OptOutStudy,
   "preference-experiment": PreferenceExperimentArguments,
+  "preference-rollback": PreferenceRollback,
   "preference-rollout": PreferenceRollout,
   "show-heartbeat": ShowHeartBeat,
 };
@@ -35,6 +37,7 @@ export const INITIAL_ACTION_ARGUMENTS = {
     preferenceType: "boolean",
     slug: "",
   },
+  "preference-rollback": { rolloutSlug: "" },
   "preference-rollout": { slug: "", preferences: [] },
   "show-heartbeat": {
     engagementButtonLabel: "",
