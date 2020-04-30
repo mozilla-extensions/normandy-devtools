@@ -56,7 +56,7 @@ export function booleanFormatter(key, value) {
 }
 
 export function tableFormatter(fields = [], formatters = {}) {
-  const table = (key, values) => {
+  const table = (key, values, data) => {
     return (
       <div className="mt-4">
         <div className="d-flex align-items-center">
@@ -77,7 +77,7 @@ export function tableFormatter(fields = [], formatters = {}) {
                   {fields.map((field) => (
                     <td key={field}>
                       {formatters[field]
-                        ? formatters[field](field, value[field])
+                        ? formatters[field](index, value[field])
                         : value[field]}
                     </td>
                   ))}
@@ -91,4 +91,25 @@ export function tableFormatter(fields = [], formatters = {}) {
   };
 
   return table;
+}
+
+export function nl2pbrFormatter(key, value) {
+  return stringFormatter(
+    key,
+    <>
+      {value.split("\n\n").map((p, i) => {
+        const nl = p.split("\n");
+        return (
+          <p key={i}>
+            {nl.map((l, k) => (
+              <>
+                {l}
+                {k < nl.length - 1 ? <br /> : null}
+              </>
+            ))}
+          </p>
+        );
+      })}
+    </>,
+  );
 }

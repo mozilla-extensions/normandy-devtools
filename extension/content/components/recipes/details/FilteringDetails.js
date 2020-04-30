@@ -58,7 +58,7 @@ export default function FilteringDetails() {
           <ModePopover message="Display the composite details">
             <IconButton
               active={mode === MODE_COMPOSITE}
-              icon={<Icon icon="calculator" />}
+              icon={<Icon icon="cubes" />}
               onClick={handleModeClick(MODE_COMPOSITE)}
             />
           </ModePopover>

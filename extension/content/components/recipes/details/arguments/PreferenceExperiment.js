@@ -1,4 +1,5 @@
 import React from "react";
+import { Tag } from "rsuite";
 
 import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
 import Generic from "devtools/components/recipes/details/arguments/Generic";
@@ -9,10 +10,10 @@ import {
   tableFormatter,
   tagFormatter,
 } from "devtools/components/recipes/details/arguments/formatters";
-import { Tag } from "rsuite";
 
 export default function PreferenceExperiment() {
   const data = useRecipeDetailsData();
+
   return (
     <Generic
       data={data.arguments}
@@ -33,13 +34,13 @@ export default function PreferenceExperiment() {
           isHighVolume: booleanFormatter,
         }),
         branches: tableFormatter(["slug", "ratio", "value"], {
-          slug(key, value) {
+          slug(index, value) {
             return <code>{value}</code>;
           },
-          ratio(key, value) {
+          ratio(index, value) {
             return <code>{value}</code>;
           },
-          value(key, value) {
+          value(index, value) {
             if (data.arguments.preferenceType === "boolean") {
               return (
                 <Tag color={value ? "green" : "red"}>

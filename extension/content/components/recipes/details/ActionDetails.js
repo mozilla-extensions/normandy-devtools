@@ -7,12 +7,21 @@ import Highlight from "devtools/components/common/Highlight";
 import CollapsibleSection from "devtools/components/recipes/details/CollapsibleSection";
 import Generic from "devtools/components/recipes/details/arguments/Generic";
 import PreferenceExperiment from "devtools/components/recipes/details/arguments/PreferenceExperiment";
+import PreferenceRollout from "devtools/components/recipes/details/arguments/PreferenceRollout";
+import BranchedAddonStudy from "devtools/components/recipes/details/arguments/BranchedAddonStudy";
+import MessagingExperiment from "devtools/components/recipes/details/arguments/MessagingExperiment";
+import AddonStudy from "devtools/components/recipes/details/arguments/AddonStudy";
 
 const MODE_RICH = "RICH";
 const MODE_RAW = "RAW";
 
 const ACTION_DETAILS_MAPPING = {
+  "addon-study": AddonStudy,
+  "branched-addon-study": BranchedAddonStudy,
+  "messaging-experiment": MessagingExperiment,
   "preference-experiment": PreferenceExperiment,
+  "opt-out-study": AddonStudy,
+  "preference-rollout": PreferenceRollout,
 };
 
 export default function ActionDetails() {
