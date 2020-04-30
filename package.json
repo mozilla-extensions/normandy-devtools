@@ -21,7 +21,7 @@
     "test": "jest",
     "watch": "npm-run-all build:webpack-dev --parallel --race watch:*",
     "watch:extension": "web-ext run -s dist -f nightly",
-    "watch:webpack": "webpack --progress --mode development --watch",
+    "watch:webpack": "nodemon -w webpack.config.js -x \"webpack --progress --mode development --watch\"",
     "postinstall": "yarn clean"
   },
   "devDependencies": {
@@ -61,6 +61,7 @@
     "less": "3.11.1",
     "less-loader": "6.0.0",
     "mini-css-extract-plugin": "0.9.0",
+    "nodemon": "2.0.3",
     "npm-run-all": "4.1.5",
     "prettier": "2.0.5",
     "style-loader": "1.2.0",

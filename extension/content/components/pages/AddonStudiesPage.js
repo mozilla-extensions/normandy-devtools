@@ -29,7 +29,7 @@ export default class PrefStudiesPage extends React.PureComponent {
       );
     } else if (studies) {
       return (
-        <React.Fragment>
+        <>
           <h3>Active</h3>
           {studies
             .filter((study) => !study.expired)
@@ -42,7 +42,7 @@ export default class PrefStudiesPage extends React.PureComponent {
             .map((study) => (
               <AddonStudy key={study.id} study={study} />
             ))}
-        </React.Fragment>
+        </>
       );
     }
 
