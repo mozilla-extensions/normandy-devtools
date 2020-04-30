@@ -6,12 +6,14 @@ import {
   RecipeDetailsProvider,
 } from "devtools/contexts/recipeDetails";
 import {
+  useEnvironmentState,
   useSelectedExperimenterEnvironmentAPI,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
 import RecipeForm from "devtools/components/recipes/form/RecipeForm";
 
 export default function RecipeFormPage() {
+  const { selectedKey: environmentKey } = useEnvironmentState();
   const { recipeId, experimenterSlug } = useParams();
   const [data, setData] = React.useState({});
   const [importInstructions, setImportInstructions] = React.useState("");
@@ -41,7 +43,7 @@ export default function RecipeFormPage() {
       setData(INITIAL_RECIPE_DATA);
       setImportInstructions("");
     }
-  }, [recipeId, experimenterSlug]);
+  }, [recipeId, experimenterSlug, environmentKey]);
 
   let title = "Create Recipe";
   if (recipeId) {

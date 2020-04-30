@@ -3,11 +3,19 @@ export default class API {
     this.environment = environment;
   }
 
-  getBaseUrl() {
+  /** @returns {String} */
+  getBaseUrl({ version, method }) {
     throw new Error("getBaseURL() needs to be implemented");
   }
 
-  async request({ url, extraHeaders, version, ...options }) {
+  /**
+   * @param {Object} args
+   * @param {string} args.url
+   * @param {number} [args.version]
+   * @param {Object} [args.extraHeaders]
+   * @param {string|FormData} [args.body]
+   */
+  async request({ url, version, extraHeaders = {}, ...options }) {
     const headers = new Headers();
     headers.append("Accept", "application/json");
     if (!(options.body && options.body instanceof FormData)) {
@@ -18,6 +26,7 @@ export default class API {
       headers.append(headerName, extraHeaders[headerName]);
     }
 
+    /** @type {any} */
     const settings = {
       headers,
       method: "GET",
@@ -47,7 +56,7 @@ export default class API {
       delete settings.data;
     }
 
-    const response = await fetch(apiUrl, settings);
+    const response = await fetch(apiUrl.toString(), settings);
 
     if (!response.ok) {
       let message;

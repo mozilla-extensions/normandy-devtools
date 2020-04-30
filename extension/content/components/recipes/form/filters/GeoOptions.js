@@ -7,9 +7,13 @@ import {
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
-import { useSelectedNormandyEnvironmentAPI } from "devtools/contexts/environment";
+import {
+  useEnvironmentState,
+  useSelectedNormandyEnvironmentAPI,
+} from "devtools/contexts/environment";
 
 export default function GeoOptions() {
+  const { selectedKey: environmentKey } = useEnvironmentState();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
   const [filters, setFilters] = React.useState({
     locales: [],
@@ -20,7 +24,7 @@ export default function GeoOptions() {
     normandyApi.fetchFilters().then((filters) => {
       setFilters(filters);
     });
-  }, []);
+  }, [environmentKey]);
 
   return (
     <Row>

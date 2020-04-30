@@ -1,3 +1,4 @@
+// @ts-nocheck
 import PropTypes from "prop-types";
 import Tree, { TreeNode } from "rc-tree";
 import React from "react";

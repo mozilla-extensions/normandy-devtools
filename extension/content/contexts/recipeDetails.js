@@ -38,6 +38,7 @@ function reducer(state, action) {
 }
 
 export function RecipeDetailsProvider({ children, data, importInstructions }) {
+  /** @type {[React.ReducerState<any>, React.Dispatch<React.ReducerAction<any>>]} */
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
   React.useEffect(() => {
@@ -54,6 +55,7 @@ export function RecipeDetailsProvider({ children, data, importInstructions }) {
     });
   }, [importInstructions]);
 
+  // @ts-ignore
   return <Provider value={{ state, dispatch }}>{children}</Provider>;
 }
 
