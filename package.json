@@ -6,10 +6,11 @@
   "private": true,
   "license": "MPLv2",
   "scripts": {
-    "build": "npm-run-all clean build:webpack build:extension",
+    "build": "npm-run-all clean build:webpack build:extension build:finalize",
     "build:extension": "web-ext build -s dist --overwrite-dest",
     "build:webpack": "webpack --mode production --progress",
     "build:webpack-dev": "webpack --mode development --progress",
+    "build:finalize": "mv web-ext-artifacts/*.zip web-ext-artifacts/normandy-devtools.zip",
     "clean": "rimraf dist web-ext-artifacts",
     "lint": "npm-run-all lint:eslint",
     "lint-fix": "npm-run-all lint:eslint-fix",
