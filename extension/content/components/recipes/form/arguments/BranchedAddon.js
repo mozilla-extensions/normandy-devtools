@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import PropTypes from "prop-types";
 import {
@@ -186,7 +187,7 @@ function Branch({ index, extensionOptions }) {
             />
           </FormGroup>
         </div>
-        <div className="flex-grow-1">
+        <div>
           <FormGroup>
             <ControlLabel>Extension</ControlLabel>
             <SelectPicker
