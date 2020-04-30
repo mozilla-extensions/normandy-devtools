@@ -25,7 +25,16 @@ export default function FilteringDetails() {
     details = <RawDetails />;
   }
 
-  let filterExpression = null;
+  let filterExpression = (
+    <div className="mt-4">
+      <strong>Extra Filter Expression</strong>
+      <div className="my-1">
+        <code>
+          <em>(no extra filter expression set)</em>
+        </code>
+      </div>
+    </div>
+  );
   if (mode === MODE_COMPOSITE) {
     filterExpression = (
       <div className="mt-4">

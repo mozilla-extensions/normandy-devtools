@@ -11,6 +11,7 @@ import PreferenceRollout from "devtools/components/recipes/details/arguments/Pre
 import BranchedAddonStudy from "devtools/components/recipes/details/arguments/BranchedAddonStudy";
 import MessagingExperiment from "devtools/components/recipes/details/arguments/MessagingExperiment";
 import AddonStudy from "devtools/components/recipes/details/arguments/AddonStudy";
+import MultiPreferenceExperiment from "devtools/components/recipes/details/arguments/MultiPreferenceExperiment";
 
 const MODE_RICH = "RICH";
 const MODE_RAW = "RAW";
@@ -19,6 +20,7 @@ const ACTION_DETAILS_MAPPING = {
   "addon-study": AddonStudy,
   "branched-addon-study": BranchedAddonStudy,
   "messaging-experiment": MessagingExperiment,
+  "multi-preference-experiment": MultiPreferenceExperiment,
   "preference-experiment": PreferenceExperiment,
   "opt-out-study": AddonStudy,
   "preference-rollout": PreferenceRollout,

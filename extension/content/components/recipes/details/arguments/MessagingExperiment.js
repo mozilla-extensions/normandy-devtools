@@ -56,14 +56,7 @@ export default function MessagingExperiment() {
           );
         },
       }}
-      ordering={[
-        "userFacingName",
-        "userFacingDescription",
-        "experimenterUrl",
-        "slug",
-        "isEnrollmentPaused",
-        "branches",
-      ]}
+      ordering={["slug", "isEnrollmentPaused", "branches"]}
     />
   );
 }
