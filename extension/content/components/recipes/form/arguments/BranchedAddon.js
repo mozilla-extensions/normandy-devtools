@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import React from "react";
 import PropTypes from "prop-types";
 import {
@@ -30,21 +28,6 @@ import InputField from "devtools/components/recipes/form/arguments/fields/InputF
 import ToggleField from "devtools/components/recipes/form/arguments/fields/ToggleField";
 
 export default function BranchedAddon() {
-  const { selectedKey: environmentKey } = useEnvironmentState();
-  const [extensions, setExtensions] = React.useState([]);
-  const normandyApi = useSelectedNormandyEnvironmentAPI();
-
-  React.useEffect(() => {
-    normandyApi.fetchAllExtensions().then((allExtensions) => {
-      setExtensions(allExtensions);
-    });
-  }, [environmentKey]);
-
-  const options = extensions.map((extension) => ({
-    label: extension.name,
-    value: extension.id,
-  }));
-
   return (
     <FormGroup>
       <Row>
@@ -63,14 +46,28 @@ export default function BranchedAddon() {
           </ToggleField>
         </Col>
       </Row>
-      <Branches options={options} />
+      <Branches />
     </FormGroup>
   );
 }
 
-function Branches({ options }) {
+function Branches() {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
+  const { selectedKey: environmentKey } = useEnvironmentState();
+  const [extensions, setExtensions] = React.useState([]);
+  const normandyApi = useSelectedNormandyEnvironmentAPI();
+
+  React.useEffect(() => {
+    normandyApi.fetchAllExtensions().then((allExtensions) => {
+      setExtensions(allExtensions);
+    });
+  }, [environmentKey]);
+
+  const extensionOptions = extensions.map((extension) => ({
+    label: extension.name,
+    value: extension.id,
+  }));
 
   const handleClickAddBranch = () => {
     /** @type {{ratio: number, slug: string, value: string | number | boolean}} */
@@ -91,7 +88,7 @@ function Branches({ options }) {
   let branchesList = <HelpBlock>There are no branches.</HelpBlock>;
   if (data.arguments.branches && data.arguments.branches.length) {
     branchesList = data.arguments.branches.map((branch, index) => (
-      <Branch key={index} index={index} options={options} />
+      <Branch key={index} extensionOptions={extensionOptions} index={index} />
     ));
   }
 
@@ -112,7 +109,7 @@ function Branches({ options }) {
   );
 }
 
-function Branch({ index, options }) {
+function Branch({ index, extensionOptions }) {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
   const branch = data.arguments.branches[index];
@@ -173,7 +170,7 @@ function Branch({ index, options }) {
             onClick={handleClickDelete}
           />
         </div>
-        <div className="pr-1">
+        <div className="w-400px pr-1">
           <FormGroup>
             <ControlLabel>Slug</ControlLabel>
             <Input value={branch.slug} onChange={handleChange("slug")} />
@@ -184,9 +181,6 @@ function Branch({ index, options }) {
             <ControlLabel>Ratio</ControlLabel>
             <InputNumber
               min={1}
-              style={{
-                width: "80px",
-              }}
               value={branch.ratio}
               onChange={handleChange("ratio", parseNumericInput)}
             />
@@ -198,7 +192,8 @@ function Branch({ index, options }) {
             <SelectPicker
               block
               cleanable={false}
-              data={options}
+              data={extensionOptions}
+              placement="autoVertical"
               value={branch.extensionApiId}
               onChange={handleChange("extensionApiId")}
             />
@@ -211,8 +206,5 @@ function Branch({ index, options }) {
 
 Branch.propTypes = {
   index: PropTypes.number.isRequired,
-  options: PropTypes.array.isRequired,
-};
-Branches.propTypes = {
-  options: PropTypes.array.isRequired,
+  extensionOptions: PropTypes.array.isRequired,
 };
