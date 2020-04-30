@@ -61,12 +61,8 @@ export const AppSidebar: React.FC = () => {
           </Nav>
 
           <div className="text-subtle cursor-pointer p-2 flex-grow-0">
-            <Whisper
-              placement="topStart"
-              speaker={versionPopover}
-              trigger="click"
-            >
-              <button>{__BUILD__.version}</button>
+            <Whisper placement="topStart" speaker={versionPopover}>
+              <span>{__BUILD__.version}</span>
             </Whisper>
           </div>
         </Sidenav.Body>

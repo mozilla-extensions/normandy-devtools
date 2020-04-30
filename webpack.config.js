@@ -139,9 +139,9 @@ module.exports = async (env, argv = {}) => {
 
 async function getBuildInfo(isDevelopment) {
   return {
-    isDevelopment,
-    version: (await execOutput("git describe")).trim(),
+    version: (await execOutput("git describe --dirty=-changed")).trim(),
     commitHash: (await execOutput("git rev-parse HEAD")).trim(),
+    isDevelopment,
   };
 }
 
