@@ -28,7 +28,7 @@ import JsonEditor from "devtools/components/common/JsonEditor";
 export default function MessagingExperiment() {
   return (
     <>
-      <InputField label="Experiment Slug" name="slug" />
+      <InputField label="Messaging Experiment Slug" name="slug" />
 
       <ToggleField label="Prevent New Enrollment" name="isEnrollmentPaused">
         Prevents new users from joining the experiment cohort.

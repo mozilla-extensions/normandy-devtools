@@ -11,6 +11,7 @@ import {
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
 import RecipeForm from "devtools/components/recipes/form/RecipeForm";
+import RecipeFormHeader from "devtools/components/recipes/form/RecipeFormHeader";
 
 export default function RecipeFormPage() {
   const { selectedKey: environmentKey } = useEnvironmentState();
@@ -45,22 +46,16 @@ export default function RecipeFormPage() {
     }
   }, [recipeId, experimenterSlug, environmentKey]);
 
-  let title = "Create Recipe";
-  if (recipeId) {
-    title = "Edit Recipe";
-  } else if (experimenterSlug) {
-    title = "Import Recipe";
-  }
-
   return (
-    <div className="page-wrapper">
-      <h4>{title}</h4>
-      <RecipeDetailsProvider
-        data={data}
-        importInstructions={importInstructions}
-      >
-        <RecipeForm />
-      </RecipeDetailsProvider>
-    </div>
+    <RecipeDetailsProvider data={data} importInstructions={importInstructions}>
+      <div className="d-flex flex-column h-100">
+        <RecipeFormHeader />
+        <div className="flex-grow-1 overflow-auto">
+          <div className="page-wrapper">
+            <RecipeForm />
+          </div>
+        </div>
+      </div>
+    </RecipeDetailsProvider>
   );
 }
