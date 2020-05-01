@@ -28,17 +28,17 @@ export default function RecipeFormPage() {
         setImportInstructions("");
       });
     } else if (experimenterSlug) {
-      experimenterApi
-        .fetchRecipe(experimenterSlug)
-        .then(({ comment, action_name, ...recipeData }) => {
-          setData({
-            ...recipeData,
-            action: {
-              name: action_name,
-            },
+      normandyApi.fetchAllActions().then((actions) => {
+        experimenterApi
+          .fetchRecipe(experimenterSlug)
+          .then(({ comment, action_name, ...recipeData }) => {
+            setData({
+              ...recipeData,
+              action: actions.find((a) => a.name === action_name),
+            });
+            setImportInstructions(comment);
           });
-          setImportInstructions(comment);
-        });
+      });
     } else {
       setData(INITIAL_RECIPE_DATA);
       setImportInstructions("");
