@@ -20,10 +20,6 @@ actions:
     include:
       - "*.css"
       - "*.less"
-  package-version:
-    run: node ./bin/check-package-version.js
-    include:
-      - "package.json"
 
 shortcuts:
   lint:
