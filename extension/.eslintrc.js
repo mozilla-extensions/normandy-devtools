@@ -4,6 +4,6 @@ module.exports = {
     webextensions: true,
   },
   globals: {
-    DEVELOPMENT: false,
+    __BUILD__: false,
   },
 };

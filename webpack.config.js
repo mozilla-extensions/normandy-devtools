@@ -1,5 +1,8 @@
 /* eslint-env node */
 const path = require("path");
+const util = require("util");
+const exec = util.promisify(require("child_process").exec);
+
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const Dotenv = require("dotenv-webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
@@ -16,7 +19,7 @@ const cacheLoader = {
   options: { cacheDirectory: ".webpack-cache" },
 };
 
-module.exports = (env, argv = {}) => {
+module.exports = async (env, argv = {}) => {
   const development = argv.mode === "development";
 
   const entry = {
@@ -69,7 +72,7 @@ module.exports = (env, argv = {}) => {
       2 /* indent width */,
     ),
     new webpack.DefinePlugin({
-      DEVELOPMENT: JSON.stringify(development),
+      __BUILD__: JSON.stringify(await getBuildInfo(development)),
     }),
   ];
 
@@ -136,3 +139,25 @@ module.exports = (env, argv = {}) => {
     },
   };
 };
+
+async function getBuildInfo(isDevelopment) {
+  const rv = {
+    version: (await execOutput("git describe --dirty=-uc")).trim(),
+    commitHash: (await execOutput("git rev-parse HEAD")).trim(),
+  };
+
+  if (isDevelopment) {
+    rv.isDevelopment = true;
+  }
+
+  if (rv.version.endsWith("-uc")) {
+    rv.hasUncommittedChanges = true;
+  }
+
+  return rv;
+}
+
+async function execOutput(command, options = {}) {
+  const { stdout } = await exec(command);
+  return stdout;
+}

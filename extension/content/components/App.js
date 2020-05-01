@@ -2,23 +2,19 @@ import React from "react";
 import {
   HashRouter,
   Route,
-  NavLink,
   Redirect,
   Switch,
   useRouteMatch,
 } from "react-router-dom";
 import ErrorBoundary from "react-error-boundary";
-import { Icon, Nav, Sidenav } from "rsuite";
 
 import AppHeader from "devtools/components/common/AppHeader";
+import { AppSidebar } from "devtools/components/common/AppSidebar";
 import RecipesPage from "devtools/components/pages/RecipesPage";
 import FiltersPage from "devtools/components/pages/FiltersPage";
 import PrefStudiesPage from "devtools/components/pages/PrefStudiesPage";
 import AddonStudiesPage from "devtools/components/pages/AddonStudiesPage";
-import {
-  EnvironmentProvider,
-  useEnvironmentState,
-} from "devtools/contexts/environment";
+import { EnvironmentProvider } from "devtools/contexts/environment";
 import RecipeFormPage from "devtools/components/pages/RecipeFormPage";
 import { useHistoryRecorder } from "devtools/hooks/urls";
 import RecipeDetailsPage from "devtools/components/pages/RecipeDetailsPage";
@@ -36,49 +32,6 @@ export default function App(props) {
         </div>
       </EnvironmentProvider>
     </HashRouter>
-  );
-}
-
-function AppSidebar() {
-  const { selectedKey } = useEnvironmentState();
-
-  return (
-    <div className="app-sidebar">
-      <Sidenav>
-        <Sidenav.Body>
-          <Nav vertical>
-            <Nav.Item
-              componentClass={NavLink}
-              icon={<Icon icon="book" />}
-              to={`/${selectedKey}/recipes`}
-            >
-              Recipes
-            </Nav.Item>
-            <Nav.Item
-              componentClass={NavLink}
-              icon={<Icon icon="filter" />}
-              to={`/${selectedKey}/filters`}
-            >
-              Filters
-            </Nav.Item>
-            <Nav.Item
-              componentClass={NavLink}
-              icon={<Icon icon="table" />}
-              to={`/${selectedKey}/pref-studies`}
-            >
-              Pref Studies
-            </Nav.Item>
-            <Nav.Item
-              componentClass={NavLink}
-              icon={<Icon icon="puzzle-piece" />}
-              to={`/${selectedKey}/addon-studies`}
-            >
-              Add-on Studies
-            </Nav.Item>
-          </Nav>
-        </Sidenav.Body>
-      </Sidenav>
-    </div>
   );
 }
 

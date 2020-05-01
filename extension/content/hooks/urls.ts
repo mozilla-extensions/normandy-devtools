@@ -10,7 +10,7 @@ export function useExtensionUrl(): URL {
 }
 
 export function useHistoryRecorder(): void {
-  if (DEVELOPMENT) {
+  if (__BUILD__.isDevelopment) {
     const extensionUrl = useExtensionUrl();
     React.useEffect(() => {
       window.localStorage.setItem(
