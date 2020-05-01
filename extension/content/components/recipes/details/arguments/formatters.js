@@ -117,10 +117,10 @@ export function nl2pbrFormatter(key, value) {
         return (
           <p key={i}>
             {nl.map((l, k) => (
-              <>
+              <React.Fragment key={k}>
                 {l}
                 {k < nl.length - 1 ? <br /> : null}
-              </>
+              </React.Fragment>
             ))}
           </p>
         );

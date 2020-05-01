@@ -13,12 +13,12 @@ export const AppSidebar: React.FC = () => {
       <dl>
         {Object.entries(__BUILD__).map(([key, value]) => {
           return (
-            <>
+            <React.Fragment key={key}>
               <dt>{splitCamelCase(key, { case: "title-case" })}</dt>
               <dd>
                 {typeof value === "string" ? value : JSON.stringify(value)}
               </dd>
-            </>
+            </React.Fragment>
           );
         })}
       </dl>

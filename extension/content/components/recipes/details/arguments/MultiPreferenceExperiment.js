@@ -8,7 +8,7 @@ import {
   multiColumnFormatter,
 } from "devtools/components/recipes/details/arguments/formatters";
 
-export default function PreferenceExperiment() {
+export default function MultiPreferenceExperiment() {
   const data = useRecipeDetailsData();
 
   return (
@@ -34,10 +34,10 @@ export default function PreferenceExperiment() {
                 const prefNameParts = preferenceName.split(".");
                 const displayName = prefNameParts.map((p, i) => {
                   return (
-                    <>
+                    <React.Fragment key={i}>
                       {i < prefNameParts.length - 1 ? `${p}.` : p}
                       <wbr />
-                    </>
+                    </React.Fragment>
                   );
                 });
                 return (

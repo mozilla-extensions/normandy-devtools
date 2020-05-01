@@ -23,13 +23,13 @@ export default function MessagingExperiment() {
                   <div className="d-flex">
                     <div className="pr-5">
                       <div className="font-weight-bold">Ratio</div>
-                      <div className="my-1">
+                      <div className="my-1 text-subtle">
                         <code>{value.ratio}</code>
                       </div>
                     </div>
                     <div className="flex-grow-1">
                       <div className="font-weight-bold">Slug</div>
-                      <div className="my-1">
+                      <div className="my-1 text-subtle">
                         <code>{value.slug}</code>
                       </div>
                     </div>

@@ -87,13 +87,15 @@ export default function Generic({
         </div>
       );
     } else if (typeof value === "boolean") {
+      let booleanText = value ? "True" : "False";
       if (key.startsWith("is")) {
         label += "?";
+        booleanText = value ? "Yes" : "No";
       }
 
       displayValue = (
         <div className="my-1">
-          <Tag color={value ? "green" : "red"}>{value ? "Yes" : "No"}</Tag>
+          <Tag color={value ? "green" : "red"}>{booleanText}</Tag>
         </div>
       );
     } else if (Array.isArray(value)) {
@@ -135,7 +137,7 @@ export default function Generic({
     );
   });
 
-  return <>{details}</>;
+  return <div>{details}</div>;
 }
 
 Generic.propTypes = {

@@ -115,10 +115,10 @@ export default function SuitabilityTag() {
           const dd = SUITABILITIES_DESCRIPTIONS[dt];
 
           return (
-            <>
-              <dt key={s}>{dt}</dt>
+            <React.Fragment key={s}>
+              <dt>{dt}</dt>
               {dd ? <dd>{dd}</dd> : null}
-            </>
+            </React.Fragment>
           );
         })}
       </dl>
