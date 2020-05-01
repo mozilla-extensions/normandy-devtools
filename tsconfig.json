@@ -9,10 +9,10 @@
     "paths": {
       "devtools/*": ["extension/content/*"]
     },
-    "noEmit": true,
     "jsx": "preserve",
     "typeRoots": ["node_modules/@types", "node_modules/web-ext-types"],
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "noEmit": true
   },
   "include": ["extension/content/**/*", "types/**/*.d.ts"],
   "exclude": ["node_modules"]
