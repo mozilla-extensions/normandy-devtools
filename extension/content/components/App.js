@@ -6,7 +6,7 @@ import {
   Switch,
   useRouteMatch,
 } from "react-router-dom";
-import ErrorBoundary from "react-error-boundary";
+import { ErrorBoundary } from "react-error-boundary";
 
 import AppHeader from "devtools/components/common/AppHeader";
 import { AppSidebar } from "devtools/components/common/AppSidebar";
@@ -17,6 +17,7 @@ import AddonStudiesPage from "devtools/components/pages/AddonStudiesPage";
 import { EnvironmentProvider } from "devtools/contexts/environment";
 import RecipeFormPage from "devtools/components/pages/RecipeFormPage";
 import { useHistoryRecorder } from "devtools/hooks/urls";
+import { ErrorFallbackPage } from "devtools/components/pages/ErrorFallbackPage";
 
 export default function App(props) {
   return (
@@ -40,7 +41,7 @@ function Page() {
 
   return (
     <div className="page-container">
-      <ErrorBoundary>
+      <ErrorBoundary FallbackComponent={ErrorFallbackPage}>
         <Switch>
           <Route exact path={`${match.path}/`}>
             <Redirect to={`${match.url}/recipes`} />
