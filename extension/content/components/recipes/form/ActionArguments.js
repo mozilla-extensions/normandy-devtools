@@ -6,6 +6,7 @@ import BranchedAddon from "devtools/components/recipes/form/arguments/BranchedAd
 import PreferenceExperiment from "devtools/components/recipes/form/arguments/PreferenceExperiment";
 import MessagingExperiment from "devtools/components/recipes/form/arguments/MessagingExperiment";
 import ConsoleLog from "devtools/components/recipes/form/arguments/ConsoleLog";
+import MultiPreference from "devtools/components/recipes/form/arguments/MultiPreference";
 import OptOutStudy from "devtools/components/recipes/form/arguments/OptOutStudy";
 import PreferenceRollout from "devtools/components/recipes/form/arguments/PreferenceRollout";
 import PreferenceRollback from "devtools/components/recipes/form/arguments/PreferenceRollback";
@@ -15,6 +16,7 @@ const ARGUMENTS_FIELDS_MAPPING = {
   "branched-addon-study": BranchedAddon,
   "console-log": ConsoleLog,
   "messaging-experiment": MessagingExperiment,
+  "multi-preference-experiment": MultiPreference,
   "opt-out-study": OptOutStudy,
   "preference-experiment": PreferenceExperiment,
   "preference-rollback": PreferenceRollback,
@@ -35,6 +37,13 @@ export const INITIAL_ACTION_ARGUMENTS = {
     branches: [],
     isEnrollmentPaused: false,
     slug: "",
+  },
+  "multi-preference-experiment": {
+    branches: [],
+    experimentDocumentUrl: "",
+    slug: "",
+    userFacingDescription: "",
+    userFacingName: "",
   },
   "opt-out-study": {
     addonUrl: "",
