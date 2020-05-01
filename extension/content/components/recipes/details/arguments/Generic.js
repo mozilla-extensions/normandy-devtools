@@ -5,6 +5,7 @@ import { Icon, Tag } from "rsuite";
 import validator from "validator";
 
 import Highlight from "devtools/components/common/Highlight";
+import { splitCamelCase } from "devtools/utils/helpers";
 
 export default function Generic({
   data,
@@ -124,7 +125,9 @@ export default function Generic({
     return (
       <div key={key} className="mt-4">
         <div className="d-flex align-items-center">
-          <div className="pr-2 font-weight-bold">{label}</div>
+          <div className="pr-2 font-weight-bold">
+            {splitCamelCase(label, { case: "title-case" })}
+          </div>
           {labelExtra}
         </div>
         <div>{displayValue}</div>

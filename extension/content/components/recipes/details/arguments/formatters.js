@@ -1,5 +1,6 @@
 import React from "react";
 import { Tag } from "rsuite";
+import { splitCamelCase } from "devtools/utils/helpers";
 
 export function multiColumnFormatter(fields = [], formatters = {}) {
   const columns = (key, value, data) => (
@@ -18,7 +19,9 @@ export function stringFormatter(key, value) {
   return (
     <div className="mt-4">
       <div className="d-flex align-items-center">
-        <div className="pr-2 font-weight-bold">{key}</div>
+        <div className="pr-2 font-weight-bold">
+          {splitCamelCase(key, { case: "title-case" })}
+        </div>
       </div>
       <div className="my-1 text-subtle">{value}</div>
     </div>
@@ -43,13 +46,21 @@ export function tagFormatter(options = {}) {
 
 export function booleanFormatter(key, value) {
   const label = key.startsWith("is") ? `${key}?` : key;
+
+  let text = value ? "True" : "False";
+  if (key.startsWith("is")) {
+    text = value ? "Yes" : "No";
+  }
+
   return (
     <div className="mt-4">
       <div className="d-flex align-items-center">
-        <div className="pr-2 font-weight-bold">{label}</div>
+        <div className="pr-2 font-weight-bold">
+          {splitCamelCase(label, { case: "title-case" })}
+        </div>
       </div>
       <div className="my-1 text-subtle">
-        <Tag color={value ? "green" : "red"}>{value ? "Yes" : "No"}</Tag>
+        <Tag color={value ? "green" : "red"}>{text}</Tag>
       </div>
     </div>
   );
@@ -60,14 +71,18 @@ export function tableFormatter(fields = [], formatters = {}) {
     return (
       <div className="mt-4">
         <div className="d-flex align-items-center">
-          <div className="pr-2 font-weight-bold">{key}</div>
+          <div className="pr-2 font-weight-bold">
+            {splitCamelCase(key, { case: "title-case" })}
+          </div>
         </div>
         <div className="mt-3 mb-1 text-subtle">
           <table className="data-table w-100">
             <thead>
               <tr>
                 {fields.map((field) => (
-                  <th key={field}>{field}</th>
+                  <th key={field}>
+                    {splitCamelCase(field, { case: "title-case" })}
+                  </th>
                 ))}
               </tr>
             </thead>
