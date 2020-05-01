@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Panel, Tag } from "rsuite";
 
-export default function BucketSample({ data }) {
+export default function StableSample({ data }) {
   return (
     <div className="mt-4">
       <strong>Stable Sampling</strong>
@@ -28,6 +28,6 @@ export default function BucketSample({ data }) {
   );
 }
 
-BucketSample.propTypes = {
+StableSample.propTypes = {
   data: PropTypes.object,
 };

@@ -1,15 +1,13 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Tag } from "rsuite";
 
-import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
-import Generic from "devtools/components/recipes/details/arguments/Generic";
+import GenericArguments from "devtools/components/recipes/details/arguments/GenericArguments";
 import { tableFormatter } from "devtools/components/recipes/details/arguments/formatters";
 
-export default function PreferenceRollout() {
-  const data = useRecipeDetailsData();
-
+export default function PreferenceRollout({ data }) {
   return (
-    <Generic
+    <GenericArguments
       data={data.arguments}
       formatters={{
         preferences: tableFormatter(["preferenceName", "type", "value"], {
@@ -40,3 +38,7 @@ export default function PreferenceRollout() {
     />
   );
 }
+
+PreferenceRollout.propTypes = {
+  data: PropTypes.object,
+};

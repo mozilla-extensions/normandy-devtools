@@ -1,8 +1,8 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Tag } from "rsuite";
 
-import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
-import Generic from "devtools/components/recipes/details/arguments/Generic";
+import GenericArguments from "devtools/components/recipes/details/arguments/GenericArguments";
 import {
   booleanFormatter,
   codeFormatter,
@@ -11,11 +11,9 @@ import {
   tagFormatter,
 } from "devtools/components/recipes/details/arguments/formatters";
 
-export default function PreferenceExperiment() {
-  const data = useRecipeDetailsData();
-
+export default function PreferenceExperiment({ data }) {
   return (
-    <Generic
+    <GenericArguments
       data={data.arguments}
       formatters={{
         "row-1": multiColumnFormatter(["preferenceName", "slug"], {
@@ -71,3 +69,7 @@ export default function PreferenceExperiment() {
     />
   );
 }
+
+PreferenceExperiment.propTypes = {
+  data: PropTypes.object,
+};

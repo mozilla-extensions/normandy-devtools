@@ -1,17 +1,15 @@
 import React from "react";
+import PropTypes from "prop-types";
 
-import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
-import Generic from "devtools/components/recipes/details/arguments/Generic";
+import GenericArguments from "devtools/components/recipes/details/arguments/GenericArguments";
 import {
   nl2pbrFormatter,
   tagFormatter,
 } from "devtools/components/recipes/details/arguments/formatters";
 
-export default function AddonStudy() {
-  const data = useRecipeDetailsData();
-
+export default function AddonStudy({ data }) {
   return (
-    <Generic
+    <GenericArguments
       data={data.arguments}
       formatters={{
         description: nl2pbrFormatter,
@@ -27,3 +25,7 @@ export default function AddonStudy() {
     />
   );
 }
+
+AddonStudy.propTypes = {
+  data: PropTypes.object,
+};

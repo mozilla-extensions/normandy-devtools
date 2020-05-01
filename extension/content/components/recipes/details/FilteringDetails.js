@@ -30,7 +30,7 @@ export default function FilteringDetails() {
   const data = useRecipeDetailsData();
   const [mode, setMode] = React.useState(MODE_RICH);
 
-  const handleModeClick = (newMode) => {
+  const generateHandlerModeClick = (newMode) => {
     return () => {
       setMode(newMode);
     };
@@ -79,21 +79,21 @@ export default function FilteringDetails() {
             <IconButton
               active={mode === MODE_RICH}
               icon={<Icon icon="file-text-o" />}
-              onClick={handleModeClick(MODE_RICH)}
+              onClick={generateHandlerModeClick(MODE_RICH)}
             />
           </ModePopover>
           <ModePopover message="Display the composite details">
             <IconButton
               active={mode === MODE_COMPOSITE}
               icon={<Icon icon="cubes" />}
-              onClick={handleModeClick(MODE_COMPOSITE)}
+              onClick={generateHandlerModeClick(MODE_COMPOSITE)}
             />
           </ModePopover>
           <ModePopover message="Display the raw details">
             <IconButton
               active={mode === MODE_RAW}
               icon={<Icon icon="code" />}
-              onClick={handleModeClick(MODE_RAW)}
+              onClick={generateHandlerModeClick(MODE_RAW)}
             />
           </ModePopover>
         </ButtonGroup>

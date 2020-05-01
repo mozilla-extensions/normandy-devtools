@@ -7,7 +7,7 @@ import validator from "validator";
 import Highlight from "devtools/components/common/Highlight";
 import { splitCamelCase } from "devtools/utils/helpers";
 
-export default function Generic({
+export default function GenericArguments({
   data,
   ordering = [],
   omit = [],
@@ -104,7 +104,7 @@ export default function Generic({
           {value.map((item, index) => {
             let displayItem = null;
             if (typeof item === "object") {
-              displayItem = <Generic data={item} />;
+              displayItem = <GenericArguments data={item} />;
             } else {
               displayItem =
                 typeof item === "string" ? item : JSON.stringify(item);
@@ -140,7 +140,7 @@ export default function Generic({
   return <div>{details}</div>;
 }
 
-Generic.propTypes = {
+GenericArguments.propTypes = {
   data: PropTypes.object.isRequired,
   ordering: PropTypes.array,
   omit: PropTypes.array,

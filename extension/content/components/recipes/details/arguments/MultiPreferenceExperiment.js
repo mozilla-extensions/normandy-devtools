@@ -1,18 +1,16 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Panel, Tag } from "rsuite";
 
-import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
-import Generic from "devtools/components/recipes/details/arguments/Generic";
+import GenericArguments from "devtools/components/recipes/details/arguments/GenericArguments";
 import {
   booleanFormatter,
   multiColumnFormatter,
 } from "devtools/components/recipes/details/arguments/formatters";
 
-export default function MultiPreferenceExperiment() {
-  const data = useRecipeDetailsData();
-
+export default function MultiPreferenceExperiment({ data }) {
   return (
-    <Generic
+    <GenericArguments
       data={data.arguments}
       formatters={{
         "row-1": multiColumnFormatter(["isEnrollmentPaused", "isHighVolume"], {
@@ -130,3 +128,7 @@ export default function MultiPreferenceExperiment() {
     />
   );
 }
+
+MultiPreferenceExperiment.propTypes = {
+  data: PropTypes.object,
+};

@@ -5,7 +5,7 @@ import { ButtonGroup, Icon, IconButton, Popover, Tag, Whisper } from "rsuite";
 import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
 import Highlight from "devtools/components/common/Highlight";
 import CollapsibleSection from "devtools/components/recipes/details/CollapsibleSection";
-import Generic from "devtools/components/recipes/details/arguments/Generic";
+import Generic from "devtools/components/recipes/details/arguments/GenericArguments";
 import PreferenceExperiment from "devtools/components/recipes/details/arguments/PreferenceExperiment";
 import PreferenceRollout from "devtools/components/recipes/details/arguments/PreferenceRollout";
 import BranchedAddonStudy from "devtools/components/recipes/details/arguments/BranchedAddonStudy";
@@ -21,8 +21,8 @@ const ACTION_DETAILS_MAPPING = {
   "branched-addon-study": BranchedAddonStudy,
   "messaging-experiment": MessagingExperiment,
   "multi-preference-experiment": MultiPreferenceExperiment,
-  "preference-experiment": PreferenceExperiment,
   "opt-out-study": AddonStudy,
+  "preference-experiment": PreferenceExperiment,
   "preference-rollout": PreferenceRollout,
 };
 
@@ -30,7 +30,7 @@ export default function ActionDetails() {
   const data = useRecipeDetailsData();
   const [mode, setMode] = React.useState(MODE_RICH);
 
-  const handleModeClick = (newMode) => {
+  const generateHandlerModeClick = (newMode) => {
     return () => {
       setMode(newMode);
     };
@@ -42,7 +42,7 @@ export default function ActionDetails() {
   } else if (mode === MODE_RICH) {
     if (data.action.name in ACTION_DETAILS_MAPPING) {
       const DetailsComponent = ACTION_DETAILS_MAPPING[data.action.name];
-      details = <DetailsComponent />;
+      details = <DetailsComponent data={data} />;
     } else {
       details = <Generic data={data.arguments} />;
     }
@@ -56,14 +56,14 @@ export default function ActionDetails() {
             <IconButton
               active={mode === MODE_RICH}
               icon={<Icon icon="file-text-o" />}
-              onClick={handleModeClick(MODE_RICH)}
+              onClick={generateHandlerModeClick(MODE_RICH)}
             />
           </ModePopover>
           <ModePopover message="Display the raw details">
             <IconButton
               active={mode === MODE_RAW}
               icon={<Icon icon="code" />}
-              onClick={handleModeClick(MODE_RAW)}
+              onClick={generateHandlerModeClick(MODE_RAW)}
             />
           </ModePopover>
         </ButtonGroup>
