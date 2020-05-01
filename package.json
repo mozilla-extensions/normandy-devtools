@@ -101,7 +101,8 @@
     "react-error-boundary": "2.2.1",
     "react-router-dom": "5.1.2",
     "react-split": "2.0.7",
-    "rsuite": "4.4.1"
+    "rsuite": "4.4.1",
+    "validator": "13.0.0"
   },
   "resolutions": {
     "web-ext/addons-linter": "1.24.0"
