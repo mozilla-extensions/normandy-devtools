@@ -142,12 +142,14 @@ module.exports = async (env, argv = {}) => {
 
 async function getBuildInfo(isDevelopment) {
   const rv = {
-    version: (await execOutput("git describe --dirty=-uc")).trim(),
     commitHash: (await execOutput("git rev-parse HEAD")).trim(),
   };
 
   if (isDevelopment) {
     rv.isDevelopment = true;
+    rv.version = (await execOutput("git describe --dirty=-uc")).trim();
+  } else {
+    rv.version = packageData.version;
   }
 
   if (rv.version.endsWith("-uc")) {
