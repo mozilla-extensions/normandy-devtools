@@ -5,5 +5,6 @@ module.exports = {
   },
   globals: {
     __BUILD__: false,
+    DEVELOPMENT: false,
   },
 };
