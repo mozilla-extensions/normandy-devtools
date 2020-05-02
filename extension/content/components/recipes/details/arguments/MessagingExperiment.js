@@ -36,7 +36,10 @@ export default function MessagingExperiment({ data }) {
                     <div className="font-weight-bold">Groups</div>
                     <div className="my-1">
                       {value.groups.map((group) => (
-                        <Tag key={group} className="rs-tag-rsuite">
+                        <Tag
+                          key={group}
+                          className="rs-tag-rsuite font-family-monospace"
+                        >
                           {group}
                         </Tag>
                       ))}
