@@ -159,7 +159,7 @@ async function getBuildInfo(isDevelopment) {
   return rv;
 }
 
-async function execOutput(command, options = {}) {
+async function execOutput(command) {
   const { stdout } = await exec(command);
   return stdout;
 }

@@ -67,7 +67,7 @@ export function booleanFormatter(key, value) {
 }
 
 export function tableFormatter(fields = [], formatters = {}) {
-  const table = (key, values, data) => {
+  const table = (key, values) => {
     return (
       <div className="mt-4">
         <div className="d-flex align-items-center">

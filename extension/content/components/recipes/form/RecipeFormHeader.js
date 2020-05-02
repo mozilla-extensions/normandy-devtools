@@ -21,9 +21,7 @@ export default function RecipeFormHeader() {
         throw Error("Import Instructions not empty!");
       }
 
-      /* eslint-disable no-unused-vars */
       const { comment: _omitComment, action, ...cleanedData } = data;
-      /* eslint-enable no-unused-vars */
 
       const requestSave = normandyApi.saveRecipe(recipeId, {
         ...cleanedData,

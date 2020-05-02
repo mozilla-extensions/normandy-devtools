@@ -64,13 +64,10 @@ function RepeatOptionsField() {
 
   const repeatOptionChangeSideEffect = ({ data, value }) => {
     if (value !== "xdays") {
-      /* eslint-disable no-unused-vars */
       const {
         repeatEvery: _omitRepeatEvery,
-        action,
         ...cleanedArguments
       } = data.arguments;
-      /* eslint-enable no-unused-vars */
       return { ...data, arguments: cleanedArguments };
     }
 
