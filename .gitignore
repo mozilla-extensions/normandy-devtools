@@ -2,6 +2,6 @@ dist/
 node_modules/
 web-ext-artifacts/
 yarn-error.log
-.env
+.env*
 .webpack-cache
 coverage/

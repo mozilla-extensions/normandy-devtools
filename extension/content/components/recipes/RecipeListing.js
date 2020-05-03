@@ -139,7 +139,7 @@ class RecipeListing extends React.PureComponent {
     } = recipe;
 
     return (
-      <React.Fragment>
+      <>
         <span className="pull-right recipe-actions">
           {this.renderCopyToArbitraryButton()}
           {this.renderRunButton()}
@@ -147,7 +147,7 @@ class RecipeListing extends React.PureComponent {
           {this.renderFilterIcon()}
         </span>
         <Tag color="blue">{id}</Tag> {name}
-      </React.Fragment>
+      </>
     );
   }
 
@@ -164,7 +164,9 @@ class RecipeListing extends React.PureComponent {
           Edit Recipe
         </Button>
 
-        <Button onClick={this.handleshowRecipeButton}>View Recipe</Button>
+        <Button componentClass={Link} to={`recipes/${recipe.id}`}>
+          View Recipe
+        </Button>
       </ButtonToolbar>
     );
   }

@@ -1,3 +1,9 @@
+declare const __BUILD__: {
+  isDevelopment: boolean;
+  version: string;
+  commitHash: string;
+};
+
 declare namespace browser.experiments.normandy {
   type V1Recipe = {};
 

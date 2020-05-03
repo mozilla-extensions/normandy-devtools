@@ -1,0 +1,36 @@
+import React from "react";
+import { useParams } from "react-router-dom";
+
+import { RecipeDetailsProvider } from "devtools/contexts/recipeDetails";
+import {
+  useEnvironmentState,
+  useSelectedNormandyEnvironmentAPI,
+} from "devtools/contexts/environment";
+import RecipeDetails from "devtools/components/recipes/details/RecipeDetails";
+import DetailsHeader from "devtools/components/recipes/details/DetailsHeader";
+
+export default function RecipeDetailsPage() {
+  const { recipeId } = useParams();
+  const { selectedKey: environmentKey } = useEnvironmentState();
+  const normandyApi = useSelectedNormandyEnvironmentAPI();
+  const [data, setData] = React.useState({});
+
+  React.useEffect(() => {
+    normandyApi.fetchRecipe(recipeId).then((recipeData) => {
+      setData(recipeData.latest_revision);
+    });
+  }, [environmentKey, recipeId]);
+
+  return (
+    <RecipeDetailsProvider data={data}>
+      <div className="d-flex flex-column h-100">
+        <DetailsHeader />
+        <div className="flex-grow-1 overflow-auto">
+          <div className="page-wrapper">
+            <RecipeDetails />
+          </div>
+        </div>
+      </div>
+    </RecipeDetailsProvider>
+  );
+}

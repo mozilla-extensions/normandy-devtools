@@ -11,8 +11,14 @@ module.exports = {
     "plugin:react/recommended",
   ],
   plugins: ["mozilla"],
+  settings: {
+    react: {
+      version: "detect",
+    },
+  },
   rules: {
     "mozilla/no-define-cc-etc": "off",
+    "react/jsx-fragments": ["error", "syntax"],
     "react/jsx-curly-brace-presence": ["error", "never"],
     "react/jsx-sort-props": [
       "error",

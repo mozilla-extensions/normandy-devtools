@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import PropTypes from "prop-types";
 import {
@@ -37,7 +38,7 @@ const PREFERENCE_BRANCH_TYPE_OPTIONS = [
   { label: "User", value: "user" },
 ];
 
-export default function PreferenceExperimentArguments() {
+export default function PreferenceExperiment() {
   const preferenceTypeChangeSideEffect = ({ data, name, value }) => {
     return {
       ...data,

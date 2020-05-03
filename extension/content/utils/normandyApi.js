@@ -48,6 +48,23 @@ export default class NormandyAPI extends API {
     });
   }
 
+  async fetchAllRecipes(searchParams = {}) {
+    let response = await this.request({
+      url: "recipe/",
+      data: searchParams,
+    });
+    let recipes = response.results;
+
+    while (response.next) {
+      response = await this.request({
+        url: response.next,
+      });
+      recipes = [...recipes, ...response.results];
+    }
+
+    return recipes;
+  }
+
   async fetchRecipe(id) {
     return this.request({
       url: `recipe/${id}/`,
@@ -87,5 +104,21 @@ export default class NormandyAPI extends API {
 
   async fetchFilters() {
     return this.request({ url: "filters/" });
+  }
+
+  async fetchAllExtensions() {
+    let response = await this.request({
+      url: "extension/",
+    });
+    let extensions = response.results;
+
+    while (response.next) {
+      response = await this.request({
+        url: response.next,
+      });
+      extensions = [...extensions, ...response.results];
+    }
+
+    return extensions;
   }
 }

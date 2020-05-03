@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "devtools/*": ["../extension/content/*"]
+    }
+  },
+  "include": ["**/*.ts", "../types/**/*.d.ts"],
+}

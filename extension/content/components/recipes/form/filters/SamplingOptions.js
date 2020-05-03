@@ -79,16 +79,18 @@ export default function SamplingOptions() {
   }
 
   return (
-    <FormGroup>
-      <ControlLabel>Sampling Type</ControlLabel>
-      <InputPicker
-        cleanable={false}
-        data={SAMPLING_OPTIONS}
-        value={typeValue}
-        onChange={handleTypeChange}
-      />
+    <>
+      <FormGroup>
+        <ControlLabel>Sampling Type</ControlLabel>
+        <InputPicker
+          cleanable={false}
+          data={SAMPLING_OPTIONS}
+          value={typeValue}
+          onChange={handleTypeChange}
+        />
+      </FormGroup>
       {optionsFields}
-    </FormGroup>
+    </>
   );
 }
 
@@ -107,7 +109,7 @@ function BucketSampleOptions({ onChange }) {
       <Col xs={4}>
         <SamplingNumberInput label="Total" name="total" onChange={onChange} />
       </Col>
-      <Col xs={8}>
+      <Col xs={12}>
         <SamplingInputInput key={JSON.stringify(input)} onChange={onChange} />
       </Col>
     </Row>
