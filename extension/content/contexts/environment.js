@@ -40,6 +40,7 @@ const initialState = {
   environments: initialEnvironments,
   auth: initialAuth,
   selectedKey: DEFAULT_ENV,
+  isLoggingIn: false,
 };
 export const environmentContext = React.createContext(initialState);
 const { Provider } = environmentContext;
@@ -49,6 +50,7 @@ export const ACTION_UPDATE_ENVIRONMENT = "UPDATE_ENVIRONMENT";
 export const ACTION_UPDATE_AUTH = "UPDATE_AUTH";
 export const ACTION_UPDATE_AUTH_EXPIRES_AT = "UPDATE_AUTH_EXPIRES_AT";
 export const ACTION_UPDATE_AUTH_RESULT = "UPDATE_AUTH_RESULT";
+export const ACTION_SET_IS_LOGGING_IN = "SET_LOGGING_IN";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -123,6 +125,12 @@ function reducer(state, action) {
       return {
         ...state,
         selectedKey: action.key,
+      };
+
+    case ACTION_SET_IS_LOGGING_IN:
+      return {
+        ...state,
+        isLoggingIn: action.isLoggingIn,
       };
 
     default:
@@ -203,7 +211,7 @@ export function EnvironmentProvider({ children }) {
             await refreshToken(dispatch, key, environment);
           } catch (err) {
             console.warn(`Unable to refresh Auth0 access token for "${key}"`);
-            console.warn(err.description);
+            console.warn(err);
             logout(dispatch, key);
           }
         }
@@ -379,8 +387,39 @@ async function launchWebAuthFlow(
   });
 }
 
-export function login(dispatch, selectedKey, environment) {
-  return launchWebAuthFlow(dispatch, selectedKey, environment);
+export async function login(dispatch, selectedKey, environment) {
+  dispatch({
+    isLoggingIn: true,
+    type: ACTION_SET_IS_LOGGING_IN,
+  });
+
+  let result;
+  try {
+    result = await launchWebAuthFlow(dispatch, selectedKey, environment, {
+      interactive: false,
+    });
+  } catch {
+    console.info(
+      "Non-interactive authentication failed, prompting for interaction...",
+    );
+
+    try {
+      result = await launchWebAuthFlow(dispatch, selectedKey, environment);
+    } catch (err) {
+      dispatch({
+        isLoggingIn: false,
+        type: ACTION_SET_IS_LOGGING_IN,
+      });
+      throw err;
+    }
+  }
+
+  dispatch({
+    isLoggingIn: false,
+    type: ACTION_SET_IS_LOGGING_IN,
+  });
+
+  return result;
 }
 
 export function refreshToken(dispatch, selectedKey, environment) {
