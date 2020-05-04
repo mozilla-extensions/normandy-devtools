@@ -356,13 +356,18 @@ async function launchWebAuthFlow(
 
   const webAuth = getWebAuthForEnvironment(environment);
 
+  const buildUrlOptions = {
+    state,
+    nonce,
+  };
+
+  if ("interactive" in details && !details.interactive) {
+    buildUrlOptions.prompt = "none";
+  }
+
   const redirectUri = await browser.identity.launchWebAuthFlow({
     interactive: true,
-    url: webAuth.client.buildAuthorizeUrl({
-      state,
-      nonce,
-      ...(details.interactive === false ? { prompt: "none" } : {}),
-    }),
+    url: webAuth.client.buildAuthorizeUrl(buildUrlOptions),
     ...details,
   });
 
