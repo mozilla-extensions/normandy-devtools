@@ -5047,10 +5047,10 @@ fx-runner@1.0.11:
     which "1.2.4"
     winreg "0.0.12"
 
-generate-json-webpack-plugin@0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/generate-json-webpack-plugin/-/generate-json-webpack-plugin-0.3.1.tgz#b5ebb383ba552d8be663ce177ed134f480735144"
-  integrity sha512-0gsqCyLf1OF+9tjN75QkPYV6UoyuPCfhgLXcX44/Ft9j82z9kBG/7yMS/ufN8yU2l4noSNEVNYQ9GdqenH/0cQ==
+generate-json-webpack-plugin@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/generate-json-webpack-plugin/-/generate-json-webpack-plugin-1.0.0.tgz#518e762eb8a152f7a8cc2af56172c0dc58dfa989"
+  integrity sha512-VX3hYIHuVRGH44pz2c1/QonRvCLa7pzw1dP2pisRiRhVx7pl5/mkG+e/FL2nTAJTc6k8PDVI8npBA2WUH3YG3w==
 
 gensync@^1.0.0-beta.1:
   version "1.0.0-beta.1"
