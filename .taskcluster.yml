@@ -12,10 +12,7 @@ tasks:
               repo: https://github.com/mozilla-extensions/xpi-template
               branch: master
           trustDomain: xpi
-          # XXX for private repos, uncomment this line, and comment out the next
-          # githubCloneSecret: project/xpi/xpi-github-clone-ssh
           githubCloneSecret: ""
-          # XXX use "privileged" or "system" to enable signing
           xpiSigningType: "privileged"
       in:
           $if: 'tasks_for in ["github-pull-request", "github-push", "action", "cron"]'
