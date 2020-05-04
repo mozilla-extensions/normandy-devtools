@@ -3,7 +3,7 @@
 Tools to work with Normandy recipes and filters, both locally and on the
 Normandy servers.
 
-Read more in the docs: https://mozilla-extensions.github.io/normand-devtools
+Read more in the docs: https://mozilla-extensions.github.io/normandy-devtools
 
 ## Installation
 
