@@ -1,7 +1,6 @@
 /* eslint-env node */
 const path = require("path");
-const util = require("util");
-const exec = util.promisify(require("child_process").exec);
+const { execSync } = require("child_process");
 
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const Dotenv = require("dotenv-webpack");
@@ -72,7 +71,11 @@ module.exports = async (env, argv = {}) => {
       2 /* indent width */,
     ),
     new webpack.DefinePlugin({
-      __BUILD__: JSON.stringify(await getBuildInfo(development)),
+      __BUILD__: webpack.DefinePlugin.runtimeValue(
+        () => JSON.stringify(getBuildInfo(development)),
+        true,
+      ),
+      DEVELOPMENT: JSON.stringify(development),
     }),
   ];
 
@@ -140,26 +143,41 @@ module.exports = async (env, argv = {}) => {
   };
 };
 
-async function getBuildInfo(isDevelopment) {
+function getBuildInfo(isDevelopment) {
+  const packageJson = require("./package.json");
+
   const rv = {
-    commitHash: (await execOutput("git rev-parse HEAD")).trim(),
+    commitHash: execOutput("git rev-parse HEAD").trim(),
   };
 
+  rv.version = packageJson.version;
   if (isDevelopment) {
-    rv.isDevelopment = true;
-    rv.version = (await execOutput("git describe --dirty=-uc")).trim();
-  } else {
-    rv.version = packageData.version;
-  }
+    const described = execOutput("git describe --dirty=-uc").trim();
+    const describedPattern = /^v(.+?)(?:-((?:[0-9]+?)-(?:.+?)))?(-uc)?$/;
+    const matches = described.match(describedPattern);
+    const buildMetadata = [];
+    if (matches) {
+      rv.version = matches[1];
 
-  if (rv.version.endsWith("-uc")) {
-    rv.hasUncommittedChanges = true;
+      if (matches[2]) {
+        buildMetadata.push(matches[2]);
+      }
+
+      if (matches[3]) {
+        buildMetadata.push("uc");
+        rv.hasUncommittedChanges = true;
+      }
+    }
+
+    if (buildMetadata) {
+      rv.version += `+${buildMetadata.join("-")}`;
+    }
   }
 
   return rv;
 }
 
-async function execOutput(command, options = {}) {
-  const { stdout } = await exec(command);
-  return stdout;
+function execOutput(command) {
+  const output = execSync(command);
+  return output.toString();
 }

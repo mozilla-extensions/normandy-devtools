@@ -4,7 +4,7 @@ browser.browserAction.onClicked.addListener(async () => {
   });
 });
 
-if (__BUILD__.isDevelopment) {
+if (DEVELOPMENT) {
   browser.tabs.create({
     url: "restore.html",
   });
