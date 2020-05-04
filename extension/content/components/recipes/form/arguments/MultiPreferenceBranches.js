@@ -26,7 +26,7 @@ export default function MultiPreferenceBranches() {
   const dispatch = useRecipeDetailsDispatch();
 
   const handleClickAddBranch = () => {
-    /** @type {{ratio: number, slug: string, branches: array}} */
+    /** @type {{ratio: number, slug: string, preferences: object}} */
     const newBranch = { ratio: 1, slug: "", preferences: {} };
 
     dispatch({
@@ -43,9 +43,9 @@ export default function MultiPreferenceBranches() {
 
   let branchesList = <HelpBlock>There are no branches.</HelpBlock>;
   if (data.arguments.branches && data.arguments.branches.length) {
-    branchesList = data.arguments.branches.map((branch, index) => (
-      <Branch key={index} index={index} />
-    ));
+    branchesList = data.arguments.branches.map((branch, index) => {
+      return <Branch key={index} branch={branch} index={index} />;
+    });
   }
 
   return (
@@ -65,10 +65,9 @@ export default function MultiPreferenceBranches() {
   );
 }
 
-function Branch({ index }) {
+function Branch({ branch, index }) {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
-  const branch = data.arguments.branches[index];
   const { branches } = data.arguments;
   const [preferences, setPreferences] = React.useState([]);
 
@@ -212,15 +211,17 @@ function Branch({ index }) {
 
   let prefList = <HelpBlock>There are no preferences.</HelpBlock>;
   if (branch && branch.preferences) {
-    prefList = preferences.map((pref, i) => (
-      <PreferenceFields
-        key={i}
-        index={i}
-        prefData={pref}
-        onChange={handlePrefChange}
-        onDelete={handleDeletePref}
-      />
-    ));
+    prefList = preferences.map((pref, i) => {
+      return (
+        <PreferenceFields
+          key={`${branch.slug}:${i}`}
+          index={i}
+          prefData={pref}
+          onChange={handlePrefChange}
+          onDelete={handleDeletePref}
+        />
+      );
+    });
   }
 
   const parseNumericInput = (value) => {

@@ -24,6 +24,7 @@ export default function ActionPicker() {
     normandyApi.fetchAllActions().then((allActions) => {
       setActions(allActions);
     });
+    console.log(value);
   }, [environmentKey]);
 
   const handleChange = (value) => {
