@@ -3,8 +3,6 @@
 Tools to work with Normandy recipes and filters, both locally and on the
 Normandy servers.
 
-Read more in the docs: https://mozilla-extensions.github.io/normand-devtools
-
 ## Installation
 
 Since Normandy Devtools is an exceptionally niche add-on, it is not hosted on
@@ -16,4 +14,3 @@ there, you can access Normandy devtools using the new wrench icon in the top
 right of the browser window.
 
 Happy debugging!
-
