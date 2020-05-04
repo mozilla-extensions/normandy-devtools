@@ -4,6 +4,12 @@
   min-height: 100vh;
 }
 
+pre,
+code {
+  font-family: @font-family-monospace;
+  font-variant-ligatures: no-contextual;
+}
+
 code {
   font-size: 12px;
 }
@@ -53,7 +59,8 @@ dl {
     }
 
     dt {
-      font-family: monospace;
+      font-family: @font-family-monospace;
+      font-variant-ligatures: no-contextual;
 
       + dd {
         margin-top: -10px;

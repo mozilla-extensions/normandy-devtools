@@ -37,7 +37,7 @@ export default function BucketSample({ data }) {
           <strong>Input</strong>
           <div className="my-1">
             {data.input.map((i) => (
-              <Tag key={i} className="rs-tag-rsuite">
+              <Tag key={i} className="rs-tag-rsuite font-family-monospace">
                 {i}
               </Tag>
             ))}
