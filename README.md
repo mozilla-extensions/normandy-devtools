@@ -94,6 +94,18 @@ $ yarn watch
 > is installed on your system and if you are on Linux make sure that `firefox-nightly`
 > is on your PATH.
 
+## Debugging with React Devtools
+
+If you are in development mode such as by running the command `yarn watch` you will 
+be able to debug the extension with React Devtools. 
+
+To start React Devtools simply run:
+```
+$ yarn react-devtools
+```
+
+Now simply reload the extension. It should connect to React Devtools.
+
 # Release
 
 Releases are built automatically and available on the
