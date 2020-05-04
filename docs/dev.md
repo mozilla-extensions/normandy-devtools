@@ -75,3 +75,14 @@ Now simply reload the extension. It should connect to React Devtools.
 Releases are built automatically and available on the
 [releases pages on Github](https://github.com/mozilla/normandy-devtools/releases).
 There is no manual build process, since it relies on having secrets to sign the add-on.
+
+### Development releases
+
+We now provide automatically built and signed XPIs for development purposes. These can 
+be found by looking at the list of checks for the commit you want an XPI for and
+click through to the TaskCluster task for "dep-signing-normandy-devtools".
+
+You should now be able to find an XPI file in the list of artifacts.
+
+To be able to install these XPIs you need to go to `about:config` and add a preference
+named `xpinstall.signatures.dev-root` as a boolean set to `true`.

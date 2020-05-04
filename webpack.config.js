@@ -76,7 +76,7 @@ module.exports = async (env, argv = {}) => {
     ),
     new webpack.DefinePlugin({
       __BUILD__: webpack.DefinePlugin.runtimeValue(
-        () => JSON.stringify(getBuildInfo(development)),
+        () => JSON.stringify(getBuildInfo()),
         true,
       ),
       DEVELOPMENT: JSON.stringify(development),
@@ -148,35 +148,36 @@ module.exports = async (env, argv = {}) => {
   };
 };
 
-function getBuildInfo(isDevelopment) {
+function getBuildInfo() {
   const packageJson = require("./package.json");
 
   const rv = {
     commitHash: execOutput("git rev-parse HEAD").trim(),
   };
 
-  rv.version = packageJson.version;
-  if (isDevelopment) {
-    const described = execOutput("git describe --dirty=-uc").trim();
-    const describedPattern = /^v(.+?)(?:-((?:[0-9]+?)-(?:.+?)))?(-uc)?$/;
-    const matches = described.match(describedPattern);
-    const buildMetadata = [];
-    if (matches) {
-      rv.version = matches[1];
+  const described = execOutput("git describe --dirty=-uc").trim();
+  const describedPattern = /^v(.+?)(?:-((?:[0-9]+?)-(?:.+?)))?(-uc)?$/;
+  const matches = described.match(describedPattern);
+  const buildMetadata = [];
+  if (matches) {
+    rv.version = matches[1];
 
-      if (matches[2]) {
-        buildMetadata.push(matches[2]);
-      }
-
-      if (matches[3]) {
-        buildMetadata.push("uc");
-        rv.hasUncommittedChanges = true;
-      }
+    if (matches[2]) {
+      buildMetadata.push(matches[2]);
     }
 
-    if (buildMetadata) {
-      rv.version += `+${buildMetadata.join("-")}`;
+    if (matches[3]) {
+      buildMetadata.push("uc");
+      rv.hasUncommittedChanges = true;
     }
+  }
+
+  if (!rv.version) {
+    rv.version = packageJson.version;
+  }
+
+  if (buildMetadata) {
+    rv.version += `+${buildMetadata.join("-")}`;
   }
 
   return rv;
