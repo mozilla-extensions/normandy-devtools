@@ -73,10 +73,8 @@ function reducer(state, action) {
         };
       }
 
-      /* eslint-disable no-unused-vars */
       const { [action.key]: _omitEnv, ...newEnvironments } = state.environments;
       const { [action.key]: _omitAuth, ...newAuth } = state.auth;
-      /* eslint-enable no-unused-vars */
       return {
         ...state,
         environments: newEnvironments,

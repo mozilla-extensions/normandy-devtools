@@ -20,7 +20,7 @@ import { useHistoryRecorder } from "devtools/hooks/urls";
 import RecipeDetailsPage from "devtools/components/pages/RecipeDetailsPage";
 import { ErrorFallbackPage } from "devtools/components/pages/ErrorFallbackPage";
 
-export default function App(props) {
+export default function App() {
   return (
     <HashRouter>
       <EnvironmentProvider>
