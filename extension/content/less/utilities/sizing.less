@@ -13,11 +13,7 @@ each(@dimensions, .(@d) {
     .@{abbrev}-@{sk} { @{prop}: @sv !important };
   });
 
-  each(range(10, 90, 10), {
-    .@{abbrev}-@{value}px { @{prop}: @value * 1px !important };
-  });
-
-  each(range(100, 2000, 100), {
+  each(range(10, 2000, 10), {
     .@{abbrev}-@{value}px { @{prop}: @value * 1px !important };
   });
 })

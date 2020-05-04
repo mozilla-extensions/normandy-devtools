@@ -10,6 +10,7 @@ import {
   IconButton,
   Input,
   InputGroup,
+  Loader,
   Modal,
   Popover,
   SelectPicker,
@@ -175,7 +176,7 @@ function Authenticator() {
   const auth = useSelectedEnvironmentAuth();
   const dispatch = useEnvironmentDispatch();
   const environment = useSelectedEnvironment();
-  const { selectedKey } = useEnvironmentState();
+  const { isLoggingIn, selectedKey } = useEnvironmentState();
 
   const handleLoginClick = () => {
     login(dispatch, selectedKey, environment);
@@ -184,6 +185,14 @@ function Authenticator() {
   const handleLogoutClick = () => {
     logout(dispatch, selectedKey);
   };
+
+  if (isLoggingIn) {
+    return (
+      <div className="d-flex align-items-center justify-content-center h-100 w-110px">
+        <Loader content="Logging In&hellip;"></Loader>
+      </div>
+    );
+  }
 
   if (auth.result) {
     const { idTokenPayload: profile } = auth.result;
@@ -204,7 +213,7 @@ function Authenticator() {
         }
         trigger="click"
       >
-        <div className="d-flex">
+        <div className="d-flex cursor-pointer">
           <Avatar
             circle
             alt={profile.email.substring(0, 1)}
