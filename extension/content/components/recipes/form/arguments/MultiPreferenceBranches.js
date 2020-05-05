@@ -42,9 +42,12 @@ export default function MultiPreferenceBranches() {
   };
 
   let branchesList = <HelpBlock>There are no branches.</HelpBlock>;
+  const branchLength = data.arguments.branches.length;
   if (data.arguments.branches && data.arguments.branches.length) {
     branchesList = data.arguments.branches.map((branch, index) => {
-      return <Branch key={index} branch={branch} index={index} />;
+      return (
+        <Branch key={`${index}${branchLength}`} branch={branch} index={index} />
+      );
     });
   }
 
@@ -65,10 +68,11 @@ export default function MultiPreferenceBranches() {
   );
 }
 
-function Branch({ branch, index }) {
+function Branch({ index }) {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
   const { branches } = data.arguments;
+  const branch = branches[index];
   const [preferences, setPreferences] = React.useState([]);
 
   React.useEffect(() => {
