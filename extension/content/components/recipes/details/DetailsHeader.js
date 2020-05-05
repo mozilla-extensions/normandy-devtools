@@ -5,15 +5,22 @@ import { Icon, IconButton } from "rsuite";
 import {
   useEnvironmentState,
   useSelectedEnvironment,
+  useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
-import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
+import {
+  ACTION_UPDATE_DATA,
+  useRecipeDetailsData,
+  useRecipeDetailsDispatch,
+} from "devtools/contexts/recipeDetails";
 
 export default function DetailsHeader() {
   const data = useRecipeDetailsData();
-  const { recipeId } = useParams();
+  const dispatch = useRecipeDetailsDispatch();
+  const { recipeId, revisionId } = useParams();
   const environment = useSelectedEnvironment();
   const { selectedKey: environmentKey } = useEnvironmentState();
   const history = useHistory();
+  const normandyApi = useSelectedNormandyEnvironmentAPI();
 
   const handleEditClick = () => {
     history.push(`/${environmentKey}/recipes/${recipeId}/edit`);
@@ -21,6 +28,33 @@ export default function DetailsHeader() {
 
   const handleBackClick = () => {
     history.push(`/${environmentKey}/recipes`);
+  };
+
+  const handleRequestApprovalClick = async () => {
+    const approvalRequest = await normandyApi.requestApproval(data.id);
+    dispatch({
+      data: {
+        ...data,
+        approval_request: approvalRequest,
+      },
+      type: ACTION_UPDATE_DATA,
+    });
+  };
+
+  const handleEnableClick = async () => {
+    const updatedRecipe = await normandyApi.enableRecipe(data.recipe.id);
+    dispatch({
+      data: updatedRecipe.approved_revision,
+      type: ACTION_UPDATE_DATA,
+    });
+  };
+
+  const handleDisableClick = async () => {
+    const updatedRecipe = await normandyApi.disableRecipe(data.recipe.id);
+    dispatch({
+      data: updatedRecipe.approved_revision,
+      type: ACTION_UPDATE_DATA,
+    });
   };
 
   let viewExperimentButton = null;
@@ -38,6 +72,46 @@ export default function DetailsHeader() {
     );
   }
 
+  let requestApprovalButton = null;
+  let statusToggleButton = null;
+  if (!revisionId) {
+    if (!data.approval_request) {
+      requestApprovalButton = (
+        <IconButton
+          className="ml-1"
+          icon={<Icon icon="question-circle2" />}
+          onClick={handleRequestApprovalClick}
+        >
+          Request Approval
+        </IconButton>
+      );
+    } else if (data.approval_request.approved) {
+      if (data.enabled) {
+        statusToggleButton = (
+          <IconButton
+            className="ml-1"
+            color="red"
+            icon={<Icon icon="close-circle" />}
+            onClick={handleDisableClick}
+          >
+            Disable
+          </IconButton>
+        );
+      } else {
+        statusToggleButton = (
+          <IconButton
+            className="ml-1"
+            color="green"
+            icon={<Icon icon="check-circle" />}
+            onClick={handleEnableClick}
+          >
+            Enable
+          </IconButton>
+        );
+      }
+    }
+  }
+
   return (
     <div className="page-header">
       <div className="flex-grow-1">
@@ -51,6 +125,8 @@ export default function DetailsHeader() {
       </div>
       <div className="d-flex align-items-center text-right">
         {viewExperimentButton}
+        {requestApprovalButton}
+        {statusToggleButton}
         <IconButton
           appearance="primary"
           className="ml-1"

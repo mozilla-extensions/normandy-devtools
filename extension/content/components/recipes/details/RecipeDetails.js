@@ -5,6 +5,7 @@ import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
 import SuitabilityTag from "devtools/components/recipes/details/SuitabilityTag";
 import ActionDetails from "devtools/components/recipes/details/ActionDetails";
 import FilteringDetails from "devtools/components/recipes/details/FilteringDetails";
+import ApprovalRequest from "devtools/components/recipes/details/ApprovalRequest";
 
 export default function RecipeDetails() {
   const data = useRecipeDetailsData();
@@ -36,6 +37,7 @@ export default function RecipeDetails() {
         </div>
       </div>
       <Divider />
+      <ApprovalRequest />
       <ActionDetails />
       <Divider />
       <FilteringDetails />
