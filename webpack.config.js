@@ -156,7 +156,7 @@ function getBuildInfo() {
     commitHash: execOutput("git rev-parse HEAD").trim(),
   };
 
-  if (process.env.MOZ_AUTOMATION && process.env.RELEASE_BUILD) {
+  if (process.env.MOZ_AUTOMATION && process.env.MOZ_RELEASE_BUILD) {
     rv.version = packageJson.version;
   } else {
     const described = execOutput("git describe --dirty=-uc").trim();
