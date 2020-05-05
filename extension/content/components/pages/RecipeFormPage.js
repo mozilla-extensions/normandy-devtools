@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { useParams } from "react-router-dom";
 
 import {
@@ -13,7 +14,7 @@ import {
 import RecipeForm from "devtools/components/recipes/form/RecipeForm";
 import RecipeFormHeader from "devtools/components/recipes/form/RecipeFormHeader";
 
-export default function RecipeFormPage() {
+export default function RecipeFormPage(props) {
   const { selectedKey: environmentKey } = useEnvironmentState();
   const { recipeId, experimenterSlug } = useParams();
   const [data, setData] = React.useState({});
@@ -40,6 +41,9 @@ export default function RecipeFormPage() {
             setImportInstructions(comment);
           });
       });
+    } else if (props.location.state && props.location.state.data) {
+      setData(props.location.state.data);
+      setImportInstructions("");
     } else {
       setData(INITIAL_RECIPE_DATA);
       setImportInstructions("");
@@ -59,3 +63,7 @@ export default function RecipeFormPage() {
     </RecipeDetailsProvider>
   );
 }
+
+RecipeFormPage.propTypes = {
+  location: PropTypes.object,
+};

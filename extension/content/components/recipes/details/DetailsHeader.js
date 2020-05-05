@@ -26,6 +26,13 @@ export default function DetailsHeader() {
     history.push(`/${environmentKey}/recipes/${recipeId}/edit`);
   };
 
+  const handleCopyClick = () => {
+    history.push({
+      pathname: `/${environmentKey}/recipes/new`,
+      state: { data },
+    });
+  };
+
   const handleBackClick = () => {
     history.push(`/${environmentKey}/recipes`);
   };
@@ -127,6 +134,14 @@ export default function DetailsHeader() {
         {viewExperimentButton}
         {requestApprovalButton}
         {statusToggleButton}
+        <IconButton
+          appearance="primary"
+          className="ml-1"
+          icon={<Icon icon="copy" />}
+          onClick={handleCopyClick}
+        >
+          Copy Recipe
+        </IconButton>
         <IconButton
           appearance="primary"
           className="ml-1"
