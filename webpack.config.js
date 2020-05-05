@@ -1,5 +1,6 @@
 /* eslint-env node */
 const path = require("path");
+const process = require("process");
 const { execSync } = require("child_process");
 
 const CopyWebpackPlugin = require("copy-webpack-plugin");
@@ -155,29 +156,33 @@ function getBuildInfo() {
     commitHash: execOutput("git rev-parse HEAD").trim(),
   };
 
-  const described = execOutput("git describe --dirty=-uc").trim();
-  const describedPattern = /^v(.+?)(?:-((?:[0-9]+?)-(?:.+?)))?(-uc)?$/;
-  const matches = described.match(describedPattern);
-  const buildMetadata = [];
-  if (matches) {
-    rv.version = matches[1];
-
-    if (matches[2]) {
-      buildMetadata.push(matches[2]);
-    }
-
-    if (matches[3]) {
-      buildMetadata.push("uc");
-      rv.hasUncommittedChanges = true;
-    }
-  }
-
-  if (!rv.version) {
+  if (process.env.MOZ_AUTOMATION && process.env.RELEASE_BUILD) {
     rv.version = packageJson.version;
-  }
+  } else {
+    const described = execOutput("git describe --dirty=-uc").trim();
+    const describedPattern = /^v(.+?)(?:-((?:[0-9]+?)-(?:.+?)))?(-uc)?$/;
+    const matches = described.match(describedPattern);
+    const buildMetadata = [];
+    if (matches) {
+      rv.version = matches[1];
 
-  if (buildMetadata) {
-    rv.version += `+${buildMetadata.join("-")}`;
+      if (matches[2]) {
+        buildMetadata.push(matches[2]);
+      }
+
+      if (matches[3]) {
+        buildMetadata.push("uc");
+        rv.hasUncommittedChanges = true;
+      }
+    }
+
+    if (!rv.version) {
+      rv.version = packageJson.version;
+    }
+
+    if (buildMetadata) {
+      rv.version += `+${buildMetadata.join("-")}`;
+    }
   }
 
   return rv;
