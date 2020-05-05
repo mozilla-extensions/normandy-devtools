@@ -9,7 +9,7 @@
     --cm-line-number-color: fade(#000, 40%);
     --cm-color-comment: @color-protocol-light-gray-70;
     --cm-color-blue: @color-protocol-blue-40;
-    --cm-color-violet: @color-protocol-purple-60;
+    --cm-color-violet: @violet;
     --cm-color-orange: @color-protocol-orange-70;
     --cm-color-yellow: @color-protocol-yellow-60;
     --cm-color-green: @color-protocol-green-70;
@@ -27,10 +27,10 @@
     --cm-line-number-color: fade(#FFF, 40%);
     --cm-color-comment: @color-protocol-light-gray-70;
     --cm-color-blue: @color-protocol-blue-40;
-    --cm-color-violet: @color-protocol-purple-50;
+    --cm-color-violet: @violet;
     --cm-color-orange: @color-protocol-orange-60;
     --cm-color-yellow: @color-protocol-yellow-50;
-    --cm-color-green: @color-protocol-green-60;
+    --cm-color-green: @green;
     --cm-color-gray: @color-protocol-light-gray-50;
     --cm-color-cursor: fade(@color-protocol-light-gray-50, 40%);
   }
@@ -44,6 +44,8 @@
     border: 1px solid var(--cm-border);
     border-radius: @input-border-radius;
     color: var(--cm-color);
+    font-family: @font-family-monospace;
+    font-variant-ligatures: no-contextual;
     line-height: 1.4375;
 
     &.CodeMirror-focused {

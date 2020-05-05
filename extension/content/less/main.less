@@ -4,6 +4,76 @@
   min-height: 100vh;
 }
 
+pre,
+code {
+  font-family: @font-family-monospace;
+  font-variant-ligatures: no-contextual;
+}
+
+code {
+  font-size: 12px;
+}
+
+table.data-table {
+  border: 1px solid @input-border;
+  border-collapse: separate;
+  border-radius: @border-radius-base;
+  border-spacing: 0;
+
+  thead {
+    background: @sidenav-default-bg;
+    border-bottom: 1px solid @input-border;
+  }
+
+  th {
+    color: @text-color;
+  }
+
+  th,
+  td {
+    border-bottom: 1px solid @input-border;
+    border-right: 1px solid @input-border;
+    padding: 10px;
+    text-align: left;
+  }
+
+  tr:last-child {
+    td {
+      border-bottom: none;
+    }
+  }
+}
+
+dl {
+  &.documentation {
+    margin: 0;
+
+    dd,
+    dt {
+      border-left: 2px solid fade(@help-block-color, 50%);
+      font-size: 12px;
+      margin-bottom: 10px;
+      padding-bottom: 3px;
+      padding-left: 10px;
+      padding-top: 3px;
+    }
+
+    dt {
+      font-family: @font-family-monospace;
+      font-variant-ligatures: no-contextual;
+
+      + dd {
+        margin-top: -10px;
+      }
+    }
+
+    dd:last-child,
+    dt:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
 .app-container {
   display: flex;
   flex-direction: column;
@@ -113,9 +183,14 @@ code.hljs {
   }
 }
 
-.authenticator {
-  cursor: pointer;
+.page-header {
+  background: @sidenav-default-bg;
+  border-bottom: 1px solid @input-border;
+  display: flex;
+  padding: 9px 20px;
+}
 
+.authenticator {
   .d-flex {
     align-items: center;
   }
@@ -139,8 +214,4 @@ code.hljs {
       color: @text-primary-color;
     }
   }
-}
-
-.rs-control-label {
-  font-weight: bold;
 }

@@ -1,3 +1,29 @@
+const sharedRules = {
+  "mozilla/no-define-cc-etc": "off",
+  "react/jsx-fragments": ["error", "syntax"],
+  "react/jsx-curly-brace-presence": ["error", "never"],
+  "react/jsx-sort-props": [
+    "error",
+    {
+      callbacksLast: true,
+      shorthandFirst: true,
+      ignoreCase: true,
+      reservedFirst: true,
+    },
+  ],
+  eqeqeq: ["error", "always"],
+  "prefer-const": "error",
+  "lines-between-class-members": ["error", "always"],
+  "padding-line-between-statements": [
+    "error",
+    {
+      blankLine: "always",
+      prev: "multiline-block-like",
+      next: "*",
+    },
+  ],
+};
+
 module.exports = {
   env: {
     jest: true,
@@ -11,28 +37,17 @@ module.exports = {
     "plugin:react/recommended",
   ],
   plugins: ["mozilla"],
+  settings: {
+    react: {
+      version: "detect",
+    },
+  },
   rules: {
-    "mozilla/no-define-cc-etc": "off",
-    "react/jsx-fragments": ["error", "syntax"],
-    "react/jsx-curly-brace-presence": ["error", "never"],
-    "react/jsx-sort-props": [
+    ...sharedRules,
+    "no-unused-vars": [
       "error",
       {
-        callbacksLast: true,
-        shorthandFirst: true,
-        ignoreCase: true,
-        reservedFirst: true,
-      },
-    ],
-    eqeqeq: ["error", "always"],
-    "prefer-const": "error",
-    "lines-between-class-members": ["error", "always"],
-    "padding-line-between-statements": [
-      "error",
-      {
-        blankLine: "always",
-        prev: "multiline-block-like",
-        next: "*",
+        varsIgnorePattern: "^_omit",
       },
     ],
   },
@@ -50,6 +65,15 @@ module.exports = {
         "plugin:@typescript-eslint/recommended",
         "prettier/@typescript-eslint",
       ],
+      rules: {
+        ...sharedRules,
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            varsIgnorePattern: "^_omit",
+          },
+        ],
+      },
     },
   ],
 };

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import PropTypes from "prop-types";
 import React from "react";
 import { Route, Redirect, Switch, useParams } from "react-router-dom";
@@ -7,12 +8,9 @@ import { DEFAULT_ENV, ENVIRONMENTS } from "devtools/config";
 import NormandyAPI from "devtools/utils/normandyApi";
 import ExperimenterAPI from "devtools/utils/experimenterApi";
 import { generateNonce, normalizeErrorObject } from "devtools/utils/auth0";
+import { MINUTE, SECOND } from "devtools/utils/timeConstants";
 
-const LOGIN_FAILED_CODES = [
-  "login_required",
-  "consent_required",
-  "interaction_required",
-];
+const REFRESH_THRESHOLD_MS = 10 * MINUTE;
 
 const ENV_CONFIG_KEY_RE = /^environment\.([^.]+?)\.config$/;
 const AUTH_RESULT_KEY_RE = /^environment\.([^.]+?)\.auth.result$/;
@@ -42,6 +40,7 @@ const initialState = {
   environments: initialEnvironments,
   auth: initialAuth,
   selectedKey: DEFAULT_ENV,
+  isLoggingIn: false,
 };
 export const environmentContext = React.createContext(initialState);
 const { Provider } = environmentContext;
@@ -51,6 +50,7 @@ export const ACTION_UPDATE_ENVIRONMENT = "UPDATE_ENVIRONMENT";
 export const ACTION_UPDATE_AUTH = "UPDATE_AUTH";
 export const ACTION_UPDATE_AUTH_EXPIRES_AT = "UPDATE_AUTH_EXPIRES_AT";
 export const ACTION_UPDATE_AUTH_RESULT = "UPDATE_AUTH_RESULT";
+export const ACTION_SET_IS_LOGGING_IN = "SET_LOGGING_IN";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -73,10 +73,8 @@ function reducer(state, action) {
         };
       }
 
-      /* eslint-disable no-unused-vars */
       const { [action.key]: _omitEnv, ...newEnvironments } = state.environments;
       const { [action.key]: _omitAuth, ...newAuth } = state.auth;
-      /* eslint-enable no-unused-vars */
       return {
         ...state,
         environments: newEnvironments,
@@ -125,6 +123,12 @@ function reducer(state, action) {
       return {
         ...state,
         selectedKey: action.key,
+      };
+
+    case ACTION_SET_IS_LOGGING_IN:
+      return {
+        ...state,
+        isLoggingIn: action.isLoggingIn,
       };
 
     default:
@@ -193,6 +197,41 @@ export function EnvironmentProvider({ children }) {
         }
       });
     });
+  }, []);
+
+  const checkExpiredAuth = () => {
+    console.info(`Checking for expired Auth0 tokens...`);
+    Object.entries(state.environments).forEach(async ([key, environment]) => {
+      const { expiresAt } = state.auth[key];
+      if (expiresAt) {
+        if (expiresAt - new Date().getTime() <= REFRESH_THRESHOLD_MS) {
+          try {
+            await refreshToken(dispatch, key, environment);
+          } catch (err) {
+            console.warn(`Unable to refresh Auth0 access token for "${key}"`);
+            console.warn(err);
+            logout(dispatch, key);
+          }
+        }
+      } else {
+        logout(dispatch, key);
+      }
+    });
+  };
+
+  let refreshInterval;
+  React.useEffect(() => {
+    // Check for expired auth tokens and set an interval to recheck
+    checkExpiredAuth();
+    refreshInterval = window.setInterval(
+      checkExpiredAuth,
+      REFRESH_THRESHOLD_MS,
+    );
+
+    // Return a cleanup function
+    return () => {
+      window.clearInterval(refreshInterval);
+    };
   }, []);
 
   return (
@@ -275,16 +314,16 @@ function getWebAuthForEnvironment(environment) {
     clientID: environment.oidcClientId,
     redirectUri: browser.identity.getRedirectURL(),
     responseType: "token id_token",
-    scope: "openid profile email",
+    scope: "openid profile email offline_access",
   });
 }
 
 function setSession(dispatch, selectedKey, authResult) {
   const { expiresIn } = authResult;
 
-  let expiresAt;
+  let expiresAt = Date.now();
   if (expiresIn) {
-    expiresAt = authResult.expiresIn * 1000 + new Date().getTime();
+    expiresAt += authResult.expiresIn * SECOND;
     localStorage.setItem(
       `environment.${selectedKey}.auth.expiresAt`,
       JSON.stringify(expiresAt),
@@ -304,18 +343,30 @@ function setSession(dispatch, selectedKey, authResult) {
   });
 }
 
-export async function login(dispatch, selectedKey, environment) {
+async function launchWebAuthFlow(
+  dispatch,
+  selectedKey,
+  environment,
+  details = {},
+) {
   const nonce = generateNonce(16);
   const state = generateNonce(16);
 
   const webAuth = getWebAuthForEnvironment(environment);
 
+  const buildUrlOptions = {
+    state,
+    nonce,
+  };
+
+  if ("interactive" in details && !details.interactive) {
+    buildUrlOptions.prompt = "none";
+  }
+
   const redirectUri = await browser.identity.launchWebAuthFlow({
     interactive: true,
-    url: webAuth.client.buildAuthorizeUrl({
-      state,
-      nonce,
-    }),
+    url: webAuth.client.buildAuthorizeUrl(buildUrlOptions),
+    ...details,
   });
 
   const hash = redirectUri.split("#").splice(1).join("#");
@@ -339,6 +390,48 @@ export async function login(dispatch, selectedKey, environment) {
   });
 }
 
+export async function login(dispatch, selectedKey, environment) {
+  dispatch({
+    isLoggingIn: true,
+    type: ACTION_SET_IS_LOGGING_IN,
+  });
+
+  let result;
+  try {
+    result = await launchWebAuthFlow(dispatch, selectedKey, environment, {
+      interactive: false,
+    });
+  } catch {
+    console.info(
+      "Non-interactive authentication failed, prompting for interaction...",
+    );
+
+    try {
+      result = await launchWebAuthFlow(dispatch, selectedKey, environment);
+    } catch (err) {
+      dispatch({
+        isLoggingIn: false,
+        type: ACTION_SET_IS_LOGGING_IN,
+      });
+      throw err;
+    }
+  }
+
+  dispatch({
+    isLoggingIn: false,
+    type: ACTION_SET_IS_LOGGING_IN,
+  });
+
+  return result;
+}
+
+export function refreshToken(dispatch, selectedKey, environment) {
+  console.info(`Refreshing the Auth0 access token for "${selectedKey}"...`);
+  return launchWebAuthFlow(dispatch, selectedKey, environment, {
+    interactive: false,
+  });
+}
+
 export function logout(dispatch, selectedKey) {
   localStorage.removeItem(`environment.${selectedKey}.auth.result`);
   localStorage.removeItem(`environment.${selectedKey}.auth.expiresAt`);
@@ -347,30 +440,5 @@ export function logout(dispatch, selectedKey) {
     key: selectedKey,
     result: null,
     expiresAt: null,
-  });
-}
-
-export function refreshToken(dispatch, selectedKey, environment) {
-  const webAuth = getWebAuthForEnvironment(environment);
-  const nonce = generateNonce(16);
-
-  console.info("Refreshing the Auth0 access token...");
-
-  return new Promise((resolve, reject) => {
-    webAuth.checkSession({ state: "refresh", nonce }, (err, authResult) => {
-      if (authResult && !err) {
-        setSession(dispatch, selectedKey, authResult);
-        resolve();
-      } else {
-        const normalizedErr = normalizeErrorObject(err);
-        if (normalizedErr && LOGIN_FAILED_CODES.includes(normalizedErr.code)) {
-          // Refreshing the token failed and a fresh login is required so log the user out
-          logout(dispatch, selectedKey);
-          resolve();
-        } else {
-          reject(normalizedErr);
-        }
-      }
-    });
   });
 }

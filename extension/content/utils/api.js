@@ -3,7 +3,13 @@ export default class API {
     this.environment = environment;
   }
 
-  /** @returns {String} */
+  /**
+   * @param {Object} args
+   * @param {number} args.version
+   * @param {string} args.method
+   * @returns {String}
+   * */
+  // eslint-disable-next-line no-unused-vars
   getBaseUrl({ version, method }) {
     throw new Error("getBaseURL() needs to be implemented");
   }

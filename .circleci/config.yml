@@ -72,6 +72,16 @@ jobs:
       - store_artifacts:
           path: web-ext-artifacts
 
+  validate-tag:
+    docker:
+      - image: node:14-stretch
+
+    steps:
+      - checkout
+      - run:
+          name: Verify git tag matches version
+          command: node ./bin/check-package-version.js
+
 workflows:
   version: 2
   main:
@@ -79,3 +89,9 @@ workflows:
       - lint
       - test
       - build-extension
+      - validate-tag:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/

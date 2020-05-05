@@ -131,7 +131,7 @@ function makeTreeNodes({ data, title, key = null }) {
 
       return (
         <TreeNode key={fullKey} title={title} value={fullKey}>
-          {Object.entries(data).map(([valueKey, value], idx) =>
+          {Object.entries(data).map(([valueKey, value]) =>
             makeTreeNodes({
               data: value,
               title: valueKey,

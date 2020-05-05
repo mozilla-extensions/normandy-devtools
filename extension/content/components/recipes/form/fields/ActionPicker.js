@@ -56,11 +56,12 @@ export default function ActionPicker() {
 
   return (
     <FormGroup>
-      <ControlLabel>Actions</ControlLabel>
+      <ControlLabel>Action</ControlLabel>
       <InputPicker
         block
         cleanable={false}
         data={options}
+        disabled={data.recipe && data.recipe.id}
         placeholder="Select an action"
         placement="autoVerticalStart"
         value={value}

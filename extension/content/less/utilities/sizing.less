@@ -1,4 +1,4 @@
-@sizes: 0 0, 25 25%, 50 50%, 75 75%, 100 100%, 400px 400px auto auto;
+@sizes: 0 0, 25 25%, 50 50%, 75 75%, 100 100%, auto auto;
 @dimensions: w width, h height;
 // Width and height
 
@@ -6,11 +6,16 @@
 each(@dimensions, .(@d) {
   @abbrev: extract(@d, 1);
   @prop: extract(@d, 2);
+
   each(@sizes, .(@s) {
     @sk: extract(@s, 1);
     @sv: extract(@s, 2);
     .@{abbrev}-@{sk} { @{prop}: @sv !important };
-  })
+  });
+
+  each(range(10, 2000, 10), {
+    .@{abbrev}-@{value}px { @{prop}: @value * 1px !important };
+  });
 })
 /* stylelint-enable indentation, selector-max-empty-lines */
 

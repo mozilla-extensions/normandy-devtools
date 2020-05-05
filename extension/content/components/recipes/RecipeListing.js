@@ -37,7 +37,7 @@ class RecipeListing extends React.PureComponent {
     });
   }
 
-  handleCopyToArbitraryButtonClick(ev) {
+  handleCopyToArbitraryButtonClick() {
     this.props.copyRecipeToArbitrary(this.props.recipe);
   }
 
@@ -49,7 +49,7 @@ class RecipeListing extends React.PureComponent {
     );
   }
 
-  async handleRunButtonClick(ev) {
+  async handleRunButtonClick() {
     const { environmentName, recipe } = this.props;
     this.setState({ running: true });
     await normandy.runRecipe(convertToV1Recipe(recipe, environmentName));
@@ -164,7 +164,9 @@ class RecipeListing extends React.PureComponent {
           Edit Recipe
         </Button>
 
-        <Button onClick={this.handleshowRecipeButton}>View Recipe</Button>
+        <Button componentClass={Link} to={`recipes/${recipe.id}`}>
+          View Recipe
+        </Button>
       </ButtonToolbar>
     );
   }
