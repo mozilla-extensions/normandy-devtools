@@ -1,16 +1,18 @@
 import API, { RequestError } from "devtools/utils/api";
 
 export default class NormandyAPI extends API {
-  constructor(environment, auth) {
+  constructor(environment, auth, writeableConnected) {
     super(environment);
     this.auth = auth;
+    this.writeableConnected = writeableConnected;
   }
 
   getBaseUrl({ version = 3, method }) {
     const isReadOperation = ["GET", "HEAD"].includes(method.toUpperCase());
-    const base = isReadOperation
-      ? this.environment.readOnlyUrl
-      : this.environment.writeableUrl;
+    const base =
+      isReadOperation && !this.writeableConnected
+        ? this.environment.readOnlyUrl
+        : this.environment.writeableUrl;
     return new URL(`api/v${version}/`, base).href;
   }
 

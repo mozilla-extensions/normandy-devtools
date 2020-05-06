@@ -58,7 +58,8 @@
   "permissions": [
     "<all_urls>",
     "clipboardWrite",
-    "identity"
+    "identity",
+    "networkStatus"
   ],
 
   "experiment_apis": {

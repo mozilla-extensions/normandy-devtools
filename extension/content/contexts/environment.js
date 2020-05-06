@@ -9,6 +9,7 @@ import NormandyAPI from "devtools/utils/normandyApi";
 import ExperimenterAPI from "devtools/utils/experimenterApi";
 import { generateNonce, normalizeErrorObject } from "devtools/utils/auth0";
 import { MINUTE, SECOND } from "devtools/utils/timeConstants";
+import fetchWithTimeout from "devtools/utils/fetchWithTimeout";
 
 const REFRESH_THRESHOLD_MS = 10 * MINUTE;
 
@@ -39,6 +40,7 @@ Object.keys(initialEnvironments).forEach((k) => {
 const initialState = {
   environments: initialEnvironments,
   auth: initialAuth,
+  connectionStatus: {},
   selectedKey: DEFAULT_ENV,
   isLoggingIn: false,
 };
@@ -51,6 +53,7 @@ export const ACTION_UPDATE_AUTH = "UPDATE_AUTH";
 export const ACTION_UPDATE_AUTH_EXPIRES_AT = "UPDATE_AUTH_EXPIRES_AT";
 export const ACTION_UPDATE_AUTH_RESULT = "UPDATE_AUTH_RESULT";
 export const ACTION_SET_IS_LOGGING_IN = "SET_LOGGING_IN";
+export const ACTION_SET_CONNECTION_STATUS = "SET_CONNECTION_STATUS";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -131,6 +134,15 @@ function reducer(state, action) {
         isLoggingIn: action.isLoggingIn,
       };
 
+    case ACTION_SET_CONNECTION_STATUS:
+      return {
+        ...state,
+        connectionStatus: {
+          ...state.connectionStatus,
+          [action.key]: action.status,
+        },
+      };
+
     default:
       return state;
   }
@@ -177,9 +189,9 @@ export function EnvironmentProvider({ children }) {
   /** @type {[React.ReducerState<any>, React.Dispatch<React.ReducerAction<any>>]} */
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
-  // Add event listener for changes to local storage
   React.useEffect(() => {
-    window.addEventListener("storage", (ev) => {
+    // Add event listener for changes to local storage
+    const storageListener = (ev) => {
       [
         [ENV_CONFIG_KEY_RE, ACTION_UPDATE_ENVIRONMENT, "config"],
         [AUTH_EXPIRES_AT_KEY_RE, ACTION_UPDATE_AUTH_EXPIRES_AT, "expiresAt"],
@@ -196,7 +208,54 @@ export function EnvironmentProvider({ children }) {
           });
         }
       });
-    });
+    };
+
+    window.addEventListener("storage", storageListener);
+
+    // Add event listener for network changes
+    const networkListener = ({ status }) => {
+      console.info("Checking connection status...");
+
+      Object.entries(ENVIRONMENTS).forEach(([key, environment]) => {
+        dispatch({
+          type: ACTION_SET_CONNECTION_STATUS,
+          status: environment.readOnlyUrl === environment.writeableUrl,
+          key,
+        });
+      });
+
+      if (status === "up") {
+        Object.entries(ENVIRONMENTS).forEach(async ([key, environment]) => {
+          if (environment.readOnlyUrl !== environment.writeableUrl) {
+            let status = true;
+            try {
+              await fetchWithTimeout(
+                environment.writeableUrl,
+                { cache: "no-cache" },
+                3000,
+              );
+            } catch {
+              status = false;
+            }
+
+            dispatch({
+              type: ACTION_SET_CONNECTION_STATUS,
+              status,
+              key,
+            });
+          }
+        });
+      }
+    };
+
+    browser.networkStatus.onConnectionChanged.addListener(networkListener);
+    networkListener({ status: "up" });
+
+    // Clean up
+    return () => {
+      window.removeEventListener(storageListener);
+      browser.networkStatus.onConnectionChanged.removeListener(networkListener);
+    };
   }, []);
 
   const checkExpiredAuth = () => {
@@ -276,10 +335,16 @@ export function useSelectedEnvironmentAuth() {
   return state.auth[state.selectedKey];
 }
 
+export function useSelectedEnvironmentConnectionStatus() {
+  const { state } = React.useContext(environmentContext);
+  return state.connectionStatus[state.selectedKey];
+}
+
 export function useSelectedNormandyEnvironmentAPI() {
   const environment = useSelectedEnvironment();
   const auth = useSelectedEnvironmentAuth();
-  return new NormandyAPI(environment, auth);
+  const connectionStatus = useSelectedEnvironmentConnectionStatus();
+  return new NormandyAPI(environment, auth, connectionStatus);
 }
 
 export function useSelectedExperimenterEnvironmentAPI() {

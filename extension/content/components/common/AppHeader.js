@@ -2,6 +2,7 @@ import React from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import {
   Avatar,
+  Badge,
   ControlLabel,
   Form,
   FormGroup,
@@ -26,6 +27,7 @@ import {
   useEnvironmentState,
   useSelectedEnvironment,
   useSelectedEnvironmentAuth,
+  useSelectedEnvironmentConnectionStatus,
 } from "devtools/contexts/environment";
 import { upperCaseFirst } from "devtools/utils/helpers";
 import { useExtensionUrl } from "devtools/hooks/urls";
@@ -125,6 +127,7 @@ function EnvironmentConfigurator() {
   }));
 
   const { selectedKey } = useEnvironmentState();
+  const connectionStatus = useSelectedEnvironmentConnectionStatus();
   const history = useHistory();
   const location = useLocation();
 
@@ -134,15 +137,19 @@ function EnvironmentConfigurator() {
 
   return (
     <>
-      <IconButton
-        icon={<Icon icon="globe" />}
-        onClick={() => {
-          setShowEnvironmentModal(true);
-        }}
-      >
-        <strong>Environment:&nbsp;</strong>
-        <strong className="text-primary">{upperCaseFirst(selectedKey)}</strong>
-      </IconButton>
+      <Badge className={connectionStatus ? "green" : "red"}>
+        <IconButton
+          icon={<Icon icon="globe" />}
+          onClick={() => {
+            setShowEnvironmentModal(true);
+          }}
+        >
+          <strong>Environment:&nbsp;</strong>
+          <strong className="text-primary">
+            {upperCaseFirst(selectedKey)}
+          </strong>
+        </IconButton>
+      </Badge>
 
       <Modal
         show={showEnvironmentModal}
