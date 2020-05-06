@@ -121,4 +121,52 @@ export default class NormandyAPI extends API {
 
     return extensions;
   }
+
+  requestApproval(revisionId) {
+    return this.request({
+      url: `recipe_revision/${revisionId}/request_approval/`,
+      method: "POST",
+    });
+  }
+
+  closeApprovalRequest(approvalRequestId) {
+    return this.request({
+      url: `approval_request/${approvalRequestId}/close/`,
+      method: "POST",
+    });
+  }
+
+  approveApprovalRequest(approvalRequestId, comment) {
+    return this.request({
+      url: `approval_request/${approvalRequestId}/approve/`,
+      data: {
+        comment,
+      },
+      method: "POST",
+    });
+  }
+
+  rejectApprovalRequest(approvalRequestId, comment) {
+    return this.request({
+      url: `approval_request/${approvalRequestId}/reject/`,
+      data: {
+        comment,
+      },
+      method: "POST",
+    });
+  }
+
+  enableRecipe(recipeId) {
+    return this.request({
+      url: `recipe/${recipeId}/enable/`,
+      method: "POST",
+    });
+  }
+
+  disableRecipe(recipeId) {
+    return this.request({
+      url: `recipe/${recipeId}/disable/`,
+      method: "POST",
+    });
+  }
 }
