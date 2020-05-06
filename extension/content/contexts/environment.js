@@ -253,7 +253,7 @@ export function EnvironmentProvider({ children }) {
 
     // Clean up
     return () => {
-      window.removeEventListener(storageListener);
+      window.removeEventListener("storage", storageListener);
       browser.networkStatus.onConnectionChanged.removeListener(networkListener);
     };
   }, []);

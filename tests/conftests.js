@@ -12,6 +12,11 @@ browser.experiments.normandy = {
   runRecipe: () => null,
 };
 
+browser.networkStatus.onConnectionChanged = {
+  addListener: () => {},
+  removeListener: () => {},
+};
+
 browser.identity = {
   getRedirectURL: () => {},
   launchWebAuthFlow: () => {
