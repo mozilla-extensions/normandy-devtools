@@ -216,34 +216,35 @@ export function EnvironmentProvider({ children }) {
     const networkListener = ({ status }) => {
       console.info("Checking connection status...");
 
-      Object.entries(ENVIRONMENTS).forEach(([key, environment]) => {
+      Object.keys(ENVIRONMENTS).forEach((key) => {
         dispatch({
           type: ACTION_SET_CONNECTION_STATUS,
-          status: environment.readOnlyUrl === environment.writeableUrl,
+          status: false,
           key,
         });
       });
 
       if (status === "up") {
         Object.entries(ENVIRONMENTS).forEach(async ([key, environment]) => {
-          if (environment.readOnlyUrl !== environment.writeableUrl) {
-            let status = true;
-            try {
-              await fetchWithTimeout(
-                environment.writeableUrl,
-                { cache: "no-cache" },
-                3000,
-              );
-            } catch {
-              status = false;
-            }
-
-            dispatch({
-              type: ACTION_SET_CONNECTION_STATUS,
-              status,
-              key,
-            });
+          let status = true;
+          try {
+            await fetchWithTimeout(
+              environment.writeableUrl,
+              {
+                cache: "no-cache",
+                method: "HEAD",
+              },
+              3000,
+            );
+          } catch {
+            status = false;
           }
+
+          dispatch({
+            type: ACTION_SET_CONNECTION_STATUS,
+            status,
+            key,
+          });
         });
       }
     };
