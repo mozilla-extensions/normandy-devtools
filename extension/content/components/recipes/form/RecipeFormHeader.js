@@ -1,12 +1,14 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { useHistory, useParams } from "react-router-dom";
-import { Alert, Icon, IconButton } from "rsuite";
+import { Alert, Button, Icon, IconButton, Modal } from "rsuite";
 
 import {
   useEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
 import { useRecipeDetailsState } from "devtools/contexts/recipeDetails";
+import GenericField from "devtools/components/recipes/form/fields/GenericField";
 
 export default function RecipeFormHeader() {
   const { recipeId } = useParams();
@@ -14,6 +16,7 @@ export default function RecipeFormHeader() {
   const history = useHistory();
   const { data, importInstructions } = useRecipeDetailsState();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
+  const [showCommentModal, setShowCommentModal] = React.useState(false);
 
   const handleSaveClick = () => {
     try {
@@ -21,25 +24,36 @@ export default function RecipeFormHeader() {
         throw Error("Import Instructions not empty!");
       }
 
-      const { comment: _omitComment, action, ...cleanedData } = data;
-
-      const requestSave = normandyApi.saveRecipe(recipeId, {
-        ...cleanedData,
-        action_id: action.id,
-      });
-
-      requestSave
-        .then((savedRecipe) => {
-          history.push(`/${environmentKey}/recipes/${savedRecipe.id}`);
-          Alert.success("Changes Saved");
-        })
-        .catch((err) => {
-          console.warn(err.message, err.data);
-          Alert.error(`An Error Occurred: ${JSON.stringify(err.data)}`, 5000);
-        });
+      if (recipeId) {
+        setShowCommentModal(true);
+      } else {
+        saveRecipe();
+      }
     } catch (err) {
       Alert.error(err.message);
     }
+  };
+
+  const saveRecipe = () => {
+    const { action } = data;
+    const requestSave = normandyApi.saveRecipe(recipeId, {
+      ...data,
+      action_id: action.id,
+    });
+
+    requestSave
+      .then((savedRecipe) => {
+        history.push(`/${environmentKey}/recipes/${savedRecipe.id}`);
+        Alert.success("Changes Saved");
+      })
+      .catch((err) => {
+        console.warn(err.message, err.data);
+        Alert.error(`An Error Occurred: ${JSON.stringify(err.data)}`, 5000);
+      });
+  };
+
+  const closeSaveModal = () => {
+    setShowCommentModal(false);
   };
 
   const handleBackClick = () => {
@@ -71,6 +85,45 @@ export default function RecipeFormHeader() {
           Save
         </IconButton>
       </div>
+      <SaveModal
+        show={showCommentModal}
+        onClose={closeSaveModal}
+        onSave={saveRecipe}
+      />
     </div>
   );
 }
+
+function SaveModal(props) {
+  const { show, onClose, onSave } = props;
+
+  const handleSaveClick = () => {
+    onSave();
+    onClose();
+  };
+
+  return (
+    <Modal show={show} onHide={onClose}>
+      <Modal.Header>
+        <Modal.Title>Save Recipe</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <GenericField label="Comment on Revision" name="comment" />
+      </Modal.Body>
+      <Modal.Footer>
+        <Button appearance="primary" onClick={handleSaveClick}>
+          Save
+        </Button>
+        <Button appearance="subtle" onClick={onClose}>
+          Cancel
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+}
+
+SaveModal.propTypes = {
+  onClose: PropTypes.func,
+  onSave: PropTypes.func,
+  show: PropTypes.bool,
+};
