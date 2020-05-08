@@ -24,11 +24,7 @@ export default function RecipeFormHeader() {
         throw Error("Import Instructions not empty!");
       }
 
-      if (recipeId) {
-        setShowCommentModal(true);
-      } else {
-        saveRecipe();
-      }
+      setShowCommentModal(true);
     } catch (err) {
       Alert.error(err.message);
     }
