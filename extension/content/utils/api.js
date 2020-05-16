@@ -1,3 +1,5 @@
+import { SECOND } from "devtools/utils/timeConstants";
+
 export default class API {
   constructor(environment) {
     this.environment = environment;
@@ -19,9 +21,16 @@ export default class API {
    * @param {string} args.url
    * @param {number} [args.version]
    * @param {Object} [args.extraHeaders]
+   * @param {number} [args.timeoutAfter]
    * @param {string|FormData} [args.body]
    */
-  async request({ url, version, extraHeaders = {}, ...options }) {
+  async request({
+    url,
+    version,
+    extraHeaders = {},
+    timeoutAfter = 10 * SECOND,
+    ...options
+  }) {
     const headers = new Headers();
     headers.append("Accept", "application/json");
     if (!(options.body && options.body instanceof FormData)) {
@@ -62,7 +71,31 @@ export default class API {
       delete settings.data;
     }
 
-    const response = await fetch(apiUrl.toString(), settings);
+    const controller = new AbortController();
+
+    const timeout = setTimeout(() => {
+      controller.abort();
+    }, timeoutAfter);
+
+    let response;
+    try {
+      response = await fetch(apiUrl.toString(), settings);
+    } catch (err) {
+      if (err.name === "AbortError") {
+        throw new RequestError(
+          "The request timed out.",
+          {
+            url: apiUrl.toString(),
+            timeout: `${timeoutAfter}ms`,
+          },
+          err,
+        );
+      }
+
+      throw err;
+    } finally {
+      clearTimeout(timeout);
+    }
 
     if (!response.ok) {
       let message;
@@ -82,7 +115,10 @@ export default class API {
       throw new RequestError(message, data, err);
     }
 
-    if (response.status !== 204) {
+    if (
+      response.status !== 204 &&
+      response.headers.get("Content-Type") === "application/json"
+    ) {
       return response.json();
     }
 

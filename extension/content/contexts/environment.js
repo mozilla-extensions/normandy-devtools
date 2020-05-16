@@ -9,7 +9,7 @@ import NormandyAPI from "devtools/utils/normandyApi";
 import ExperimenterAPI from "devtools/utils/experimenterApi";
 import { generateNonce, normalizeErrorObject } from "devtools/utils/auth0";
 import { MINUTE, SECOND } from "devtools/utils/timeConstants";
-import fetchWithTimeout from "devtools/utils/fetchWithTimeout";
+import { delay } from "devtools/utils/helpers";
 
 const REFRESH_THRESHOLD_MS = 10 * MINUTE;
 
@@ -228,14 +228,11 @@ export function EnvironmentProvider({ children }) {
         Object.entries(ENVIRONMENTS).forEach(async ([key, environment]) => {
           let status = true;
           try {
-            await fetchWithTimeout(
-              environment.writeableUrl,
-              {
-                cache: "no-cache",
-                method: "HEAD",
-              },
-              3000,
-            );
+            // Send a notification to prune all active TCP connections
+            // This is required to work around https://bugzilla.mozilla.org/show_bug.cgi?id=1635935
+            browser.experiments.networking.pruneAllConnections();
+            const normandyApi = new NormandyAPI(environment);
+            await checkVPNStatus(normandyApi, 5);
           } catch {
             status = false;
           }
@@ -321,36 +318,40 @@ export function useEnvironments() {
   return state.environments;
 }
 
-export function useSelectedEnvironment() {
+export function useSelectedEnvironmentState() {
   const { state } = React.useContext(environmentContext);
-  return state.environments[state.selectedKey];
-}
-
-export function useAuth() {
-  const { state } = React.useContext(environmentContext);
-  return state.auth;
-}
-
-export function useSelectedEnvironmentAuth() {
-  const { state } = React.useContext(environmentContext);
-  return state.auth[state.selectedKey];
-}
-
-export function useSelectedEnvironmentConnectionStatus() {
-  const { state } = React.useContext(environmentContext);
-  return state.connectionStatus[state.selectedKey];
+  const { environments, auth, connectionStatus, ...otherState } = state;
+  return {
+    ...otherState,
+    environment: environments[state.selectedKey],
+    auth: auth[state.selectedKey],
+    connectionStatus: connectionStatus[state.selectedKey],
+  };
 }
 
 export function useSelectedNormandyEnvironmentAPI() {
-  const environment = useSelectedEnvironment();
-  const auth = useSelectedEnvironmentAuth();
-  const connectionStatus = useSelectedEnvironmentConnectionStatus();
+  const { environment, auth, connectionStatus } = useSelectedEnvironmentState();
   return new NormandyAPI(environment, auth, connectionStatus);
 }
 
 export function useSelectedExperimenterEnvironmentAPI() {
-  const environment = useSelectedEnvironment();
+  const { environment } = useSelectedEnvironmentState();
   return new ExperimenterAPI(environment);
+}
+
+async function checkVPNStatus(normandyApi, maxAttempts, currentAttempt = 0) {
+  await delay(50 * currentAttempt);
+  try {
+    await normandyApi.checkLBHeartbeat({
+      timeoutAfter: (currentAttempt + 1) * 500,
+    });
+  } catch (err) {
+    if (currentAttempt < maxAttempts) {
+      await checkVPNStatus(normandyApi, maxAttempts, currentAttempt + 1);
+    } else {
+      throw err;
+    }
+  }
 }
 
 export function updateEnvironment(dispatch, key, config) {

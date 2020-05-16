@@ -63,6 +63,14 @@
   ],
 
   "experiment_apis": {
+    "networking": {
+      "schema": "experiments/networking/schema.json",
+      "parent": {
+        "scopes": ["addon_parent"],
+        "script": "experiments/networking/api.js",
+        "paths": [["experiments", "networking"]]
+      }
+    },
     "normandy": {
       "schema": "experiments/normandy/schema.json",
       "parent": {

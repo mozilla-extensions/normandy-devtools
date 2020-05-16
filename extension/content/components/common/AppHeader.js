@@ -24,10 +24,7 @@ import {
   logout,
   useEnvironmentDispatch,
   useEnvironments,
-  useEnvironmentState,
-  useSelectedEnvironment,
-  useSelectedEnvironmentAuth,
-  useSelectedEnvironmentConnectionStatus,
+  useSelectedEnvironmentState,
 } from "devtools/contexts/environment";
 import { upperCaseFirst } from "devtools/utils/helpers";
 import { useExtensionUrl } from "devtools/hooks/urls";
@@ -126,8 +123,7 @@ function EnvironmentConfigurator() {
     value: key,
   }));
 
-  const { selectedKey } = useEnvironmentState();
-  const connectionStatus = useSelectedEnvironmentConnectionStatus();
+  const { connectionStatus, selectedKey } = useSelectedEnvironmentState();
   const history = useHistory();
   const location = useLocation();
 
@@ -180,10 +176,13 @@ function EnvironmentConfigurator() {
 }
 
 function Authenticator() {
-  const auth = useSelectedEnvironmentAuth();
+  const {
+    auth,
+    environment,
+    isLoggingIn,
+    selectedKey,
+  } = useSelectedEnvironmentState();
   const dispatch = useEnvironmentDispatch();
-  const environment = useSelectedEnvironment();
-  const { isLoggingIn, selectedKey } = useEnvironmentState();
 
   const handleLoginClick = () => {
     login(dispatch, selectedKey, environment);

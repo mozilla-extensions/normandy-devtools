@@ -3,8 +3,7 @@ import { useHistory, useParams } from "react-router-dom";
 import { Icon, IconButton } from "rsuite";
 
 import {
-  useEnvironmentState,
-  useSelectedEnvironment,
+  useSelectedEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
 import {
@@ -17,8 +16,10 @@ export default function DetailsHeader() {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
   const { recipeId, revisionId } = useParams();
-  const environment = useSelectedEnvironment();
-  const { selectedKey: environmentKey } = useEnvironmentState();
+  const {
+    environment,
+    selectedKey: environmentKey,
+  } = useSelectedEnvironmentState();
   const history = useHistory();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
 

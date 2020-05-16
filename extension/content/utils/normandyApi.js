@@ -1,4 +1,5 @@
 import API, { RequestError } from "devtools/utils/api";
+import { SECOND } from "devtools/utils/timeConstants";
 
 export default class NormandyAPI extends API {
   constructor(environment, auth, writeableConnected) {
@@ -169,6 +170,13 @@ export default class NormandyAPI extends API {
     return this.request({
       url: `recipe/${recipeId}/disable/`,
       method: "POST",
+    });
+  }
+
+  checkLBHeartbeat({ timeoutAfter = 3 * SECOND }) {
+    return this.request({
+      url: new URL("/__lbheartbeat__/", this.environment.writeableUrl),
+      timeoutAfter,
     });
   }
 }

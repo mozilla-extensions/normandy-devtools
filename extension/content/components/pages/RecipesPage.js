@@ -19,9 +19,7 @@ import Highlight from "devtools/components/common/Highlight";
 import RecipeListing from "devtools/components/recipes/RecipeListing";
 import {
   useEnvironments,
-  useEnvironmentState,
-  useSelectedEnvironment,
-  useSelectedEnvironmentConnectionStatus,
+  useSelectedEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
 import { convertToV1Recipe } from "devtools/utils/recipes";
@@ -312,10 +310,12 @@ class RecipesPage extends React.PureComponent {
 }
 
 export default function WrappedRecipePage(props) {
-  const { selectedKey } = useEnvironmentState();
-  const environment = useSelectedEnvironment();
+  const {
+    connectionStatus,
+    environment,
+    selectedKey,
+  } = useSelectedEnvironmentState();
   const environments = useEnvironments();
-  const connectionStatus = useSelectedEnvironmentConnectionStatus();
   const api = useSelectedNormandyEnvironmentAPI();
   return (
     <RecipesPage

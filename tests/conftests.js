@@ -12,6 +12,10 @@ browser.experiments.normandy = {
   runRecipe: () => null,
 };
 
+browser.experiments.networking = {
+  pruneAllConnections: () => {},
+};
+
 browser.networkStatus.onConnectionChanged = {
   addListener: () => {},
   removeListener: () => {},
