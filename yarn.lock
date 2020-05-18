@@ -5195,10 +5195,10 @@ findup-sync@3.0.0:
     micromatch "^3.0.4"
     resolve-dir "^1.0.1"
 
-firacode@3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/firacode/-/firacode-3.1.0.tgz#f5a0fa0c63b85ad0a870652d5b727492c8259f8b"
-  integrity sha512-VkcNXWls+sk+4qkLMEYPWNznRf2BvDMOAiAf9iwWw8kB0x07MQEvYdQ0bIFC6K6H8c5uG4aeNBMOjbfNTftwsQ==
+firacode@4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/firacode/-/firacode-4.0.0.tgz#272d395ec38bdb1bdd71e41fd9640f1b2bcd3319"
+  integrity sha512-VIDDSdztYmjzCaMTamNcHv9ZYpVPD0BW+DMeh0k7XlvybpdhM5oxkUrzVZ2XJCUS3YMiJJWkoDrsn+LTZwxejQ==
 
 firefox-profile@1.3.1:
   version "1.3.1"

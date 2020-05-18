@@ -94,7 +94,7 @@
     "auth0-js": "9.13.2",
     "autobind-decorator": "2.4.0",
     "codemirror": "5.53.2",
-    "firacode": "3.1.0",
+    "firacode": "4.0.0",
     "highlight.js": "10.0.2",
     "js-yaml": "3.13.1",
     "rc-tree": "3.1.10",
