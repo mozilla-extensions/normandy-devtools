@@ -1,13 +1,13 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 
-import { RecipeDetailsProvider } from "devtools/contexts/recipeDetails";
+import DetailsHeader from "devtools/components/recipes/details/DetailsHeader";
+import RecipeDetails from "devtools/components/recipes/details/RecipeDetails";
 import {
   useEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
-import RecipeDetails from "devtools/components/recipes/details/RecipeDetails";
-import DetailsHeader from "devtools/components/recipes/details/DetailsHeader";
+import { RecipeDetailsProvider } from "devtools/contexts/recipeDetails";
 
 export default function RecipeDetailsPage() {
   const { recipeId } = useParams();

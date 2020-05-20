@@ -1,6 +1,7 @@
 import React from "react";
 import { ControlLabel, FormGroup, InputPicker } from "rsuite";
 
+import { INITIAL_ACTION_ARGUMENTS } from "devtools/components/recipes/form/ActionArguments";
 import {
   useEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
@@ -10,7 +11,6 @@ import {
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
-import { INITIAL_ACTION_ARGUMENTS } from "devtools/components/recipes/form/ActionArguments";
 
 export default function ActionPicker() {
   const data = useRecipeDetailsData();

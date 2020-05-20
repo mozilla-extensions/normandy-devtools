@@ -1,10 +1,10 @@
 import React from "react";
 
+import SelectField from "devtools/components/recipes/form/arguments/fields/SelectField";
 import {
   useEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
-import SelectField from "devtools/components/recipes/form/arguments/fields/SelectField";
 
 export default function PreferenceRollback() {
   const { selectedKey: environmentKey } = useEnvironmentState();

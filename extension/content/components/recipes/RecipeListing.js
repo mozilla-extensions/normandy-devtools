@@ -5,9 +5,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button, Icon, Panel, Tag, ButtonToolbar } from "rsuite";
 
-import { convertToV1Recipe } from "devtools/utils/recipes";
-
 import Highlight from "devtools/components/common/Highlight";
+import { convertToV1Recipe } from "devtools/utils/recipes";
 
 const normandy = browser.experiments.normandy;
 

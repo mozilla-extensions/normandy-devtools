@@ -27,8 +27,8 @@ import {
   useSelectedEnvironment,
   useSelectedEnvironmentAuth,
 } from "devtools/contexts/environment";
-import { upperCaseFirst } from "devtools/utils/helpers";
 import { useExtensionUrl } from "devtools/hooks/urls";
+import { upperCaseFirst } from "devtools/utils/helpers";
 
 export default function AppHeader() {
   return (

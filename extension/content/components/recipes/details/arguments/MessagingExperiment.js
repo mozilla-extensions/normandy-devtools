@@ -1,9 +1,9 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { Panel, Tag } from "rsuite";
 
-import GenericArguments from "devtools/components/recipes/details/arguments/GenericArguments";
 import Highlight from "devtools/components/common/Highlight";
+import GenericArguments from "devtools/components/recipes/details/arguments/GenericArguments";
 
 export default function MessagingExperiment({ data }) {
   return (

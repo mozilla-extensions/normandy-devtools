@@ -1,6 +1,6 @@
 // @ts-nocheck
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import {
   Col,
   ControlLabel,
@@ -17,15 +17,14 @@ import {
   Row,
 } from "rsuite";
 
+import InputField from "devtools/components/recipes/form/arguments/fields/InputField";
+import SelectField from "devtools/components/recipes/form/arguments/fields/SelectField";
+import ToggleField from "devtools/components/recipes/form/arguments/fields/ToggleField";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
-
-import SelectField from "devtools/components/recipes/form/arguments/fields/SelectField";
-import ToggleField from "devtools/components/recipes/form/arguments/fields/ToggleField";
-import InputField from "devtools/components/recipes/form/arguments/fields/InputField";
 
 const PREFERENCE_TYPE_OPTIONS = [
   { label: "Boolean", value: "boolean" },

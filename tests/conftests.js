@@ -1,5 +1,6 @@
 /* eslint-env node */
 import crypto from "crypto";
+import "@testing-library/jest-dom/extend-expect";
 
 Object.defineProperty(global.self, "crypto", {
   value: {

@@ -1,6 +1,6 @@
 // @ts-nocheck
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { Icon, Tag } from "rsuite";
 import validator from "validator";
 
