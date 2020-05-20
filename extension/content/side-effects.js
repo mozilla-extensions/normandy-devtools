@@ -12,7 +12,11 @@ highlightjs.registerLanguage("json", json);
 highlightjs.registerLanguage("yaml", yaml);
 
 // Mode for Code Mirror
+/*
+ Note: We must import "react-codemirror2" for some side effects that allow the
+ addon(s) and mode(s) to be installed.
+ */
 // eslint-disable-next-line no-unused-vars
-import { Controlled } from "react-codemirror2"; // Imported for side effect
+import "react-codemirror2";
 import "codemirror/addon/selection/active-line";
 import "codemirror/mode/javascript/javascript";
