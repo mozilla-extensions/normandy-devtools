@@ -73,9 +73,12 @@ export default class API {
 
     const controller = new AbortController();
 
-    const timeout = setTimeout(() => {
-      controller.abort();
-    }, timeoutAfter);
+    let timeout;
+    if (timeoutAfter > 0) {
+      timeout = setTimeout(() => {
+        controller.abort();
+      }, timeoutAfter);
+    }
 
     let response;
     try {
@@ -94,7 +97,9 @@ export default class API {
 
       throw err;
     } finally {
-      clearTimeout(timeout);
+      if (timeout) {
+        clearTimeout(timeout);
+      }
     }
 
     if (!response.ok) {
