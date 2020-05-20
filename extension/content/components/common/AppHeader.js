@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import {
@@ -131,9 +132,16 @@ function EnvironmentConfigurator() {
     history.push(location.pathname.replace(/^\/.+?\/(.+?)$/, `/${key}/$1`));
   };
 
+  let Wrapper = React.Fragment;
+  let wrapperProps = {};
+  if (connectionStatus) {
+    Wrapper = Badge;
+    wrapperProps = { className: "green" };
+  }
+
   return (
     <>
-      <Badge className={connectionStatus ? "green" : "red"}>
+      <Wrapper {...wrapperProps}>
         <IconButton
           icon={<Icon icon="globe" />}
           onClick={() => {
@@ -145,7 +153,7 @@ function EnvironmentConfigurator() {
             {upperCaseFirst(selectedKey)}
           </strong>
         </IconButton>
-      </Badge>
+      </Wrapper>
 
       <Modal
         show={showEnvironmentModal}
