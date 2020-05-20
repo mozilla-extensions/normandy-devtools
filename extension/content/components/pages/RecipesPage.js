@@ -19,8 +19,7 @@ import Highlight from "devtools/components/common/Highlight";
 import RecipeListing from "devtools/components/recipes/RecipeListing";
 import {
   useEnvironments,
-  useEnvironmentState,
-  useSelectedEnvironment,
+  useSelectedEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
 import { convertToV1Recipe } from "devtools/utils/recipes";
@@ -31,6 +30,7 @@ const normandy = browser.experiments.normandy;
 class RecipesPage extends React.PureComponent {
   static propTypes = {
     api: PropTypes.object,
+    connectionStatus: PropTypes.bool,
     environment: PropTypes.object,
     environmentKey: PropTypes.string,
     environments: PropTypes.object,
@@ -69,8 +69,11 @@ class RecipesPage extends React.PureComponent {
   }
 
   async componentDidUpdate(prevProps) {
-    const { environmentKey, environment } = this.props;
-    if (environmentKey !== prevProps.environmentKey) {
+    const { connectionStatus, environmentKey, environment } = this.props;
+    if (
+      environmentKey !== prevProps.environmentKey ||
+      connectionStatus !== prevProps.connectionStatus
+    ) {
       this.refreshRecipeList(environment, this.state.page);
     }
   }
@@ -307,14 +310,18 @@ class RecipesPage extends React.PureComponent {
 }
 
 export default function WrappedRecipePage(props) {
-  const { selectedKey } = useEnvironmentState();
-  const environment = useSelectedEnvironment();
+  const {
+    connectionStatus,
+    environment,
+    selectedKey,
+  } = useSelectedEnvironmentState();
   const environments = useEnvironments();
   const api = useSelectedNormandyEnvironmentAPI();
   return (
     <RecipesPage
       {...props}
       api={api}
+      connectionStatus={connectionStatus}
       environment={environment}
       environmentKey={selectedKey}
       environments={environments}

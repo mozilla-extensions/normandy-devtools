@@ -22,7 +22,6 @@ export default function ApprovalRequest() {
   }
 
   const approvalRequest = data.approval_request;
-  console.log(approvalRequest);
   let statusTag = <Tag color="yellow">Pending</Tag>;
   if (approvalRequest.approved) {
     statusTag = <Tag color="green">Approved</Tag>;

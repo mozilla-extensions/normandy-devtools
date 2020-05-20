@@ -1,0 +1,16 @@
+[
+  {
+    "namespace": "experiments.networking",
+    "description": "Networking",
+    "functions": [
+      {
+        "name": "pruneAllConnections",
+        "type": "function",
+        "description": "Send a notification to prune all open TCP connections",
+        "parameters": []
+      }
+    ],
+
+    "events": []
+  }
+]
