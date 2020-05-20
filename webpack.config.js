@@ -38,10 +38,18 @@ module.exports = async (env, argv = {}) => {
       silent: true,
       systemvars: true,
     }),
-    new CopyWebpackPlugin([
-      { from: "extension/experiments/", to: "experiments/" },
-      { from: "extension/images/", to: "images/" },
-    ]),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: "extension/experiments/",
+          to: "experiments/",
+          globOptions: {
+            ignore: ["**/.eslintrc.js"],
+          },
+        },
+        { from: "extension/images/", to: "images/" },
+      ],
+    }),
     new HtmlWebpackPlugin({
       title: "Normandy Devtools",
       favicon: path.resolve(__dirname, "extension/images/favicon.png"),
