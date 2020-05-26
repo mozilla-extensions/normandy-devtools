@@ -1,5 +1,7 @@
 import faker from "faker";
 
+let autoIncrementIndex = 0;
+
 /* Class representing a generated field on a factory */
 export class Field {
   /**
@@ -26,10 +28,30 @@ export class Field {
   }
 }
 
+/* A special type of field that always generates a unique integer. */
+export class AutoIncrementField extends Field {
+  constructor() {
+    const generator = () => {
+      autoIncrementIndex += 1;
+      return autoIncrementIndex;
+    };
+
+    super(generator);
+  }
+}
+
 /* A special type of field that returns an ISO 8601 formatted date string. */
 export class DateField extends Field {
   constructor() {
     super(() => faker.date.past().toISOString());
+  }
+}
+
+/* A special type of field that accepts a factory class instead of a generator function. */
+export class SubFactory extends Field {
+  constructor(factory, defaults = {}, options = {}) {
+    const generator = (...args) => factory.build(...args);
+    super(generator, defaults, options);
   }
 }
 
