@@ -1,14 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useHistory, useParams } from "react-router-dom";
-import { Alert, Button, Icon, IconButton, Modal } from "rsuite";
+import { Alert, Button, Icon, IconButton, Input, Modal } from "rsuite";
 
 import {
   useEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
 import { useRecipeDetailsState } from "devtools/contexts/recipeDetails";
-import GenericField from "devtools/components/recipes/form/fields/GenericField";
 
 export default function RecipeFormHeader() {
   const { recipeId } = useParams();
@@ -30,10 +29,11 @@ export default function RecipeFormHeader() {
     }
   };
 
-  const saveRecipe = () => {
-    const { action } = data;
+  const saveRecipe = (comment) => {
+    const { action, comment: _omitComment, ...rest } = data;
     const requestSave = normandyApi.saveRecipe(recipeId, {
-      ...data,
+      ...rest,
+      comment,
       action_id: action.id,
     });
 
@@ -46,10 +46,6 @@ export default function RecipeFormHeader() {
         console.warn(err.message, err.data);
         Alert.error(`An Error Occurred: ${JSON.stringify(err.data)}`, 5000);
       });
-  };
-
-  const closeSaveModal = () => {
-    setShowCommentModal(false);
   };
 
   const handleBackClick = () => {
@@ -82,8 +78,8 @@ export default function RecipeFormHeader() {
         </IconButton>
       </div>
       <SaveModal
+        setShowModal={setShowCommentModal}
         show={showCommentModal}
-        onClose={closeSaveModal}
         onSave={saveRecipe}
       />
     </div>
@@ -91,26 +87,36 @@ export default function RecipeFormHeader() {
 }
 
 function SaveModal(props) {
-  const { show, onClose, onSave } = props;
+  const { show, setShowModal, onSave } = props;
+  const [comment, setComment] = React.useState("");
 
   const handleSaveClick = () => {
-    onSave();
-    onClose();
+    onSave(comment);
+    closeModal();
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
   };
 
   return (
-    <Modal show={show} onHide={onClose}>
+    <Modal show={show} onHide={closeModal}>
       <Modal.Header>
         <Modal.Title>Save Recipe</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <GenericField label="Comment on Revision" name="comment" />
+        <Input
+          componentClass="textarea"
+          placeholder="Please describe the changes you are making&hellip;"
+          value={comment}
+          onChange={setComment}
+        />
       </Modal.Body>
       <Modal.Footer>
         <Button appearance="primary" onClick={handleSaveClick}>
           Save
         </Button>
-        <Button appearance="subtle" onClick={onClose}>
+        <Button appearance="subtle" onClick={closeModal}>
           Cancel
         </Button>
       </Modal.Footer>
@@ -119,7 +125,7 @@ function SaveModal(props) {
 }
 
 SaveModal.propTypes = {
-  onClose: PropTypes.func,
   onSave: PropTypes.func,
+  setShowModal: PropTypes.func,
   show: PropTypes.bool,
 };
