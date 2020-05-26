@@ -99,7 +99,7 @@
     "js-yaml": "3.14.0",
     "rc-tree": "3.2.2",
     "react": "16.13.1",
-    "react-codemirror2": "7.1.0",
+    "react-codemirror2": "7.2.0",
     "react-dom": "16.13.1",
     "react-error-boundary": "2.2.1",
     "react-router-dom": "5.2.0",
