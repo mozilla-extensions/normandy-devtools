@@ -30,9 +30,9 @@ export default function RecipeFormHeader() {
   };
 
   const saveRecipe = (comment) => {
-    const { action, comment: _omitComment, ...rest } = data;
+    const { action, comment: _omitComment, ...cleanedData } = data;
     const requestSave = normandyApi.saveRecipe(recipeId, {
-      ...rest,
+      ...cleanedData,
       comment,
       action_id: action.id,
     });
