@@ -1,6 +1,6 @@
 import React from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Icon, IconButton } from "rsuite";
+import { Icon, IconButton, Alert } from "rsuite";
 
 import {
   useSelectedEnvironmentState,
@@ -22,6 +22,7 @@ export default function DetailsHeader() {
   } = useSelectedEnvironmentState();
   const history = useHistory();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
+  const [buttonLoad, setButtonLoad] = React.useState(false);
 
   const handleEditClick = () => {
     history.push(`/${environmentKey}/recipes/${recipeId}/edit`);
@@ -32,30 +33,54 @@ export default function DetailsHeader() {
   };
 
   const handleRequestApprovalClick = async () => {
-    const approvalRequest = await normandyApi.requestApproval(data.id);
-    dispatch({
-      data: {
-        ...data,
-        approval_request: approvalRequest,
-      },
-      type: ACTION_UPDATE_DATA,
-    });
+    try {
+      setButtonLoad(true);
+      const approvalRequest = await normandyApi.requestApproval(data.id);
+      dispatch({
+        data: {
+          ...data,
+          approval_request: approvalRequest,
+        },
+        type: ACTION_UPDATE_DATA,
+      });
+    } catch (err) {
+      console.warn(err.message, err.data);
+      Alert.error(`An Error Occurred: ${err.message}`, 5000);
+    } finally {
+      setButtonLoad(false);
+    }
   };
 
   const handleEnableClick = async () => {
-    const updatedRecipe = await normandyApi.enableRecipe(data.recipe.id);
-    dispatch({
-      data: updatedRecipe.approved_revision,
-      type: ACTION_UPDATE_DATA,
-    });
+    try {
+      setButtonLoad(true);
+      const updatedRecipe = await normandyApi.enableRecipe(data.recipe.id);
+      dispatch({
+        data: updatedRecipe.approved_revision,
+        type: ACTION_UPDATE_DATA,
+      });
+    } catch (err) {
+      console.warn(err.message, err.data);
+      Alert.error(`An Error Occurred: ${err.message}`, 5000);
+    } finally {
+      setButtonLoad(false);
+    }
   };
 
   const handleDisableClick = async () => {
-    const updatedRecipe = await normandyApi.disableRecipe(data.recipe.id);
-    dispatch({
-      data: updatedRecipe.approved_revision,
-      type: ACTION_UPDATE_DATA,
-    });
+    try {
+      setButtonLoad(true);
+      const updatedRecipe = await normandyApi.disableRecipe(data.recipe.id);
+      dispatch({
+        data: updatedRecipe.approved_revision,
+        type: ACTION_UPDATE_DATA,
+      });
+    } catch (err) {
+      console.warn(err.message, err.data);
+      Alert.error(`An Error Occurred: ${JSON.stringify(err.message)}`, 5000);
+    } finally {
+      setButtonLoad(false);
+    }
   };
 
   let viewExperimentButton = null;
@@ -81,6 +106,7 @@ export default function DetailsHeader() {
         <IconButton
           className="ml-1"
           icon={<Icon icon="question-circle2" />}
+          loading={buttonLoad}
           onClick={handleRequestApprovalClick}
         >
           Request Approval
@@ -93,6 +119,7 @@ export default function DetailsHeader() {
             className="ml-1"
             color="red"
             icon={<Icon icon="close-circle" />}
+            loading={buttonLoad}
             onClick={handleDisableClick}
           >
             Disable
@@ -104,6 +131,7 @@ export default function DetailsHeader() {
             className="ml-1"
             color="green"
             icon={<Icon icon="check-circle" />}
+            loading={buttonLoad}
             onClick={handleEnableClick}
           >
             Enable
