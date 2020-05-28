@@ -16,6 +16,7 @@ import {
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
+import { partitionFO } from "devtools/components/recipes/form/filters/partitionFO";
 
 const BUCKET_SAMPLE = "bucketSample";
 const STABLE_SAMPLE = "stableSample";
@@ -249,7 +250,8 @@ function getFilterObjectFromData() {
 
   let filterObject;
   if (data.filter_object) {
-    filterObject = data.filter_object.find((fo) =>
+    const [filterObjects, _omitAdditionalFO] = partitionFO(data.filter_object);
+    filterObject = filterObjects.find((fo) =>
       [BUCKET_SAMPLE, STABLE_SAMPLE].includes(fo.type),
     );
   }

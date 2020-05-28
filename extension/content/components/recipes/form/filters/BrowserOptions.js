@@ -17,6 +17,7 @@ import {
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
+import { partitionFO } from "devtools/components/recipes/form/filters/partitionFO";
 
 const MIN_VERSION = 40;
 
@@ -93,7 +94,8 @@ function VersionFilter() {
 
   let filterObject;
   if (data.filter_object) {
-    filterObject = data.filter_object.find((fo) => fo.type === "version");
+    const [filterObjects, _omitAdditionalFO] = partitionFO(data.filter_object);
+    filterObject = filterObjects.find((fo) => fo.type === "version");
   }
 
   const versions =
