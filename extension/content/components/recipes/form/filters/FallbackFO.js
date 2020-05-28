@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from "react";
-import { ControlLabel, FormGroup } from "rsuite";
+import { Badge, ControlLabel, FormGroup, Row } from "rsuite";
 
 import JsonEditor from "devtools/components/common/JsonEditor";
 import {
@@ -13,6 +13,7 @@ import { partitionFO } from "devtools/components/recipes/form/filters/partitionF
 export default function FallbackFO() {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
+  const [invalidJSON, setInvalidJson] = React.useState(false);
 
   let knownFO = [];
   let additionalFO = [];
@@ -32,14 +33,28 @@ export default function FallbackFO() {
           filter_object: newFilterObjects,
         },
       });
+      setInvalidJson(false);
+    } else {
+      setInvalidJson(true);
     }
+  };
+
+  const inValidBadge = () => {
+    if (invalidJSON) {
+      return <Badge content="Invalid JSON" />;
+    }
+
+    return null;
   };
 
   let key = data.recipe ? data.recipe.id : "create";
   key += "FO";
   return (
     <FormGroup>
-      <ControlLabel>Additional Filter Objects</ControlLabel>
+      <Row>
+        <ControlLabel>Additional Filter Objects {inValidBadge()}</ControlLabel>
+      </Row>
+
       <JsonEditor key={key} value={additionalFO} onChange={handleChange} />
     </FormGroup>
   );
