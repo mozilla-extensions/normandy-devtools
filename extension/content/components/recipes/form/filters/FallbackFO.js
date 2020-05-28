@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from "react";
-import { Badge, ControlLabel, FormGroup, Row } from "rsuite";
+import { Badge, ControlLabel, FormGroup } from "rsuite";
 
 import JsonEditor from "devtools/components/common/JsonEditor";
 import {
@@ -51,9 +51,7 @@ export default function FallbackFO() {
   key += "FO";
   return (
     <FormGroup>
-      <Row>
-        <ControlLabel>Additional Filter Objects {inValidBadge()}</ControlLabel>
-      </Row>
+      <ControlLabel>Additional Filter Objects {inValidBadge()}</ControlLabel>
 
       <JsonEditor key={key} value={additionalFO} onChange={handleChange} />
     </FormGroup>
