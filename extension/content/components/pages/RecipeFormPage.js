@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { useParams } from "react-router-dom";
 
 import {
@@ -60,7 +59,3 @@ export default function RecipeFormPage() {
     </RecipeDetailsProvider>
   );
 }
-
-RecipeFormPage.propTypes = {
-  location: PropTypes.object,
-};

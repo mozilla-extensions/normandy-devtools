@@ -134,7 +134,6 @@ export default function DetailsHeader() {
         {viewExperimentButton}
         {requestApprovalButton}
         {statusToggleButton}
-
         <IconButton
           appearance="primary"
           className="ml-1"
