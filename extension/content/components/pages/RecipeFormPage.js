@@ -14,7 +14,7 @@ import {
 import RecipeForm from "devtools/components/recipes/form/RecipeForm";
 import RecipeFormHeader from "devtools/components/recipes/form/RecipeFormHeader";
 
-export default function RecipeFormPage(props) {
+export default function RecipeFormPage() {
   const { selectedKey: environmentKey } = useEnvironmentState();
   const { recipeId, experimenterSlug } = useParams();
   const [data, setData] = React.useState({});
@@ -41,9 +41,6 @@ export default function RecipeFormPage(props) {
             setImportInstructions(comment);
           });
       });
-    } else if (props.location.state && props.location.state.data) {
-      setData(props.location.state.data);
-      setImportInstructions("");
     } else {
       setData(INITIAL_RECIPE_DATA);
       setImportInstructions("");

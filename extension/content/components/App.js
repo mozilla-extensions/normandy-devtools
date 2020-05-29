@@ -56,6 +56,11 @@ function Page() {
           />
           <Route
             exact
+            component={RecipeFormPage}
+            path={`${match.path}/recipes/:recipeId/clone`}
+          />
+          <Route
+            exact
             component={RecipeDetailsPage}
             path={`${match.path}/recipes/:recipeId`}
           />

@@ -31,11 +31,15 @@ export default function RecipeFormHeader() {
 
   const saveRecipe = (comment) => {
     const { action, comment: _omitComment, ...cleanedData } = data;
-    const requestSave = normandyApi.saveRecipe(recipeId, {
-      ...cleanedData,
-      comment,
-      action_id: action.id,
-    });
+    const requestSave = normandyApi.saveRecipe(
+      recipeId,
+      history.location.pathname,
+      {
+        ...cleanedData,
+        comment,
+        action_id: action.id,
+      },
+    );
 
     requestSave
       .then((savedRecipe) => {

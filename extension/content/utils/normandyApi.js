@@ -74,10 +74,10 @@ export default class NormandyAPI extends API {
     });
   }
 
-  async saveRecipe(id, data) {
+  async saveRecipe(id, path, data) {
     let url = "recipe/";
     let method = "POST";
-    if (id) {
+    if (path.includes("edit") && id) {
       url = `recipe/${id}/`;
       method = "PUT";
     }

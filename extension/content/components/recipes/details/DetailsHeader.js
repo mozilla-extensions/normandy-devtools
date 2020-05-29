@@ -1,6 +1,6 @@
 import React from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Icon, IconButton } from "rsuite";
+import { Button, Icon, IconButton, Popover, Whisper } from "rsuite";
 
 import {
   useSelectedEnvironmentState,
@@ -29,8 +29,7 @@ export default function DetailsHeader() {
 
   const handleCopyClick = () => {
     history.push({
-      pathname: `/${environmentKey}/recipes/new`,
-      state: { data },
+      pathname: `/${environmentKey}/recipes/${recipeId}/clone`,
     });
   };
 
@@ -135,14 +134,7 @@ export default function DetailsHeader() {
         {viewExperimentButton}
         {requestApprovalButton}
         {statusToggleButton}
-        <IconButton
-          appearance="primary"
-          className="ml-1"
-          icon={<Icon icon="copy" />}
-          onClick={handleCopyClick}
-        >
-          Copy Recipe
-        </IconButton>
+
         <IconButton
           appearance="primary"
           className="ml-1"
@@ -151,6 +143,21 @@ export default function DetailsHeader() {
         >
           Edit Recipe
         </IconButton>
+        <Whisper
+          placement="bottomEnd"
+          speaker={
+            <Popover>
+              <Button appearance="subtle" onClick={handleCopyClick}>
+                Clone Experiment
+              </Button>
+            </Popover>
+          }
+          trigger="click"
+        >
+          <div className="ml-1">
+            <Icon icon="ellipsis-h" />
+          </div>
+        </Whisper>
       </div>
     </div>
   );
