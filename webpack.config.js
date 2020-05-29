@@ -1,5 +1,6 @@
 /* eslint-env node */
 const path = require("path");
+const process = require("process");
 const { execSync } = require("child_process");
 
 const CopyWebpackPlugin = require("copy-webpack-plugin");
@@ -76,7 +77,7 @@ module.exports = async (env, argv = {}) => {
     ),
     new webpack.DefinePlugin({
       __BUILD__: webpack.DefinePlugin.runtimeValue(
-        () => JSON.stringify(getBuildInfo(development)),
+        () => JSON.stringify(getBuildInfo()),
         true,
       ),
       DEVELOPMENT: JSON.stringify(development),
@@ -148,15 +149,16 @@ module.exports = async (env, argv = {}) => {
   };
 };
 
-function getBuildInfo(isDevelopment) {
+function getBuildInfo() {
   const packageJson = require("./package.json");
 
   const rv = {
     commitHash: execOutput("git rev-parse HEAD").trim(),
   };
 
-  rv.version = packageJson.version;
-  if (isDevelopment) {
+  if (process.env.MOZ_AUTOMATION && process.env.MOZ_RELEASE_BUILD) {
+    rv.version = packageJson.version;
+  } else {
     const described = execOutput("git describe --dirty=-uc").trim();
     const describedPattern = /^v(.+?)(?:-((?:[0-9]+?)-(?:.+?)))?(-uc)?$/;
     const matches = described.match(describedPattern);
@@ -172,6 +174,10 @@ function getBuildInfo(isDevelopment) {
         buildMetadata.push("uc");
         rv.hasUncommittedChanges = true;
       }
+    }
+
+    if (!rv.version) {
+      rv.version = packageJson.version;
     }
 
     if (buildMetadata) {

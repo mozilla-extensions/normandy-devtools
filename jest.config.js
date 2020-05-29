@@ -4,6 +4,7 @@ module.exports = {
     browser: {
       experiments: {},
       identity: {},
+      networkStatus: {},
     },
   },
   setupFiles: ["<rootDir>/tests/conftests.js"],
