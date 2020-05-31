@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from "react";
-import { Button, Divider, Input, Tag } from "rsuite";
+import { Alert, Button, Divider, Input, Tag } from "rsuite";
 
 import CollapsibleSection from "devtools/components/recipes/details/CollapsibleSection";
 import {
@@ -16,6 +16,8 @@ export default function ApprovalRequest() {
   const normandyApi = useSelectedNormandyEnvironmentAPI();
 
   const [comment, updateComment] = React.useState("");
+  const [isApproving, setIsApproving] = React.useState(false);
+  const [isRejecting, setIsRejecting] = React.useState(false);
 
   if (!data.approval_request) {
     return null;
@@ -30,31 +32,47 @@ export default function ApprovalRequest() {
   }
 
   const handleClickApprove = async () => {
-    const updatedApprovalRequest = await normandyApi.approveApprovalRequest(
-      approvalRequest.id,
-      comment,
-    );
-    dispatch({
-      data: {
-        ...data,
-        approval_request: updatedApprovalRequest,
-      },
-      type: ACTION_UPDATE_DATA,
-    });
+    setIsApproving(true);
+    try {
+      const updatedApprovalRequest = await normandyApi.approveApprovalRequest(
+        approvalRequest.id,
+        comment,
+      );
+      dispatch({
+        data: {
+          ...data,
+          approval_request: updatedApprovalRequest,
+        },
+        type: ACTION_UPDATE_DATA,
+      });
+    } catch (err) {
+      console.warn(err.message, err.data);
+      Alert.error(`An Error Occurred: ${err.message}`, 5000);
+    } finally {
+      setIsApproving(false);
+    }
   };
 
   const handleClickReject = async () => {
-    const updatedApprovalRequest = await normandyApi.rejectApprovalRequest(
-      approvalRequest.id,
-      comment,
-    );
-    dispatch({
-      data: {
-        ...data,
-        approval_request: updatedApprovalRequest,
-      },
-      type: ACTION_UPDATE_DATA,
-    });
+    setIsRejecting(true);
+    try {
+      const updatedApprovalRequest = await normandyApi.rejectApprovalRequest(
+        approvalRequest.id,
+        comment,
+      );
+      dispatch({
+        data: {
+          ...data,
+          approval_request: updatedApprovalRequest,
+        },
+        type: ACTION_UPDATE_DATA,
+      });
+    } catch (err) {
+      console.warn(err.message, err.data);
+      Alert.error(`An Error Occurred: ${err.message}`, 5000);
+    } finally {
+      setIsRejecting(false);
+    }
   };
 
   const handleClickCancel = async () => {
@@ -82,10 +100,21 @@ export default function ApprovalRequest() {
       </div>
       <div className="d-flex mt-2">
         <div className="flex-grow-1">
-          <Button color="green" onClick={handleClickApprove}>
+          <Button
+            color="green"
+            disabled={isApproving || isRejecting}
+            loading={isApproving}
+            onClick={handleClickApprove}
+          >
             Approve
           </Button>
-          <Button className="ml-1" color="red" onClick={handleClickReject}>
+          <Button
+            className="ml-1"
+            color="red"
+            disabled={isRejecting || isApproving}
+            loading={isRejecting}
+            onClick={handleClickReject}
+          >
             Reject
           </Button>
         </div>
