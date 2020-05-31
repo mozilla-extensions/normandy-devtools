@@ -22,7 +22,7 @@ export default function DetailsHeader() {
   } = useSelectedEnvironmentState();
   const history = useHistory();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
-  const [buttonLoad, setButtonLoad] = React.useState(false);
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
 
   const handleEditClick = () => {
     history.push(`/${environmentKey}/recipes/${recipeId}/edit`);
@@ -33,8 +33,8 @@ export default function DetailsHeader() {
   };
 
   const handleRequestApprovalClick = async () => {
+    setIsButtonLoading(true);
     try {
-      setButtonLoad(true);
       const approvalRequest = await normandyApi.requestApproval(data.id);
       dispatch({
         data: {
@@ -47,13 +47,13 @@ export default function DetailsHeader() {
       console.warn(err.message, err.data);
       Alert.error(`An Error Occurred: ${err.message}`, 5000);
     } finally {
-      setButtonLoad(false);
+      setIsButtonLoading(false);
     }
   };
 
   const handleEnableClick = async () => {
+    setIsButtonLoading(true);
     try {
-      setButtonLoad(true);
       const updatedRecipe = await normandyApi.enableRecipe(data.recipe.id);
       dispatch({
         data: updatedRecipe.approved_revision,
@@ -63,13 +63,13 @@ export default function DetailsHeader() {
       console.warn(err.message, err.data);
       Alert.error(`An Error Occurred: ${err.message}`, 5000);
     } finally {
-      setButtonLoad(false);
+      setIsButtonLoading(false);
     }
   };
 
   const handleDisableClick = async () => {
+    setIsButtonLoading(true);
     try {
-      setButtonLoad(true);
       const updatedRecipe = await normandyApi.disableRecipe(data.recipe.id);
       dispatch({
         data: updatedRecipe.approved_revision,
@@ -79,7 +79,7 @@ export default function DetailsHeader() {
       console.warn(err.message, err.data);
       Alert.error(`An Error Occurred: ${JSON.stringify(err.message)}`, 5000);
     } finally {
-      setButtonLoad(false);
+      setIsButtonLoading(false);
     }
   };
 
@@ -106,7 +106,7 @@ export default function DetailsHeader() {
         <IconButton
           className="ml-1"
           icon={<Icon icon="question-circle2" />}
-          loading={buttonLoad}
+          loading={isButtonLoading}
           onClick={handleRequestApprovalClick}
         >
           Request Approval
@@ -119,7 +119,7 @@ export default function DetailsHeader() {
             className="ml-1"
             color="red"
             icon={<Icon icon="close-circle" />}
-            loading={buttonLoad}
+            loading={isButtonLoading}
             onClick={handleDisableClick}
           >
             Disable
@@ -131,7 +131,7 @@ export default function DetailsHeader() {
             className="ml-1"
             color="green"
             icon={<Icon icon="check-circle" />}
-            loading={buttonLoad}
+            loading={isButtonLoading}
             onClick={handleEnableClick}
           >
             Enable

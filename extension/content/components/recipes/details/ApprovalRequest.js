@@ -16,7 +16,8 @@ export default function ApprovalRequest() {
   const normandyApi = useSelectedNormandyEnvironmentAPI();
 
   const [comment, updateComment] = React.useState("");
-  const [buttonLoad, setButtonLoad] = React.useState(false);
+  const [isApproving, setIsApproving] = React.useState(false);
+  const [isRejecting, setIsRejecting] = React.useState(false);
 
   if (!data.approval_request) {
     return null;
@@ -31,8 +32,8 @@ export default function ApprovalRequest() {
   }
 
   const handleClickApprove = async () => {
+    setIsApproving(true);
     try {
-      setButtonLoad(true);
       const updatedApprovalRequest = await normandyApi.approveApprovalRequest(
         approvalRequest.id,
         comment,
@@ -48,13 +49,13 @@ export default function ApprovalRequest() {
       console.warn(err.message, err.data);
       Alert.error(`An Error Occurred: ${err.message}`, 5000);
     } finally {
-      setButtonLoad(false);
+      setIsApproving(false);
     }
   };
 
   const handleClickReject = async () => {
+    setIsRejecting(true);
     try {
-      setButtonLoad(true);
       const updatedApprovalRequest = await normandyApi.rejectApprovalRequest(
         approvalRequest.id,
         comment,
@@ -70,7 +71,7 @@ export default function ApprovalRequest() {
       console.warn(err.message, err.data);
       Alert.error(`An Error Occurred: ${err.message}`, 5000);
     } finally {
-      setButtonLoad(false);
+      setIsRejecting(false);
     }
   };
 
@@ -101,7 +102,8 @@ export default function ApprovalRequest() {
         <div className="flex-grow-1">
           <Button
             color="green"
-            loading={buttonLoad}
+            disabled={isApproving || isRejecting}
+            loading={isApproving}
             onClick={handleClickApprove}
           >
             Approve
@@ -109,7 +111,8 @@ export default function ApprovalRequest() {
           <Button
             className="ml-1"
             color="red"
-            loading={buttonLoad}
+            disabled={isRejecting || isApproving}
+            loading={isRejecting}
             onClick={handleClickReject}
           >
             Reject
