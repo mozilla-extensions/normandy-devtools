@@ -154,7 +154,7 @@ export default function DetailsHeader() {
           trigger="click"
         >
           <div className="ml-1">
-            <Icon icon="ellipsis-h" />
+            <IconButton icon={<Icon icon="ellipsis-h" />} />
           </div>
         </Whisper>
       </div>
