@@ -1,17 +1,17 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { ButtonGroup, Icon, IconButton, Popover, Whisper } from "rsuite";
 
-import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
 import Highlight from "devtools/components/common/Highlight";
 import CollapsibleSection from "devtools/components/recipes/details/CollapsibleSection";
-import { splitCamelCase } from "devtools/utils/helpers";
-import Version from "devtools/components/recipes/details/filters/Version";
+import BucketSample from "devtools/components/recipes/details/filters/BucketSample";
 import Channel from "devtools/components/recipes/details/filters/Channel";
 import Country from "devtools/components/recipes/details/filters/Country";
 import Locale from "devtools/components/recipes/details/filters/Locale";
-import BucketSample from "devtools/components/recipes/details/filters/BucketSample";
 import StableSample from "devtools/components/recipes/details/filters/StableSample";
+import Version from "devtools/components/recipes/details/filters/Version";
+import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
+import { splitCamelCase } from "devtools/utils/helpers";
 
 const MODE_RICH = "RICH";
 const MODE_RAW = "RAW";

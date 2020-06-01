@@ -9,15 +9,14 @@ import {
   Col,
 } from "rsuite";
 
+import InputField from "devtools/components/recipes/form/arguments/fields/InputField";
+import SelectField from "devtools/components/recipes/form/arguments/fields/SelectField";
+import ToggleField from "devtools/components/recipes/form/arguments/fields/ToggleField";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
-
-import InputField from "devtools/components/recipes/form/arguments/fields/InputField";
-import SelectField from "devtools/components/recipes/form/arguments/fields/SelectField";
-import ToggleField from "devtools/components/recipes/form/arguments/fields/ToggleField";
 
 export default function ShowHeart() {
   return (

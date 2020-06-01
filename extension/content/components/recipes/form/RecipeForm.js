@@ -1,12 +1,12 @@
 import React from "react";
 import { Form } from "rsuite";
 
-import GenericField from "devtools/components/recipes/form/fields/GenericField";
-import CodeMirrorField from "devtools/components/recipes/form/fields/CodeMirrorField";
-import ActionPicker from "devtools/components/recipes/form/fields/ActionPicker";
 import ActionArguments from "devtools/components/recipes/form/ActionArguments";
-import FilterObjects from "devtools/components/recipes/form/FilterObjects";
+import ActionPicker from "devtools/components/recipes/form/fields/ActionPicker";
+import CodeMirrorField from "devtools/components/recipes/form/fields/CodeMirrorField";
+import GenericField from "devtools/components/recipes/form/fields/GenericField";
 import ImportInstructions from "devtools/components/recipes/form/fields/ImportInstructions";
+import FilterObjects from "devtools/components/recipes/form/FilterObjects";
 
 export default function RecipeForm() {
   return (

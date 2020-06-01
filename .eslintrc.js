@@ -22,6 +22,24 @@ const sharedRules = {
       next: "*",
     },
   ],
+  "import/order": [
+    "error",
+    {
+      groups: ["builtin", "external", "internal", "parent"],
+      pathGroups: [
+        {
+          pattern: "devtools/**",
+          group: "parent",
+        },
+      ],
+      pathGroupsExcludedImportTypes: ["builtin"],
+      alphabetize: {
+        order: "asc",
+        caseInsensitive: true,
+      },
+      "newlines-between": "always",
+    },
+  ],
 };
 
 module.exports = {
@@ -36,7 +54,7 @@ module.exports = {
     "plugin:mozilla/recommended",
     "plugin:react/recommended",
   ],
-  plugins: ["mozilla"],
+  plugins: ["mozilla", "import"],
   settings: {
     react: {
       version: "detect",

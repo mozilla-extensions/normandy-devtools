@@ -7,7 +7,8 @@ module.exports = {
       networkStatus: {},
     },
   },
-  setupFiles: ["<rootDir>/tests/conftests.js"],
+  setupFiles: ["<rootDir>/tests/jest.setup.js"],
+  setupFilesAfterEnv: ["<rootDir>/tests/jest-env.setup.js"],
   transform: {
     "^.+\\.js$": "babel-jest",
     "^.+\\.tsx?": "ts-jest",

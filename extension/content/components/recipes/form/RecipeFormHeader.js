@@ -1,5 +1,5 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Alert, Button, Icon, IconButton, Input, Modal } from "rsuite";
 

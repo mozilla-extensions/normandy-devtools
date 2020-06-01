@@ -3,12 +3,12 @@ import React from "react";
 import { Alert, Button, Divider, Input, Tag } from "rsuite";
 
 import CollapsibleSection from "devtools/components/recipes/details/CollapsibleSection";
+import { useSelectedNormandyEnvironmentAPI } from "devtools/contexts/environment";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
-import { useSelectedNormandyEnvironmentAPI } from "devtools/contexts/environment";
 
 export default function ApprovalRequest() {
   const data = useRecipeDetailsData();

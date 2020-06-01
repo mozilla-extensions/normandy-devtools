@@ -1,6 +1,6 @@
 // @ts-nocheck
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import {
   Col,
   ControlLabel,
@@ -16,17 +16,17 @@ import {
   SelectPicker,
 } from "rsuite";
 
+import InputField from "devtools/components/recipes/form/arguments/fields/InputField";
+import ToggleField from "devtools/components/recipes/form/arguments/fields/ToggleField";
+import {
+  useEnvironmentState,
+  useSelectedNormandyEnvironmentAPI,
+} from "devtools/contexts/environment";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
-import {
-  useEnvironmentState,
-  useSelectedNormandyEnvironmentAPI,
-} from "devtools/contexts/environment";
-import InputField from "devtools/components/recipes/form/arguments/fields/InputField";
-import ToggleField from "devtools/components/recipes/form/arguments/fields/ToggleField";
 
 export default function BranchedAddon() {
   return (
