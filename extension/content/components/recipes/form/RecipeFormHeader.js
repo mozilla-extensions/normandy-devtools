@@ -30,8 +30,13 @@ export default function RecipeFormHeader() {
   };
 
   const saveRecipe = (comment) => {
-    const { action, comment: _omitComment, ...cleanedData } = data;
-    const requestSave = normandyApi.saveRecipe(recipeId, {
+    const { action, ...cleanedData } = data;
+    let id;
+    if (!history.location.pathname.includes("clone")) {
+      id = recipeId;
+    }
+
+    const requestSave = normandyApi.saveRecipe(id, {
       ...cleanedData,
       comment,
       action_id: action.id,
