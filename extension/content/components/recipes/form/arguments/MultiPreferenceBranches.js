@@ -1,6 +1,6 @@
 // @ts-nocheck
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import {
   Col,
   ControlLabel,
@@ -14,12 +14,12 @@ import {
   Panel,
 } from "rsuite";
 
+import PreferenceFields from "devtools/components/recipes/form/arguments/PreferenceFields";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
-import PreferenceFields from "devtools/components/recipes/form/arguments/PreferenceFields";
 
 export default function MultiPreferenceBranches() {
   const data = useRecipeDetailsData();

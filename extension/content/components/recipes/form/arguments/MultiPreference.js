@@ -2,9 +2,9 @@
 import React from "react";
 import { Col, FormGroup, Row } from "rsuite";
 
-import MultiPreferenceBranches from "devtools/components/recipes/form/arguments/MultiPreferenceBranches";
-import ToggleField from "devtools/components/recipes/form/arguments/fields/ToggleField";
 import InputField from "devtools/components/recipes/form/arguments/fields/InputField";
+import ToggleField from "devtools/components/recipes/form/arguments/fields/ToggleField";
+import MultiPreferenceBranches from "devtools/components/recipes/form/arguments/MultiPreferenceBranches";
 
 export default function MultiPreference() {
   return (
