@@ -238,37 +238,40 @@ function Branch({ index }) {
 
   return (
     <FormGroup>
-      <div className="d-flex">
-        <div className="pr-2">
-          <ControlLabel>&nbsp;</ControlLabel>
-          <IconButton
-            circle
-            color="red"
-            icon={<Icon icon="trash" />}
-            size="sm"
-            onClick={handleClickDelete}
-          />
-        </div>
-        <div className="flex-grow-1 pr-1">
-          <FormGroup>
-            <ControlLabel>Branch Name</ControlLabel>
-            <Input value={branch.slug} onChange={handleChange("slug")} />
-          </FormGroup>
-        </div>
-        <div className="pr-1">
-          <FormGroup>
-            <ControlLabel>Ratio</ControlLabel>
-            <InputNumber
-              min={1}
-              style={{
-                width: "80px",
-              }}
-              value={branch.ratio}
-              onChange={handleChange("ratio", parseNumericInput)}
+      <FormGroup>
+        <div className="d-flex">
+          <div className="pr-2">
+            <ControlLabel>&nbsp;</ControlLabel>
+            <IconButton
+              circle
+              color="red"
+              icon={<Icon icon="trash" />}
+              size="sm"
+              onClick={handleClickDelete}
             />
-          </FormGroup>
+          </div>
+          <div className="flex-grow-1 pr-1">
+            <FormGroup>
+              <ControlLabel>Branch Name</ControlLabel>
+              <Input value={branch.slug} onChange={handleChange("slug")} />
+            </FormGroup>
+          </div>
+          <div className="pr-1">
+            <FormGroup>
+              <ControlLabel>Ratio</ControlLabel>
+              <InputNumber
+                min={1}
+                style={{
+                  width: "80px",
+                }}
+                value={branch.ratio}
+                onChange={handleChange("ratio", parseNumericInput)}
+              />
+            </FormGroup>
+          </div>
         </div>
-      </div>
+      </FormGroup>
+
       <Col xsOffset={1}>
         <FormGroup>
           <ControlLabel>Preferences</ControlLabel>
