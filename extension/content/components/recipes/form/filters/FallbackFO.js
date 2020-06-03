@@ -8,7 +8,15 @@ import {
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
-import { partitionFO } from "devtools/components/recipes/form/filters/partitionFO";
+
+const KNOWN_FILTER_TYPES = [
+  "channel",
+  "version",
+  "country",
+  "locale",
+  "bucketSample",
+  "stableSample",
+];
 
 export default function FallbackFO() {
   const data = useRecipeDetailsData();
@@ -18,12 +26,20 @@ export default function FallbackFO() {
   let knownFO = [];
   let additionalFO = [];
   if (data.filter_object) {
-    [knownFO, additionalFO] = partitionFO(data.filter_object);
+    [knownFO, additionalFO] = data.filter_object.reduce(
+      ([knownFO, additionalFO], fo) => {
+        if (fo && KNOWN_FILTER_TYPES.includes(fo.type)) {
+          return [[...knownFO, fo], additionalFO];
+        }
+
+        return [knownFO, [...additionalFO, fo]];
+      },
+      [[], []],
+    );
   }
 
   const handleChange = (value) => {
     if (value) {
-      [knownFO, additionalFO] = partitionFO(data.filter_object);
       const newFilterObjects = [...knownFO, ...value];
 
       dispatch({
@@ -39,19 +55,16 @@ export default function FallbackFO() {
     }
   };
 
-  const inValidBadge = () => {
-    if (invalidJSON) {
-      return <Badge content="Invalid JSON" />;
-    }
+  let invalidBadge;
+  if (invalidJSON) {
+    invalidBadge = <Badge content="Invalid JSON" />;
+  }
 
-    return null;
-  };
+  const key = data.recipe ? data.recipe.id : "create";
 
-  let key = data.recipe ? data.recipe.id : "create";
-  key += "FO";
   return (
     <FormGroup>
-      <ControlLabel>Additional Filter Objects {inValidBadge()}</ControlLabel>
+      <ControlLabel>Additional Filter Objects {invalidBadge}</ControlLabel>
 
       <JsonEditor key={key} value={additionalFO} onChange={handleChange} />
     </FormGroup>

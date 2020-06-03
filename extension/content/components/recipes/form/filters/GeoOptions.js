@@ -11,7 +11,6 @@ import {
   useEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
-import { partitionFO } from "devtools/components/recipes/form/filters/partitionFO";
 
 export default function GeoOptions() {
   const { selectedKey: environmentKey } = useEnvironmentState();
@@ -55,8 +54,7 @@ function GeoFilterField({ label, name, dataKey, options }) {
 
   let filterObject;
   if (data.filter_object) {
-    const [filterObjects, _omitAdditionalFO] = partitionFO(data.filter_object);
-    filterObject = filterObjects.find((fo) => fo.type === name);
+    filterObject = data.filter_object.find((fo) => fo.type === name);
   }
 
   const value =
