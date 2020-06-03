@@ -74,3 +74,13 @@
 .rs-control-label {
   font-weight: bold;
 }
+
+/* stylelint-disable indentation, selector-max-empty-lines */
+each(@colors, {
+  .rs-badge-wrapper.@{value} {
+    .rs-badge-content {
+      background-color: @@value !important;
+    }
+  }
+})
+/* stylelint-enable indentation, selector-max-empty-lines */

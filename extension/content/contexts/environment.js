@@ -1,13 +1,14 @@
 // @ts-nocheck
+import auth0 from "auth0-js";
 import PropTypes from "prop-types";
 import React from "react";
 import { Route, Redirect, Switch, useParams } from "react-router-dom";
-import auth0 from "auth0-js";
 
 import { DEFAULT_ENV, ENVIRONMENTS } from "devtools/config";
-import NormandyAPI from "devtools/utils/normandyApi";
-import ExperimenterAPI from "devtools/utils/experimenterApi";
 import { generateNonce, normalizeErrorObject } from "devtools/utils/auth0";
+import ExperimenterAPI from "devtools/utils/experimenterApi";
+import { delay } from "devtools/utils/helpers";
+import NormandyAPI from "devtools/utils/normandyApi";
 import { MINUTE, SECOND } from "devtools/utils/timeConstants";
 
 const REFRESH_THRESHOLD_MS = 10 * MINUTE;
@@ -39,6 +40,7 @@ Object.keys(initialEnvironments).forEach((k) => {
 const initialState = {
   environments: initialEnvironments,
   auth: initialAuth,
+  connectionStatus: {},
   selectedKey: DEFAULT_ENV,
   isLoggingIn: false,
 };
@@ -51,6 +53,7 @@ export const ACTION_UPDATE_AUTH = "UPDATE_AUTH";
 export const ACTION_UPDATE_AUTH_EXPIRES_AT = "UPDATE_AUTH_EXPIRES_AT";
 export const ACTION_UPDATE_AUTH_RESULT = "UPDATE_AUTH_RESULT";
 export const ACTION_SET_IS_LOGGING_IN = "SET_LOGGING_IN";
+export const ACTION_SET_CONNECTION_STATUS = "SET_CONNECTION_STATUS";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -131,6 +134,15 @@ function reducer(state, action) {
         isLoggingIn: action.isLoggingIn,
       };
 
+    case ACTION_SET_CONNECTION_STATUS:
+      return {
+        ...state,
+        connectionStatus: {
+          ...state.connectionStatus,
+          [action.key]: action.status,
+        },
+      };
+
     default:
       return state;
   }
@@ -177,9 +189,9 @@ export function EnvironmentProvider({ children }) {
   /** @type {[React.ReducerState<any>, React.Dispatch<React.ReducerAction<any>>]} */
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
-  // Add event listener for changes to local storage
   React.useEffect(() => {
-    window.addEventListener("storage", (ev) => {
+    // Add event listener for changes to local storage
+    const storageListener = (ev) => {
       [
         [ENV_CONFIG_KEY_RE, ACTION_UPDATE_ENVIRONMENT, "config"],
         [AUTH_EXPIRES_AT_KEY_RE, ACTION_UPDATE_AUTH_EXPIRES_AT, "expiresAt"],
@@ -196,7 +208,52 @@ export function EnvironmentProvider({ children }) {
           });
         }
       });
-    });
+    };
+
+    window.addEventListener("storage", storageListener);
+
+    // Add event listener for network changes
+    const networkListener = ({ status }) => {
+      console.info("Checking connection status...");
+
+      Object.keys(ENVIRONMENTS).forEach((key) => {
+        dispatch({
+          type: ACTION_SET_CONNECTION_STATUS,
+          status: false,
+          key,
+        });
+      });
+
+      if (status === "up") {
+        Object.entries(ENVIRONMENTS).forEach(async ([key, environment]) => {
+          let status = true;
+          try {
+            // Send a notification to prune all active TCP connections
+            // This is required to work around https://bugzilla.mozilla.org/show_bug.cgi?id=1635935
+            browser.experiments.networking.pruneAllConnections();
+            const normandyApi = new NormandyAPI(environment);
+            await checkVPNStatus(normandyApi, 5);
+          } catch {
+            status = false;
+          }
+
+          dispatch({
+            type: ACTION_SET_CONNECTION_STATUS,
+            status,
+            key,
+          });
+        });
+      }
+    };
+
+    browser.networkStatus.onConnectionChanged.addListener(networkListener);
+    networkListener({ status: "up" });
+
+    // Clean up
+    return () => {
+      window.removeEventListener("storage", storageListener);
+      browser.networkStatus.onConnectionChanged.removeListener(networkListener);
+    };
   }, []);
 
   const checkExpiredAuth = () => {
@@ -261,30 +318,40 @@ export function useEnvironments() {
   return state.environments;
 }
 
-export function useSelectedEnvironment() {
+export function useSelectedEnvironmentState() {
   const { state } = React.useContext(environmentContext);
-  return state.environments[state.selectedKey];
-}
-
-export function useAuth() {
-  const { state } = React.useContext(environmentContext);
-  return state.auth;
-}
-
-export function useSelectedEnvironmentAuth() {
-  const { state } = React.useContext(environmentContext);
-  return state.auth[state.selectedKey];
+  const { environments, auth, connectionStatus, ...otherState } = state;
+  return {
+    ...otherState,
+    environment: environments[state.selectedKey],
+    auth: auth[state.selectedKey],
+    connectionStatus: connectionStatus[state.selectedKey],
+  };
 }
 
 export function useSelectedNormandyEnvironmentAPI() {
-  const environment = useSelectedEnvironment();
-  const auth = useSelectedEnvironmentAuth();
-  return new NormandyAPI(environment, auth);
+  const { environment, auth, connectionStatus } = useSelectedEnvironmentState();
+  return new NormandyAPI(environment, auth, connectionStatus);
 }
 
 export function useSelectedExperimenterEnvironmentAPI() {
-  const environment = useSelectedEnvironment();
+  const { environment } = useSelectedEnvironmentState();
   return new ExperimenterAPI(environment);
+}
+
+async function checkVPNStatus(normandyApi, maxAttempts, currentAttempt = 0) {
+  await delay(50 * currentAttempt);
+  try {
+    await normandyApi.checkLBHeartbeat({
+      timeoutAfter: (currentAttempt + 1) * 500,
+    });
+  } catch (err) {
+    if (currentAttempt < maxAttempts) {
+      await checkVPNStatus(normandyApi, maxAttempts, currentAttempt + 1);
+    } else {
+      throw err;
+    }
+  }
 }
 
 export function updateEnvironment(dispatch, key, config) {

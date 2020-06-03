@@ -2,14 +2,13 @@
 
 /* Check that the version in package.json matches the most recent git tag. */
 
-const util = require("util");
+const { execSync } = require("child_process");
 const process = require("process");
-const exec = util.promisify(require("child_process").exec);
 
 const packageData = require("../package.json");
 
 async function main() {
-  const gitTag = (await exec("git describe --abbrev=0")).stdout.trim();
+  const gitTag = execSync("git describe --abbrev=0").toString().trim();
   const { version } = packageData;
 
   if (gitTag !== `v${version}`) {

@@ -1,17 +1,17 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { ButtonGroup, Icon, IconButton, Popover, Tag, Whisper } from "rsuite";
 
-import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
 import Highlight from "devtools/components/common/Highlight";
-import CollapsibleSection from "devtools/components/recipes/details/CollapsibleSection";
+import AddonStudy from "devtools/components/recipes/details/arguments/AddonStudy";
+import BranchedAddonStudy from "devtools/components/recipes/details/arguments/BranchedAddonStudy";
 import Generic from "devtools/components/recipes/details/arguments/GenericArguments";
+import MessagingExperiment from "devtools/components/recipes/details/arguments/MessagingExperiment";
+import MultiPreferenceExperiment from "devtools/components/recipes/details/arguments/MultiPreferenceExperiment";
 import PreferenceExperiment from "devtools/components/recipes/details/arguments/PreferenceExperiment";
 import PreferenceRollout from "devtools/components/recipes/details/arguments/PreferenceRollout";
-import BranchedAddonStudy from "devtools/components/recipes/details/arguments/BranchedAddonStudy";
-import MessagingExperiment from "devtools/components/recipes/details/arguments/MessagingExperiment";
-import AddonStudy from "devtools/components/recipes/details/arguments/AddonStudy";
-import MultiPreferenceExperiment from "devtools/components/recipes/details/arguments/MultiPreferenceExperiment";
+import CollapsibleSection from "devtools/components/recipes/details/CollapsibleSection";
+import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
 
 const MODE_RICH = "RICH";
 const MODE_RAW = "RAW";

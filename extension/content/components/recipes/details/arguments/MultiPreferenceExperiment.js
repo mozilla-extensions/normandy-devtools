@@ -1,12 +1,12 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { Panel, Tag } from "rsuite";
 
-import GenericArguments from "devtools/components/recipes/details/arguments/GenericArguments";
 import {
   booleanFormatter,
   multiColumnFormatter,
 } from "devtools/components/recipes/details/arguments/formatters";
+import GenericArguments from "devtools/components/recipes/details/arguments/GenericArguments";
 
 export default function MultiPreferenceExperiment({ data }) {
   return (

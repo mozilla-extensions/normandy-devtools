@@ -1,8 +1,7 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { Tag } from "rsuite";
 
-import GenericArguments from "devtools/components/recipes/details/arguments/GenericArguments";
 import {
   booleanFormatter,
   codeFormatter,
@@ -10,6 +9,7 @@ import {
   tableFormatter,
   tagFormatter,
 } from "devtools/components/recipes/details/arguments/formatters";
+import GenericArguments from "devtools/components/recipes/details/arguments/GenericArguments";
 
 export default function PreferenceExperiment({ data }) {
   return (

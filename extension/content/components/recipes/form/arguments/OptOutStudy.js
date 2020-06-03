@@ -3,14 +3,14 @@
 import React from "react";
 import { FormGroup, Row, Col } from "rsuite";
 
-import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
+import InputField from "devtools/components/recipes/form/arguments/fields/InputField";
+import SelectField from "devtools/components/recipes/form/arguments/fields/SelectField";
+import ToggleField from "devtools/components/recipes/form/arguments/fields/ToggleField";
 import {
   useEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
-import InputField from "devtools/components/recipes/form/arguments/fields/InputField";
-import SelectField from "devtools/components/recipes/form/arguments/fields/SelectField";
-import ToggleField from "devtools/components/recipes/form/arguments/fields/ToggleField";
+import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
 
 export default function OptOutStudy() {
   const { selectedKey: environmentKey } = useEnvironmentState();

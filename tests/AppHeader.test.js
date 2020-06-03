@@ -1,8 +1,7 @@
+import { render, fireEvent } from "@testing-library/react";
+import { WebAuth } from "auth0-js";
 import React from "react";
 import { HashRouter } from "react-router-dom";
-import { render, fireEvent } from "@testing-library/react";
-import "@testing-library/jest-dom/extend-expect";
-import { WebAuth } from "auth0-js";
 
 import AppHeader from "devtools/components/common/AppHeader";
 import { EnvironmentProvider } from "devtools/contexts/environment";

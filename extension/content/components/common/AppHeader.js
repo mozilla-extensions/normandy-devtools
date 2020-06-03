@@ -1,7 +1,9 @@
+// @ts-nocheck
 import React from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import {
   Avatar,
+  Badge,
   ControlLabel,
   Form,
   FormGroup,
@@ -23,12 +25,10 @@ import {
   logout,
   useEnvironmentDispatch,
   useEnvironments,
-  useEnvironmentState,
-  useSelectedEnvironment,
-  useSelectedEnvironmentAuth,
+  useSelectedEnvironmentState,
 } from "devtools/contexts/environment";
-import { upperCaseFirst } from "devtools/utils/helpers";
 import { useExtensionUrl } from "devtools/hooks/urls";
+import { upperCaseFirst } from "devtools/utils/helpers";
 
 export default function AppHeader() {
   return (
@@ -124,7 +124,7 @@ function EnvironmentConfigurator() {
     value: key,
   }));
 
-  const { selectedKey } = useEnvironmentState();
+  const { connectionStatus, selectedKey } = useSelectedEnvironmentState();
   const history = useHistory();
   const location = useLocation();
 
@@ -132,17 +132,28 @@ function EnvironmentConfigurator() {
     history.push(location.pathname.replace(/^\/.+?\/(.+?)$/, `/${key}/$1`));
   };
 
+  let Wrapper = React.Fragment;
+  let wrapperProps = {};
+  if (connectionStatus) {
+    Wrapper = Badge;
+    wrapperProps = { className: "green" };
+  }
+
   return (
     <>
-      <IconButton
-        icon={<Icon icon="globe" />}
-        onClick={() => {
-          setShowEnvironmentModal(true);
-        }}
-      >
-        <strong>Environment:&nbsp;</strong>
-        <strong className="text-primary">{upperCaseFirst(selectedKey)}</strong>
-      </IconButton>
+      <Wrapper {...wrapperProps}>
+        <IconButton
+          icon={<Icon icon="globe" />}
+          onClick={() => {
+            setShowEnvironmentModal(true);
+          }}
+        >
+          <strong>Environment:&nbsp;</strong>
+          <strong className="text-primary">
+            {upperCaseFirst(selectedKey)}
+          </strong>
+        </IconButton>
+      </Wrapper>
 
       <Modal
         show={showEnvironmentModal}
@@ -173,10 +184,13 @@ function EnvironmentConfigurator() {
 }
 
 function Authenticator() {
-  const auth = useSelectedEnvironmentAuth();
+  const {
+    auth,
+    environment,
+    isLoggingIn,
+    selectedKey,
+  } = useSelectedEnvironmentState();
   const dispatch = useEnvironmentDispatch();
-  const environment = useSelectedEnvironment();
-  const { isLoggingIn, selectedKey } = useEnvironmentState();
 
   const handleLoginClick = () => {
     login(dispatch, selectedKey, environment);
