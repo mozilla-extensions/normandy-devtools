@@ -11,9 +11,9 @@ export class FiltersFactory extends Factory {
   }
 
   postGeneration() {
-    const { countries, locales } = this.options;
-    this.generateCountries(countries);
-    this.generateLocales(locales);
+    const { generateCountriesCount, generateLocalesCount } = this.options;
+    this.generateCountries(generateCountriesCount);
+    this.generateLocales(generateLocalesCount);
   }
 
   generateCountries(numOfCountries) {

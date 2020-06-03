@@ -11,7 +11,7 @@ export class versionFilterObjectFactory extends Factory {
 
   postGeneration() {
     const versionSet = new Set();
-    const setTotal = faker.random.number({ min: 1, max: 10 });
+    const setTotal = this.options;
     for (let i = 0; i < setTotal; i++) {
       versionSet.add(faker.random.number({ min: 40, max: 100 }));
     }
@@ -22,10 +22,22 @@ export class versionFilterObjectFactory extends Factory {
 
 export class channelFilterObjectFactory extends Factory {
   getFields() {
-    const channels = ["nightly", "aurora", "beta", "release"];
     return {
       type: "channel",
-      channels: [faker.random.arrayElement(channels)],
+      channels: [],
     };
+  }
+
+  postGeneration() {
+    let { generateChannelsCount } = this.options;
+    const channels = ["nightly", "aurora", "beta", "release"];
+    const selectedChannels = [];
+
+    while (generateChannelsCount || channels.length) {
+      const randIndex = faker.random.number % channels.length;
+      const channel = channels.splice(randIndex, 1);
+      selectedChannels.push(channel);
+      generateChannelsCount--;
+    }
   }
 }

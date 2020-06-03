@@ -9,7 +9,7 @@ import {
 import "@testing-library/jest-dom/extend-expect";
 import NormandyAPI from "devtools/utils/normandyApi";
 import App from "devtools/components/App";
-import { ConsoleLogRecipeFactory } from "./factories/recipeFactory";
+import { RecipeFactory } from "./factories/recipeFactory";
 import { ActionsResponse, FiltersFactory } from "./factories/filterFactory";
 
 describe("The `RecipeForm` component", () => {
@@ -83,7 +83,16 @@ describe("The `RecipeForm` component", () => {
   };
 
   const setup = () => {
-    const recipe = ConsoleLogRecipeFactory.build();
+    const recipe = RecipeFactory.build(
+      {},
+      {
+        actionName: "console-log",
+        generateFilterObjects: {
+          generateVersionCount: 2,
+          generateChannelCount: 1,
+        },
+      },
+    );
     const pageResponse = { results: [recipe] };
     const filtersResponse = FiltersFactory.build(
       {},
@@ -286,8 +295,13 @@ describe("The `RecipeForm` component", () => {
 
     const { latest_revision } = recipeData;
 
-    // eslint-disable-next-line prefer-const
-    let { action, ...updatedRecipeData } = latest_revision;
+    /* eslint-disable prefer-const */
+    let {
+      action,
+      comment: _omitComment,
+      ...updatedRecipeData
+    } = latest_revision;
+    /* eslint-enable prefer-const */
     const channelValues = ["nightly", "aurora", "beta", "release"];
 
     updatedRecipeData = {

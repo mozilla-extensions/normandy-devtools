@@ -11,8 +11,7 @@ module.exports = {
   },
   setupFiles: ["<rootDir>/tests/conftests.js"],
   transform: {
-    "^.+\\.js$": "babel-jest",
-    "^.+\\.tsx?": "babel-jest",
+    "^.+\\.[jt]sx?$": "babel-jest",
   },
   moduleNameMapper: {
     "^devtools/(.*)$": "<rootDir>/extension/content/$1",
