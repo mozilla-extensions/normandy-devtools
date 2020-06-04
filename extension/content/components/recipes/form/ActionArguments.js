@@ -56,7 +56,7 @@ export const INITIAL_ACTION_ARGUMENTS = {
     branches: [],
     experimentDocumentUrl: "",
     isEnrollmentPaused: false,
-    isHighVolume: false,
+    isHighPopulation: false,
     preferenceBranchType: "default",
     preferenceName: "",
     preferenceType: "boolean",
