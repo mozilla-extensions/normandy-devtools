@@ -98,7 +98,7 @@ export default function PreferenceExperiment() {
       <FormGroup>
         <Row>
           <Col xs={12}>
-            <ToggleField label="High Volume Recipe" name="isHighVolume">
+            <ToggleField label="High Volume Recipe" name="isHighPopulation">
               Affects the experiment type reported to telemetry, and can be used
               to filter recipe data in analysis. This should be set to true on
               recipes that affect a significant percentage of release.
