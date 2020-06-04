@@ -16,4 +16,3 @@ there, you can access Normandy devtools using the new wrench icon in the top
 right of the browser window.
 
 Happy debugging!
-
