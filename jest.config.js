@@ -11,10 +11,12 @@ module.exports = {
   setupFilesAfterEnv: ["<rootDir>/tests/jest-env.setup.js"],
   transform: {
     "^.+\\.js$": "babel-jest",
-    "^.+\\.tsx?": "ts-jest",
+    "^.+\\.tsx?$": "ts-jest",
   },
   moduleNameMapper: {
     "^devtools/(.*)$": "<rootDir>/extension/content/$1",
     "\\.(less|css)$": "identity-obj-proxy",
   },
+  collectCoverage: true,
+  collectCoverageFrom: ["<rootDir>/extension/content/**/*.{js,ts,tsx}"],
 };
