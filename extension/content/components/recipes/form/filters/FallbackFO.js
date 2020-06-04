@@ -23,46 +23,35 @@ export default function FallbackFO() {
   const dispatch = useRecipeDetailsDispatch();
   const [invalidJSON, setInvalidJson] = React.useState(false);
 
-  let knownFO = [];
-  let additionalFO = [];
+  const knownFO = [];
+  const additionalFO = [];
   if (data.filter_object) {
-    [knownFO, additionalFO] = data.filter_object.reduce(
-      ([knownFO, additionalFO], fo) => {
-        if (fo && KNOWN_FILTER_TYPES.includes(fo.type)) {
-          return [[...knownFO, fo], additionalFO];
-        }
-
-        return [knownFO, [...additionalFO, fo]];
-      },
-      [[], []],
-    );
+    data.filter_object.forEach((fo) => {
+      if (KNOWN_FILTER_TYPES.includes(fo.type)) {
+        knownFO.push(fo);
+      } else {
+        additionalFO.push(fo);
+      }
+    });
   }
 
   const handleChange = (value, err) => {
-    if (value && !err) {
-      const newFilterObjects = [...knownFO, ...value];
-
-      dispatch({
-        type: ACTION_UPDATE_DATA,
-        data: {
-          ...data,
-          filter_object: newFilterObjects,
-        },
-      });
-      setInvalidJson(false);
-    } else if (value === "") {
-      const newFilterObjects = [...knownFO];
-
-      dispatch({
-        type: ACTION_UPDATE_DATA,
-        data: {
-          ...data,
-          filter_object: newFilterObjects,
-        },
-      });
-      setInvalidJson(false);
-    } else {
+    if (err) {
       setInvalidJson(true);
+    } else {
+      setInvalidJson(false);
+      let newFilterObjects = [...knownFO];
+      if (value) {
+        newFilterObjects = newFilterObjects.concat(value);
+      }
+
+      dispatch({
+        type: ACTION_UPDATE_DATA,
+        data: {
+          ...data,
+          filter_object: newFilterObjects,
+        },
+      });
     }
   };
 
