@@ -38,9 +38,20 @@ export default function FallbackFO() {
     );
   }
 
-  const handleChange = (value) => {
-    if (value) {
+  const handleChange = (value, err) => {
+    if (value && !err) {
       const newFilterObjects = [...knownFO, ...value];
+
+      dispatch({
+        type: ACTION_UPDATE_DATA,
+        data: {
+          ...data,
+          filter_object: newFilterObjects,
+        },
+      });
+      setInvalidJson(false);
+    } else if (value === "") {
+      const newFilterObjects = [...knownFO];
 
       dispatch({
         type: ACTION_UPDATE_DATA,
