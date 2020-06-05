@@ -1,11 +1,13 @@
 // @ts-nocheck
 import React from "react";
-import { Badge, ControlLabel, FormGroup } from "rsuite";
+import { ControlLabel, FormGroup, HelpBlock } from "rsuite";
 
 import JsonEditor from "devtools/components/common/JsonEditor";
 import {
   ACTION_UPDATE_DATA,
+  ACTION_UPDATE_CLIENT_ERRORS,
   useRecipeDetailsData,
+  useRecipeDetailsClientErrors,
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
 
@@ -20,8 +22,9 @@ const KNOWN_FILTER_TYPES = [
 
 export default function FallbackFO() {
   const data = useRecipeDetailsData();
+  const errors = useRecipeDetailsClientErrors();
   const dispatch = useRecipeDetailsDispatch();
-  const [invalidJSON, setInvalidJson] = React.useState(false);
+  const filter_object_errors = errors.filter_object || [];
 
   const knownFO = [];
   const additionalFO = [];
@@ -35,12 +38,32 @@ export default function FallbackFO() {
     });
   }
 
+  const invalidJson = "Filter Object(s) is not valid JSON";
+  const notAnArray = "Filter Object(s) is not contained in an array";
+
+  const validateFO = (value, err) => {
+    const foErrors = [];
+    if (value) {
+      if (err) {
+        foErrors.push(invalidJson);
+      }
+
+      if (!Array.isArray(value)) {
+        foErrors.push(notAnArray);
+      }
+    }
+
+    dispatch({
+      type: ACTION_UPDATE_CLIENT_ERRORS,
+      clientErrors: { ...errors, filter_object: foErrors },
+    });
+  };
+
   const handleChange = (value, err) => {
-    if (err) {
-      setInvalidJson(true);
-    } else {
-      setInvalidJson(false);
-      let newFilterObjects = [...knownFO];
+    validateFO(value, err);
+
+    if (filter_object_errors) {
+      let newFilterObjects = knownFO;
       if (value) {
         newFilterObjects = newFilterObjects.concat(value);
       }
@@ -55,18 +78,24 @@ export default function FallbackFO() {
     }
   };
 
-  let invalidBadge;
-  if (invalidJSON) {
-    invalidBadge = <Badge content="Invalid JSON" />;
+  let errMessages;
+  if (filter_object_errors) {
+    errMessages = (
+      <HelpBlock className="text-red">
+        {filter_object_errors.map((err) => {
+          return <li key={err}>{err}</li>;
+        })}
+      </HelpBlock>
+    );
   }
 
   const key = data.recipe ? data.recipe.id : "create";
 
   return (
     <FormGroup>
-      <ControlLabel>Additional Filter Objects {invalidBadge}</ControlLabel>
-
+      <ControlLabel>Additional Filter Objects</ControlLabel>
       <JsonEditor key={key} value={additionalFO} onChange={handleChange} />
+      {errMessages}
     </FormGroup>
   );
 }
