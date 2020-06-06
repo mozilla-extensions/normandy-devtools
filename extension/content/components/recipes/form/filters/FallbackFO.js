@@ -6,8 +6,9 @@ import JsonEditor from "devtools/components/common/JsonEditor";
 import {
   ACTION_UPDATE_DATA,
   ACTION_UPDATE_CLIENT_ERRORS,
+  ACTION_REMOVE_CLIENT_ERRORS,
   useRecipeDetailsData,
-  useRecipeDetailsClientErrors,
+  useRecipeDetailsErrors,
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
 
@@ -22,9 +23,10 @@ const KNOWN_FILTER_TYPES = [
 
 export default function FallbackFO() {
   const data = useRecipeDetailsData();
-  const errors = useRecipeDetailsClientErrors();
+  const errors = useRecipeDetailsErrors();
+  const { clientErrors } = errors;
   const dispatch = useRecipeDetailsDispatch();
-  const filter_object_errors = errors.filter_object || [];
+  const filter_object_errors = clientErrors.filter_object || [];
 
   const knownFO = [];
   const additionalFO = [];
@@ -42,6 +44,8 @@ export default function FallbackFO() {
   const notAnArray = "Filter Object(s) is not contained in an array";
 
   const validateFO = (value, err) => {
+    let action = ACTION_REMOVE_CLIENT_ERRORS;
+    let actionArgs = { name: "filter_object" };
     const foErrors = [];
     if (value) {
       if (err) {
@@ -53,9 +57,14 @@ export default function FallbackFO() {
       }
     }
 
+    if (foErrors) {
+      action = ACTION_UPDATE_CLIENT_ERRORS;
+      actionArgs = { ...actionArgs, errors: foErrors };
+    }
+
     dispatch({
-      type: ACTION_UPDATE_CLIENT_ERRORS,
-      clientErrors: { ...errors, filter_object: foErrors },
+      type: action,
+      ...actionArgs,
     });
   };
 
