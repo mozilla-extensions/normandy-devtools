@@ -1,4 +1,5 @@
 import faker from "faker";
+
 import { Factory, Field } from "./factory";
 
 export class ConsoleLogRecipeFactory extends Factory {

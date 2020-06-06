@@ -1,6 +1,6 @@
 // @ts-nocheck
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import {
   Col,
   ControlLabel,
@@ -16,14 +16,14 @@ import {
   TagPicker,
 } from "rsuite";
 
+import JsonEditor from "devtools/components/common/JsonEditor";
+import InputField from "devtools/components/recipes/form/arguments/fields/InputField";
+import ToggleField from "devtools/components/recipes/form/arguments/fields/ToggleField";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
-import ToggleField from "devtools/components/recipes/form/arguments/fields/ToggleField";
-import InputField from "devtools/components/recipes/form/arguments/fields/InputField";
-import JsonEditor from "devtools/components/common/JsonEditor";
 
 export default function MessagingExperiment() {
   return (

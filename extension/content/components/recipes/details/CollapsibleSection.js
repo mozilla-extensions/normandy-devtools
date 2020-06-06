@@ -1,5 +1,5 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { Icon, IconButton } from "rsuite";
 
 export default function CollapsibleSection({

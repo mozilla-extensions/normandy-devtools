@@ -1,4 +1,5 @@
 import React from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import {
   HashRouter,
   Route,
@@ -6,19 +7,18 @@ import {
   Switch,
   useRouteMatch,
 } from "react-router-dom";
-import { ErrorBoundary } from "react-error-boundary";
 
 import AppHeader from "devtools/components/common/AppHeader";
 import { AppSidebar } from "devtools/components/common/AppSidebar";
-import RecipesPage from "devtools/components/pages/RecipesPage";
+import AddonStudiesPage from "devtools/components/pages/AddonStudiesPage";
+import { ErrorFallbackPage } from "devtools/components/pages/ErrorFallbackPage";
 import FiltersPage from "devtools/components/pages/FiltersPage";
 import PrefStudiesPage from "devtools/components/pages/PrefStudiesPage";
-import AddonStudiesPage from "devtools/components/pages/AddonStudiesPage";
-import { EnvironmentProvider } from "devtools/contexts/environment";
-import RecipeFormPage from "devtools/components/pages/RecipeFormPage";
-import { useHistoryRecorder } from "devtools/hooks/urls";
 import RecipeDetailsPage from "devtools/components/pages/RecipeDetailsPage";
-import { ErrorFallbackPage } from "devtools/components/pages/ErrorFallbackPage";
+import RecipeFormPage from "devtools/components/pages/RecipeFormPage";
+import RecipesPage from "devtools/components/pages/RecipesPage";
+import { EnvironmentProvider } from "devtools/contexts/environment";
+import { useHistoryRecorder } from "devtools/hooks/urls";
 
 export default function App() {
   return (
@@ -53,6 +53,11 @@ function Page() {
             exact
             component={RecipeFormPage}
             path={`${match.path}/recipes/new`}
+          />
+          <Route
+            exact
+            component={RecipeFormPage}
+            path={`${match.path}/recipes/:recipeId/clone`}
           />
           <Route
             exact

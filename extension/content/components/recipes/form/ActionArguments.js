@@ -1,20 +1,22 @@
 import React from "react";
 
-import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
-import FallbackEditor from "devtools/components/recipes/form/arguments/FallbackEditor";
 import BranchedAddon from "devtools/components/recipes/form/arguments/BranchedAddon";
-import PreferenceExperiment from "devtools/components/recipes/form/arguments/PreferenceExperiment";
-import MessagingExperiment from "devtools/components/recipes/form/arguments/MessagingExperiment";
 import ConsoleLog from "devtools/components/recipes/form/arguments/ConsoleLog";
+import FallbackEditor from "devtools/components/recipes/form/arguments/FallbackEditor";
+import MessagingExperiment from "devtools/components/recipes/form/arguments/MessagingExperiment";
+import MultiPreference from "devtools/components/recipes/form/arguments/MultiPreference";
 import OptOutStudy from "devtools/components/recipes/form/arguments/OptOutStudy";
-import PreferenceRollout from "devtools/components/recipes/form/arguments/PreferenceRollout";
+import PreferenceExperiment from "devtools/components/recipes/form/arguments/PreferenceExperiment";
 import PreferenceRollback from "devtools/components/recipes/form/arguments/PreferenceRollback";
+import PreferenceRollout from "devtools/components/recipes/form/arguments/PreferenceRollout";
 import ShowHeartBeat from "devtools/components/recipes/form/arguments/ShowHeartBeat";
+import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
 
 const ARGUMENTS_FIELDS_MAPPING = {
   "branched-addon-study": BranchedAddon,
   "console-log": ConsoleLog,
   "messaging-experiment": MessagingExperiment,
+  "multi-preference-experiment": MultiPreference,
   "opt-out-study": OptOutStudy,
   "preference-experiment": PreferenceExperiment,
   "preference-rollback": PreferenceRollback,
@@ -36,6 +38,13 @@ export const INITIAL_ACTION_ARGUMENTS = {
     isEnrollmentPaused: false,
     slug: "",
   },
+  "multi-preference-experiment": {
+    branches: [],
+    experimentDocumentUrl: "",
+    slug: "",
+    userFacingDescription: "",
+    userFacingName: "",
+  },
   "opt-out-study": {
     addonUrl: "",
     description: "",
@@ -47,7 +56,7 @@ export const INITIAL_ACTION_ARGUMENTS = {
     branches: [],
     experimentDocumentUrl: "",
     isEnrollmentPaused: false,
-    isHighVolume: false,
+    isHighPopulation: false,
     preferenceBranchType: "default",
     preferenceName: "",
     preferenceType: "boolean",

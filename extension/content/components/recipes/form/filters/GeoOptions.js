@@ -1,16 +1,16 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { Col, ControlLabel, FormGroup, Row, TagPicker } from "rsuite";
 
+import {
+  useEnvironmentState,
+  useSelectedNormandyEnvironmentAPI,
+} from "devtools/contexts/environment";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
-import {
-  useEnvironmentState,
-  useSelectedNormandyEnvironmentAPI,
-} from "devtools/contexts/environment";
 
 export default function GeoOptions() {
   const { selectedKey: environmentKey } = useEnvironmentState();

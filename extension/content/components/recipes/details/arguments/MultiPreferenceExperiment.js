@@ -1,22 +1,25 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { Panel, Tag } from "rsuite";
 
-import GenericArguments from "devtools/components/recipes/details/arguments/GenericArguments";
 import {
   booleanFormatter,
   multiColumnFormatter,
 } from "devtools/components/recipes/details/arguments/formatters";
+import GenericArguments from "devtools/components/recipes/details/arguments/GenericArguments";
 
 export default function MultiPreferenceExperiment({ data }) {
   return (
     <GenericArguments
       data={data.arguments}
       formatters={{
-        "row-1": multiColumnFormatter(["isEnrollmentPaused", "isHighVolume"], {
-          isEnrollmentPaused: booleanFormatter,
-          isHighVolume: booleanFormatter,
-        }),
+        "row-1": multiColumnFormatter(
+          ["isEnrollmentPaused", "isHighPopulation"],
+          {
+            isEnrollmentPaused: booleanFormatter,
+            isHighPopulation: booleanFormatter,
+          },
+        ),
         branches(key, value) {
           const panels = value.map((branch, index) => {
             const preferences = Object.entries(branch.preferences);
@@ -116,7 +119,7 @@ export default function MultiPreferenceExperiment({ data }) {
           );
         },
       }}
-      omit={["isEnrollmentPaused", "isHighVolume"]}
+      omit={["isEnrollmentPaused", "isHighPopulation"]}
       ordering={[
         "userFacingName",
         "userFacingDescription",

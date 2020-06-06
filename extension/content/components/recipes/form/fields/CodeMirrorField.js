@@ -1,13 +1,13 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { ControlLabel, FormGroup, HelpBlock } from "rsuite";
 
+import CodeMirror from "devtools/components/common/CodeMirror";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
-import CodeMirror from "devtools/components/common/CodeMirror";
 
 export default function CodeMirrorField({ name, label, options, required }) {
   const data = useRecipeDetailsData();

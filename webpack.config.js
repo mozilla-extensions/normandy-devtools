@@ -1,18 +1,18 @@
 /* eslint-env node */
+const { execSync } = require("child_process");
 const path = require("path");
 const process = require("process");
-const { execSync } = require("child_process");
 
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const Dotenv = require("dotenv-webpack");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
 const GenerateJsonPlugin = require("generate-json-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require("webpack");
 const FixStyleOnlyEntriesPlugin = require("webpack-fix-style-only-entries");
 
-const packageData = require("./package.json");
 const manifest = require("./extension/manifest.json");
+const packageData = require("./package.json");
 
 const cacheLoader = {
   loader: "cache-loader",
@@ -38,10 +38,18 @@ module.exports = async (env, argv = {}) => {
       silent: true,
       systemvars: true,
     }),
-    new CopyWebpackPlugin([
-      { from: "extension/experiments/", to: "experiments/" },
-      { from: "extension/images/", to: "images/" },
-    ]),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: "extension/experiments/",
+          to: "experiments/",
+          globOptions: {
+            ignore: ["**/.eslintrc.js"],
+          },
+        },
+        { from: "extension/images/", to: "images/" },
+      ],
+    }),
     new HtmlWebpackPlugin({
       title: "Normandy Devtools",
       favicon: path.resolve(__dirname, "extension/images/favicon.png"),

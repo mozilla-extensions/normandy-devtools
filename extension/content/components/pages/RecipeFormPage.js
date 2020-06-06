@@ -1,17 +1,17 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 
-import {
-  INITIAL_RECIPE_DATA,
-  RecipeDetailsProvider,
-} from "devtools/contexts/recipeDetails";
+import RecipeForm from "devtools/components/recipes/form/RecipeForm";
+import RecipeFormHeader from "devtools/components/recipes/form/RecipeFormHeader";
 import {
   useEnvironmentState,
   useSelectedExperimenterEnvironmentAPI,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
-import RecipeForm from "devtools/components/recipes/form/RecipeForm";
-import RecipeFormHeader from "devtools/components/recipes/form/RecipeFormHeader";
+import {
+  INITIAL_RECIPE_DATA,
+  RecipeDetailsProvider,
+} from "devtools/contexts/recipeDetails";
 
 export default function RecipeFormPage() {
   const { selectedKey: environmentKey } = useEnvironmentState();
