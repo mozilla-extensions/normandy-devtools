@@ -23,8 +23,7 @@ const KNOWN_FILTER_TYPES = [
 
 export default function FallbackFO() {
   const data = useRecipeDetailsData();
-  const errors = useRecipeDetailsErrors();
-  const { clientErrors } = errors;
+  const { clientErrors } = useRecipeDetailsErrors();
   const dispatch = useRecipeDetailsDispatch();
   const filter_object_errors = clientErrors.filter_object || [];
 
@@ -44,8 +43,6 @@ export default function FallbackFO() {
   const notAnArray = "Filter Object(s) is not contained in an array";
 
   const validateFO = (value, err) => {
-    let action = ACTION_REMOVE_CLIENT_ERRORS;
-    let actionArgs = { name: "filter_object" };
     const foErrors = [];
     if (value) {
       if (err) {
@@ -57,6 +54,8 @@ export default function FallbackFO() {
       }
     }
 
+    let action = ACTION_REMOVE_CLIENT_ERRORS;
+    let actionArgs = { name: "filter_object" };
     if (foErrors) {
       action = ACTION_UPDATE_CLIENT_ERRORS;
       actionArgs = { ...actionArgs, errors: foErrors };
