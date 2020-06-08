@@ -15,7 +15,7 @@ export default function JsonEditor({ value, onChange, options, ...props }) {
       const parsed = JSON.parse(value);
       onChange(parsed);
     } catch (err) {
-      onChange(null);
+      onChange(value, err);
     }
   }
 

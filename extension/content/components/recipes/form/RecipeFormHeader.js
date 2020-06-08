@@ -7,13 +7,17 @@ import {
   useEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
-import { useRecipeDetailsState } from "devtools/contexts/recipeDetails";
+import {
+  useRecipeDetailsState,
+  useRecipeDetailsErrors,
+} from "devtools/contexts/recipeDetails";
 
 export default function RecipeFormHeader() {
   const { recipeId } = useParams();
   const { selectedKey: environmentKey } = useEnvironmentState();
   const history = useHistory();
   const { data, importInstructions } = useRecipeDetailsState();
+  const { clientErrors } = useRecipeDetailsErrors();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
   const [showCommentModal, setShowCommentModal] = React.useState(false);
 
@@ -61,6 +65,8 @@ export default function RecipeFormHeader() {
     }
   };
 
+  const isSaveDisabled = Boolean(Object.keys(clientErrors).length);
+
   return (
     <div className="page-header">
       <div className="flex-grow-1">
@@ -76,6 +82,7 @@ export default function RecipeFormHeader() {
         <IconButton
           appearance="primary"
           className="ml-1"
+          disabled={isSaveDisabled}
           icon={<Icon icon="save" />}
           onClick={handleSaveClick}
         >

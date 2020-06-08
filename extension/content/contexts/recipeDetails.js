@@ -10,6 +10,7 @@ export const INITIAL_RECIPE_DATA = {
 const initialState = {
   data: INITIAL_RECIPE_DATA,
   importInstructions: "",
+  clientErrors: {},
 };
 
 export const recipeDetailsContext = React.createContext(initialState);
@@ -17,6 +18,8 @@ const { Provider } = recipeDetailsContext;
 
 export const ACTION_UPDATE_DATA = "UPDATE_DATA";
 export const ACTION_UPDATE_IMPORT_INSTRUCTIONS = "UPDATE_IMPORT_INSTRUCTIONS";
+export const ACTION_UPDATE_CLIENT_ERRORS = "UPDATE_CLIENT_ERRORS";
+export const ACTION_REMOVE_CLIENT_ERRORS = "REMOVE_CLIENT_ERRORS";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -30,6 +33,22 @@ function reducer(state, action) {
       return {
         ...state,
         importInstructions: action.importInstructions,
+      };
+
+    case ACTION_UPDATE_CLIENT_ERRORS:
+      return {
+        ...state,
+        clientErrors: {
+          ...state.clientErrors,
+          [action.name]: action.errors,
+        },
+      };
+
+    case ACTION_REMOVE_CLIENT_ERRORS:
+      const { [action.name]: _omit, ...clientErrors } = state.clientErrors;
+      return {
+        ...state,
+        clientErrors,
       };
 
     default:
@@ -83,4 +102,10 @@ export function useRecipeDetailsData() {
 export function useRecipeDetailsImportInstructions() {
   const { state } = React.useContext(recipeDetailsContext);
   return state.importInstructions;
+}
+
+export function useRecipeDetailsErrors() {
+  const { state } = React.useContext(recipeDetailsContext);
+  const { clientErrors } = state;
+  return { clientErrors };
 }
