@@ -11,6 +11,11 @@ import NormandyAPI from "devtools/utils/normandyApi";
 import App from "devtools/components/App";
 import { RecipeFactory } from "./factories/recipeFactory";
 import { ActionsResponse, FiltersFactory } from "./factories/filterFactory";
+import {
+  VersionFilterObjectFactory,
+  ChannelFilterObjectFactory,
+  BucketSampleFilterObjectFactory,
+} from "./factories/filterObjectFactory";
 
 describe("The `RecipeForm` component", () => {
   afterEach(() => {
@@ -83,14 +88,21 @@ describe("The `RecipeForm` component", () => {
   };
 
   const setup = () => {
+    const versions = VersionFilterObjectFactory.build(
+      {},
+      { generateVersionsCount: 2 },
+    );
+    const channels = ChannelFilterObjectFactory.build(
+      {},
+      { generateChannelsCount: 1 },
+    );
+    const sample = BucketSampleFilterObjectFactory.build();
+    const filterObject = [versions, sample, channels];
     const recipe = RecipeFactory.build(
       {},
       {
         actionName: "console-log",
-        generateFilterObjects: {
-          generateVersionCount: 2,
-          generateChannelCount: 1,
-        },
+        filterObject,
       },
     );
     const pageResponse = { results: [recipe] };

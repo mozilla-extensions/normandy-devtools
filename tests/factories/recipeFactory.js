@@ -1,21 +1,19 @@
 import faker from "faker";
 import { AutoIncrementField, Factory, SubFactory, Field } from "./factory";
-import {
-  versionFilterObjectFactory,
-  channelFilterObjectFactory,
-} from "./filterObjectFactory";
 
 export class RecipeFactory extends Factory {
   getFields() {
     return {
       id: new Field(faker.random.number),
       latest_revision: new SubFactory(RevisionFactory),
+      approved_revision: null,
     };
   }
 
   postGeneration() {
+    const { filterObject } = this.options;
     this.generateActionFields();
-    this.generateFilterObjects();
+    this.data.latest_revision.filter_object = filterObject;
   }
 
   generateActionFields() {
@@ -30,35 +28,6 @@ export class RecipeFactory extends Factory {
         ...this.data.latest_revision,
         arguments: actionArgs,
         action: ActionFactory.build({ name: actionName }),
-      };
-    }
-  }
-
-  generateFilterObjects() {
-    const { latest_revision } = this.data;
-    const { generateFilterObjects } = this.options;
-    const {
-      generateVersionCount,
-      generateChannelCount,
-    } = generateFilterObjects;
-
-    if (generateVersionCount) {
-      this.data.latest_revision = {
-        ...latest_revision,
-        filter_object: [
-          ...latest_revision.filter_object,
-          versionFilterObjectFactory.build({}, generateVersionCount),
-        ],
-      };
-    }
-
-    if (generateChannelCount) {
-      this.data.latest_revision = {
-        ...latest_revision,
-        filter_object: [
-          ...latest_revision.filter_object,
-          channelFilterObjectFactory.build({}, generateChannelCount),
-        ],
       };
     }
   }
