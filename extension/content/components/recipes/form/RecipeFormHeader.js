@@ -65,7 +65,7 @@ export default function RecipeFormHeader() {
     }
   };
 
-  const isSaveDisabled = Object.keys(clientErrors).length;
+  const isSaveDisabled = Boolean(Object.keys(clientErrors).length);
 
   return (
     <div className="page-header">
