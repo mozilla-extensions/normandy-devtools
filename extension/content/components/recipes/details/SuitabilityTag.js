@@ -4,8 +4,8 @@ import { useParams } from "react-router-dom";
 import { Icon, Popover, Tag, Whisper } from "rsuite";
 
 import { useEnvironmentState } from "devtools/contexts/environment";
-import { convertToV1Recipe } from "devtools/utils/recipes";
 import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
+import { convertToV1Recipe } from "devtools/utils/recipes";
 
 const { normandy } = browser.experiments;
 

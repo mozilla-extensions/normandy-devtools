@@ -1,19 +1,25 @@
+import PropTypes from "prop-types";
 import React from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Alert, Icon, IconButton } from "rsuite";
+import { Alert, Button, Icon, IconButton, Input, Modal } from "rsuite";
 
 import {
   useEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
-import { useRecipeDetailsState } from "devtools/contexts/recipeDetails";
+import {
+  useRecipeDetailsState,
+  useRecipeDetailsErrors,
+} from "devtools/contexts/recipeDetails";
 
 export default function RecipeFormHeader() {
   const { recipeId } = useParams();
   const { selectedKey: environmentKey } = useEnvironmentState();
   const history = useHistory();
   const { data, importInstructions } = useRecipeDetailsState();
+  const { clientErrors } = useRecipeDetailsErrors();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
+  const [showCommentModal, setShowCommentModal] = React.useState(false);
 
   const handleSaveClick = () => {
     try {
@@ -21,25 +27,34 @@ export default function RecipeFormHeader() {
         throw Error("Import Instructions not empty!");
       }
 
-      const { comment: _omitComment, action, ...cleanedData } = data;
-
-      const requestSave = normandyApi.saveRecipe(recipeId, {
-        ...cleanedData,
-        action_id: action.id,
-      });
-
-      requestSave
-        .then((savedRecipe) => {
-          history.push(`/${environmentKey}/recipes/${savedRecipe.id}`);
-          Alert.success("Changes Saved");
-        })
-        .catch((err) => {
-          console.warn(err.message, err.data);
-          Alert.error(`An Error Occurred: ${JSON.stringify(err.data)}`, 5000);
-        });
+      setShowCommentModal(true);
     } catch (err) {
       Alert.error(err.message);
     }
+  };
+
+  const saveRecipe = (comment) => {
+    const { action, ...cleanedData } = data;
+    let id;
+    if (!history.location.pathname.includes("clone")) {
+      id = recipeId;
+    }
+
+    const requestSave = normandyApi.saveRecipe(id, {
+      ...cleanedData,
+      comment,
+      action_id: action.id,
+    });
+
+    requestSave
+      .then((savedRecipe) => {
+        history.push(`/${environmentKey}/recipes/${savedRecipe.id}`);
+        Alert.success("Changes Saved");
+      })
+      .catch((err) => {
+        console.warn(err.message, err.data);
+        Alert.error(`An Error Occurred: ${JSON.stringify(err.data)}`, 5000);
+      });
   };
 
   const handleBackClick = () => {
@@ -49,6 +64,8 @@ export default function RecipeFormHeader() {
       history.push(`/${environmentKey}/recipes`);
     }
   };
+
+  const isSaveDisabled = Boolean(Object.keys(clientErrors).length);
 
   return (
     <div className="page-header">
@@ -65,12 +82,62 @@ export default function RecipeFormHeader() {
         <IconButton
           appearance="primary"
           className="ml-1"
+          disabled={isSaveDisabled}
           icon={<Icon icon="save" />}
           onClick={handleSaveClick}
         >
           Save
         </IconButton>
       </div>
+      <SaveModal
+        setShowModal={setShowCommentModal}
+        show={showCommentModal}
+        onSave={saveRecipe}
+      />
     </div>
   );
 }
+
+function SaveModal(props) {
+  const { show, setShowModal, onSave } = props;
+  const [comment, setComment] = React.useState("");
+
+  const handleSaveClick = () => {
+    onSave(comment);
+    closeModal();
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  return (
+    <Modal show={show} onHide={closeModal}>
+      <Modal.Header>
+        <Modal.Title>Save Recipe</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Input
+          componentClass="textarea"
+          placeholder="Please describe the changes you are making&hellip;"
+          value={comment}
+          onChange={setComment}
+        />
+      </Modal.Body>
+      <Modal.Footer>
+        <Button appearance="primary" onClick={handleSaveClick}>
+          Save
+        </Button>
+        <Button appearance="subtle" onClick={closeModal}>
+          Cancel
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+}
+
+SaveModal.propTypes = {
+  onSave: PropTypes.func,
+  setShowModal: PropTypes.func,
+  show: PropTypes.bool,
+};

@@ -1,9 +1,9 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { Tag } from "rsuite";
 
-import GenericArguments from "devtools/components/recipes/details/arguments/GenericArguments";
 import { tableFormatter } from "devtools/components/recipes/details/arguments/formatters";
+import GenericArguments from "devtools/components/recipes/details/arguments/GenericArguments";
 
 export default function PreferenceRollout({ data }) {
   return (

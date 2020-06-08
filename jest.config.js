@@ -9,7 +9,8 @@ module.exports = {
       networkStatus: {},
     },
   },
-  setupFiles: ["<rootDir>/tests/conftests.js"],
+  setupFiles: ["<rootDir>/tests/jest.setup.js"],
+  setupFilesAfterEnv: ["<rootDir>/tests/jest-env.setup.js"],
   transform: {
     "^.+\\.[jt]sx?$": "babel-jest",
   },
@@ -17,4 +18,6 @@ module.exports = {
     "^devtools/(.*)$": "<rootDir>/extension/content/$1",
     "\\.(less|css)$": "identity-obj-proxy",
   },
+  collectCoverage: true,
+  collectCoverageFrom: ["<rootDir>/extension/content/**/*.{js,ts,tsx}"],
 };

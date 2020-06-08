@@ -4,3 +4,4 @@ web-ext-artifacts/
 yarn-error.log
 .env*
 .webpack-cache
+coverage/

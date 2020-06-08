@@ -1,6 +1,6 @@
 // @ts-nocheck
-import React, { useState } from "react";
 import PropTypes from "prop-types";
+import React, { useState } from "react";
 
 import CodeMirror from "devtools/components/common/CodeMirror";
 
@@ -15,7 +15,7 @@ export default function JsonEditor({ value, onChange, options, ...props }) {
       const parsed = JSON.parse(value);
       onChange(parsed);
     } catch (err) {
-      onChange(null);
+      onChange(value, err);
     }
   }
 

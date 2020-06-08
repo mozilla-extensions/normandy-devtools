@@ -1,5 +1,6 @@
 import React from "react";
 import { Tag } from "rsuite";
+
 import { splitCamelCase } from "devtools/utils/helpers";
 
 export function multiColumnFormatter(fields = [], formatters = {}) {

@@ -1,6 +1,6 @@
 import React from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Icon, IconButton } from "rsuite";
+import { Alert, Button, Icon, IconButton, Popover, Whisper } from "rsuite";
 
 import {
   useSelectedEnvironmentState,
@@ -22,9 +22,16 @@ export default function DetailsHeader() {
   } = useSelectedEnvironmentState();
   const history = useHistory();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
+  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
 
   const handleEditClick = () => {
     history.push(`/${environmentKey}/recipes/${recipeId}/edit`);
+  };
+
+  const handleCopyClick = () => {
+    history.push({
+      pathname: `/${environmentKey}/recipes/${recipeId}/clone`,
+    });
   };
 
   const handleBackClick = () => {
@@ -32,30 +39,54 @@ export default function DetailsHeader() {
   };
 
   const handleRequestApprovalClick = async () => {
-    const approvalRequest = await normandyApi.requestApproval(data.id);
-    dispatch({
-      data: {
-        ...data,
-        approval_request: approvalRequest,
-      },
-      type: ACTION_UPDATE_DATA,
-    });
+    setIsButtonLoading(true);
+    try {
+      const approvalRequest = await normandyApi.requestApproval(data.id);
+      dispatch({
+        data: {
+          ...data,
+          approval_request: approvalRequest,
+        },
+        type: ACTION_UPDATE_DATA,
+      });
+    } catch (err) {
+      console.warn(err.message, err.data);
+      Alert.error(`An Error Occurred: ${err.message}`, 5000);
+    } finally {
+      setIsButtonLoading(false);
+    }
   };
 
   const handleEnableClick = async () => {
-    const updatedRecipe = await normandyApi.enableRecipe(data.recipe.id);
-    dispatch({
-      data: updatedRecipe.approved_revision,
-      type: ACTION_UPDATE_DATA,
-    });
+    setIsButtonLoading(true);
+    try {
+      const updatedRecipe = await normandyApi.enableRecipe(data.recipe.id);
+      dispatch({
+        data: updatedRecipe.approved_revision,
+        type: ACTION_UPDATE_DATA,
+      });
+    } catch (err) {
+      console.warn(err.message, err.data);
+      Alert.error(`An Error Occurred: ${err.message}`, 5000);
+    } finally {
+      setIsButtonLoading(false);
+    }
   };
 
   const handleDisableClick = async () => {
-    const updatedRecipe = await normandyApi.disableRecipe(data.recipe.id);
-    dispatch({
-      data: updatedRecipe.approved_revision,
-      type: ACTION_UPDATE_DATA,
-    });
+    setIsButtonLoading(true);
+    try {
+      const updatedRecipe = await normandyApi.disableRecipe(data.recipe.id);
+      dispatch({
+        data: updatedRecipe.approved_revision,
+        type: ACTION_UPDATE_DATA,
+      });
+    } catch (err) {
+      console.warn(err.message, err.data);
+      Alert.error(`An Error Occurred: ${JSON.stringify(err.message)}`, 5000);
+    } finally {
+      setIsButtonLoading(false);
+    }
   };
 
   let viewExperimentButton = null;
@@ -81,6 +112,7 @@ export default function DetailsHeader() {
         <IconButton
           className="ml-1"
           icon={<Icon icon="question-circle2" />}
+          loading={isButtonLoading}
           onClick={handleRequestApprovalClick}
         >
           Request Approval
@@ -93,6 +125,7 @@ export default function DetailsHeader() {
             className="ml-1"
             color="red"
             icon={<Icon icon="close-circle" />}
+            loading={isButtonLoading}
             onClick={handleDisableClick}
           >
             Disable
@@ -104,6 +137,7 @@ export default function DetailsHeader() {
             className="ml-1"
             color="green"
             icon={<Icon icon="check-circle" />}
+            loading={isButtonLoading}
             onClick={handleEnableClick}
           >
             Enable
@@ -136,6 +170,19 @@ export default function DetailsHeader() {
         >
           Edit Recipe
         </IconButton>
+        <Whisper
+          placement="bottomEnd"
+          speaker={
+            <Popover>
+              <Button appearance="subtle" onClick={handleCopyClick}>
+                Clone Experiment
+              </Button>
+            </Popover>
+          }
+          trigger="click"
+        >
+          <IconButton className="ml-1" icon={<Icon icon="ellipsis-h" />} />
+        </Whisper>
       </div>
     </div>
   );

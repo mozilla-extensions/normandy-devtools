@@ -1,22 +1,23 @@
 actions:
   eslint:
     description: eslint
-    run: yarn eslint {files}
-    fix: yarn eslint --fix {files}
+    run: ./node_modules/.bin/eslint --color --max-warnings 0 {files}
+    fix: ./node_modules/.bin/eslint --color --max-warnings 0 --fix {files}
     include:
       - "*.js"
     exclude:
       - ".eslintrc.js"
       - ".prettierrc.js"
   typescript:
-    description: Typescript type checking
-    run: yarn tsc --noEmit --project tsconfig.json
+    description: tsc-type-checking
+    run: ./node_modules/.bin/tsc --noEmit --project tsconfig.json
     include:
       - "extension/content/*.js"
-      - "extension/content/*.ts"
-      - "extension/content/*.tsx"
+      - "*.ts"
+      - "*.tsx"
   stylelint:
-    run: yarn stylelint {files}
+    run: ./node_modules/.bin/stylelint {files}
+    fix: ./node_modules/.bin/stylelint {files} --fix
     include:
       - "*.css"
       - "*.less"

@@ -1,15 +1,15 @@
 // @ts-nocheck
+import auth0 from "auth0-js";
 import PropTypes from "prop-types";
 import React from "react";
 import { Route, Redirect, Switch, useParams } from "react-router-dom";
-import auth0 from "auth0-js";
 
 import { DEFAULT_ENV, ENVIRONMENTS } from "devtools/config";
-import NormandyAPI from "devtools/utils/normandyApi";
-import ExperimenterAPI from "devtools/utils/experimenterApi";
 import { generateNonce, normalizeErrorObject } from "devtools/utils/auth0";
-import { MINUTE, SECOND } from "devtools/utils/timeConstants";
+import ExperimenterAPI from "devtools/utils/experimenterApi";
 import { delay } from "devtools/utils/helpers";
+import NormandyAPI from "devtools/utils/normandyApi";
+import { MINUTE, SECOND } from "devtools/utils/timeConstants";
 
 const REFRESH_THRESHOLD_MS = 10 * MINUTE;
 
