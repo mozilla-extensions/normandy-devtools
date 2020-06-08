@@ -9723,10 +9723,10 @@ rc-animate@^3.1.0:
     raf "^3.4.0"
     rc-util "^5.0.1"
 
-rc-tree@3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/rc-tree/-/rc-tree-3.3.0.tgz#9bd839f49931b575a22e2385c5dbdd2edd7a4a4b"
-  integrity sha512-0j6xlAAIresiuCIcooEcg8s3IdQNvyvcywQTiU3yE5MeEnAC9qj0EsMrwMz7iaeei03f7kdh9PNxScmhfBO+KA==
+rc-tree@3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/rc-tree/-/rc-tree-3.3.1.tgz#1b656ded2a8447bc8a7cae18e6cd97f5b85bad0b"
+  integrity sha512-DGyVZN4HRSrmFErn68KOISIl3z0R9EjeNyZE0sgAaa5oqpQDAEK78/lYf5k3rot1N/iFAEJKaTRJfM7eIdWGwg==
   dependencies:
     "@babel/runtime" "^7.10.1"
     classnames "2.x"
