@@ -1,4 +1,5 @@
 import faker from "faker";
+
 import { Factory } from "./factory";
 
 export class VersionFilterObjectFactory extends Factory {

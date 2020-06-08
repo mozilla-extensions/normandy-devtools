@@ -34,7 +34,7 @@ export default function JsonEditor({ value, onChange, options, ...props }) {
 }
 
 JsonEditor.propTypes = {
-  value: PropTypes.object,
+  value: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   onChange: PropTypes.func.isRequired,
   options: PropTypes.object,
 };

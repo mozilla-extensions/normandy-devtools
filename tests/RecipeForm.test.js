@@ -1,4 +1,3 @@
-import React from "react";
 import {
   render,
   cleanup,
@@ -6,16 +5,19 @@ import {
   fireEvent,
   within,
 } from "@testing-library/react";
+import React from "react";
+
 import "@testing-library/jest-dom/extend-expect";
-import NormandyAPI from "devtools/utils/normandyApi";
 import App from "devtools/components/App";
-import { RecipeFactory } from "./factories/recipeFactory";
+import NormandyAPI from "devtools/utils/normandyApi";
+
 import { ActionsResponse, FiltersFactory } from "./factories/filterFactory";
 import {
   VersionFilterObjectFactory,
   ChannelFilterObjectFactory,
   BucketSampleFilterObjectFactory,
 } from "./factories/filterObjectFactory";
+import { RecipeFactory } from "./factories/recipeFactory";
 
 describe("The `RecipeForm` component", () => {
   afterEach(() => {
@@ -123,7 +125,7 @@ describe("The `RecipeForm` component", () => {
 
     jest
       .spyOn(NormandyAPI.prototype, "saveRecipe")
-      .mockImplementation(ActionsResponse());
+      .mockImplementation(() => Promise.resolve(jest.fn()));
 
     jest
       .spyOn(NormandyAPI.prototype, "fetchRecipe")
@@ -227,7 +229,15 @@ describe("The `RecipeForm` component", () => {
     fireEvent.change(branchNameInput, { target: { value: "branch1" } });
     fireEvent.change(valueInput, { target: { value: "pref value" } });
 
+    getByText("Save");
     fireEvent.click(getByText("Save"));
+
+    const modalDialog = getAllByRole("dialog")[0];
+    const commentInput = modalDialog.querySelector("textArea");
+    const saveMessage = "Created Recipe";
+    fireEvent.change(commentInput, { target: { value: saveMessage } });
+
+    fireEvent.click(within(modalDialog).getByText("Save"));
 
     expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(undefined, {
       action_id: 3,
@@ -241,12 +251,13 @@ describe("The `RecipeForm` component", () => {
         ],
         experimentDocumentUrl: "https://example.com",
         isEnrollmentPaused: true,
-        isHighVolume: true,
+        isHighPopulation: true,
         preferenceBranchType: "user",
         preferenceName: "pref1.name",
         preferenceType: "string",
         slug: "experimenter-slug-field",
       },
+      comment: saveMessage,
       experimenter_slug: "the-experimenter-slug",
       filter_object: [
         { input: ["normandy.recipe.id"], rate: 0.05, type: "stableSample" },
@@ -305,6 +316,13 @@ describe("The `RecipeForm` component", () => {
 
     fireEvent.click(getByText("Save"));
 
+    const modalDialog = getAllByRole("dialog")[0];
+    const commentInput = modalDialog.querySelector("textArea");
+    const saveMessage = "Edited Recipe";
+    fireEvent.change(commentInput, { target: { value: saveMessage } });
+
+    fireEvent.click(within(modalDialog).getByText("Save"));
+
     const { latest_revision } = recipeData;
 
     /* eslint-disable prefer-const */
@@ -320,6 +338,7 @@ describe("The `RecipeForm` component", () => {
       ...updatedRecipeData,
       experimenter_slug,
       name,
+      comment: saveMessage,
       action_id: action.id,
       arguments: { ...updatedRecipeData.arguments, message },
       filter_object: updatedRecipeData.filter_object.map((fo) => {

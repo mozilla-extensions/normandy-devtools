@@ -1,4 +1,5 @@
 import faker from "faker";
+
 import { AutoIncrementField, Factory, SubFactory, Field } from "./factory";
 
 export class RecipeFactory extends Factory {
