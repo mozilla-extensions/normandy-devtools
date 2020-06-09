@@ -12,8 +12,8 @@ export class VersionFilterObjectFactory extends Factory {
 
   postGeneration() {
     const versionSet = new Set();
-    const { generateVersionsCount } = this.options;
-    for (let i = 0; i < generateVersionsCount; i++) {
+    const { generateVersionsCount = 0 } = this.options;
+    while (versionSet.size < generateVersionsCount) {
       versionSet.add(faker.random.number({ min: 40, max: 100 }));
     }
 
