@@ -56,7 +56,7 @@ export default function FallbackFO() {
 
     let action = ACTION_REMOVE_CLIENT_ERRORS;
     let actionArgs = { name: "filter_object" };
-    if (foErrors) {
+    if (foErrors.length) {
       action = ACTION_UPDATE_CLIENT_ERRORS;
       actionArgs = { ...actionArgs, errors: foErrors };
     }
