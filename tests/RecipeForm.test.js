@@ -40,6 +40,7 @@ describe("The `RecipeForm` component", () => {
     const versionForm = findForm(formGroups, "Version");
     const countriesForm = findForm(formGroups, "Countries");
     const localesForm = findForm(formGroups, "Locales");
+    const fallbackFOForm = findForm(formGroups, "Additional Filter Objects");
     const actionForm = findForm(formGroups, "Action");
     return {
       nameForm,
@@ -49,6 +50,7 @@ describe("The `RecipeForm` component", () => {
       versionForm,
       countriesForm,
       localesForm,
+      fallbackFOForm,
       actionForm,
     };
   };
@@ -351,6 +353,86 @@ describe("The `RecipeForm` component", () => {
 
         return fo;
       }),
+    };
+
+    expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(
+      recipeData.id.toString(),
+      updatedRecipeData,
+    );
+  });
+
+  it("save button is re-enabled when form errors are addressed", async () => {
+    const recipeData = setup();
+    const { getByText, getAllByRole } = await render(<App />);
+
+    fireEvent.click(getByText("Recipes"));
+
+    await waitFor(() => {
+      expect(getByText("Edit Recipe")).toBeInTheDocument();
+    });
+    fireEvent.click(getByText("Edit Recipe"));
+    await waitFor(() => {
+      expect(getByText("Experimenter Slug")).toBeInTheDocument();
+    });
+
+    const formGroups = getAllByRole("group");
+    const { fallbackFOForm } = getForms(formGroups);
+
+    const saveButton = getByText("Save");
+    expect(saveButton).not.toHaveAttribute("disabled");
+
+    const foCodeBlock = fallbackFOForm.querySelector("textarea");
+
+    const clipboardEvent = new Event("paste", {
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+    });
+
+    clipboardEvent.clipboardData = {
+      getData: () => "invalid json!",
+    };
+    foCodeBlock.dispatchEvent(clipboardEvent);
+
+    expect(getByText("[]invalid json!")).toBeInTheDocument();
+    expect(getByText("Filter Object(s) is not valid JSON")).toBeInTheDocument();
+    expect(
+      getByText("Filter Object(s) is not contained in an array"),
+    ).toBeInTheDocument();
+    expect(saveButton).toHaveAttribute("disabled");
+
+    //ctrl z... the paste
+    foCodeBlock.dispatchEvent(new Event("focus"));
+    foCodeBlock.dispatchEvent(
+      new KeyboardEvent("keydown", { keyCode: 90, ctrlKey: true }),
+    );
+
+    expect(getByText("[]")).toBeInTheDocument();
+    expect(saveButton).not.toHaveAttribute("disabled");
+
+    fireEvent.click(saveButton);
+
+    const modalDialog = getAllByRole("dialog")[0];
+    const commentInput = modalDialog.querySelector("textArea");
+    const saveMessage = "Edited Recipe";
+    fireEvent.change(commentInput, { target: { value: saveMessage } });
+
+    fireEvent.click(within(modalDialog).getByText("Save"));
+
+    const { latest_revision } = recipeData;
+
+    /* eslint-disable prefer-const */
+    let {
+      action,
+      comment: _omitComment,
+      ...updatedRecipeData
+    } = latest_revision;
+    /* eslint-enable prefer-const */
+
+    updatedRecipeData = {
+      ...updatedRecipeData,
+      comment: saveMessage,
+      action_id: action.id,
     };
 
     expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(
