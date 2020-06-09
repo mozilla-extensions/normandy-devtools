@@ -16,7 +16,6 @@ class RecipeListing extends React.PureComponent {
     environmentName: PropTypes.string,
     recipe: PropTypes.object.isRequired,
     copyRecipeToArbitrary: PropTypes.func.isRequired,
-    showRecipe: PropTypes.func,
   };
 
   constructor(props) {
@@ -148,10 +147,6 @@ class RecipeListing extends React.PureComponent {
         <Tag color="blue">{id}</Tag> {name}
       </>
     );
-  }
-
-  handleshowRecipeButton() {
-    this.props.showRecipe(this.props.recipe);
   }
 
   renderRecipeButtonToolBar() {
