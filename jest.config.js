@@ -1,6 +1,8 @@
 /* eslint-env node */
 module.exports = {
   globals: {
+    __BUILD__: false,
+    DEVELOPMENT: false,
     browser: {
       experiments: {},
       identity: {},
@@ -10,8 +12,7 @@ module.exports = {
   setupFiles: ["<rootDir>/tests/jest.setup.js"],
   setupFilesAfterEnv: ["<rootDir>/tests/jest-env.setup.js"],
   transform: {
-    "^.+\\.js$": "babel-jest",
-    "^.+\\.tsx?$": "ts-jest",
+    "^.+\\.[jt]sx?$": "babel-jest",
   },
   moduleNameMapper: {
     "^devtools/(.*)$": "<rootDir>/extension/content/$1",

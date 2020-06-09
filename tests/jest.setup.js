@@ -10,6 +10,7 @@ Object.defineProperty(global.self, "crypto", {
 browser.experiments.normandy = {
   checkRecipeFilter: () => null,
   runRecipe: () => null,
+  getRecipeSuitabilities: () => null,
 };
 
 browser.experiments.networking = {
