@@ -17,7 +17,11 @@ import {
   ChannelFilterObjectFactory,
   BucketSampleFilterObjectFactory,
 } from "./factories/filterObjectFactory";
-import { RecipeFactory } from "./factories/recipeFactory";
+import {
+  RecipeFactory,
+  MultiPrefBranchFactory,
+  MultiPreferenceFactory,
+} from "./factories/recipeFactory";
 
 describe("The `RecipeForm` component", () => {
   afterEach(() => {
@@ -91,24 +95,7 @@ describe("The `RecipeForm` component", () => {
     };
   };
 
-  const setup = () => {
-    const versions = VersionFilterObjectFactory.build(
-      {},
-      { generateVersionsCount: 2 },
-    );
-    const channels = ChannelFilterObjectFactory.build(
-      {},
-      { generateChannelsCount: 1 },
-    );
-    const sample = BucketSampleFilterObjectFactory.build();
-    const filterObject = [versions, sample, channels];
-    const recipe = RecipeFactory.build(
-      {},
-      {
-        actionName: "console-log",
-        filterObject,
-      },
-    );
+  const setup = (recipe) => {
     const pageResponse = { results: [recipe] };
     const filtersResponse = FiltersFactory.build(
       {},
@@ -132,12 +119,58 @@ describe("The `RecipeForm` component", () => {
     jest
       .spyOn(NormandyAPI.prototype, "fetchRecipe")
       .mockImplementation(() => Promise.resolve(recipe));
+  };
+
+  const consoleLogRecipeSetup = () => {
+    const versions = VersionFilterObjectFactory.build(
+      {},
+      { generateVersionsCount: 2 },
+    );
+    const channels = ChannelFilterObjectFactory.build(
+      {},
+      { generateChannelsCount: 1 },
+    );
+    const sample = BucketSampleFilterObjectFactory.build();
+    const filterObject = [versions, sample, channels];
+    return RecipeFactory.build(
+      {},
+      {
+        actionName: "console-log",
+        filterObject,
+      },
+    );
+  };
+
+  const multiprefRecipeSetUp = () => {
+    const versions = VersionFilterObjectFactory.build(
+      {},
+      { generateVersionsCount: 2 },
+    );
+    const recipe = RecipeFactory.build(
+      {},
+      {
+        actionName: "multi-preference-experiment",
+        filterObject: [versions],
+      },
+    );
+    const branch1 = MultiPrefBranchFactory.build(
+      {},
+      { generatePreferenceCount: 2 },
+    );
+    const branch2 = MultiPrefBranchFactory.build(
+      {},
+      { generatePreferenceCount: 1 },
+    );
+    const branches = [branch1, branch2];
+    const multiPrefArguments = MultiPreferenceFactory.build({ branches });
+    recipe.latest_revision.arguments = multiPrefArguments;
 
     return recipe;
   };
 
   it("creation recipe form", async () => {
-    setup();
+    const recipe = RecipeFactory.build();
+    setup(recipe);
     const { getByText, getAllByRole } = await render(<App />);
     fireEvent.click(getByText("Create Recipe"));
     await waitFor(() =>
@@ -277,7 +310,8 @@ describe("The `RecipeForm` component", () => {
   });
 
   it("edit recipe form", async () => {
-    const recipeData = setup();
+    const recipeData = consoleLogRecipeSetup();
+    setup(recipeData);
     const { getByText, getAllByRole } = await render(<App />);
 
     await waitFor(() => {
@@ -362,11 +396,11 @@ describe("The `RecipeForm` component", () => {
   });
 
   it("save button is re-enabled when form errors are addressed", async () => {
-    const recipeData = setup();
+    const recipeData = consoleLogRecipeSetup();
+    setup(recipeData);
     const { getByText, getAllByRole } = await render(<App />);
 
     fireEvent.click(getByText("Recipes"));
-
     await waitFor(() => {
       expect(getByText("Edit Recipe")).toBeInTheDocument();
     });
@@ -435,6 +469,180 @@ describe("The `RecipeForm` component", () => {
       action_id: action.id,
     };
 
+    expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(
+      recipeData.id.toString(),
+      updatedRecipeData,
+    );
+  });
+
+  it("should add missing isEnrollmentPaused to edited multipref experiment recipe ", async () => {
+    const recipeData = multiprefRecipeSetUp();
+    setup(recipeData);
+    const { getByText, getAllByRole } = await render(<App />);
+
+    fireEvent.click(getByText("Recipes"));
+
+    await waitFor(() => {
+      expect(getByText("Edit Recipe")).toBeInTheDocument();
+    });
+    fireEvent.click(getByText("Edit Recipe"));
+    await waitFor(() => {
+      expect(getByText("Experimenter Slug")).toBeInTheDocument();
+    });
+
+    let formGroups = getAllByRole("group");
+
+    const userFacingForm = findForm(formGroups, "User Facing Name");
+    const highVolumeForm = findForm(formGroups, "High Volume Recipe");
+    const BranchForm = findForm(formGroups, "Branches");
+
+    const userFacingInput = userFacingForm.querySelector("input");
+    const highVolumeToggle = within(highVolumeForm).getByRole("button");
+    const firstDeleteBranchButton = BranchForm.querySelectorAll("button")[0];
+
+    const userFacingName = "A new user facing name";
+
+    fireEvent.change(userFacingInput, { target: { value: userFacingName } });
+    fireEvent.click(highVolumeToggle);
+    fireEvent.click(firstDeleteBranchButton);
+
+    formGroups = getAllByRole("group");
+    const preferences = findForm(formGroups, "Preferences");
+
+    const prefButtons = preferences.querySelectorAll("button");
+    const prefDeleteButton = prefButtons[0];
+    fireEvent.click(prefDeleteButton);
+
+    fireEvent.click(getByText("Add Preference"));
+
+    formGroups = getAllByRole("group");
+    const prefForm = findForm(formGroups, "Preferences");
+
+    // find preference fields
+    let prefFieldForms = within(prefForm).getAllByRole("group");
+    const prefNameForm = findForm(prefFieldForms, "Name");
+    const prefBranchTypeForm = findForm(
+      prefFieldForms,
+      "Preference Branch Type",
+    );
+    const prefTypeForm = findForm(prefFieldForms, "Preference Type");
+    const prefNameInput = prefNameForm.querySelector("input");
+
+    const prefNameValue = "pref1";
+    const prefBranchTypeValue = "Default";
+    const prefTypeValue = "Integer";
+    const prefValueValue = 22;
+
+    fireEvent.change(prefNameInput, { target: { value: prefNameValue } });
+    fireEvent.click(within(prefBranchTypeForm).getByRole("combobox"));
+    fireEvent.click(getByText(prefBranchTypeValue));
+    fireEvent.click(within(prefTypeForm).getByRole("combobox"));
+    fireEvent.click(getByText(prefTypeValue));
+
+    prefFieldForms = within(prefForm).getAllByRole("group");
+    const prefValueForm = findForm(prefFieldForms, "Value");
+    const prefValueInput = prefValueForm.querySelector("input");
+
+    fireEvent.change(prefValueInput, { target: { value: prefValueValue } });
+
+    fireEvent.click(getByText("Save"));
+
+    const modalDialog = getAllByRole("dialog")[0];
+    const commentInput = modalDialog.querySelector("textArea");
+    const saveMessage = "Edited Recipe";
+    fireEvent.change(commentInput, { target: { value: saveMessage } });
+
+    fireEvent.click(within(modalDialog).getByText("Save"));
+
+    const { latest_revision } = recipeData;
+    /* eslint-disable prefer-const */
+    let {
+      action,
+      comment: _omitComment,
+      ...updatedRecipeData
+    } = latest_revision;
+    /* eslint-enable prefer-const */
+    const { branches } = updatedRecipeData.arguments;
+    const branch = branches[1];
+    const updatedBranches = [
+      {
+        ...branch,
+        preferences: {
+          [prefNameValue]: {
+            preferenceBranchType: "default",
+            preferenceType: "integer",
+            preferenceValue: prefValueValue,
+          },
+        },
+      },
+    ];
+    updatedRecipeData = {
+      ...updatedRecipeData,
+      comment: saveMessage,
+      action_id: action.id,
+      arguments: {
+        ...updatedRecipeData.arguments,
+        userFacingName,
+        isHighPopulation: true,
+        isEnrollmentPaused: false,
+        branches: updatedBranches,
+      },
+    };
+    expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(
+      recipeData.id.toString(),
+      updatedRecipeData,
+    );
+  });
+
+  it("should leave isEnrollmentPaused when it's already set ", async () => {
+    const recipeData = multiprefRecipeSetUp();
+    recipeData.latest_revision.arguments.isEnrollmentPaused = true;
+    setup(recipeData);
+    const { getByText, getAllByRole } = await render(<App />);
+
+    fireEvent.click(getByText("Recipes"));
+
+    await waitFor(() => {
+      expect(getByText("Edit Recipe")).toBeInTheDocument();
+    });
+    fireEvent.click(getByText("Edit Recipe"));
+    await waitFor(() => {
+      expect(getByText("Experimenter Slug")).toBeInTheDocument();
+    });
+
+    const formGroups = getAllByRole("group");
+    const highVolumeForm = findForm(formGroups, "High Volume Recipe");
+    const highVolumeToggle = within(highVolumeForm).getByRole("button");
+
+    fireEvent.click(highVolumeToggle);
+
+    fireEvent.click(getByText("Save"));
+
+    const modalDialog = getAllByRole("dialog")[0];
+    const commentInput = modalDialog.querySelector("textArea");
+    const saveMessage = "Edited Recipe";
+    fireEvent.change(commentInput, { target: { value: saveMessage } });
+
+    fireEvent.click(within(modalDialog).getByText("Save"));
+
+    const { latest_revision } = recipeData;
+    /* eslint-disable prefer-const */
+    let {
+      action,
+      comment: _omitComment,
+      ...updatedRecipeData
+    } = latest_revision;
+    /* eslint-enable prefer-const */
+
+    updatedRecipeData = {
+      ...updatedRecipeData,
+      comment: saveMessage,
+      action_id: action.id,
+      arguments: {
+        ...updatedRecipeData.arguments,
+        isHighPopulation: true,
+      },
+    };
     expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(
       recipeData.id.toString(),
       updatedRecipeData,

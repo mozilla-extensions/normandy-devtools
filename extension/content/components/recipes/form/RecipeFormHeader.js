@@ -3,6 +3,7 @@ import React from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Alert, Button, Icon, IconButton, Input, Modal } from "rsuite";
 
+import { INITIAL_ACTION_ARGUMENTS } from "devtools/components/recipes/form/ActionArguments";
 import {
   useEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
@@ -33,18 +34,34 @@ export default function RecipeFormHeader() {
     }
   };
 
+  const isEnrollmentPausedRequired = (action, data) => {
+    const { name } = action;
+    const { arguments: args } = data;
+    const intitation_action_args = INITIAL_ACTION_ARGUMENTS[name];
+    return (
+      !("isEnrollmentPaused" in args) &&
+      "isEnrollmentPaused" in intitation_action_args
+    );
+  };
+
   const saveRecipe = (comment) => {
     const { action, ...cleanedData } = data;
+
     let id;
     if (!history.location.pathname.includes("clone")) {
       id = recipeId;
     }
 
-    const requestSave = normandyApi.saveRecipe(id, {
-      ...cleanedData,
-      comment,
-      action_id: action.id,
-    });
+    let saveData = { ...cleanedData, comment, action_id: action.id };
+
+    if (isEnrollmentPausedRequired(action, cleanedData)) {
+      saveData = {
+        ...saveData,
+        arguments: { ...saveData.arguments, isEnrollmentPaused: false },
+      };
+    }
+
+    const requestSave = normandyApi.saveRecipe(id, saveData);
 
     requestSave
       .then((savedRecipe) => {
