@@ -9,6 +9,7 @@ XPCOMUtils.defineLazyModuleGetters(this, {
     "resource://gre/modules/components-utils/FilterExpressions.jsm",
   PreferenceExperiments: "resource://normandy/lib/PreferenceExperiments.jsm",
   RecipeRunner: "resource://normandy/lib/RecipeRunner.jsm",
+  Sampling: "resource://gre/modules/components-utils/Sampling.jsm",
   Services: "resource://gre/modules/Services.jsm",
 });
 
@@ -267,6 +268,10 @@ var normandy = class extends ExtensionAPI {
 
           async getAddonStudies() {
             return AddonStudies.getAll();
+          },
+
+          async bucketSample(input, start, count, total) {
+            return Sampling.bucketSample(input, start, count, total);
           },
         },
       },
