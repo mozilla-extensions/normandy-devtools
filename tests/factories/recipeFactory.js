@@ -25,6 +25,10 @@ export class RecipeFactory extends Factory {
         actionArgs = ConsoleLogArgumentFactory.build();
       }
 
+      if (actionName === "multi-preference-experiment") {
+        actionArgs = MultiPreferenceFactory.build();
+      }
+
       this.data.latest_revision = {
         ...this.data.latest_revision,
         arguments: actionArgs,
@@ -91,5 +95,54 @@ class ApprovalRequestFactory extends Factory {
 class ConsoleLogArgumentFactory extends Factory {
   getFields() {
     return { message: new Field(faker.lorem.words) };
+  }
+}
+
+export class MultiPreferenceFactory extends Factory {
+  getFields() {
+    return {
+      branches: [],
+      experimentDocumentUrl: new Field(faker.internet.url),
+      slug: new Field(faker.lorem.slug),
+      userFacingDescription: new Field(faker.lorem.sentence),
+      userFacingName: new Field(faker.lorem.words),
+    };
+  }
+}
+
+export class MultiPrefBranchFactory extends Factory {
+  getFields() {
+    return {
+      slug: new Field(faker.lorem.slug),
+      ratio: new Field(faker.random.number),
+      preferences: [],
+    };
+  }
+
+  postGeneration() {
+    const { generatePreferenceCount } = this.options;
+    const preferences = {};
+    const prefBranchOptions = ["user", "default"];
+    const prefTypeOptions = ["integer", "string", "boolean"];
+    const prefValueOptions = {
+      integer: faker.random.number(),
+      string: faker.random.word(),
+      boolean: faker.random.boolean(),
+    };
+
+    for (let i = 0; i < generatePreferenceCount; i++) {
+      const preferenceName = faker.lorem.slug();
+      const preferenceBranchType = faker.random.arrayElement(prefBranchOptions);
+      const preferenceType = faker.random.arrayElement(prefTypeOptions);
+      const preferenceValue = prefValueOptions[preferenceType];
+      const preference = {
+        preferenceBranchType,
+        preferenceType,
+        preferenceValue,
+      };
+      preferences[preferenceName] = preference;
+    }
+
+    this.data.preferences = preferences;
   }
 }
