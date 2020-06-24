@@ -6,9 +6,11 @@ import {
   within,
 } from "@testing-library/react";
 import React from "react";
-
 import "@testing-library/jest-dom/extend-expect";
+
 import App from "devtools/components/App";
+import RecipeFormPage from "devtools/components/pages/RecipeFormPage";
+import ExperimenterAPI from "devtools/utils/experimenterApi";
 import NormandyAPI from "devtools/utils/normandyApi";
 
 import { ActionsResponse, FiltersFactory } from "./factories/filterFactory";
@@ -24,11 +26,7 @@ import {
 } from "./factories/recipeFactory";
 
 describe("The `RecipeForm` component", () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-    cleanup();
-  });
-
+  afterEach(cleanup);
   const findForm = (formGroups, formName) => {
     const forms = formGroups.filter((form) =>
       within(form).queryByText(formName),
@@ -141,7 +139,7 @@ describe("The `RecipeForm` component", () => {
     );
   };
 
-  const multiprefRecipeSetUp = () => {
+  const multiprefExperimenterRecipeSetUp = () => {
     const versions = VersionFilterObjectFactory.build(
       {},
       { generateVersionsCount: 2 },
@@ -163,8 +161,8 @@ describe("The `RecipeForm` component", () => {
     );
     const branches = [branch1, branch2];
     const multiPrefArguments = MultiPreferenceFactory.build({ branches });
-    recipe.latest_revision.arguments = multiPrefArguments;
-
+    recipe.arguments = multiPrefArguments;
+    recipe.action_name = "multi-preference-experiment";
     return recipe;
   };
 
@@ -313,7 +311,6 @@ describe("The `RecipeForm` component", () => {
     const recipeData = consoleLogRecipeSetup();
     setup(recipeData);
     const { getByText, getAllByRole } = await render(<App />);
-
     await waitFor(() => {
       expect(getByText("Edit Recipe")).toBeInTheDocument();
     });
@@ -475,137 +472,28 @@ describe("The `RecipeForm` component", () => {
     );
   });
 
-  it("should add missing isEnrollmentPaused to edited multipref experiment recipe ", async () => {
-    const recipeData = multiprefRecipeSetUp();
+  it("should have isEnrollmentPaused set when import from experimenter", async () => {
+    const recipeData = multiprefExperimenterRecipeSetUp();
     setup(recipeData);
-    const { getByText, getAllByRole } = await render(<App />);
+    jest
+      .spyOn(ExperimenterAPI.prototype, "fetchRecipe")
+      .mockImplementation(() => Promise.resolve(recipeData));
+    jest
+      .spyOn(NormandyAPI.prototype, "fetchAllActions")
+      .mockImplementation(() =>
+        Promise.resolve([{ id: 1, name: "multi-preference-experiment" }]),
+      );
 
-    fireEvent.click(getByText("Recipes"));
-
-    await waitFor(() => {
-      expect(getByText("Edit Recipe")).toBeInTheDocument();
-    });
-    fireEvent.click(getByText("Edit Recipe"));
-    await waitFor(() => {
-      expect(getByText("Experimenter Slug")).toBeInTheDocument();
-    });
-
-    let formGroups = getAllByRole("group");
-
-    const userFacingForm = findForm(formGroups, "User Facing Name");
-    const highVolumeForm = findForm(formGroups, "High Volume Recipe");
-    const BranchForm = findForm(formGroups, "Branches");
-
-    const userFacingInput = userFacingForm.querySelector("input");
-    const highVolumeToggle = within(highVolumeForm).getByRole("button");
-    const firstDeleteBranchButton = BranchForm.querySelectorAll("button")[0];
-
-    const userFacingName = "A new user facing name";
-
-    fireEvent.change(userFacingInput, { target: { value: userFacingName } });
-    fireEvent.click(highVolumeToggle);
-    fireEvent.click(firstDeleteBranchButton);
-
-    formGroups = getAllByRole("group");
-    const preferences = findForm(formGroups, "Preferences");
-
-    const prefButtons = preferences.querySelectorAll("button");
-    const prefDeleteButton = prefButtons[0];
-    fireEvent.click(prefDeleteButton);
-
-    fireEvent.click(getByText("Add Preference"));
-
-    formGroups = getAllByRole("group");
-    const prefForm = findForm(formGroups, "Preferences");
-
-    // find preference fields
-    let prefFieldForms = within(prefForm).getAllByRole("group");
-    const prefNameForm = findForm(prefFieldForms, "Name");
-    const prefBranchTypeForm = findForm(
-      prefFieldForms,
-      "Preference Branch Type",
-    );
-    const prefTypeForm = findForm(prefFieldForms, "Preference Type");
-    const prefNameInput = prefNameForm.querySelector("input");
-
-    const prefNameValue = "pref1";
-    const prefBranchTypeValue = "Default";
-    const prefTypeValue = "Integer";
-    const prefValueValue = 22;
-
-    fireEvent.change(prefNameInput, { target: { value: prefNameValue } });
-    fireEvent.click(within(prefBranchTypeForm).getByRole("combobox"));
-    fireEvent.click(getByText(prefBranchTypeValue));
-    fireEvent.click(within(prefTypeForm).getByRole("combobox"));
-    fireEvent.click(getByText(prefTypeValue));
-
-    prefFieldForms = within(prefForm).getAllByRole("group");
-    const prefValueForm = findForm(prefFieldForms, "Value");
-    const prefValueInput = prefValueForm.querySelector("input");
-
-    fireEvent.change(prefValueInput, { target: { value: prefValueValue } });
-
-    fireEvent.click(getByText("Save"));
-
-    const modalDialog = getAllByRole("dialog")[0];
-    const commentInput = modalDialog.querySelector("textArea");
-    const saveMessage = "Edited Recipe";
-    fireEvent.change(commentInput, { target: { value: saveMessage } });
-
-    fireEvent.click(within(modalDialog).getByText("Save"));
-
-    const { latest_revision } = recipeData;
-    /* eslint-disable prefer-const */
-    let {
-      action,
-      comment: _omitComment,
-      ...updatedRecipeData
-    } = latest_revision;
-    /* eslint-enable prefer-const */
-    const { branches } = updatedRecipeData.arguments;
-    const branch = branches[1];
-    const updatedBranches = [
+    /* global renderWithContext */
+    const { getByText, getAllByRole } = await renderWithContext(
+      <RecipeFormPage />,
       {
-        ...branch,
-        preferences: {
-          [prefNameValue]: {
-            preferenceBranchType: "default",
-            preferenceType: "integer",
-            preferenceValue: prefValueValue,
-          },
-        },
+        route: "/prod/recipes/import/experimenter-slug",
+        path: "/prod/recipes/import/:experimenterSlug",
       },
-    ];
-    updatedRecipeData = {
-      ...updatedRecipeData,
-      comment: saveMessage,
-      action_id: action.id,
-      arguments: {
-        ...updatedRecipeData.arguments,
-        userFacingName,
-        isHighPopulation: true,
-        isEnrollmentPaused: false,
-        branches: updatedBranches,
-      },
-    };
-    expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(
-      recipeData.id.toString(),
-      updatedRecipeData,
     );
-  });
+    expect(ExperimenterAPI.prototype.fetchRecipe).toHaveBeenCalled();
 
-  it("should leave isEnrollmentPaused when it's already set ", async () => {
-    const recipeData = multiprefRecipeSetUp();
-    recipeData.latest_revision.arguments.isEnrollmentPaused = true;
-    setup(recipeData);
-    const { getByText, getAllByRole } = await render(<App />);
-
-    fireEvent.click(getByText("Recipes"));
-
-    await waitFor(() => {
-      expect(getByText("Edit Recipe")).toBeInTheDocument();
-    });
-    fireEvent.click(getByText("Edit Recipe"));
     await waitFor(() => {
       expect(getByText("Experimenter Slug")).toBeInTheDocument();
     });
@@ -625,26 +513,23 @@ describe("The `RecipeForm` component", () => {
 
     fireEvent.click(within(modalDialog).getByText("Save"));
 
-    const { latest_revision } = recipeData;
-    /* eslint-disable prefer-const */
-    let {
-      action,
+    /* eslint-disable prefer-const */ let {
+      action_name: _omitActionName,
       comment: _omitComment,
       ...updatedRecipeData
-    } = latest_revision;
-    /* eslint-enable prefer-const */
-
-    updatedRecipeData = {
+    } = recipeData;
+    /* eslint-enable prefer-const */ updatedRecipeData = {
       ...updatedRecipeData,
       comment: saveMessage,
-      action_id: action.id,
+      action_id: 1,
       arguments: {
         ...updatedRecipeData.arguments,
         isHighPopulation: true,
+        isEnrollmentPaused: false,
       },
     };
     expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(
-      recipeData.id.toString(),
+      undefined,
       updatedRecipeData,
     );
   });

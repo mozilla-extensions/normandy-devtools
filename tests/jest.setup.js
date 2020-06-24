@@ -1,6 +1,14 @@
 /* eslint-env node */
 import crypto from "crypto";
 
+import { render } from "@testing-library/react";
+import { createMemoryHistory } from "history";
+import PropTypes from "prop-types";
+import React from "react";
+import { Router, Route } from "react-router-dom";
+
+import { EnvironmentProvider } from "devtools/contexts/environment";
+
 Object.defineProperty(global.self, "crypto", {
   value: {
     getRandomValues: (arr) => crypto.randomBytes(arr.length),
@@ -35,3 +43,31 @@ global.document.body.createTextRange = () => ({
   getBoundingClientRect: () => {},
   getClientRects: () => [],
 });
+
+global.renderWithContext = (
+  ui,
+  {
+    route = "/",
+    path = "/",
+    history = createMemoryHistory({ initialEntries: [route] }),
+  } = {},
+) => {
+  const Wrapper = ({ children }) => (
+    <Router history={history}>
+      <EnvironmentProvider>
+        <Route path={path}>{children}</Route>
+      </EnvironmentProvider>
+    </Router>
+  );
+
+  Wrapper.propTypes = {
+    children: PropTypes.object,
+  };
+  return {
+    ...render(ui, { wrapper: Wrapper }),
+    // adding `history` to the returned utilities to allow us
+    // to reference it in our tests (just try to avoid using
+    // this to test implementation details).
+    history,
+  };
+};
