@@ -13,7 +13,11 @@ import RecipeFormPage from "devtools/components/pages/RecipeFormPage";
 import ExperimenterAPI from "devtools/utils/experimenterApi";
 import NormandyAPI from "devtools/utils/normandyApi";
 
-import { ActionsResponse, FiltersFactory } from "./factories/filterFactory";
+import {
+  ActionsResponse,
+  FiltersFactory,
+  ExtensionFactory,
+} from "./factories/filterFactory";
 import {
   VersionFilterObjectFactory,
   ChannelFilterObjectFactory,
@@ -21,12 +25,17 @@ import {
 } from "./factories/filterObjectFactory";
 import {
   RecipeFactory,
+  AddOnBranchFactory,
   MultiPrefBranchFactory,
   MultiPreferenceFactory,
 } from "./factories/recipeFactory";
 
 describe("The `RecipeForm` component", () => {
-  afterEach(cleanup);
+  afterEach(async () => {
+    await jest.clearAllMocks();
+    await cleanup();
+  });
+
   const findForm = (formGroups, formName) => {
     const forms = formGroups.filter((form) =>
       within(form).queryByText(formName),
@@ -93,6 +102,20 @@ describe("The `RecipeForm` component", () => {
     };
   };
 
+  const getAddonFields = (forms) => {
+    const studyNameForm = findForm(forms, "Study Name");
+    const studyDescriptionForm = findForm(forms, "Study Description");
+    const extensionForm = findForm(forms, "Extension");
+    const preventNewEnrollmentForm = findForm(forms, "Prevent New Enrollment");
+
+    return {
+      studyNameForm,
+      studyDescriptionForm,
+      extensionForm,
+      preventNewEnrollmentForm,
+    };
+  };
+
   const setup = (recipe) => {
     const pageResponse = { results: [recipe] };
     const filtersResponse = FiltersFactory.build(
@@ -119,6 +142,18 @@ describe("The `RecipeForm` component", () => {
       .mockImplementation(() => Promise.resolve(recipe));
   };
 
+  const extensionSetup = () => {
+    const ext1 = ExtensionFactory.build({});
+    const ext2 = ExtensionFactory.build({});
+    const ext3 = ExtensionFactory.build({});
+
+    jest
+      .spyOn(NormandyAPI.prototype, "fetchAllExtensions")
+      .mockImplementation(() => Promise.resolve([ext1, ext2, ext3]));
+
+    return [ext1, ext2, ext3];
+  };
+
   const consoleLogRecipeSetup = () => {
     const versions = VersionFilterObjectFactory.build(
       {},
@@ -137,6 +172,28 @@ describe("The `RecipeForm` component", () => {
         filterObject,
       },
     );
+  };
+
+  const branchedAddonSetup = () => {
+    const channels = ChannelFilterObjectFactory.build(
+      {},
+      { generateChannelsCount: 1 },
+    );
+    const filterObject = [channels];
+    const branch1 = AddOnBranchFactory.build();
+    const branch2 = AddOnBranchFactory.build();
+    const recipe = RecipeFactory.build(
+      {},
+      {
+        actionName: "branched-addon-study",
+        filterObject,
+      },
+    );
+    recipe.latest_revision.arguments = {
+      ...recipe.latest_revision.arguments,
+      branches: [branch1, branch2],
+    };
+    return recipe;
   };
 
   const multiprefExperimenterRecipeSetUp = () => {
@@ -166,7 +223,7 @@ describe("The `RecipeForm` component", () => {
     return recipe;
   };
 
-  it("creation recipe form", async () => {
+  it("creation pref recipe form", async () => {
     const recipe = RecipeFactory.build();
     setup(recipe);
     const { getByText, getAllByRole } = await render(<App />);
@@ -308,7 +365,8 @@ describe("The `RecipeForm` component", () => {
   });
 
   it("edit recipe form", async () => {
-    const recipeData = consoleLogRecipeSetup();
+    const recipeData = branchedAddonSetup();
+    const extensions = extensionSetup();
     setup(recipeData);
     const { getByText, getAllByRole } = await render(<App />);
     await waitFor(() => {
@@ -319,21 +377,17 @@ describe("The `RecipeForm` component", () => {
       expect(getByText("Experimenter Slug")).toBeInTheDocument();
     });
 
-    const formGroups = getAllByRole("group");
+    let formGroups = getAllByRole("group");
 
     const { nameForm, experimenterSlugForm, channelForm } = getForms(
       formGroups,
     );
 
-    const messageForm = findForm(formGroups, "Message");
-
     const nameInput = nameForm.querySelector("input");
     const experimenterSlugInput = experimenterSlugForm.querySelector("input");
-    const messageInput = messageForm.querySelector("input");
 
     const name = "A new Recipe Name";
     const experimenter_slug = "the-new-experinenter-slug";
-    const message = "recipe message";
 
     fireEvent.change(nameInput, { target: { value: name } });
     fireEvent.change(experimenterSlugInput, {
@@ -345,7 +399,42 @@ describe("The `RecipeForm` component", () => {
       fireEvent.click(within(channelForm).getByText(channel));
     }
 
-    fireEvent.change(messageInput, { target: { value: message } });
+    formGroups = getAllByRole("group");
+    let branches = findForm(formGroups, "Branches");
+
+    let branchButtons = branches.querySelectorAll("button");
+    const firstDeleteButton = branchButtons[0];
+    fireEvent.click(firstDeleteButton);
+
+    formGroups = getAllByRole("group");
+    branches = findForm(formGroups, "Branches");
+
+    branchButtons = branches.querySelectorAll("button");
+    const secondBranchButton = branchButtons[0];
+
+    fireEvent.click(secondBranchButton);
+
+    fireEvent.click(getByText("Add Branch"));
+
+    formGroups = getAllByRole("group");
+    branches = findForm(formGroups, "Branches");
+    const branchGroups = within(branches).getAllByRole("group");
+    const slugForm = findForm(branchGroups, "Slug");
+    const ratioForm = findForm(branchGroups, "Ratio");
+    const extensionForm = findForm(branchGroups, "Extension");
+
+    const slugInput = slugForm.querySelector("input");
+    const ratioInput = ratioForm.querySelector("input");
+    const extensionInput = within(extensionForm).getByRole("combobox");
+
+    const slug = "addon-slug";
+    const ratio = 25;
+    const selectedExtension = extensions[1];
+
+    fireEvent.change(slugInput, { target: { value: slug } });
+    fireEvent.change(ratioInput, { target: { value: ratio } });
+    fireEvent.click(extensionInput);
+    fireEvent.click(getByText(selectedExtension.name));
 
     fireEvent.click(getByText("Save"));
 
@@ -359,12 +448,14 @@ describe("The `RecipeForm` component", () => {
     const { latest_revision } = recipeData;
 
     /* eslint-disable prefer-const */
+
     let {
       action,
       comment: _omitComment,
       ...updatedRecipeData
     } = latest_revision;
     /* eslint-enable prefer-const */
+
     const channelValues = ["nightly", "aurora", "beta", "release"];
 
     updatedRecipeData = {
@@ -373,7 +464,10 @@ describe("The `RecipeForm` component", () => {
       name,
       comment: saveMessage,
       action_id: action.id,
-      arguments: { ...updatedRecipeData.arguments, message },
+      arguments: {
+        ...updatedRecipeData.arguments,
+        branches: [{ slug, ratio, extensionApiId: selectedExtension.id }],
+      },
       filter_object: updatedRecipeData.filter_object.map((fo) => {
         if (fo.type === "channel") {
           return {
@@ -394,7 +488,7 @@ describe("The `RecipeForm` component", () => {
 
   it("save button is re-enabled when form errors are addressed", async () => {
     const recipeData = consoleLogRecipeSetup();
-    setup(recipeData);
+    await setup(recipeData);
     const { getByText, getAllByRole } = await render(<App />);
 
     fireEvent.click(getByText("Recipes"));
@@ -513,12 +607,14 @@ describe("The `RecipeForm` component", () => {
 
     fireEvent.click(within(modalDialog).getByText("Save"));
 
-    /* eslint-disable prefer-const */ let {
+    /* eslint-disable prefer-const */
+    let {
       action_name: _omitActionName,
       comment: _omitComment,
       ...updatedRecipeData
     } = recipeData;
-    /* eslint-enable prefer-const */ updatedRecipeData = {
+    /* eslint-enable prefer-const */
+    updatedRecipeData = {
       ...updatedRecipeData,
       comment: saveMessage,
       action_id: 1,
@@ -532,5 +628,118 @@ describe("The `RecipeForm` component", () => {
       undefined,
       updatedRecipeData,
     );
+  });
+
+  it("creation addon recipe form", async () => {
+    const recipe = RecipeFactory.build();
+    setup(recipe);
+    const extensions = extensionSetup();
+
+    const { getByText, getAllByRole } = await render(<App />);
+
+    fireEvent.click(getByText("Recipes"));
+    fireEvent.click(getByText("Create Recipe"));
+
+    await waitFor(() =>
+      expect(getByText("Experimenter Slug")).toBeInTheDocument(),
+    );
+    let formGroups = getAllByRole("group");
+
+    const {
+      nameForm,
+      experimenterSlugForm,
+      channelForm,
+      actionForm,
+    } = getForms(formGroups);
+
+    const nameInput = nameForm.querySelector("input");
+    const experimenterSlugInput = experimenterSlugForm.querySelector("input");
+
+    fireEvent.change(nameInput, { target: { value: "Recipe Name" } });
+    fireEvent.change(experimenterSlugInput, {
+      target: { value: "the-experimenter-slug" },
+    });
+
+    fireEvent.click(within(channelForm).getByText("Release"));
+
+    const actionInput = within(actionForm).getByRole("combobox");
+    expect(NormandyAPI.prototype.fetchAllActions).toHaveBeenCalled();
+    fireEvent.click(actionInput);
+    fireEvent.click(getByText("opt-out-study"));
+    fireEvent.click(document);
+
+    await waitFor(() =>
+      expect(NormandyAPI.prototype.fetchAllExtensions).toReturn(),
+    );
+
+    formGroups = getAllByRole("group");
+    const {
+      studyNameForm,
+      studyDescriptionForm,
+      extensionForm,
+      preventNewEnrollmentForm,
+    } = getAddonFields(formGroups);
+
+    const studyNameInput = studyNameForm.querySelector("input");
+    const studyDescriptionInput = studyDescriptionForm.querySelector(
+      "textarea",
+    );
+    const extensionInput = within(extensionForm).getByRole("combobox");
+    const preventNewEnrollmentToggle = within(
+      preventNewEnrollmentForm,
+    ).getByRole("button");
+
+    const studyName = "Addon Study Name";
+    const studyDescription =
+      "This is the description of the addon study description";
+    const selectedExtension = extensions[0];
+    fireEvent.change(studyNameInput, { target: { value: studyName } });
+    fireEvent.change(studyDescriptionInput, {
+      target: { value: studyDescription },
+    });
+
+    fireEvent.click(extensionInput);
+    expect(getByText(selectedExtension.name)).toBeInTheDocument();
+    fireEvent.click(getByText(selectedExtension.name));
+    fireEvent.click(preventNewEnrollmentToggle);
+
+    getByText("Save");
+    fireEvent.click(getByText("Save"));
+
+    const modalDialog = getAllByRole("dialog")[0];
+    const commentInput = modalDialog.querySelector("textArea");
+    const saveMessage = "Created Recipe";
+    fireEvent.change(commentInput, { target: { value: saveMessage } });
+
+    fireEvent.click(within(modalDialog).getByText("Save"));
+
+    expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(undefined, {
+      action_id: 2,
+      arguments: {
+        addonUrl: selectedExtension.xpi,
+        description: "This is the description of the addon study description",
+        extensionApiId: selectedExtension.id,
+        isEnrollmentPaused: true,
+        name: "Addon Study Name",
+      },
+      comment: "Created Recipe",
+      experimenter_slug: "the-experimenter-slug",
+      filter_object: [{ channels: ["release"], type: "channel" }],
+      name: "Recipe Name",
+    });
+  });
+  it("fallback editor is rendered for unknown action types", async () => {
+    const recipeData = RecipeFactory.build({}, { actionName: "unknown type" });
+    setup(recipeData);
+    const { getByText } = await render(<App />);
+    await waitFor(() => {
+      expect(getByText("Edit Recipe")).toBeInTheDocument();
+    });
+    fireEvent.click(getByText("Edit Recipe"));
+    await waitFor(() => {
+      expect(getByText("Experimenter Slug")).toBeInTheDocument();
+    });
+
+    expect(getByText("Action Arguments")).toBeInTheDocument();
   });
 });

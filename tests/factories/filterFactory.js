@@ -54,6 +54,20 @@ export class LocalFactory extends Factory {
   }
 }
 
+export class ExtensionFactory extends Factory {
+  getFields() {
+    return {
+      id: new Field(faker.random.number),
+      name: new Field(faker.lorem.slug),
+      xpi: new Field(faker.internet.url),
+      extension_id: new Field(faker.lorem.slug),
+      version: new Field(faker.random.word),
+      hash: new Field(faker.random.alphaNumeric),
+      hash_algorithm: new Field(faker.random.word),
+    };
+  }
+}
+
 export const ActionsResponse = () => {
   const actionNames = [
     "show-heartbeat",
