@@ -41,6 +41,7 @@ export const INITIAL_ACTION_ARGUMENTS = {
   "multi-preference-experiment": {
     branches: [],
     experimentDocumentUrl: "",
+    isEnrollmentPaused: false,
     slug: "",
     userFacingDescription: "",
     userFacingName: "",

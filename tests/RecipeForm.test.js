@@ -6,9 +6,11 @@ import {
   within,
 } from "@testing-library/react";
 import React from "react";
-
 import "@testing-library/jest-dom/extend-expect";
+
 import App from "devtools/components/App";
+import RecipeFormPage from "devtools/components/pages/RecipeFormPage";
+import ExperimenterAPI from "devtools/utils/experimenterApi";
 import NormandyAPI from "devtools/utils/normandyApi";
 
 import { ActionsResponse, FiltersFactory } from "./factories/filterFactory";
@@ -17,14 +19,14 @@ import {
   ChannelFilterObjectFactory,
   BucketSampleFilterObjectFactory,
 } from "./factories/filterObjectFactory";
-import { RecipeFactory } from "./factories/recipeFactory";
+import {
+  RecipeFactory,
+  MultiPrefBranchFactory,
+  MultiPreferenceFactory,
+} from "./factories/recipeFactory";
 
 describe("The `RecipeForm` component", () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-    cleanup();
-  });
-
+  afterEach(cleanup);
   const findForm = (formGroups, formName) => {
     const forms = formGroups.filter((form) =>
       within(form).queryByText(formName),
@@ -91,24 +93,7 @@ describe("The `RecipeForm` component", () => {
     };
   };
 
-  const setup = () => {
-    const versions = VersionFilterObjectFactory.build(
-      {},
-      { generateVersionsCount: 2 },
-    );
-    const channels = ChannelFilterObjectFactory.build(
-      {},
-      { generateChannelsCount: 1 },
-    );
-    const sample = BucketSampleFilterObjectFactory.build();
-    const filterObject = [versions, sample, channels];
-    const recipe = RecipeFactory.build(
-      {},
-      {
-        actionName: "console-log",
-        filterObject,
-      },
-    );
+  const setup = (recipe) => {
     const pageResponse = { results: [recipe] };
     const filtersResponse = FiltersFactory.build(
       {},
@@ -132,12 +117,58 @@ describe("The `RecipeForm` component", () => {
     jest
       .spyOn(NormandyAPI.prototype, "fetchRecipe")
       .mockImplementation(() => Promise.resolve(recipe));
+  };
 
+  const consoleLogRecipeSetup = () => {
+    const versions = VersionFilterObjectFactory.build(
+      {},
+      { generateVersionsCount: 2 },
+    );
+    const channels = ChannelFilterObjectFactory.build(
+      {},
+      { generateChannelsCount: 1 },
+    );
+    const sample = BucketSampleFilterObjectFactory.build();
+    const filterObject = [versions, sample, channels];
+    return RecipeFactory.build(
+      {},
+      {
+        actionName: "console-log",
+        filterObject,
+      },
+    );
+  };
+
+  const multiprefExperimenterRecipeSetUp = () => {
+    const versions = VersionFilterObjectFactory.build(
+      {},
+      { generateVersionsCount: 2 },
+    );
+    const recipe = RecipeFactory.build(
+      {},
+      {
+        actionName: "multi-preference-experiment",
+        filterObject: [versions],
+      },
+    );
+    const branch1 = MultiPrefBranchFactory.build(
+      {},
+      { generatePreferenceCount: 2 },
+    );
+    const branch2 = MultiPrefBranchFactory.build(
+      {},
+      { generatePreferenceCount: 1 },
+    );
+    const branches = [branch1, branch2];
+    const multiPrefArguments = MultiPreferenceFactory.build({ branches });
+    recipe.arguments = multiPrefArguments;
+    recipe.action_name = "multi-preference-experiment";
     return recipe;
   };
 
   it("creation recipe form", async () => {
-    setup();
+    const recipe = RecipeFactory.build();
+    setup(recipe);
     const { getByText, getAllByRole } = await render(<App />);
     fireEvent.click(getByText("Create Recipe"));
     await waitFor(() =>
@@ -277,9 +308,9 @@ describe("The `RecipeForm` component", () => {
   });
 
   it("edit recipe form", async () => {
-    const recipeData = setup();
+    const recipeData = consoleLogRecipeSetup();
+    setup(recipeData);
     const { getByText, getAllByRole } = await render(<App />);
-
     await waitFor(() => {
       expect(getByText("Edit Recipe")).toBeInTheDocument();
     });
@@ -362,11 +393,11 @@ describe("The `RecipeForm` component", () => {
   });
 
   it("save button is re-enabled when form errors are addressed", async () => {
-    const recipeData = setup();
+    const recipeData = consoleLogRecipeSetup();
+    setup(recipeData);
     const { getByText, getAllByRole } = await render(<App />);
 
     fireEvent.click(getByText("Recipes"));
-
     await waitFor(() => {
       expect(getByText("Edit Recipe")).toBeInTheDocument();
     });
@@ -437,6 +468,68 @@ describe("The `RecipeForm` component", () => {
 
     expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(
       recipeData.id.toString(),
+      updatedRecipeData,
+    );
+  });
+
+  it("should have isEnrollmentPaused set when import from experimenter", async () => {
+    const recipeData = multiprefExperimenterRecipeSetUp();
+    setup(recipeData);
+    jest
+      .spyOn(ExperimenterAPI.prototype, "fetchRecipe")
+      .mockImplementation(() => Promise.resolve(recipeData));
+    jest
+      .spyOn(NormandyAPI.prototype, "fetchAllActions")
+      .mockImplementation(() =>
+        Promise.resolve([{ id: 1, name: "multi-preference-experiment" }]),
+      );
+
+    /* global renderWithContext */
+    const { getByText, getAllByRole } = await renderWithContext(
+      <RecipeFormPage />,
+      {
+        route: "/prod/recipes/import/experimenter-slug",
+        path: "/prod/recipes/import/:experimenterSlug",
+      },
+    );
+    expect(ExperimenterAPI.prototype.fetchRecipe).toHaveBeenCalled();
+
+    await waitFor(() => {
+      expect(getByText("Experimenter Slug")).toBeInTheDocument();
+    });
+
+    const formGroups = getAllByRole("group");
+    const highVolumeForm = findForm(formGroups, "High Volume Recipe");
+    const highVolumeToggle = within(highVolumeForm).getByRole("button");
+
+    fireEvent.click(highVolumeToggle);
+
+    fireEvent.click(getByText("Save"));
+
+    const modalDialog = getAllByRole("dialog")[0];
+    const commentInput = modalDialog.querySelector("textArea");
+    const saveMessage = "Edited Recipe";
+    fireEvent.change(commentInput, { target: { value: saveMessage } });
+
+    fireEvent.click(within(modalDialog).getByText("Save"));
+
+    /* eslint-disable prefer-const */ let {
+      action_name: _omitActionName,
+      comment: _omitComment,
+      ...updatedRecipeData
+    } = recipeData;
+    /* eslint-enable prefer-const */ updatedRecipeData = {
+      ...updatedRecipeData,
+      comment: saveMessage,
+      action_id: 1,
+      arguments: {
+        ...updatedRecipeData.arguments,
+        isHighPopulation: true,
+        isEnrollmentPaused: false,
+      },
+    };
+    expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(
+      undefined,
       updatedRecipeData,
     );
   });

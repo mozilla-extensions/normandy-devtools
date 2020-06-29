@@ -1,6 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 
+import { INITIAL_ACTION_ARGUMENTS } from "devtools/components/recipes/form/ActionArguments";
 import RecipeForm from "devtools/components/recipes/form/RecipeForm";
 import RecipeFormHeader from "devtools/components/recipes/form/RecipeFormHeader";
 import {
@@ -35,6 +36,10 @@ export default function RecipeFormPage() {
           .then(({ comment, action_name, ...recipeData }) => {
             setData({
               ...recipeData,
+              arguments: {
+                ...INITIAL_ACTION_ARGUMENTS[action_name],
+                ...recipeData.arguments,
+              },
               action: actions.find((a) => a.name === action_name),
             });
             setImportInstructions(comment);
