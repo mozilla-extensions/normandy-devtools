@@ -23,9 +23,10 @@ export default function ShowHeart() {
     <FormGroup>
       <Row>
         <Col xs={12}>
-          <InputField label="Survey ID" name="surveyID" />
+          <InputField label="Survey ID" name="surveyId" />
           <InputField label="Message" name="message" />
           <InputField label="Learn More Message" name="learnMoreMessage" />
+          <InputField label="Learn More Url" name="learnMoreUrl" />
           <RepeatOptionsField />
         </Col>
         <Col xs={12}>
