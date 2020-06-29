@@ -73,7 +73,6 @@ export const INITIAL_ACTION_ARGUMENTS = {
     message: "",
     postAnswerUrl: "",
     repeatOption: "once",
-    surveyID: "",
     surveyId: "",
     thanksMessage: "",
   },

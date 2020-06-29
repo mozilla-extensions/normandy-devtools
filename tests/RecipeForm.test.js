@@ -116,6 +116,29 @@ describe("The `RecipeForm` component", () => {
     };
   };
 
+  const getHeartBeatFields = (forms) => {
+    const surveyIDForm = findForm(forms, "Survey ID");
+    const engagementButtonForm = findForm(forms, "Engagement Button Label");
+    const messageForm = findForm(forms, "Message");
+    const thanksMessageForm = findForm(forms, "Thanks Message");
+    const learnMessageForm = findForm(forms, "Learn More Message");
+    const learnMoreUrlForm = findForm(forms, "Learn More Url");
+    const postAnswerURLForm = findForm(forms, "Post-Answer URL");
+    const promptForm = findForm(forms, "How often should the prompt be shown?");
+    const includeTelmetryForm = findForm(forms, "Include Telemetry UUID?");
+    return {
+      surveyIDForm,
+      engagementButtonForm,
+      messageForm,
+      thanksMessageForm,
+      learnMessageForm,
+      learnMoreUrlForm,
+      postAnswerURLForm,
+      promptForm,
+      includeTelmetryForm,
+    };
+  };
+
   const setup = (recipe) => {
     const pageResponse = { results: [recipe] };
     const filtersResponse = FiltersFactory.build(
@@ -565,7 +588,6 @@ describe("The `RecipeForm` component", () => {
       updatedRecipeData,
     );
   });
-
   it("should have isEnrollmentPaused set when import from experimenter", async () => {
     const recipeData = multiprefExperimenterRecipeSetUp();
     setup(recipeData);
@@ -628,6 +650,140 @@ describe("The `RecipeForm` component", () => {
       undefined,
       updatedRecipeData,
     );
+  });
+
+  it("create show heart beat recipe", async () => {
+    const recipe = RecipeFactory.build();
+    setup(recipe);
+
+    const { getByText, getAllByRole } = await render(<App />);
+
+    fireEvent.click(getByText("Recipes"));
+    fireEvent.click(getByText("Create Recipe"));
+
+    await waitFor(() =>
+      expect(getByText("Experimenter Slug")).toBeInTheDocument(),
+    );
+    let formGroups = getAllByRole("group");
+
+    const {
+      nameForm,
+      experimenterSlugForm,
+      channelForm,
+      actionForm,
+    } = getForms(formGroups);
+
+    const nameInput = nameForm.querySelector("input");
+    const experimenterSlugInput = experimenterSlugForm.querySelector("input");
+
+    fireEvent.change(nameInput, { target: { value: "Recipe Name" } });
+    fireEvent.change(experimenterSlugInput, {
+      target: { value: "the-experimenter-slug" },
+    });
+
+    fireEvent.click(within(channelForm).getByText("Release"));
+
+    const actionInput = within(actionForm).getByRole("combobox");
+    expect(NormandyAPI.prototype.fetchAllActions).toHaveBeenCalled();
+    fireEvent.click(actionInput);
+    fireEvent.click(getByText("show-heartbeat"));
+
+    formGroups = getAllByRole("group");
+    const {
+      surveyIDForm,
+      engagementButtonForm,
+      messageForm,
+      thanksMessageForm,
+      learnMessageForm,
+      learnMoreUrlForm,
+      postAnswerURLForm,
+      promptForm,
+      includeTelmetryForm,
+    } = getHeartBeatFields(formGroups);
+
+    const surveyIDInput = surveyIDForm.querySelector("input");
+    const engagementInput = engagementButtonForm.querySelector("input");
+    const messageInput = messageForm.querySelector("input");
+    const thanksMessageInput = thanksMessageForm.querySelector("input");
+    const learnMessageInput = learnMessageForm.querySelector("input");
+    const learnMoreUrlInput = learnMoreUrlForm.querySelector("input");
+    const postAnswerURLInput = postAnswerURLForm.querySelector("input");
+    const promptInput = within(promptForm).getByRole("combobox");
+    const includeTelemetryToggle = within(includeTelmetryForm).getByRole(
+      "button",
+    );
+
+    const surveyId = "survey-id";
+    const engagementButton = "take survey";
+    const message = "it's the message of the survey!";
+    const thanksMessage = "thank you!";
+    const learnMessage = "learn more";
+    const learnMoreUrl = "https://example.com/learnmore";
+    const postAnswerUrl = "https://example.com";
+
+    fireEvent.change(surveyIDInput, { target: { value: surveyId } });
+    fireEvent.change(engagementInput, { target: { value: engagementButton } });
+    fireEvent.change(messageInput, { target: { value: message } });
+    fireEvent.change(thanksMessageInput, { target: { value: thanksMessage } });
+    fireEvent.change(learnMessageInput, { target: { value: learnMessage } });
+    fireEvent.change(learnMoreUrlInput, { target: { value: learnMoreUrl } });
+    fireEvent.change(postAnswerURLInput, { target: { value: postAnswerUrl } });
+
+    fireEvent.click(promptInput);
+    fireEvent.click(getByText("Show users every X days."));
+    expect(getByText("Days before user is reprompted")).toBeInTheDocument();
+
+    formGroups = getAllByRole("group");
+    const repromptForm = findForm(formGroups, "Days before user is reprompted");
+    const repromptInput = repromptForm.querySelector("input");
+    fireEvent.change(repromptInput, { target: { value: 4 } });
+
+    fireEvent.click(includeTelemetryToggle);
+
+    getByText("Save");
+    fireEvent.click(getByText("Save"));
+
+    const modalDialog = getAllByRole("dialog")[0];
+    const commentInput = modalDialog.querySelector("textArea");
+    const saveMessage = "Created Recipe";
+    fireEvent.change(commentInput, { target: { value: saveMessage } });
+
+    fireEvent.click(within(modalDialog).getByText("Save"));
+
+    expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(undefined, {
+      action_id: 1,
+      arguments: {
+        learnMoreUrl,
+        message,
+        postAnswerUrl,
+        surveyId,
+        thanksMessage,
+        engagementButtonLabel: engagementButton,
+        includeTelemetryUUID: true,
+        learnMoreMessage: learnMessage,
+        repeatEvery: 4,
+        repeatOption: "xdays",
+      },
+      comment: "Created Recipe",
+      experimenter_slug: "the-experimenter-slug",
+      filter_object: [{ channels: ["release"], type: "channel" }],
+      name: "Recipe Name",
+    });
+  });
+
+  it("fallback editor is rendered for unknown action types", async () => {
+    const recipeData = RecipeFactory.build({}, { actionName: "unknown type" });
+    setup(recipeData);
+    const { getByText } = await render(<App />);
+    await waitFor(() => {
+      expect(getByText("Edit Recipe")).toBeInTheDocument();
+    });
+    fireEvent.click(getByText("Edit Recipe"));
+    await waitFor(() => {
+      expect(getByText("Experimenter Slug")).toBeInTheDocument();
+    });
+
+    expect(getByText("Action Arguments")).toBeInTheDocument();
   });
 
   it("creation addon recipe form", async () => {
