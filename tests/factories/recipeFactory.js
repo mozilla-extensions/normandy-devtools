@@ -20,13 +20,22 @@ export class RecipeFactory extends Factory {
   generateActionFields() {
     const { actionName } = this.options;
     if (actionName) {
-      let actionArgs = {};
-      if (actionName === "console-log") {
-        actionArgs = ConsoleLogArgumentFactory.build();
-      }
-
-      if (actionName === "multi-preference-experiment") {
-        actionArgs = MultiPreferenceFactory.build();
+      let actionArgs;
+      switch (actionName) {
+        case "console-log":
+          actionArgs = ConsoleLogArgumentFactory.build();
+          break;
+        case "multi-preference-experiment":
+          actionArgs = MultiPreferenceFactory.build();
+          break;
+        case "opt-out-study":
+          actionArgs = AddOnArgumentFactory.build();
+          break;
+        case "branched-addon-study":
+          actionArgs = BranchedAddonArgumentFactory.build();
+          break;
+        default:
+          actionArgs = {};
       }
 
       this.data.latest_revision = {
@@ -95,6 +104,40 @@ class ApprovalRequestFactory extends Factory {
 class ConsoleLogArgumentFactory extends Factory {
   getFields() {
     return { message: new Field(faker.lorem.words) };
+  }
+}
+
+class AddOnArgumentFactory extends Factory {
+  getFields() {
+    return {
+      addonUrl: new Field(faker.internet.url),
+      description: new Field(faker.lorem.words),
+      extensionApiId: new Field(faker.random.number),
+      isEnrollmentPaused: new Field(faker.random.boolean),
+      name: new Field(faker.commerce.productName),
+    };
+  }
+}
+
+class BranchedAddonArgumentFactory extends Factory {
+  getFields() {
+    return {
+      branches: [],
+      isEnrollmentPaused: new Field(faker.random.boolean),
+      slug: new Field(faker.lorem.slug),
+      userFacingDescription: new Field(faker.lorem.words),
+      userFacingName: new Field(faker.commerce.productName),
+    };
+  }
+}
+
+export class AddOnBranchFactory extends Factory {
+  getFields() {
+    return {
+      extensionApiId: new Field(faker.random.number),
+      slug: new Field(faker.lorem.slug),
+      ratio: new Field(faker.random.number),
+    };
   }
 }
 
