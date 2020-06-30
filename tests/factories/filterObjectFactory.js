@@ -48,7 +48,7 @@ export class ChannelFilterObjectFactory extends Factory {
 export class CountryFilterObjectFactory extends Factory {
   getFields() {
     return {
-      type: "countries",
+      type: "country",
       countries: [],
     };
   }
@@ -68,7 +68,7 @@ export class CountryFilterObjectFactory extends Factory {
 export class LocaleFitlerObjectFactory extends Factory {
   getFields() {
     return {
-      type: "locales",
+      type: "locale",
       locales: [],
     };
   }
