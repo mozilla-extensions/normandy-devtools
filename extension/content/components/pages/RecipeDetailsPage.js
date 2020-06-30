@@ -3,15 +3,11 @@ import { useParams } from "react-router-dom";
 
 import DetailsHeader from "devtools/components/recipes/details/DetailsHeader";
 import RecipeDetails from "devtools/components/recipes/details/RecipeDetails";
-import {
-  useEnvironmentState,
-  useSelectedNormandyEnvironmentAPI,
-} from "devtools/contexts/environment";
+import { useSelectedNormandyEnvironmentAPI } from "devtools/contexts/environment";
 import { RecipeDetailsProvider } from "devtools/contexts/recipeDetails";
 
 export default function RecipeDetailsPage() {
   const { recipeId } = useParams();
-  const { selectedKey: environmentKey } = useEnvironmentState();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
   const [data, setData] = React.useState({});
 
@@ -19,7 +15,7 @@ export default function RecipeDetailsPage() {
     normandyApi.fetchRecipe(recipeId).then((recipeData) => {
       setData(recipeData.latest_revision);
     });
-  }, [environmentKey, recipeId]);
+  }, [recipeId, normandyApi.getBaseUrl({ method: "GET" })]);
 
   return (
     <RecipeDetailsProvider data={data}>
