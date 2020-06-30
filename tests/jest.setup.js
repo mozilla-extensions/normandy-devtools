@@ -18,7 +18,8 @@ Object.defineProperty(global.self, "crypto", {
 browser.experiments.normandy = {
   checkRecipeFilter: () => null,
   runRecipe: () => null,
-  getRecipeSuitabilities: () => null,
+  getRecipeSuitabilities: () =>
+    Promise.resolve(["RECIPE_SUITABILITY_FILTER_MATCH"]),
 };
 
 browser.experiments.networking = {

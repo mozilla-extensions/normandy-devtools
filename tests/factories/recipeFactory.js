@@ -64,10 +64,20 @@ class RevisionFactory extends Factory {
       id: new Field(faker.random.number),
       name: new Field(faker.lorem.words),
       updated: new Field(faker.date.recent),
+      recipe: new SubFactory(RevisionRecipeFactory),
     };
   }
 }
 
+class RevisionRecipeFactory extends Factory {
+  getFields() {
+    return {
+      approved_revision_id: new Field(faker.random.number),
+      id: new Field(faker.random.number),
+      latest_revision_id: new Field(faker.random.number),
+    };
+  }
+}
 class ActionFactory extends Factory {
   getFields() {
     const { name } = this.options;
@@ -90,7 +100,7 @@ class UserFactory extends Factory {
   }
 }
 
-class ApprovalRequestFactory extends Factory {
+export class ApprovalRequestFactory extends Factory {
   getFields() {
     return {
       approved: new Field(faker.random.boolean),
@@ -99,6 +109,15 @@ class ApprovalRequestFactory extends Factory {
       created: new Field(faker.date.recent),
       creator: new SubFactory(UserFactory),
     };
+  }
+
+  postGeneration() {
+    const { empty } = this.options;
+    if (empty) {
+      this.data.approved = null;
+      this.data.approver = null;
+      this.data.comment = null;
+    }
   }
 }
 class ConsoleLogArgumentFactory extends Factory {
