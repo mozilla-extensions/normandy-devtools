@@ -16,10 +16,12 @@ Object.defineProperty(global.self, "crypto", {
 });
 
 browser.experiments.normandy = {
-  checkRecipeFilter: () => null,
-  runRecipe: () => null,
-  getRecipeSuitabilities: () =>
+  checkRecipeFilter: jest.fn(),
+  runRecipe: jest.fn(),
+  getRecipeSuitabilities: jest.fn(() =>
     Promise.resolve(["RECIPE_SUITABILITY_FILTER_MATCH"]),
+  ),
+  bucketSample: jest.fn(() => new Promise(() => {})), // it never resolves by default
 };
 
 browser.experiments.networking = {

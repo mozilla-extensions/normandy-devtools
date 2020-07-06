@@ -114,6 +114,38 @@
         "description": "Get an array of all add-on studies, both active and inactive",
         "async": true,
         "parameters": []
+      },
+
+      {
+        "name": "bucketSample",
+        "type": "function",
+        "description": "Directly run a bucketSample, bypassing JEXL",
+        "async": true,
+        "parameters": [
+          {
+            "name": "input",
+            "type": "array",
+            "description": "The sampling input",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "start",
+            "type": "number",
+            "description": "The first bucket to include"
+          },
+          {
+            "name": "count",
+            "type": "number",
+            "description": "The number of buckets to include"
+          },
+          {
+            "name": "total",
+            "type": "number",
+            "description": "The total number of buckets"
+          }
+        ]
       }
     ],
 

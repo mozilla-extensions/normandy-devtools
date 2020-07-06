@@ -10,7 +10,7 @@ import {
   ChannelFilterObjectFactory,
   BucketSampleFilterObjectFactory,
   StableSampleFilterObjectFactory,
-  LocaleFitlerObjectFactory,
+  LocaleFilterObjectFactory,
   CountryFilterObjectFactory,
 } from "./factories/filterObjectFactory";
 import {
@@ -51,7 +51,7 @@ describe("The `RecipeDetailForm` component", () => {
       {},
       { generateCountriesCount: 2 },
     );
-    const locales = LocaleFitlerObjectFactory.build(
+    const locales = LocaleFilterObjectFactory.build(
       {},
       { generateLocalesCount: 2 },
     );

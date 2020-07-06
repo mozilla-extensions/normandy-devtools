@@ -65,7 +65,7 @@ export class CountryFilterObjectFactory extends Factory {
   }
 }
 
-export class LocaleFitlerObjectFactory extends Factory {
+export class LocaleFilterObjectFactory extends Factory {
   getFields() {
     return {
       type: "locale",

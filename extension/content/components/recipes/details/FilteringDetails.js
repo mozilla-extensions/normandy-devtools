@@ -137,7 +137,7 @@ function RawDetails() {
 }
 
 function RichDetails() {
-  const { filter_object: filterObjects } = useRecipeDetailsData();
+  const { filter_object: filterObjects, recipe } = useRecipeDetailsData();
 
   return filterObjects
     .sort((a, b) => {
@@ -159,7 +159,12 @@ function RichDetails() {
     .map((fo, index) => {
       if (fo.type in FILTER_OBJECT_MAPPING) {
         const FilterObjectDetails = FILTER_OBJECT_MAPPING[fo.type];
-        return <FilterObjectDetails key={index} data={fo} />;
+        return (
+          <FilterObjectDetails
+            key={`${recipe?.id ?? "new-recipe"}-${index}`}
+            data={fo}
+          />
+        );
       }
 
       return (

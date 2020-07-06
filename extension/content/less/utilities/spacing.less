@@ -59,6 +59,31 @@ each(@spacing-props, .(@sp) {
       @{spp}-left: -(@padding-base-horizontal * @value) !important;
     }
   })
+
+  // Half margins for fine details
+  .@{spa}-half {
+    @{spp}: (@padding-base-vertical / 2) (@padding-base-horizontal / 2) !important;
+  }
+
+  .@{spa}y-half,
+  .@{spa}t-half {
+    @{spp}-top: (@padding-base-vertical / 2) !important;
+  }
+
+  .@{spa}x-half,
+  .@{spa}r-half {
+    @{spp}-right: (@padding-base-horizontal / 2) !important;
+  }
+
+  .@{spa}y-half,
+  .@{spa}b-half {
+    @{spp}-bottom: (@padding-base-vertical / 2) !important;
+  }
+
+  .@{spa}x-half,
+  .@{spa}l-half {
+    @{spp}-left: (@padding-base-horizontal / 2) !important;
+  }
 })
 /* stylelint-enable indentation, selector-max-empty-lines */
 

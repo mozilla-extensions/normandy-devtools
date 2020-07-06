@@ -46,3 +46,18 @@ export function splitCamelCase(
 export async function delay(time: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
+
+export class Deferred<T = unknown, E = Error> {
+  resolve: (value: T) => void;
+
+  reject: (error: E) => void;
+
+  promise: Promise<T>;
+
+  constructor() {
+    this.promise = new Promise((resolve, reject) => {
+      this.resolve = resolve;
+      this.reject = reject;
+    });
+  }
+}
