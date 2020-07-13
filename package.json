@@ -82,7 +82,7 @@
     "stylelint-order": "4.1.0",
     "ts-jest": "25.5.1",
     "typescript": "3.9.5",
-    "web-ext": "4.2.0",
+    "web-ext": "4.3.0",
     "web-ext-types": "3.2.1",
     "webpack": "4.43.0",
     "webpack-bundle-analyzer": "3.8.0",
