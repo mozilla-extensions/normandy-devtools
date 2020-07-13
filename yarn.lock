@@ -3054,12 +3054,7 @@ camelcase@^6.0.0:
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-6.0.0.tgz#5259f7c30e35e278f1bdc2a4d91230b37cad981e"
   integrity sha512-8KMDF1Vz2gzOq54ONPJS65IvTUaB1cHJ2DMM7MbPmLZljDH1qpzzLsWdiN9pHh6qvkRVDTi/07+eNGch/oLU4w==
 
-caniuse-lite@^1.0.30001039:
-  version "1.0.30001094"
-  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001094.tgz"
-  integrity sha512-ufHZNtMaDEuRBpTbqD93tIQnngmJ+oBknjvr0IbFympSdtFpAUFmNv4mVKbb53qltxFx0nK3iy32S9AqkLzUNA==
-
-caniuse-lite@^1.0.30001043:
+caniuse-lite@^1.0.30001039, caniuse-lite@^1.0.30001043:
   version "1.0.30001094"
   resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001094.tgz"
   integrity sha512-ufHZNtMaDEuRBpTbqD93tIQnngmJ+oBknjvr0IbFympSdtFpAUFmNv4mVKbb53qltxFx0nK3iy32S9AqkLzUNA==
@@ -10210,10 +10205,10 @@ rsuite-table@^3.13.1:
     element-resize-event "^3.0.2"
     lodash "^4.17.5"
 
-rsuite@4.7.5:
-  version "4.7.5"
-  resolved "https://registry.yarnpkg.com/rsuite/-/rsuite-4.7.5.tgz#a236c0ba4ccd16f343d44c423fae389b7cf17f4a"
-  integrity sha512-nT4OJCG+TLbvfAg7IJGOQiftDUnhMgAUnx5glcdJ//zvQrt5XZO1DVMGQFHyaEYKbmZAj9A9cbFSOleMadYvug==
+rsuite@4.8.0:
+  version "4.8.0"
+  resolved "https://registry.yarnpkg.com/rsuite/-/rsuite-4.8.0.tgz#5180664d948ac9d89467834952d6b845f46e019d"
+  integrity sha512-fYmO6cgrhvGO0B4czqZU04PpcDFixGhmDz84NuCyP8jfE2mechvNgujVwJ8KK30oM0I3KZgW+JKRMv7Ii6dTxg==
   dependencies:
     "@babel/runtime" "^7.8.4"
     classnames ">=2.0.0"
