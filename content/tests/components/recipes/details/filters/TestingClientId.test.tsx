@@ -2,8 +2,8 @@ import { render, fireEvent, waitFor, cleanup } from "@testing-library/react";
 import React from "react";
 
 import TestingClientId from "devtools/components/recipes/details/filters/TestingClientId";
+import { BucketSampleFilterObject } from "devtools/types/filters";
 import { Deferred } from "devtools/utils/helpers";
-import { BucketSampleFilterObject } from "types/filters";
 
 afterEach(async () => {
   jest.clearAllMocks();

@@ -1,3 +1,5 @@
+import { RatioInput } from "devtools/utils/recipes";
+
 export type ActionArguments =
   | ConsoleLogArguments
   | BranchedAddonStudyArguments
@@ -32,7 +34,7 @@ export interface MultiPreferenceExperimentArguments {
   experimentDocumentUrl: string;
 }
 
-export interface MultiPreferenceExperimentBranch {
+export interface MultiPreferenceExperimentBranch extends RatioInput {
   slug: string;
   ratio: number;
   preferences: MultiPreferenceExperimentPrefs;
