@@ -48,11 +48,12 @@ export async function bruteForceBucketSample(
   const maxTrials = (filter.total / filter.count) * 10;
   for (let i = 0; i < maxTrials; i++) {
     const fakeClientId = `test-userId-${i}`;
+    const fakeClientIdStr = `"${fakeClientId}"`;
     const newInput = filter.input.map((inp) =>
-      inp === "normandy.userId" ? fakeClientId : inp,
+      inp === "normandy.userId" ? fakeClientIdStr : inp,
     );
     assert(
-      newInput.includes(fakeClientId),
+      newInput.includes(fakeClientIdStr),
       "Fake client ID not inserted. This is a bug.",
     );
 
