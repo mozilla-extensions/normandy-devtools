@@ -15,9 +15,9 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - v2-dependencies-{{ checksum "yarn.lock" }}
-          # fallback to using the latest cache if no exact match is found
-          - v2-dependencies-
+            - v2-dependencies-{{ checksum "yarn.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v2-dependencies-
       - run:
           name: Install node dependencies
           command: yarn install --frozen-lockfile
@@ -37,9 +37,9 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - v2-dependencies-{{ checksum "yarn.lock" }}
-          # fallback to using the latest cache if no exact match is found
-          - v2-dependencies-
+            - v2-dependencies-{{ checksum "yarn.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v2-dependencies-
       - run:
           name: Install node dependencies
           command: yarn install --frozen-lockfile
@@ -87,6 +87,37 @@ jobs:
           name: Verify git tag matches version
           command: node ./bin/check-package-version.js
 
+  publish-docs:
+    docker:
+      - image: node:14-stretch
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ checksum "yarn.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v2-dependencies-
+      - run:
+          name: Install node dependencies
+          command: yarn install --frozen-lockfile
+      - save_cache:
+          paths:
+            - "node_modules"
+          key: v2-dependencies-{{ checksum "yarn.lock" }}
+
+      - add_ssh_keys:
+          fingerprints:
+            - "e0:1e:09:cc:73:5a:54:a9:8b:da:45:b7:bf:19:ec:32"
+
+      - run:
+          name: Deploy docs to gh-pages
+          command: |
+            # Set up credentials
+            git config user.email "ci-build@normandy.mozilla.org"
+            git config user.name "ci-build"
+            npm run publish-docs
+
 workflows:
   version: 2
   main:
@@ -94,6 +125,10 @@ workflows:
       - lint
       - test
       - build-extension
+      - publish-docs:
+          filters:
+            branches:
+              only: main
       - validate-tag:
           filters:
             branches:
