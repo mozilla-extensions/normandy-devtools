@@ -3,10 +3,11 @@ import React from "react";
 import { Panel, Tag } from "rsuite";
 
 import TestingClientId from "devtools/components/recipes/details/filters/TestingClientId";
-import { BucketSampleFilterObject } from "types/filters";
+import { NamespaceSampleFilterObject } from "types/filters";
 
-const BucketSample: React.FunctionComponent<{
-  data: BucketSampleFilterObject;
+// default export
+const NamespaceSample: React.FunctionComponent<{
+  data: NamespaceSampleFilterObject;
 }> = ({ data }) => {
   return (
     <div className="mt-4">
@@ -40,13 +41,11 @@ const BucketSample: React.FunctionComponent<{
         </div>
         <div className="d-flex mt-2">
           <div className="flex-grow-1 flex-basis-0">
-            <strong>Input</strong>
+            <strong>Namespace</strong>
             <div className="my-1">
-              {data.input.map((i) => (
-                <Tag key={i} className="rs-tag-rsuite font-family-monospace">
-                  {i}
-                </Tag>
-              ))}
+              <Tag className="rs-tag-rsuite font-family-monospace">
+                {data.namespace}
+              </Tag>
             </div>
           </div>
           <TestingClientId className="flex-grow-1 flex-basis-0" filter={data} />
@@ -56,4 +55,4 @@ const BucketSample: React.FunctionComponent<{
   );
 };
 
-export default BucketSample;
+export default NamespaceSample;

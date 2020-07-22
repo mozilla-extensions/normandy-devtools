@@ -31,6 +31,10 @@ const sharedRules = {
           pattern: "devtools/**",
           group: "parent",
         },
+        {
+          pattern: "types/**",
+          group: "parent",
+        },
       ],
       pathGroupsExcludedImportTypes: ["builtin"],
       alphabetize: {
@@ -91,6 +95,8 @@ module.exports = {
             varsIgnorePattern: "^_omit",
           },
         ],
+        "@typescript-eslint/no-use-before-define": ["off"],
+        "react/prop-types": ["off"],
       },
     },
   ],
