@@ -1,7 +1,7 @@
 import { render, fireEvent, waitFor, cleanup } from "@testing-library/react";
 import React from "react";
 
-import { TestingClientId } from "devtools/components/recipes/details/filters/BucketSample";
+import TestingClientId from "devtools/components/recipes/details/filters/TestingClientId";
 import { Deferred } from "devtools/utils/helpers";
 
 afterEach(async () => {
