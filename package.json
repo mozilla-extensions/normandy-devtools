@@ -94,7 +94,7 @@
   "dependencies": {
     "auth0-js": "9.13.4",
     "autobind-decorator": "2.4.0",
-    "codemirror": "5.55.0",
+    "codemirror": "5.56.0",
     "firacode": "5.2.0",
     "highlight.js": "10.1.1",
     "js-yaml": "3.14.0",
