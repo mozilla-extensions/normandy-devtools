@@ -271,7 +271,12 @@ var normandy = class extends ExtensionAPI {
           },
 
           async bucketSample(input, start, count, total) {
-            return Sampling.bucketSample(input, start, count, total);
+            return Sampling.bucketSample(
+              input.map(JSON.parse),
+              start,
+              count,
+              total,
+            );
           },
         },
       },
