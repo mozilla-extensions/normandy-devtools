@@ -28,11 +28,11 @@
     "publish-docs": "gh-pages --dist docs --dotfiles --message '[skip ci] Docs updates'"
   },
   "devDependencies": {
-    "@babel/core": "7.10.5",
+    "@babel/core": "7.11.1",
     "@babel/plugin-proposal-class-properties": "7.10.4",
     "@babel/plugin-proposal-decorators": "7.10.5",
     "@babel/preset-env": "7.11.0",
-    "@babel/preset-react": "7.10.1",
+    "@babel/preset-react": "7.10.4",
     "@babel/preset-typescript": "7.10.1",
     "@testing-library/jest-dom": "5.11.2",
     "@testing-library/react": "10.4.7",
@@ -98,7 +98,7 @@
     "firacode": "5.2.0",
     "highlight.js": "10.1.2",
     "js-yaml": "3.14.0",
-    "rc-tree": "3.8.4",
+    "rc-tree": "3.9.0",
     "react": "16.13.1",
     "react-codemirror2": "7.2.1",
     "react-dom": "16.13.1",
