@@ -61,3 +61,12 @@ export class Deferred<T = unknown, E = Error> {
     });
   }
 }
+
+export function assert(
+  predicate: boolean,
+  message?: string,
+): asserts predicate {
+  if (!predicate) {
+    throw new Error(message ?? "Assertion failed");
+  }
+}

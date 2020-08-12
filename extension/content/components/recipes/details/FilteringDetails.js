@@ -8,6 +8,7 @@ import BucketSample from "devtools/components/recipes/details/filters/BucketSamp
 import Channel from "devtools/components/recipes/details/filters/Channel";
 import Country from "devtools/components/recipes/details/filters/Country";
 import Locale from "devtools/components/recipes/details/filters/Locale";
+import NamespaceSample from "devtools/components/recipes/details/filters/NamespaceSample";
 import StableSample from "devtools/components/recipes/details/filters/StableSample";
 import Version from "devtools/components/recipes/details/filters/Version";
 import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
@@ -24,6 +25,7 @@ const FILTER_OBJECT_MAPPING = {
   locale: Locale,
   stableSample: StableSample,
   version: Version,
+  namespaceSample: NamespaceSample,
 };
 
 export default function FilteringDetails() {
