@@ -8,7 +8,7 @@ import {
 } from "types/filters";
 
 interface TestingClientIdProps {
-  className: string;
+  className?: string;
   filter: NamespaceSampleFilterObject | BucketSampleFilterObject;
 }
 

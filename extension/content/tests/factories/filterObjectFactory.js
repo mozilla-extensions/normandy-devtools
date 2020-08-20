@@ -1,6 +1,6 @@
 import faker from "faker";
 
-import { Factory } from "./factory";
+import { Factory } from "devtools/tests/factories/factory";
 
 export class VersionFilterObjectFactory extends Factory {
   getFields() {
@@ -35,7 +35,7 @@ export class ChannelFilterObjectFactory extends Factory {
     let selectedChannels = [];
 
     while (generateChannelsCount && channels.length) {
-      const randIndex = faker.random.number % channels.length;
+      const randIndex = faker.random.number() % channels.length;
       const channel = channels.splice(randIndex, 1);
       selectedChannels = selectedChannels.concat(channel);
       generateChannelsCount--;

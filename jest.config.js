@@ -9,8 +9,8 @@ module.exports = {
       networkStatus: {},
     },
   },
-  setupFiles: ["<rootDir>/tests/jest.setup.js"],
-  setupFilesAfterEnv: ["<rootDir>/tests/jest-env.setup.js"],
+  setupFiles: ["<rootDir>/extension/content/tests/jest.setup.js"],
+  setupFilesAfterEnv: ["<rootDir>/extension/content/tests/jest-env.setup.js"],
   transform: {
     "^.+\\.[jt]sx?$": "babel-jest",
   },

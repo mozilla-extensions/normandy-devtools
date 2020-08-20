@@ -1,6 +1,11 @@
 import faker from "faker";
 
-import { AutoIncrementField, Factory, SubFactory, Field } from "./factory";
+import {
+  AutoIncrementField,
+  Factory,
+  SubFactory,
+  Field,
+} from "devtools/tests/factories/factory";
 
 export class RecipeFactory extends Factory {
   getFields() {
