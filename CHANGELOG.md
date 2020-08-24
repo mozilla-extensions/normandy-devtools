@@ -1,5 +1,10 @@
 # Changelog
 
+- Add UI for namespace sample filters
+- Add bucket filter testing ID calculator
+- Fix an issue where stale data could be shown for recently edited recipes
+- Fix an issue preventing `show-heartbeat` recipes from being created
+
 ## v2.0.3
 
 - Re-release due to deployment errors
@@ -41,11 +46,11 @@
 
 ## v1.0.0
 
-- #26 - Don't use dot notation for filter context keys with special chars
-- #28 - Add "Copy to arbitrary editor" button on recipe listing
-- #29 - Add protocol handler and pretty address bar for pretty, shareable urls
-- #32 - Load filter context dynamically instead of with a static list
-- #36 - Make filter context more robust and support appinfo
+- Don't use dot notation for filter context keys with special chars
+- Add "Copy to arbitrary editor" button on recipe listing
+- Add protocol handler and pretty address bar for pretty, shareable urls
+- Load filter context dynamically instead of with a static list
+- Make filter context more robust and support appinfo
 
 ## v0.8.0
 
