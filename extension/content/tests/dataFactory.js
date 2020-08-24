@@ -1,6 +1,6 @@
 import faker from "faker";
 
-import { Factory, Field } from "./factory";
+import { Factory, Field } from "devtools/tests/factories/factory";
 
 export class ConsoleLogRecipeFactory extends Factory {
   getFields() {

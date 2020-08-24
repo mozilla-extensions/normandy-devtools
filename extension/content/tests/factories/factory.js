@@ -83,6 +83,7 @@ export class Factory {
     this.options = options;
     this.data = {};
 
+    /** @type object */
     const fields = this.getFields();
 
     Object.keys(fields).forEach((key) => {

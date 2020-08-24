@@ -12,8 +12,15 @@
     "jsx": "preserve",
     "typeRoots": ["node_modules/@types", "node_modules/web-ext-types"],
     "downlevelIteration": true,
-    "noEmit": true
+    "noEmit": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node"
   },
-  "include": ["extension/content/**/*", "types/**/*.d.ts"],
+  "include": [
+    "extension/content/**/*",
+    "extension/tests/**/*",
+    "types/**/*.d.ts"
+  ],
   "exclude": ["node_modules"]
 }

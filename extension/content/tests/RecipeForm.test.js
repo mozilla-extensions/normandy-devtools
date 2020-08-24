@@ -531,15 +531,18 @@ describe("The `RecipeForm` component", () => {
 
     const foCodeBlock = fallbackFOForm.querySelector("textarea");
 
+    // Technically this should be a more specific ClipboardEvent, but JSDom
+    // doesn't really like that, so fake it and tell TypeScript that it's fine.
     const clipboardEvent = new Event("paste", {
       bubbles: true,
       cancelable: true,
       composed: true,
     });
-
+    // @ts-ignore
     clipboardEvent.clipboardData = {
       getData: () => "invalid json!",
     };
+
     foCodeBlock.dispatchEvent(clipboardEvent);
 
     expect(getByText("[]invalid json!")).toBeInTheDocument();
@@ -552,6 +555,7 @@ describe("The `RecipeForm` component", () => {
     //ctrl z... the paste
     foCodeBlock.dispatchEvent(new Event("focus"));
     foCodeBlock.dispatchEvent(
+      // @ts-ignore
       new KeyboardEvent("keydown", { keyCode: 90, ctrlKey: true }),
     );
 
@@ -601,6 +605,7 @@ describe("The `RecipeForm` component", () => {
       );
 
     /* global renderWithContext */
+    // @ts-ignore
     const { getByText, getAllByRole } = await renderWithContext(
       <RecipeFormPage />,
       {
@@ -641,6 +646,7 @@ describe("The `RecipeForm` component", () => {
       comment: saveMessage,
       action_id: 1,
       arguments: {
+        // @ts-ignore
         ...updatedRecipeData.arguments,
         isHighPopulation: true,
         isEnrollmentPaused: false,

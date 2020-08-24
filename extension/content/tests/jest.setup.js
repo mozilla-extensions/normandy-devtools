@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* eslint-env node */
 import crypto from "crypto";
 
@@ -18,10 +19,15 @@ Object.defineProperty(global.self, "crypto", {
 browser.experiments.normandy = {
   checkRecipeFilter: jest.fn(),
   runRecipe: jest.fn(),
-  getRecipeSuitabilities: jest.fn(() =>
+  /** type (recipe: unknown): Array<string> */
+  // eslint-disable-next-line no-unused-vars
+  getRecipeSuitabilities: jest.fn((_recipe) =>
     Promise.resolve(["RECIPE_SUITABILITY_FILTER_MATCH"]),
   ),
-  bucketSample: jest.fn(() => new Promise(() => {})), // it never resolves by default
+  bucketSample: jest.fn(
+    // eslint-disable-next-line no-unused-vars
+    (_start, _count, _total, _inputs) => new Promise(() => {}),
+  ), // it never resolves by default
 };
 
 browser.experiments.networking = {

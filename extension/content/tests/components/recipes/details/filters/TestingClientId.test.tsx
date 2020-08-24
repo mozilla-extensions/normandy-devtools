@@ -3,6 +3,7 @@ import React from "react";
 
 import TestingClientId from "devtools/components/recipes/details/filters/TestingClientId";
 import { Deferred } from "devtools/utils/helpers";
+import { BucketSampleFilterObject } from "types/filters";
 
 afterEach(async () => {
   jest.clearAllMocks();
@@ -10,7 +11,8 @@ afterEach(async () => {
 });
 
 describe("BucketSample", () => {
-  const testFilter = {
+  const testFilter: BucketSampleFilterObject = {
+    type: "bucketSample",
     start: 0,
     count: 100,
     total: 10000,

@@ -13,7 +13,7 @@
     "build:finalize": "mv web-ext-artifacts/*.zip web-ext-artifacts/normandy-devtools.xpi",
     "clean": "rimraf dist web-ext-artifacts .webpack-cache",
     "docs": "serve docs",
-    "lint": "npm-run-all lint:*",
+    "lint": "npm-run-all --parallel lint:*",
     "lint:stylelint": "stylelint extension/**/*.less extension/**/*.css",
     "lint:eslint": "eslint webpack.config.js --max-warnings 0 extension",
     "lint:typecheck": "tsc --noEmit --project tsconfig.json",
