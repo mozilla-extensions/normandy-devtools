@@ -28,7 +28,7 @@
     "publish-docs": "gh-pages --dist docs --dotfiles --message '[skip ci] Docs updates'"
   },
   "devDependencies": {
-    "@babel/core": "7.11.1",
+    "@babel/core": "7.11.4",
     "@babel/plugin-proposal-class-properties": "7.10.4",
     "@babel/plugin-proposal-decorators": "7.10.5",
     "@babel/preset-env": "7.11.0",
@@ -63,7 +63,7 @@
     "eslint-plugin-prettier": "3.1.4",
     "eslint-plugin-react": "7.20.6",
     "extract-text-webpack-plugin": "3.0.2",
-    "faker": "4.1.0",
+    "faker": "5.0.0",
     "file-loader": "6.0.0",
     "generate-json-webpack-plugin": "1.0.0",
     "gh-pages": "^3.1.0",
@@ -94,7 +94,7 @@
   "dependencies": {
     "auth0-js": "9.13.4",
     "autobind-decorator": "2.4.0",
-    "codemirror": "5.56.0",
+    "codemirror": "5.57.0",
     "firacode": "5.2.0",
     "highlight.js": "10.1.2",
     "js-yaml": "3.14.0",
@@ -105,7 +105,7 @@
     "react-error-boundary": "2.3.1",
     "react-router-dom": "5.2.0",
     "react-split": "2.0.9",
-    "rsuite": "4.8.0",
+    "rsuite": "4.8.1",
     "validator": "13.1.1"
   },
   "resolutions": {
