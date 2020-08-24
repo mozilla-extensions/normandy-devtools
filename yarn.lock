@@ -9556,16 +9556,16 @@ rc-resize-observer@^0.2.3:
     rc-util "^5.0.0"
     resize-observer-polyfill "^1.5.1"
 
-rc-tree@3.9.1:
-  version "3.9.1"
-  resolved "https://registry.yarnpkg.com/rc-tree/-/rc-tree-3.9.1.tgz#22e158300bf339abc9df625682d7b7c2d85047c0"
-  integrity sha512-LSLkSRT2tYEkXSdm+2Q2qvnMO2udAMgimbvdOD4Dc6ds9zfYiJWtkQTVimrvIQeS501ENH0XHzkGV07IPAp+kQ==
+rc-tree@3.9.3:
+  version "3.9.3"
+  resolved "https://registry.yarnpkg.com/rc-tree/-/rc-tree-3.9.3.tgz#5f52b7b805815996d15e5446e4e367a547470ea9"
+  integrity sha512-oztfPQj7JFSoCTzzDpGTZ9sVaPvYXN8jkbZMtjSFaAGTOsLcLAIV3Ac+oUVXJg3fCM+5tj6SaW+KVxUZCKDV7A==
   dependencies:
     "@babel/runtime" "^7.10.1"
     classnames "2.x"
     rc-motion "^1.0.0"
     rc-util "^5.0.0"
-    rc-virtual-list "^2.1.1"
+    rc-virtual-list "^3.0.1"
 
 rc-util@^5.0.0, rc-util@^5.0.6, rc-util@^5.0.7:
   version "5.0.7"
@@ -9575,10 +9575,10 @@ rc-util@^5.0.0, rc-util@^5.0.6, rc-util@^5.0.7:
     react-is "^16.12.0"
     shallowequal "^1.1.0"
 
-rc-virtual-list@^2.1.1:
-  version "2.1.5"
-  resolved "https://registry.yarnpkg.com/rc-virtual-list/-/rc-virtual-list-2.1.5.tgz#f065e9835e16c612525e884662a886a25e4ff793"
-  integrity sha512-4jcNyR74cHfEEk25xjVfjYh6RsgK22XRApz0VpMPyygUnEpm0+44w3OP8S9vsFq3QAWUpOmW4kwp3ESJ917aaw==
+rc-virtual-list@^3.0.1:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/rc-virtual-list/-/rc-virtual-list-3.0.4.tgz#d2d517b2c913f09ad51a6a572e496ffad887bbd2"
+  integrity sha512-rWNQTMLUlFKeqYZK/Zy5aXY00KKjc0YzzmY6l68t8g6f1ivalozCvvJcKhQ9Azt5HmHdiyvUODCVk1/ZQrL5KA==
   dependencies:
     classnames "^2.2.6"
     rc-resize-observer "^0.2.3"
