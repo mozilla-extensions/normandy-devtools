@@ -27,10 +27,11 @@ Welcome Release Captain! ⛵️
 - [ ] Make a PR to merge this branch. Add `Fixes #XYZ` to the body where XYZ is this issue.
 - [ ] Get the change reviewed and merged.
 - [ ] `git push --tags`
-- [ ] Update the Github release for the newly pushed tag with the contents from `CHANGELOG.md`.
-- [ ] Create a new extension release with Shipit.
-- [ ] Attach the signed extension file to the Github release.
-- [ ] Create a release issue for with the [release issue template][].
+- [ ] Create a new extension release with Shipit, and get a prod signed XPI.
+- [ ] Create a GitHub release for the new tag.
+  - Give it the text content from `CHANGELOG.md`.
+  - Attach the signed XPI to the release.
+- [ ] Create a new issue for the next release with the [release issue template][].
 - [ ] Close this issue.
 
 [release issue template]:
