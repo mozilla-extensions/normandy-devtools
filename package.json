@@ -36,6 +36,7 @@
     "@babel/preset-typescript": "7.10.4",
     "@testing-library/jest-dom": "5.11.4",
     "@testing-library/react": "10.4.9",
+    "@types/faker": "^4.1.12",
     "@types/jest": "26.0.10",
     "@types/js-yaml": "3.12.5",
     "@types/rc-tree": "1.11.3",

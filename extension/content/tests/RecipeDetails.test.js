@@ -6,20 +6,19 @@ import App from "devtools/components/App";
 import NormandyAPI from "devtools/utils/normandyApi";
 
 import {
-  VersionFilterObjectFactory,
-  ChannelFilterObjectFactory,
-  BucketSampleFilterObjectFactory,
-  StableSampleFilterObjectFactory,
-  LocaleFilterObjectFactory,
-  CountryFilterObjectFactory,
-} from "./factories/filterObjectFactory";
+  versionFoFactory,
+  channelFoFactory,
+  countryFoFactory,
+  localeFoFactory,
+  bucketSampleFoFactory,
+  stableSampleFoFactory,
+} from "./factories/filterObjects";
 import {
-  AddOnBranchFactory,
-  ApprovalRequestFactory,
-  MultiPrefBranchFactory,
-  MultiPreferenceFactory,
-  RecipeFactory,
-} from "./factories/recipeFactory";
+  recipeFactory,
+  addonStudyBranchFactory,
+  multiPrefBranchFactory,
+  approvalRequestFactory,
+} from "./factories/recipes";
 
 describe("The `RecipeDetailForm` component", () => {
   afterEach(async () => {
@@ -38,27 +37,17 @@ describe("The `RecipeDetailForm` component", () => {
       .mockImplementation(() => Promise.resolve(recipe));
   };
 
+  /** @return {import("devtools/types/recipes").RecipeV3<import("devtools/types/arguments").BranchedAddonStudyArguments>} */
   const branchedAddonSetup = () => {
-    const versions = VersionFilterObjectFactory.build(
-      {},
-      { generateVersionsCount: 2 },
-    );
-    const channels = ChannelFilterObjectFactory.build(
-      {},
-      { generateChannelsCount: 1 },
-    );
-    const countries = CountryFilterObjectFactory.build(
-      {},
-      { generateCountriesCount: 2 },
-    );
-    const locales = LocaleFilterObjectFactory.build(
-      {},
-      { generateLocalesCount: 2 },
-    );
-    const sample = BucketSampleFilterObjectFactory.build();
+    const versions = versionFoFactory.build({}, { generateVersionsCount: 2 });
+    const channels = channelFoFactory.build({}, { generateChannelsCount: 1 });
+    const countries = countryFoFactory.build({}, { generateCountriesCount: 2 });
+    const locales = localeFoFactory.build({}, { generateLocalesCount: 2 });
+    const sample = bucketSampleFoFactory.build();
     const extraFO = { type: "unknown", unknowns: ["something unknown"] };
 
-    const filterObject = [
+    /** @type Array<import("devtools/types/filters").FilterObject> */
+    const filter_object = [
       versions,
       channels,
       countries,
@@ -66,56 +55,40 @@ describe("The `RecipeDetailForm` component", () => {
       sample,
       extraFO,
     ];
-    const branch1 = AddOnBranchFactory.build();
-    const branch2 = AddOnBranchFactory.build();
-    const recipe = RecipeFactory.build(
-      {},
+    const branches = addonStudyBranchFactory.buildCount(2);
+    const recipe = recipeFactory.build(
       {
-        actionName: "branched-addon-study",
-        filterObject,
+        latest_revision: {
+          action: { name: "branched-addon-study" },
+          filter_object,
+          arguments: { branches },
+        },
       },
+      {},
     );
-    recipe.latest_revision.arguments = {
-      ...recipe.latest_revision.arguments,
-      branches: [branch1, branch2],
-    };
-    return recipe;
+    return /** @type import("devtools/types/recipes").RecipeV3<import("devtools/types/arguments").BranchedAddonStudyArguments> */ (recipe);
   };
 
   const multiprefRecipeSetUp = () => {
-    const sample = StableSampleFilterObjectFactory.build();
-    const versions = VersionFilterObjectFactory.build(
-      {},
-      { generateVersionsCount: 2 },
+    const sample = stableSampleFoFactory.build();
+    const versions = versionFoFactory.build({}, { generateVersionsCount: 2 });
+    const branches = multiPrefBranchFactory.buildMany(
+      [{}, {}],
+      [{ generatePreferenceCount: 2 }, { generatePreferenceCount: 3 }],
     );
-    const recipe = RecipeFactory.build(
-      {},
-      {
-        actionName: "multi-preference-experiment",
-        filterObject: [versions, sample],
+    const recipe = recipeFactory.build({
+      latest_revision: {
+        action: { name: "multi-preference-experiment" },
+        filter_object: [versions, sample],
+        arguments: { branches },
       },
-    );
-    const branch1 = MultiPrefBranchFactory.build(
-      {},
-      { generatePreferenceCount: 2 },
-    );
-    const branch2 = MultiPrefBranchFactory.build(
-      {},
-      { generatePreferenceCount: 3 },
-    );
-
-    const branches = [branch1, branch2];
-    const multiPrefArguments = MultiPreferenceFactory.build({ branches });
-    recipe.latest_revision = {
-      ...recipe.latest_revision,
-      arguments: multiPrefArguments,
-    };
+    });
 
     return recipe;
   };
 
   const unapproveRecipe = (recipe) => {
-    const approvalRequest = ApprovalRequestFactory.build({}, { empty: true });
+    const approvalRequest = approvalRequestFactory.build({}, { empty: true });
     recipe.latest_revision = {
       ...recipe.latest_revision,
       approval_request: approvalRequest,
@@ -131,7 +104,7 @@ describe("The `RecipeDetailForm` component", () => {
   it("displays details of an branchedAddon recipe", async () => {
     const recipeData = branchedAddonSetup();
     setup(recipeData);
-    const { getByText } = await render(<App />);
+    const { getByText, getAllByText } = await render(<App />);
     fireEvent.click(getByText("View Recipe"));
 
     await waitFor(() => expect(NormandyAPI.prototype.fetchRecipe).toReturn());
@@ -141,30 +114,33 @@ describe("The `RecipeDetailForm` component", () => {
     const { latest_revision } = recipeData;
     const { filter_object, arguments: recipe_args } = latest_revision;
 
-    expect(getByText(recipe_args.userFacingName)).toBeInTheDocument();
-    expect(getByText(recipe_args.userFacingDescription)).toBeInTheDocument();
-    expect(getByText(recipe_args.slug)).toBeInTheDocument();
+    expect(getAllByText(recipe_args.userFacingName)).not.toHaveLength(0);
+    expect(getAllByText(recipe_args.userFacingDescription)).not.toHaveLength(0);
+    expect(getAllByText(recipe_args.slug)).not.toHaveLength(0);
     expect(
-      getByText(latest_revision.extra_filter_expression),
-    ).toBeInTheDocument();
+      getAllByText(latest_revision.extra_filter_expression),
+    ).not.toHaveLength(0);
 
     const channels = findFOValue(filter_object, "channel", "channels");
     for (const channel of channels) {
-      expect(getByText(channel)).toBeInTheDocument();
+      expect(getAllByText(channel)).not.toHaveLength(0);
     }
 
     const versions = findFOValue(filter_object, "version", "versions");
     for (const version of versions) {
-      expect(getByText(version.toString())).toBeInTheDocument();
+      expect(getAllByText(version.toString())).not.toHaveLength(0);
     }
 
     const { branches } = recipe_args;
     for (const branch of branches) {
-      expect(getByText(branch.slug)).toBeInTheDocument();
-      expect(getByText(branch.extensionApiId.toString())).toBeInTheDocument();
-      expect(getByText(branch.ratio.toString())).toBeInTheDocument();
+      expect(getAllByText(branch.slug)).not.toHaveLength(0);
+      expect(getAllByText(branch.extensionApiId.toString())).not.toHaveLength(
+        0,
+      );
+      expect(getAllByText(branch.ratio.toString())).not.toHaveLength(0);
     }
   });
+
   it("should be able approve recipes", async () => {
     jest
       .spyOn(NormandyAPI.prototype, "approveApprovalRequest")

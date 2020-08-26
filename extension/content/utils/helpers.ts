@@ -70,3 +70,11 @@ export function assert(
     throw new Error(message ?? "Assertion failed");
   }
 }
+
+/** Check if `key` is a property on `x` in a type-safe way when `x` is `unknown` */
+export function has<K extends string>(
+  key: K,
+  x: unknown,
+): x is { [key in K]: unknown } {
+  return x && typeof x === "object" && key in x;
+}
