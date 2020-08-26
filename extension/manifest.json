@@ -23,10 +23,7 @@
 
   "content_scripts": [
     {
-      "matches": [
-        "http://*/*",
-        "https://*/*"
-      ],
+      "matches": ["http://*/*", "https://*/*"],
       "run_at": "document_end",
       "js": ["content-scripts.js"]
     }
@@ -53,12 +50,7 @@
     ]
   },
 
-  "permissions": [
-    "<all_urls>",
-    "clipboardWrite",
-    "identity",
-    "networkStatus"
-  ],
+  "permissions": ["<all_urls>", "clipboardWrite", "identity", "networkStatus"],
 
   "experiment_apis": {
     "networking": {
