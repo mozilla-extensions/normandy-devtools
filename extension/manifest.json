@@ -5,8 +5,6 @@
   "description": "$description",
   "homepage_url": "$homepage_url",
 
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self';",
-
   "applications": {
     "gecko": {
       "id": "normandy-devtools@mozilla.com",
