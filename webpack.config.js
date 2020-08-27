@@ -107,7 +107,7 @@ module.exports = async (env, argv = {}) => {
 
   return {
     mode: argv.mode || "development",
-    devtool: development ? "eval-source-map" : "source-map",
+    devtool: "source-map",
     entry,
     output: {
       filename: "[name].js",
