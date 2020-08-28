@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.1.1
+
+- Improve CSP settings
+- Stop minifying the extension
+
 ## v2.1.0
 
 - Add UI for namespace sample filters
