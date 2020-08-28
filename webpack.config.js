@@ -106,8 +106,11 @@ module.exports = async (env, argv = {}) => {
   }
 
   return {
-    mode: argv.mode || "development",
-    devtool: "source-map",
+    mode: argv.mode || (development ? "development" : "production"),
+    devtool: development ? "source-map" : "none",
+    optimization: {
+      minimize: false,
+    },
     entry,
     output: {
       filename: "[name].js",
