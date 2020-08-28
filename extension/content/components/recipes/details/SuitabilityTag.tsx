@@ -1,9 +1,7 @@
 // @ts-nocheck
 import React from "react";
-import { useParams } from "react-router-dom";
 import { Icon, Popover, Tag, Whisper } from "rsuite";
 
-import { useEnvironmentState } from "devtools/contexts/environment";
 import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
 import { convertToV1Recipe } from "devtools/utils/recipes";
 
@@ -85,23 +83,31 @@ const SUITABILITIES_DESCRIPTIONS = {
   ),
 };
 
-export default function SuitabilityTag() {
-  const data = useRecipeDetailsData();
-  const { selectedKey: environmentKey } = useEnvironmentState();
-  const { recipeId } = useParams();
+interface SuitabilityTagProps {
+  revision?: Revision;
+  hide?: Array<string>;
+}
+
+// default export
+const SuitabilityTag: React.FC<SuitabilityTagProps> = ({
+  revision,
+  hide = [],
+}) => {
   const [suitabilities, setSuitabilities] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+
+  if (!revision) {
+    revision = useRecipeDetailsData();
+  }
 
   React.useEffect(() => {
-    if (data.name) {
-      normandy
-        .getRecipeSuitabilities(
-          convertToV1Recipe({ latest_revision: data }, environmentKey),
-        )
-        .then((s) => {
-          setSuitabilities(s);
-        });
-    }
-  }, [data.name, recipeId]);
+    (async (): Promise<void> => {
+      const v1Recipe = convertToV1Recipe(revision);
+      const suitabilities = await normandy.getRecipeSuitabilities(v1Recipe);
+      setSuitabilities(suitabilities);
+      setLoading(false);
+    })();
+  }, [revision]);
 
   let popoverMessage = "Loading&hellip;";
   if (suitabilities) {
@@ -123,6 +129,10 @@ export default function SuitabilityTag() {
         })}
       </dl>
     );
+  }
+
+  if (!loading && !suitabilities.some((s) => !hide.includes(s))) {
+    return null;
   }
 
   let color;
@@ -173,4 +183,6 @@ export default function SuitabilityTag() {
       </Tag>
     </Whisper>
   );
-}
+};
+
+export default SuitabilityTag;
