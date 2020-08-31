@@ -64,7 +64,7 @@
     "eslint-plugin-react": "7.20.6",
     "extract-text-webpack-plugin": "3.0.2",
     "faker": "5.0.0",
-    "file-loader": "6.0.0",
+    "file-loader": "6.1.0",
     "generate-json-webpack-plugin": "1.0.0",
     "gh-pages": "^3.1.0",
     "html-webpack-plugin": "4.3.0",
