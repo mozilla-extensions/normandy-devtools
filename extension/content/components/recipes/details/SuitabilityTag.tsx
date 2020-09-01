@@ -136,11 +136,11 @@ const SuitabilityTag: React.FC<SuitabilityTagProps> = ({
   }
 
   let color;
-  let suitabilityMessage = "Checking suitabilities";
+  let suitabilityMessage = null;
   if (suitabilities.length === 1) {
     if (suitabilities[0] === "RECIPE_SUITABILITY_FILTER_MATCH") {
-      color = "green";
-      suitabilityMessage = "All checks passed";
+      color = "blue";
+      suitabilityMessage = "Match";
     } else if (suitabilities[0] === "RECIPE_SUITABILITY_FILTER_MISMATCH") {
       color = "red";
       suitabilityMessage = "Filter mismatch";
@@ -170,6 +170,14 @@ const SuitabilityTag: React.FC<SuitabilityTagProps> = ({
       </div>
     </div>
   );
+
+  if (suitabilityMessage === null) {
+    if (hide.length) {
+      return null;
+    }
+
+    suitabilityMessage = "Checking suitabilities";
+  }
 
   let popover = <></>;
   if (suitabilities.length) {

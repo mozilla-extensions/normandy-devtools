@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Icon, Tag, Panel, Dropdown, Popover, Whisper } from "rsuite";
 
 import { RecipeV3 } from "devtools/types/recipes";
+import { has } from "devtools/utils/helpers";
 import { convertToV1Recipe } from "devtools/utils/recipes";
 
 import SuitabilityTag from "./details/SuitabilityTag";
@@ -58,6 +59,67 @@ class RecipeListing extends React.PureComponent<
     return <Tag className="text-danger">Disabled</Tag>;
   }
 
+  renderHeader(): ReactElement {
+    const { recipe } = this.props;
+    const linkTarget = `recipes/${recipe.id}`;
+
+    return (
+      <div className="d-flex">
+        <Link className="flex-grow-0 flex-basis-0" to={linkTarget}>
+          <Tag className="mr-half" color="violet">
+            {recipe.id}
+          </Tag>
+        </Link>
+        <Link className="flex-grow-1 pr-1" to={linkTarget}>
+          {recipe.latest_revision.name}
+        </Link>
+        <div className="recipe-actions flex-grow-0 flex-shrink-0">
+          <SuitabilityTag
+            hide={["RECIPE_SUITABILITY_FILTER_MISMATCH"]}
+            revision={recipe.latest_revision}
+          />
+          {this.renderEnabledIcon()}
+          {this.renderActionMenu()}
+        </div>
+      </div>
+    );
+  }
+
+  renderMetaData(): ReactElement {
+    const { recipe } = this.props;
+    const revision = recipe.latest_revision;
+
+    const metadata = [["Action", <>{revision.action.name}</>]];
+
+    if (has("slug", revision.arguments)) {
+      metadata.push([
+        "Slug",
+        <code key="slug">{revision.arguments.slug}</code>,
+      ]);
+    }
+
+    if (has("surveyId", revision.arguments)) {
+      metadata.push([
+        "Survey ID",
+        <code key="surveyId">{revision.arguments.surveyId}</code>,
+      ]);
+    }
+
+    return (
+      <dl className="d-flex flex-wrap m-0">
+        {metadata.map(([title, value], idx) => (
+          <span
+            key={`${idx}-${title}`}
+            className="flex-grow-1 d-inline-block flex-basis-half"
+          >
+            <dt>{title}</dt>
+            <dd>{value}</dd>
+          </span>
+        ))}
+      </dl>
+    );
+  }
+
   renderActionMenu(): ReactElement {
     const { recipe } = this.props;
     const { running } = this.state;
@@ -103,21 +165,12 @@ class RecipeListing extends React.PureComponent<
     const { recipe } = this.props;
 
     return (
-      <Panel bordered className="recipe-listing mb-2">
-        <Link to={`recipes/${recipe.id}`}>
-          <Tag className="mr-half" color="blue">
-            {recipe.id}
-          </Tag>
-          {recipe.latest_revision.name}
-        </Link>
-        <div className="recipe-actions pull-right">
-          <SuitabilityTag
-            hide={["RECIPE_SUITABILITY_FILTER_MISMATCH"]}
-            revision={recipe.latest_revision}
-          />
-          {this.renderEnabledIcon()}
-          {this.renderActionMenu()}
-        </div>
+      <Panel
+        bordered
+        className="recipe-listing mb-2"
+        header={this.renderHeader()}
+      >
+        {this.renderMetaData()}
       </Panel>
     );
   }
