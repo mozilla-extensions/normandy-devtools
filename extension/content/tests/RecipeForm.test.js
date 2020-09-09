@@ -10,25 +10,23 @@ import "@testing-library/jest-dom/extend-expect";
 
 import App from "devtools/components/App";
 import RecipeFormPage from "devtools/components/pages/RecipeFormPage";
+import {
+  filtersApiResponseFactory,
+  extensionFactory,
+} from "devtools/tests/factories/api";
 import ExperimenterAPI from "devtools/utils/experimenterApi";
 import NormandyAPI from "devtools/utils/normandyApi";
 
 import {
-  ActionsResponse,
-  FiltersFactory,
-  ExtensionFactory,
-} from "./factories/filterFactory";
+  versionFoFactory,
+  channelFoFactory,
+  bucketSampleFoFactory,
+} from "./factories/filterObjects";
 import {
-  VersionFilterObjectFactory,
-  ChannelFilterObjectFactory,
-  BucketSampleFilterObjectFactory,
-} from "./factories/filterObjectFactory";
-import {
-  RecipeFactory,
-  AddOnBranchFactory,
-  MultiPrefBranchFactory,
-  MultiPreferenceFactory,
-} from "./factories/recipeFactory";
+  recipeFactory,
+  addonStudyBranchFactory,
+  multiPrefBranchFactory,
+} from "./factories/recipes";
 
 describe("The `RecipeForm` component", () => {
   afterEach(async () => {
@@ -40,6 +38,10 @@ describe("The `RecipeForm` component", () => {
     const forms = formGroups.filter((form) =>
       within(form).queryByText(formName),
     );
+    if (!forms.length) {
+      throw new Error(`Form ${formName} not found in group`);
+    }
+
     return forms.reduce((a, b) => (a.length <= b.length ? a : b));
   };
 
@@ -125,7 +127,7 @@ describe("The `RecipeForm` component", () => {
     const learnMoreUrlForm = findForm(forms, "Learn More Url");
     const postAnswerURLForm = findForm(forms, "Post-Answer URL");
     const promptForm = findForm(forms, "How often should the prompt be shown?");
-    const includeTelmetryForm = findForm(forms, "Include Telemetry UUID?");
+    const includeTelemetryForm = findForm(forms, "Include Telemetry UUID?");
     return {
       surveyIDForm,
       engagementButtonForm,
@@ -135,15 +137,15 @@ describe("The `RecipeForm` component", () => {
       learnMoreUrlForm,
       postAnswerURLForm,
       promptForm,
-      includeTelmetryForm,
+      includeTelemetryForm,
     };
   };
 
   const setup = (recipe) => {
     const pageResponse = { results: [recipe] };
-    const filtersResponse = FiltersFactory.build(
+    const filtersResponse = filtersApiResponseFactory.build(
       {},
-      { countries: 3, locales: 3 },
+      { countryCount: 3, localeCount: 3 },
     );
 
     jest
@@ -154,7 +156,14 @@ describe("The `RecipeForm` component", () => {
       .mockImplementation(() => Promise.resolve(filtersResponse));
     jest
       .spyOn(NormandyAPI.prototype, "fetchAllActions")
-      .mockImplementation(() => Promise.resolve(ActionsResponse()));
+      .mockImplementation(() =>
+        Promise.resolve([
+          { id: 1, name: "show-heartbeat" },
+          { id: 2, name: "opt-out-study" },
+          { id: 3, name: "preference-experiment" },
+          { id: 4, name: "console-log" },
+        ]),
+      );
 
     jest
       .spyOn(NormandyAPI.prototype, "saveRecipe")
@@ -166,29 +175,21 @@ describe("The `RecipeForm` component", () => {
   };
 
   const extensionSetup = () => {
-    const ext1 = ExtensionFactory.build({});
-    const ext2 = ExtensionFactory.build({});
-    const ext3 = ExtensionFactory.build({});
+    const extensions = extensionFactory.buildCount(3);
 
     jest
       .spyOn(NormandyAPI.prototype, "fetchAllExtensions")
-      .mockImplementation(() => Promise.resolve([ext1, ext2, ext3]));
+      .mockImplementation(() => Promise.resolve(extensions));
 
-    return [ext1, ext2, ext3];
+    return extensions;
   };
 
   const consoleLogRecipeSetup = () => {
-    const versions = VersionFilterObjectFactory.build(
-      {},
-      { generateVersionsCount: 2 },
-    );
-    const channels = ChannelFilterObjectFactory.build(
-      {},
-      { generateChannelsCount: 1 },
-    );
-    const sample = BucketSampleFilterObjectFactory.build();
+    const versions = versionFoFactory.build({}, { generateVersionsCount: 2 });
+    const channels = channelFoFactory.build({}, { generateChannelsCount: 1 });
+    const sample = bucketSampleFoFactory.build();
     const filterObject = [versions, sample, channels];
-    return RecipeFactory.build(
+    return recipeFactory.build(
       {},
       {
         actionName: "console-log",
@@ -198,56 +199,20 @@ describe("The `RecipeForm` component", () => {
   };
 
   const branchedAddonSetup = () => {
-    const channels = ChannelFilterObjectFactory.build(
-      {},
-      { generateChannelsCount: 1 },
-    );
-    const filterObject = [channels];
-    const branch1 = AddOnBranchFactory.build();
-    const branch2 = AddOnBranchFactory.build();
-    const recipe = RecipeFactory.build(
-      {},
-      {
-        actionName: "branched-addon-study",
-        filterObject,
+    const channels = channelFoFactory.build({}, { generateChannelsCount: 1 });
+    const filter_object = [channels];
+    const branches = addonStudyBranchFactory.buildCount(2);
+    return recipeFactory.build({
+      latest_revision: {
+        action: { name: "branched-addon-study" },
+        arguments: { branches },
+        filter_object,
       },
-    );
-    recipe.latest_revision.arguments = {
-      ...recipe.latest_revision.arguments,
-      branches: [branch1, branch2],
-    };
-    return recipe;
-  };
-
-  const multiprefExperimenterRecipeSetUp = () => {
-    const versions = VersionFilterObjectFactory.build(
-      {},
-      { generateVersionsCount: 2 },
-    );
-    const recipe = RecipeFactory.build(
-      {},
-      {
-        actionName: "multi-preference-experiment",
-        filterObject: [versions],
-      },
-    );
-    const branch1 = MultiPrefBranchFactory.build(
-      {},
-      { generatePreferenceCount: 2 },
-    );
-    const branch2 = MultiPrefBranchFactory.build(
-      {},
-      { generatePreferenceCount: 1 },
-    );
-    const branches = [branch1, branch2];
-    const multiPrefArguments = MultiPreferenceFactory.build({ branches });
-    recipe.arguments = multiPrefArguments;
-    recipe.action_name = "multi-preference-experiment";
-    return recipe;
+    });
   };
 
   it("creation pref recipe form", async () => {
-    const recipe = RecipeFactory.build();
+    const recipe = recipeFactory.build();
     setup(recipe);
     const { getByText, getAllByRole } = await render(<App />);
     fireEvent.click(getByText("Create Recipe"));
@@ -410,7 +375,7 @@ describe("The `RecipeForm` component", () => {
     const experimenterSlugInput = experimenterSlugForm.querySelector("input");
 
     const name = "A new Recipe Name";
-    const experimenter_slug = "the-new-experinenter-slug";
+    const experimenter_slug = "the-new-experimenter-slug";
 
     fireEvent.change(nameInput, { target: { value: name } });
     fireEvent.change(experimenterSlugInput, {
@@ -472,11 +437,7 @@ describe("The `RecipeForm` component", () => {
 
     /* eslint-disable prefer-const */
 
-    let {
-      action,
-      comment: _omitComment,
-      ...updatedRecipeData
-    } = latest_revision;
+    let { action, ...updatedRecipeData } = latest_revision;
     /* eslint-enable prefer-const */
 
     const channelValues = ["nightly", "aurora", "beta", "release"];
@@ -486,6 +447,7 @@ describe("The `RecipeForm` component", () => {
       experimenter_slug,
       name,
       comment: saveMessage,
+      // @ts-ignore
       action_id: action.id,
       arguments: {
         ...updatedRecipeData.arguments,
@@ -495,6 +457,7 @@ describe("The `RecipeForm` component", () => {
         if (fo.type === "channel") {
           return {
             ...fo,
+            // @ts-ignore
             channels: channelValues.filter((c) => !fo.channels.includes(c)),
           };
         }
@@ -574,16 +537,13 @@ describe("The `RecipeForm` component", () => {
     const { latest_revision } = recipeData;
 
     /* eslint-disable prefer-const */
-    let {
-      action,
-      comment: _omitComment,
-      ...updatedRecipeData
-    } = latest_revision;
+    let { action, ...updatedRecipeData } = latest_revision;
     /* eslint-enable prefer-const */
 
     updatedRecipeData = {
       ...updatedRecipeData,
       comment: saveMessage,
+      // @ts-ignore
       action_id: action.id,
     };
 
@@ -592,27 +552,42 @@ describe("The `RecipeForm` component", () => {
       updatedRecipeData,
     );
   });
+
   it("should have isEnrollmentPaused set when import from experimenter", async () => {
-    const recipeData = multiprefExperimenterRecipeSetUp();
-    setup(recipeData);
+    const versions = versionFoFactory.build({}, { generateVersionsCount: 2 });
+    const branches = multiPrefBranchFactory.buildCount(2);
+    const recipe = recipeFactory.build({
+      latest_revision: {
+        action: { name: "multi-preference-experiment" },
+        arguments: { branches },
+        filter_object: [versions],
+      },
+    });
+
+    setup(recipe);
+
+    /** @type Record<string, any> */
+    const experimenterRecipe = { ...recipe.latest_revision };
+    experimenterRecipe.action_name = experimenterRecipe.action.name;
+    experimenterRecipe.comment = "";
+    delete experimenterRecipe.action;
     jest
       .spyOn(ExperimenterAPI.prototype, "fetchRecipe")
-      .mockImplementation(() => Promise.resolve(recipeData));
+      .mockImplementation(() => Promise.resolve(experimenterRecipe));
+
     jest
       .spyOn(NormandyAPI.prototype, "fetchAllActions")
       .mockImplementation(() =>
-        Promise.resolve([{ id: 1, name: "multi-preference-experiment" }]),
+        Promise.resolve([recipe.latest_revision.action]),
       );
 
     /* global renderWithContext */
     // @ts-ignore
-    const { getByText, getAllByRole } = await renderWithContext(
-      <RecipeFormPage />,
-      {
-        route: "/prod/recipes/import/experimenter-slug",
-        path: "/prod/recipes/import/:experimenterSlug",
-      },
-    );
+    const doc = await renderWithContext(<RecipeFormPage />, {
+      route: "/prod/recipes/import/experimenter-slug",
+      path: "/prod/recipes/import/:experimenterSlug",
+    });
+    const { getByText, getAllByRole } = doc;
     expect(ExperimenterAPI.prototype.fetchRecipe).toHaveBeenCalled();
 
     await waitFor(() => {
@@ -635,19 +610,15 @@ describe("The `RecipeForm` component", () => {
     fireEvent.click(within(modalDialog).getByText("Save"));
 
     /* eslint-disable prefer-const */
-    let {
-      action_name: _omitActionName,
-      comment: _omitComment,
-      ...updatedRecipeData
-    } = recipeData;
-    /* eslint-enable prefer-const */
+    let { action: _omitAction, ...updatedRecipeData } = recipe.latest_revision;
     updatedRecipeData = {
       ...updatedRecipeData,
       comment: saveMessage,
-      action_id: 1,
+      // @ts-ignore
+      action_id: recipe.latest_revision.action.id,
       arguments: {
-        // @ts-ignore
         ...updatedRecipeData.arguments,
+        // @ts-ignore
         isHighPopulation: true,
         isEnrollmentPaused: false,
       },
@@ -659,7 +630,7 @@ describe("The `RecipeForm` component", () => {
   });
 
   it("create show heart beat recipe", async () => {
-    const recipe = RecipeFactory.build();
+    const recipe = recipeFactory.build();
     setup(recipe);
 
     const { getByText, getAllByRole } = await render(<App />);
@@ -704,7 +675,7 @@ describe("The `RecipeForm` component", () => {
       learnMoreUrlForm,
       postAnswerURLForm,
       promptForm,
-      includeTelmetryForm,
+      includeTelemetryForm,
     } = getHeartBeatFields(formGroups);
 
     const surveyIDInput = surveyIDForm.querySelector("input");
@@ -715,7 +686,7 @@ describe("The `RecipeForm` component", () => {
     const learnMoreUrlInput = learnMoreUrlForm.querySelector("input");
     const postAnswerURLInput = postAnswerURLForm.querySelector("input");
     const promptInput = within(promptForm).getByRole("combobox");
-    const includeTelemetryToggle = within(includeTelmetryForm).getByRole(
+    const includeTelemetryToggle = within(includeTelemetryForm).getByRole(
       "button",
     );
 
@@ -778,7 +749,9 @@ describe("The `RecipeForm` component", () => {
   });
 
   it("fallback editor is rendered for unknown action types", async () => {
-    const recipeData = RecipeFactory.build({}, { actionName: "unknown type" });
+    const recipeData = recipeFactory.build({
+      latest_revision: { action: { name: "unknown" } },
+    });
     setup(recipeData);
     const { getByText } = await render(<App />);
     await waitFor(() => {
@@ -793,7 +766,7 @@ describe("The `RecipeForm` component", () => {
   });
 
   it("creation addon recipe form", async () => {
-    const recipe = RecipeFactory.build();
+    const recipe = recipeFactory.build();
     setup(recipe);
     const extensions = extensionSetup();
 
@@ -891,7 +864,9 @@ describe("The `RecipeForm` component", () => {
     });
   });
   it("fallback editor is rendered for unknown action types", async () => {
-    const recipeData = RecipeFactory.build({}, { actionName: "unknown type" });
+    const recipeData = recipeFactory.build({
+      latest_revision: { action: { name: "unknown" } },
+    });
     setup(recipeData);
     const { getByText } = await render(<App />);
     await waitFor(() => {
