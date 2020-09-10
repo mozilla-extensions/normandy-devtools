@@ -46,4 +46,8 @@ export interface MultiPreferenceExperimentPrefs {
   };
 }
 
+export interface ShowHeartbeatArguments {
+  surveyId: string;
+}
+
 export type UnknownArguments = Record<string, unknown>;

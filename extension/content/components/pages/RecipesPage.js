@@ -11,16 +11,19 @@ import {
   Nav,
   Navbar,
   Pagination,
+  Row,
+  Col,
+  Grid,
 } from "rsuite";
 
 import CodeMirror from "devtools/components/common/CodeMirror";
-import Highlight from "devtools/components/common/Highlight";
 import RecipeListing from "devtools/components/recipes/RecipeListing";
 import {
   useEnvironments,
   useSelectedEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
+import { chunkBy } from "devtools/utils/helpers";
 import { convertToV1Recipe } from "devtools/utils/recipes";
 
 const normandy = browser.experiments.normandy;
@@ -33,7 +36,6 @@ class RecipesPage extends React.PureComponent {
     environment: PropTypes.object,
     environmentKey: PropTypes.string,
     environments: PropTypes.object,
-    match: PropTypes.object,
   };
 
   constructor(props) {
@@ -51,7 +53,6 @@ class RecipesPage extends React.PureComponent {
       page: 1,
       runningArbitrary: false,
       showWriteRecipes: false,
-      showReadRecipe: false,
       recipeSelected: false,
       recipePages,
     };
@@ -115,7 +116,10 @@ class RecipesPage extends React.PureComponent {
 
   copyRecipeToArbitrary(v3Recipe) {
     const { environmentKey } = this.props;
-    const v1Recipe = convertToV1Recipe(v3Recipe, environmentKey);
+    const v1Recipe = convertToV1Recipe(
+      v3Recipe.latest_revision,
+      environmentKey,
+    );
     this.setState({
       arbitraryRecipe: JSON.stringify(v1Recipe, null, 2),
       showWriteRecipes: true,
@@ -124,7 +128,7 @@ class RecipesPage extends React.PureComponent {
 
   renderRecipeList() {
     const { loading, page, recipePages } = this.state;
-    const { environmentKey, match } = this.props;
+    const { environmentKey } = this.props;
     const { [environmentKey]: { [page]: recipes = [] } = {} } = recipePages;
     if (loading) {
       return (
@@ -133,16 +137,24 @@ class RecipesPage extends React.PureComponent {
         </div>
       );
     } else if (recipes) {
-      return recipes.map((recipe) => (
-        <RecipeListing
-          key={recipe.id}
-          copyRecipeToArbitrary={this.copyRecipeToArbitrary}
-          environmentName={environmentKey}
-          match={match}
-          recipe={recipe}
-          showRecipe={this.showRecipe}
-        />
-      ));
+      return (
+        <Grid className="recipe-list">
+          {chunkBy(recipes, 2).map((recipeChunk, rowIdx) => (
+            <Row key={`row-${rowIdx}`}>
+              {recipeChunk.map((recipe, colIdx) => (
+                <Col key={`col-${colIdx}`} md={12} sm={24}>
+                  <RecipeListing
+                    key={recipe.id}
+                    copyRecipeToArbitrary={this.copyRecipeToArbitrary}
+                    environmentName={environmentKey}
+                    recipe={recipe}
+                  />
+                </Col>
+              ))}
+            </Row>
+          ))}
+        </Grid>
+      );
     }
 
     return null;
@@ -173,34 +185,6 @@ class RecipesPage extends React.PureComponent {
     }
 
     /* eslint-enable no-useless-catch */
-  }
-
-  showRecipe(recipe) {
-    this.setState({ showReadRecipe: true, recipeSelected: recipe });
-  }
-
-  hideRecipeModal() {
-    this.setState({ showReadRecipe: false });
-  }
-
-  renderViewRecipeModal() {
-    return (
-      <Modal
-        show={this.state.showReadRecipe}
-        size="lg"
-        onHide={this.hideRecipeModal}
-      >
-        <Modal.Header>
-          <Modal.Title>Recipe View</Modal.Title>
-        </Modal.Header>
-
-        <Modal.Body>
-          <Highlight language="json">
-            {JSON.stringify(this.state.recipeSelected, null, 1)}
-          </Highlight>
-        </Modal.Body>
-      </Modal>
-    );
   }
 
   renderWriteRecipeModal() {
@@ -302,7 +286,6 @@ class RecipesPage extends React.PureComponent {
         </div>
 
         {this.renderWriteRecipeModal()}
-        {this.renderViewRecipeModal()}
       </>
     );
   }

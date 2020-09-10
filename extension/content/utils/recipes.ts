@@ -1,24 +1,25 @@
 import { strict as assert } from "assert";
 
+import { Revision, RecipeV1 } from "devtools/types/recipes";
 import { BucketSampleFilterObject } from "types/filters";
 
 export function convertToV1Recipe(
-  v3Recipe,
+  revision: Revision,
   environmentName,
-): Record<string, any> {
+): RecipeV1 {
   // Normandy client expects a v1-style recipe, but we have a v3-style recipe. Convert it.
   const idSuffix = environmentName !== "prod" ? `-${environmentName}` : "";
 
   /* eslint-disable @typescript-eslint/camelcase */
   return {
-    id: `${v3Recipe.id}${idSuffix}`,
-    name: v3Recipe.latest_revision.name,
-    enabled: v3Recipe.latest_revision.enabled,
-    is_approved: v3Recipe.latest_revision.is_approved,
-    revision_id: v3Recipe.latest_revision.id,
-    action: v3Recipe.latest_revision.action.name,
-    arguments: v3Recipe.latest_revision.arguments,
-    filter_expression: v3Recipe.latest_revision.filter_expression,
+    id: `${revision.recipe.id}${idSuffix}`,
+    name: revision.name,
+    enabled: revision.enabled,
+    is_approved: revision.is_approved,
+    revision_id: revision.id,
+    action: revision.action.name,
+    arguments: revision.arguments,
+    filter_expression: revision.filter_expression,
   };
   /* eslint-enable @typescript-eslint/camelcase */
 }

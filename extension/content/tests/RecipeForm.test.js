@@ -356,16 +356,20 @@ describe("The `RecipeForm` component", () => {
     const recipeData = branchedAddonSetup();
     const extensions = extensionSetup();
     setup(recipeData);
-    const { getByText, getAllByRole } = await render(<App />);
+    const doc = await render(<App />);
+
+    await waitFor(() =>
+      expect(doc.getByRole("menu-opener")).toBeInTheDocument(),
+    );
+
+    fireEvent.mouseEnter(await doc.findByRole("menu-opener"));
+    fireEvent.click(await doc.findByText("Edit"));
+
     await waitFor(() => {
-      expect(getByText("Edit Recipe")).toBeInTheDocument();
-    });
-    fireEvent.click(getByText("Edit Recipe"));
-    await waitFor(() => {
-      expect(getByText("Experimenter Slug")).toBeInTheDocument();
+      expect(doc.getByText("Experimenter Slug")).toBeInTheDocument();
     });
 
-    let formGroups = getAllByRole("group");
+    let formGroups = doc.getAllByRole("group");
 
     const { nameForm, experimenterSlugForm, channelForm } = getForms(
       formGroups,
@@ -387,14 +391,14 @@ describe("The `RecipeForm` component", () => {
       fireEvent.click(within(channelForm).getByText(channel));
     }
 
-    formGroups = getAllByRole("group");
+    formGroups = doc.getAllByRole("group");
     let branches = findForm(formGroups, "Branches");
 
     let branchButtons = branches.querySelectorAll("button");
     const firstDeleteButton = branchButtons[0];
     fireEvent.click(firstDeleteButton);
 
-    formGroups = getAllByRole("group");
+    formGroups = doc.getAllByRole("group");
     branches = findForm(formGroups, "Branches");
 
     branchButtons = branches.querySelectorAll("button");
@@ -402,9 +406,9 @@ describe("The `RecipeForm` component", () => {
 
     fireEvent.click(secondBranchButton);
 
-    fireEvent.click(getByText("Add Branch"));
+    fireEvent.click(doc.getByText("Add Branch"));
 
-    formGroups = getAllByRole("group");
+    formGroups = doc.getAllByRole("group");
     branches = findForm(formGroups, "Branches");
     const branchGroups = within(branches).getAllByRole("group");
     const slugForm = findForm(branchGroups, "Slug");
@@ -422,11 +426,11 @@ describe("The `RecipeForm` component", () => {
     fireEvent.change(slugInput, { target: { value: slug } });
     fireEvent.change(ratioInput, { target: { value: ratio } });
     fireEvent.click(extensionInput);
-    fireEvent.click(getByText(selectedExtension.name));
+    fireEvent.click(doc.getByText(selectedExtension.name));
 
-    fireEvent.click(getByText("Save"));
+    fireEvent.click(doc.getByText("Save"));
 
-    const modalDialog = getAllByRole("dialog")[0];
+    const modalDialog = doc.getAllByRole("dialog")[0];
     const commentInput = modalDialog.querySelector("textArea");
     const saveMessage = "Edited Recipe";
     fireEvent.change(commentInput, { target: { value: saveMessage } });
@@ -475,21 +479,24 @@ describe("The `RecipeForm` component", () => {
   it("save button is re-enabled when form errors are addressed", async () => {
     const recipeData = consoleLogRecipeSetup();
     await setup(recipeData);
-    const { getByText, getAllByRole } = await render(<App />);
+    const doc = await render(<App />);
 
-    fireEvent.click(getByText("Recipes"));
+    fireEvent.click(doc.getByText("Recipes"));
     await waitFor(() => {
-      expect(getByText("Edit Recipe")).toBeInTheDocument();
+      expect(
+        doc.getByText(recipeData.latest_revision.name),
+      ).toBeInTheDocument();
     });
-    fireEvent.click(getByText("Edit Recipe"));
+    fireEvent.mouseEnter(doc.getByRole("menu-opener"));
+    fireEvent.click(doc.getByText("Edit"));
     await waitFor(() => {
-      expect(getByText("Experimenter Slug")).toBeInTheDocument();
+      expect(doc.getByText("Experimenter Slug")).toBeInTheDocument();
     });
 
-    const formGroups = getAllByRole("group");
+    const formGroups = doc.getAllByRole("group");
     const { fallbackFOForm } = getForms(formGroups);
 
-    const saveButton = getByText("Save");
+    const saveButton = doc.getByText("Save");
     expect(saveButton).not.toHaveAttribute("disabled");
 
     const foCodeBlock = fallbackFOForm.querySelector("textarea");
@@ -508,10 +515,12 @@ describe("The `RecipeForm` component", () => {
 
     foCodeBlock.dispatchEvent(clipboardEvent);
 
-    expect(getByText("[]invalid json!")).toBeInTheDocument();
-    expect(getByText("Filter Object(s) is not valid JSON")).toBeInTheDocument();
+    expect(doc.getByText("[]invalid json!")).toBeInTheDocument();
     expect(
-      getByText("Filter Object(s) is not contained in an array"),
+      doc.getByText("Filter Object(s) is not valid JSON"),
+    ).toBeInTheDocument();
+    expect(
+      doc.getByText("Filter Object(s) is not contained in an array"),
     ).toBeInTheDocument();
     expect(saveButton).toHaveAttribute("disabled");
 
@@ -522,12 +531,12 @@ describe("The `RecipeForm` component", () => {
       new KeyboardEvent("keydown", { keyCode: 90, ctrlKey: true }),
     );
 
-    expect(getByText("[]")).toBeInTheDocument();
+    expect(doc.getByText("[]")).toBeInTheDocument();
     expect(saveButton).not.toHaveAttribute("disabled");
 
     fireEvent.click(saveButton);
 
-    const modalDialog = getAllByRole("dialog")[0];
+    const modalDialog = doc.getAllByRole("dialog")[0];
     const commentInput = modalDialog.querySelector("textArea");
     const saveMessage = "Edited Recipe";
     fireEvent.change(commentInput, { target: { value: saveMessage } });
@@ -753,16 +762,19 @@ describe("The `RecipeForm` component", () => {
       latest_revision: { action: { name: "unknown" } },
     });
     setup(recipeData);
-    const { getByText } = await render(<App />);
+    const doc = await render(<App />);
     await waitFor(() => {
-      expect(getByText("Edit Recipe")).toBeInTheDocument();
+      expect(
+        doc.getByText(recipeData.latest_revision.name),
+      ).toBeInTheDocument();
     });
-    fireEvent.click(getByText("Edit Recipe"));
+    fireEvent.mouseEnter(doc.getByRole("menu-opener"));
+    fireEvent.click(doc.getByText("Edit"));
     await waitFor(() => {
-      expect(getByText("Experimenter Slug")).toBeInTheDocument();
+      expect(doc.getByText("Experimenter Slug")).toBeInTheDocument();
     });
 
-    expect(getByText("Action Arguments")).toBeInTheDocument();
+    expect(doc.getByText("Action Arguments")).toBeInTheDocument();
   });
 
   it("creation addon recipe form", async () => {
@@ -868,15 +880,18 @@ describe("The `RecipeForm` component", () => {
       latest_revision: { action: { name: "unknown" } },
     });
     setup(recipeData);
-    const { getByText } = await render(<App />);
+    const doc = await render(<App />);
     await waitFor(() => {
-      expect(getByText("Edit Recipe")).toBeInTheDocument();
+      expect(
+        doc.getByText(recipeData.latest_revision.name),
+      ).toBeInTheDocument();
     });
-    fireEvent.click(getByText("Edit Recipe"));
+    fireEvent.mouseEnter(doc.getByRole("menu-opener"));
+    fireEvent.click(doc.getByText("Edit"));
     await waitFor(() => {
-      expect(getByText("Experimenter Slug")).toBeInTheDocument();
+      expect(doc.getByText("Experimenter Slug")).toBeInTheDocument();
     });
 
-    expect(getByText("Action Arguments")).toBeInTheDocument();
+    expect(doc.getByText("Action Arguments")).toBeInTheDocument();
   });
 });

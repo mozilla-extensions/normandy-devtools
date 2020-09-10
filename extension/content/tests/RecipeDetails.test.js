@@ -105,7 +105,7 @@ describe("The `RecipeDetailForm` component", () => {
     const recipeData = branchedAddonSetup();
     setup(recipeData);
     const { getByText, getAllByText } = await render(<App />);
-    fireEvent.click(getByText("View Recipe"));
+    fireEvent.click(getByText(recipeData.latest_revision.name));
 
     await waitFor(() => expect(NormandyAPI.prototype.fetchRecipe).toReturn());
     expect(getByText("Action")).toBeInTheDocument();
@@ -152,8 +152,10 @@ describe("The `RecipeDetailForm` component", () => {
     const { getByText } = await render(<App />);
     fireEvent.click(getByText("Recipes"));
 
-    await waitFor(() => expect(getByText("View Recipe")).toBeInTheDocument());
-    fireEvent.click(getByText("View Recipe"));
+    await waitFor(() =>
+      expect(getByText(recipeData.latest_revision.name)).toBeInTheDocument(),
+    );
+    fireEvent.click(getByText(recipeData.latest_revision.name));
 
     await waitFor(() => expect(NormandyAPI.prototype.fetchRecipe).toReturn());
     expect(getByText("Approval Request")).toBeInTheDocument();
@@ -181,11 +183,10 @@ describe("The `RecipeDetailForm` component", () => {
     let recipeData = multiprefRecipeSetUp();
     recipeData = unapproveRecipe(recipeData);
     setup(recipeData);
-    const { getByText } = await render(<App />);
+    const { getByText, findByText } = await render(<App />);
     fireEvent.click(getByText("Recipes"));
 
-    await waitFor(() => expect(getByText("View Recipe")).toBeInTheDocument());
-    fireEvent.click(getByText("View Recipe"));
+    fireEvent.click(await findByText(recipeData.latest_revision.name));
 
     await waitFor(() => expect(NormandyAPI.prototype.fetchRecipe).toReturn());
     expect(getByText("Approval Request")).toBeInTheDocument();
@@ -216,8 +217,10 @@ describe("The `RecipeDetailForm` component", () => {
     const { getByText } = await render(<App />);
     fireEvent.click(getByText("Recipes"));
 
-    await waitFor(() => expect(getByText("View Recipe")).toBeInTheDocument());
-    fireEvent.click(getByText("View Recipe"));
+    await waitFor(() =>
+      expect(getByText(recipeData.latest_revision.name)).toBeInTheDocument(),
+    );
+    fireEvent.click(getByText(recipeData.latest_revision.name));
 
     await waitFor(() => expect(NormandyAPI.prototype.fetchRecipe).toReturn());
     expect(getByText("Approval Request")).toBeInTheDocument();
