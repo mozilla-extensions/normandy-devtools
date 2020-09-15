@@ -63,7 +63,12 @@ function AddressBar() {
   let inputRef;
   let triggerRef;
 
-  React.useEffect(() => setAddress(extensionUrl.toString()), [extensionUrl]);
+  React.useEffect(() => {
+    // Show current address if user is not interacting with the input.
+    if (document.activeElement !== inputRef) {
+      setAddress(extensionUrl.toString());
+    }
+  }, [extensionUrl]);
 
   const handleKeyPress = (ev) => {
     if (ev.key === "Enter") {
