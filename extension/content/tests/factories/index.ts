@@ -97,7 +97,7 @@ export default class Factory<T, O extends object = object>
         if (has("subfactory", fieldBuilder)) {
           let subfactoryOptions = {};
           if (fieldBuilder.passOptions) {
-            subfactoryOptions = fieldBuilder.passOptions(options, partial);
+            subfactoryOptions = fieldBuilder.passOptions(options, partial, rv);
           }
 
           rv[key] = fieldBuilder.subfactory.build(
@@ -192,7 +192,8 @@ export interface SubFactoryField<
   dependencies?: Array<string>;
   passOptions?: (
     options: RecursivePartial<O1>,
-    object: RecursivePartial<T>,
+    inputObject: RecursivePartial<T>,
+    inProgressObject: RecursivePartial<T>,
   ) => RecursivePartial<O2>;
 }
 

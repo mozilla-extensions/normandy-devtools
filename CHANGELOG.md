@@ -1,5 +1,9 @@
 # Changelog
 
+## Next
+
+- Add a one-click pause and request review button to recipe detail pages
+
 ## v2.1.1
 
 - Improve CSP settings
