@@ -3,6 +3,7 @@
 ## Next
 
 - Add a one-click pause and request review button to recipe detail pages
+- Switch custom protocol to `web+normandy://` (`ext+normandy://` will redirect).
 
 ## v2.1.1
 

@@ -1,3 +1,3 @@
 const restoreUrl =
-  localStorage.getItem("dev-mode-last-page") ?? "ext+normandy://";
+  localStorage.getItem("dev-mode-last-page") ?? "web+normandy://";
 window.location.href = restoreUrl;

@@ -16,7 +16,7 @@ function injectImportLink(element, environment) {
   const { environmentKey } = environment;
   element.setAttribute(
     "href",
-    `ext+normandy://${environmentKey}/recipes/import/${element.dataset.slug}`,
+    `web+normandy://${environmentKey}/recipes/import/${element.dataset.slug}`,
   );
 }
 
@@ -24,7 +24,7 @@ function injectRecipeDetailsLink(element, environment) {
   const { environmentKey } = environment;
   element.setAttribute(
     "href",
-    `ext+normandy://${environmentKey}/recipes/${element.dataset.recipeId}`,
+    `web+normandy://${environmentKey}/recipes/${element.dataset.recipeId}`,
   );
 }
 
