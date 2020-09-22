@@ -11,10 +11,12 @@ import {
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
+import { actionIsPausable } from "devtools/utils/recipes";
 
 export default function DetailsHeader() {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
+  // @ts-ignore
   const { recipeId, revisionId } = useParams();
   const {
     environment,
@@ -22,7 +24,19 @@ export default function DetailsHeader() {
   } = useSelectedEnvironmentState();
   const history = useHistory();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
-  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+  const [buttonsLoading, setButtonsLoading] = React.useState(new Set());
+
+  const addButtonLoading = (buttonName) => {
+    const newLoading = new Set(buttonsLoading);
+    newLoading.add(buttonName);
+    setButtonsLoading(newLoading);
+  };
+
+  const removeButtonLoading = (buttonName) => {
+    const newLoading = new Set(buttonsLoading);
+    newLoading.delete(buttonName);
+    setButtonsLoading(newLoading);
+  };
 
   const handleEditClick = () => {
     history.push(`/${environmentKey}/recipes/${recipeId}/edit`);
@@ -39,7 +53,7 @@ export default function DetailsHeader() {
   };
 
   const handleRequestApprovalClick = async () => {
-    setIsButtonLoading(true);
+    addButtonLoading("request-approval");
     try {
       const approvalRequest = await normandyApi.requestApproval(data.id);
       dispatch({
@@ -53,12 +67,12 @@ export default function DetailsHeader() {
       console.warn(err.message, err.data);
       Alert.error(`An Error Occurred: ${err.message}`, 5000);
     } finally {
-      setIsButtonLoading(false);
+      removeButtonLoading("request-approval");
     }
   };
 
   const handleEnableClick = async () => {
-    setIsButtonLoading(true);
+    addButtonLoading("enable");
     try {
       const updatedRecipe = await normandyApi.enableRecipe(data.recipe.id);
       dispatch({
@@ -69,12 +83,12 @@ export default function DetailsHeader() {
       console.warn(err.message, err.data);
       Alert.error(`An Error Occurred: ${err.message}`, 5000);
     } finally {
-      setIsButtonLoading(false);
+      removeButtonLoading("enable");
     }
   };
 
   const handleDisableClick = async () => {
-    setIsButtonLoading(true);
+    addButtonLoading("disable");
     try {
       const updatedRecipe = await normandyApi.disableRecipe(data.recipe.id);
       dispatch({
@@ -85,7 +99,36 @@ export default function DetailsHeader() {
       console.warn(err.message, err.data);
       Alert.error(`An Error Occurred: ${JSON.stringify(err.message)}`, 5000);
     } finally {
-      setIsButtonLoading(false);
+      removeButtonLoading("disable");
+    }
+  };
+
+  const handlePauseClick = async () => {
+    addButtonLoading("pause");
+    try {
+      const updatedData = await normandyApi.patchRecipe(data.recipe.id, {
+        comment: "One-click pause",
+        arguments: {
+          // Normandy's PATCH does not recurse into individual fields, so include all of the arguments
+          ...data.arguments,
+          isEnrollmentPaused: true,
+        },
+      });
+      const approvalRequest = await normandyApi.requestApproval(
+        updatedData.latest_revision.id,
+      );
+      dispatch({
+        data: {
+          ...updatedData.latest_revision,
+          approval_request: approvalRequest,
+        },
+        type: ACTION_UPDATE_DATA,
+      });
+    } catch (err) {
+      console.warn(err.message, err.data);
+      Alert.error(`An Error Occurred: ${err.message}`, 5000);
+    } finally {
+      removeButtonLoading("pause");
     }
   };
 
@@ -111,8 +154,9 @@ export default function DetailsHeader() {
       requestApprovalButton = (
         <IconButton
           className="ml-1"
+          disable={buttonsLoading.size > 0}
           icon={<Icon icon="question-circle2" />}
-          loading={isButtonLoading}
+          loading={buttonsLoading.has("approval-request")}
           onClick={handleRequestApprovalClick}
         >
           Request Approval
@@ -124,8 +168,9 @@ export default function DetailsHeader() {
           <IconButton
             className="ml-1"
             color="red"
+            disable={buttonsLoading.size > 0}
             icon={<Icon icon="close-circle" />}
-            loading={isButtonLoading}
+            loading={buttonsLoading.has("disable")}
             onClick={handleDisableClick}
           >
             Disable
@@ -136,8 +181,9 @@ export default function DetailsHeader() {
           <IconButton
             className="ml-1"
             color="green"
+            disable={buttonsLoading.size > 0}
             icon={<Icon icon="check-circle" />}
-            loading={isButtonLoading}
+            loading={buttonsLoading.has("enable")}
             onClick={handleEnableClick}
           >
             Enable
@@ -145,6 +191,34 @@ export default function DetailsHeader() {
         );
       }
     }
+  }
+
+  let pauseButton = null;
+  if (
+    actionIsPausable(data.action?.name) &&
+    !data.arguments.isEnrollmentPaused
+  ) {
+    pauseButton = (
+      <Whisper
+        delayShow={500}
+        placement="autoVertical"
+        speaker={
+          <Popover>
+            Create a revision that pauses the recipe, and request approval.
+          </Popover>
+        }
+      >
+        <IconButton
+          color="yellow"
+          disabled={buttonsLoading.size > 0}
+          icon={<Icon icon="pause-circle" />}
+          loading={buttonsLoading.has("pause")}
+          onClick={handlePauseClick}
+        >
+          Pause
+        </IconButton>
+      </Whisper>
+    );
   }
 
   return (
@@ -160,6 +234,7 @@ export default function DetailsHeader() {
       </div>
       <div className="d-flex align-items-center text-right">
         {viewExperimentButton}
+        {pauseButton}
         {requestApprovalButton}
         {statusToggleButton}
         <IconButton

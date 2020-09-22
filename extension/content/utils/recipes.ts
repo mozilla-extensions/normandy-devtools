@@ -72,3 +72,15 @@ export async function bruteForceBucketSample(
 
   throw new Error("No matching client found");
 }
+
+const _pausableActions = new Set([
+  "messaging-experiment",
+  "addon-study",
+  "opt-out-study",
+  "branched-addon-study",
+  "multi-preference-experiment",
+  "preference-experiment",
+]);
+export function actionIsPausable(actionName: string): boolean {
+  return _pausableActions.has(actionName);
+}

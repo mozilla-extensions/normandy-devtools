@@ -42,7 +42,7 @@ export const approvalRequestFactory = Factory.fromFields<
 
 export const revisionFactory = Factory.fromFields<
   Revision,
-  { actionName?: string }
+  { actionName?: string; recipeId?: number }
 >({
   action: { subfactory: actionFactory },
   approval_request: { subfactory: approvalRequestFactory },
@@ -74,17 +74,25 @@ export const revisionFactory = Factory.fromFields<
   updated: () => faker.date.past().toUTCString(),
   recipe: {
     dependencies: ["id"],
-    generator: (_, partial): RecipeReference => ({
-      id: faker.random.number(),
-      approved_revision_id: null,
-      latest_revision_id: partial.id,
-    }),
+    generator: (options, partial): RecipeReference => {
+      return {
+        id: options.recipeId || faker.random.number(),
+        approved_revision_id: null,
+        latest_revision_id: partial.id,
+      };
+    },
   },
 });
 
 export const recipeFactory = Factory.fromFields<RecipeV3>({
   id: autoIncrementField(),
-  latest_revision: { subfactory: revisionFactory },
+  latest_revision: {
+    subfactory: revisionFactory,
+    dependencies: ["id"],
+    passOptions: (_option, _input, partialRecipe): { recipeId: number } => {
+      return { recipeId: partialRecipe.id };
+    },
+  },
   approved_revision: null,
 });
 

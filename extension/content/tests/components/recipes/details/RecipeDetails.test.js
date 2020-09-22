@@ -3,8 +3,6 @@ import React from "react";
 
 import "@testing-library/jest-dom/extend-expect";
 import App from "devtools/components/App";
-import NormandyAPI from "devtools/utils/normandyApi";
-
 import {
   versionFoFactory,
   channelFoFactory,
@@ -12,13 +10,15 @@ import {
   localeFoFactory,
   bucketSampleFoFactory,
   stableSampleFoFactory,
-} from "./factories/filterObjects";
+} from "devtools/tests/factories/filterObjects";
 import {
   recipeFactory,
   addonStudyBranchFactory,
   multiPrefBranchFactory,
   approvalRequestFactory,
-} from "./factories/recipes";
+} from "devtools/tests/factories/recipes";
+import { Deferred } from "devtools/utils/helpers";
+import NormandyAPI from "devtools/utils/normandyApi";
 
 describe("The `RecipeDetailForm` component", () => {
   afterEach(async () => {
@@ -234,5 +234,108 @@ describe("The `RecipeDetailForm` component", () => {
     fireEvent.click(getByText("Cancel Request"));
 
     expect(NormandyAPI.prototype.closeApprovalRequest).toBeCalled();
+  });
+
+  it("should be able to pause recipes", async () => {
+    const nextRevisionId = 10042;
+    const patchRecipeDeferred = new Deferred();
+    jest
+      .spyOn(NormandyAPI.prototype, "patchRecipe")
+      .mockImplementation(() => patchRecipeDeferred.promise);
+    const requestApprovalDeferred = new Deferred();
+    jest
+      .spyOn(NormandyAPI.prototype, "requestApproval")
+      .mockImplementation(async () => approvalRequestFactory.build());
+
+    const recipe = recipeFactory.build({
+      latest_revision: {
+        action: { name: "multi-preference-experiment" },
+        arguments: { isEnrollmentPaused: false },
+      },
+    });
+    setup(recipe);
+
+    const doc = await render(<App />);
+
+    // Navigate to the detail page
+    fireEvent.click(doc.getByText("Recipes"));
+    fireEvent.click(await doc.findByText(recipe.latest_revision.name));
+
+    // wait for load to complete
+    await doc.findByText(recipe.latest_revision.name);
+
+    // The pause button should be available
+    const pauseButton = await doc.findByText("Pause");
+    expect(pauseButton).toBeInTheDocument();
+    expect(pauseButton).not.toHaveAttribute("disabled");
+
+    // Click the pause button, which should disable while the requests are in flight.
+    fireEvent.click(pauseButton);
+    expect(pauseButton).toHaveAttribute("disabled");
+
+    // A request to pause the recipe is sent
+    expect(NormandyAPI.prototype.patchRecipe).toBeCalledWith(recipe.id, {
+      comment: expect.any(String),
+      arguments: {
+        ...recipe.latest_revision.arguments,
+        isEnrollmentPaused: true,
+      },
+    });
+
+    // After the pause completes, an approval recipe should be sent
+    patchRecipeDeferred.resolve({ latest_revision: { id: nextRevisionId } });
+    await Promise.resolve();
+    expect(NormandyAPI.prototype.requestApproval).toBeCalledWith(
+      nextRevisionId,
+    );
+
+    // The button should still be visible, but disabled
+    expect(pauseButton).toHaveAttribute("disabled");
+
+    // After the request completes, the pause button should go away, since the recipe isn't pausable anymore
+    requestApprovalDeferred.resolve(approvalRequestFactory.build());
+    await waitFor(() => expect(pauseButton).not.toBeInTheDocument());
+  });
+
+  it("shouldn't show the pause button on recipes that can't be paused", async () => {
+    const recipe = recipeFactory.build({
+      latest_revision: {
+        // Heartbeat recipes aren't pausable, and so shouldn't trigger the UI
+        action: { name: "show-heartbeat" },
+      },
+    });
+    setup(recipe);
+
+    const doc = await render(<App />);
+
+    // Navigate to the detail page
+    fireEvent.click(doc.getByText("Recipes"));
+    fireEvent.click(await doc.findByText(recipe.latest_revision.name));
+
+    // wait for load to complete
+    await doc.findByText(recipe.latest_revision.name);
+
+    expect(doc.queryAllByText("Pause")).toHaveLength(0);
+  });
+
+  it("shouldn't show the pause button on already paused recipes", async () => {
+    const recipe = recipeFactory.build({
+      latest_revision: {
+        action: { name: "multi-preference-experiment" },
+        arguments: { isEnrollmentPaused: true },
+      },
+    });
+    setup(recipe);
+
+    const doc = await render(<App />);
+
+    // Navigate to the detail page
+    fireEvent.click(doc.getByText("Recipes"));
+    fireEvent.click(await doc.findByText(recipe.latest_revision.name));
+
+    // wait for load to complete
+    await doc.findByText(recipe.latest_revision.name);
+
+    expect(doc.queryAllByText("Pause")).toHaveLength(0);
   });
 });

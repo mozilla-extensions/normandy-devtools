@@ -7,6 +7,7 @@ import {
   ActionArguments,
   BranchedAddonStudyArguments,
   UnknownArguments,
+  ShowHeartbeatArguments,
 } from "devtools/types/arguments";
 
 export const consoleLogArgumentsFactory = Factory.fromFields<
@@ -41,6 +42,12 @@ const branchedAddonStudyArgumentsFactory = Factory.fromFields<
   },
 });
 
+export const showHeartbeatArgumentsFactory = Factory.fromFields<
+  ShowHeartbeatArguments
+>({
+  surveyId: () => faker.lorem.slug(),
+});
+
 export const unknownArgumentsFactory = new Factory<UnknownArguments>(
   () => ({}),
 );
@@ -49,6 +56,7 @@ const argumentFactoriesByAction = {
   "console-log": consoleLogArgumentsFactory,
   "multi-preference-experiment": multiPrefExperimentArgumentsFactory,
   "branched-addon-study": branchedAddonStudyArgumentsFactory,
+  "show-heartbeat": showHeartbeatArgumentsFactory,
   unknown: unknownArgumentsFactory,
 };
 
