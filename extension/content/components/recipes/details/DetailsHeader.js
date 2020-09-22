@@ -109,6 +109,7 @@ export default function DetailsHeader() {
       const updatedData = await normandyApi.patchRecipe(data.recipe.id, {
         comment: "One-click pause",
         arguments: {
+          // Normandy's PATCH does not recurse into individual fields, so include all of the arguments
           ...data.arguments,
           isEnrollmentPaused: true,
         },

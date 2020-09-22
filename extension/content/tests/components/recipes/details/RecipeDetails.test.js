@@ -17,6 +17,7 @@ import {
   multiPrefBranchFactory,
   approvalRequestFactory,
 } from "devtools/tests/factories/recipes";
+import { Deferred } from "devtools/utils/helpers";
 import NormandyAPI from "devtools/utils/normandyApi";
 
 describe("The `RecipeDetailForm` component", () => {
@@ -237,11 +238,11 @@ describe("The `RecipeDetailForm` component", () => {
 
   it("should be able to pause recipes", async () => {
     const nextRevisionId = 10042;
+    const patchRecipeDeferred = new Deferred();
     jest
       .spyOn(NormandyAPI.prototype, "patchRecipe")
-      .mockImplementation(async () => ({
-        latest_revision: { id: nextRevisionId },
-      }));
+      .mockImplementation(() => patchRecipeDeferred.promise);
+    const requestApprovalDeferred = new Deferred();
     jest
       .spyOn(NormandyAPI.prototype, "requestApproval")
       .mockImplementation(async () => approvalRequestFactory.build());
@@ -263,10 +264,16 @@ describe("The `RecipeDetailForm` component", () => {
     // wait for load to complete
     await doc.findByText(recipe.latest_revision.name);
 
+    // The pause button should be available
     const pauseButton = await doc.findByText("Pause");
     expect(pauseButton).toBeInTheDocument();
+    expect(pauseButton).not.toHaveAttribute("disabled");
 
+    // Click the pause button, which should disable while the requests are in flight.
     fireEvent.click(pauseButton);
+    expect(pauseButton).toHaveAttribute("disabled");
+
+    // A request to pause the recipe is sent
     expect(NormandyAPI.prototype.patchRecipe).toBeCalledWith(recipe.id, {
       comment: expect.any(String),
       arguments: {
@@ -274,17 +281,26 @@ describe("The `RecipeDetailForm` component", () => {
         isEnrollmentPaused: true,
       },
     });
-    // Give it a moment for the event loop to spin.
-    await waitFor(() =>
-      expect(NormandyAPI.prototype.requestApproval).toBeCalledWith(
-        nextRevisionId,
-      ),
+
+    // After the pause completes, an approval recipe should be sent
+    patchRecipeDeferred.resolve({ latest_revision: { id: nextRevisionId } });
+    await Promise.resolve();
+    expect(NormandyAPI.prototype.requestApproval).toBeCalledWith(
+      nextRevisionId,
     );
+
+    // The button should still be visible, but disabled
+    expect(pauseButton).toHaveAttribute("disabled");
+
+    // After the request completes, the pause button should go away, since the recipe isn't pausable anymore
+    requestApprovalDeferred.resolve(approvalRequestFactory.build());
+    await waitFor(() => expect(pauseButton).not.toBeInTheDocument());
   });
 
   it("shouldn't show the pause button on recipes that can't be paused", async () => {
     const recipe = recipeFactory.build({
       latest_revision: {
+        // Heartbeat recipes aren't pausable, and so shouldn't trigger the UI
         action: { name: "show-heartbeat" },
       },
     });
