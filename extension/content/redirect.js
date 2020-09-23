@@ -1,12 +1,15 @@
 const urlParams = new URLSearchParams(window.location.search);
-const r = urlParams.get("r");
+const r = urlParams.get("r") ?? "";
 
-if (!r || !r.startsWith("ext+normandy://")) {
+const protocolMatch = r.match(/^(ext|web)\+normandy:\/\/(?<uri>.*)$/);
+
+if (!protocolMatch) {
   window.location.href = "/content.html";
 } else {
-  const uri = r.substring(15);
-  if (uri.match(/^login(#.*)?$/)) {
-    window.location.href = `/login.html${uri.substring(5)}`;
+  const { uri } = protocolMatch.groups;
+  const loginMatch = uri.match(/^login(?<hash>#.*)?$/);
+  if (loginMatch) {
+    window.location.href = `/login.html${loginMatch.groups.hash}`;
   } else {
     window.location.href = `/content.html#/${uri}`;
   }

@@ -3,7 +3,7 @@ import { useLocation } from "react-router";
 
 export function useExtensionUrl(): URL {
   const location = useLocation();
-  const url = new URL(`ext+normandy:/${location.pathname}`);
+  const url = new URL(`web+normandy:/${location.pathname}`);
   url.search = location.search;
   url.hash = location.hash;
   return url;
