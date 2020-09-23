@@ -3,6 +3,7 @@ import { Divider, Loader, Tag } from "rsuite";
 
 import ActionDetails from "devtools/components/recipes/details/ActionDetails";
 import ApprovalRequest from "devtools/components/recipes/details/ApprovalRequest";
+import ExperimenterDetails from "devtools/components/recipes/details/ExperimenterDetails";
 import FilteringDetails from "devtools/components/recipes/details/FilteringDetails";
 import SuitabilityTag from "devtools/components/recipes/details/SuitabilityTag";
 import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
@@ -26,6 +27,7 @@ export default function RecipeDetails() {
         </div>
         <div className="flex-grow-1 pr-2">
           <h5>{data.name}</h5>
+          <ExperimenterDetails />
         </div>
         <div className="pr-1">
           <SuitabilityTag />
