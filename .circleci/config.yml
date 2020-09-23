@@ -49,7 +49,14 @@ jobs:
           key: v2-dependencies-{{ checksum "yarn.lock" }}
       - run:
           name: Run tests
-          command: yarn test
+          command: |
+            # Don't include coverage for Dependabot; it's noisy and rarely tells us anything useful.
+            if [[ "$CIRCLE_USERNAME" -eq "dependabot[bot]" ]]; then
+              yarn test
+            else
+              yarn test --coverage
+            fi
+      # This will only upload if a coverage file was actually generated.
       - codecov/upload:
           file: coverage/coverage-final.json
 
