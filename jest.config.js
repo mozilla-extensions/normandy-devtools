@@ -18,6 +18,6 @@ module.exports = {
     "^devtools/(.*)$": "<rootDir>/extension/content/$1",
     "\\.(less|css)$": "identity-obj-proxy",
   },
-  collectCoverage: true,
+  collectCoverage: false,
   collectCoverageFrom: ["<rootDir>/extension/content/**/*.{js,ts,tsx}"],
 };
