@@ -51,7 +51,7 @@ jobs:
           name: Run tests
           command: |
             # Don't include coverage for Dependabot; it's noisy and rarely tells us anything useful.
-            if [[ "$CIRCLE_USERNAME" -eq "dependabot[bot]" ]]; then
+            if [[ "$CIRCLE_USERNAME" = "dependabot[bot]" ]]; then
               yarn test
             else
               yarn test --coverage
