@@ -107,7 +107,7 @@
     "react-router-dom": "5.2.0",
     "react-split": "2.0.9",
     "rsuite": "4.8.2",
-    "validator": "13.1.1"
+    "validator": "13.1.17"
   },
   "resolutions": {
     "web-ext/addons-linter": "1.24.0"
