@@ -7,7 +7,9 @@
     "esModuleInterop": true,
     "baseUrl": ".",
     "paths": {
-      "devtools/*": ["extension/content/*"]
+      "devtools/*": [
+        "content/*"
+      ]
     },
     "jsx": "preserve",
     "typeRoots": ["node_modules/@types", "node_modules/web-ext-types"],
@@ -18,8 +20,8 @@
     "moduleResolution": "node"
   },
   "include": [
-    "extension/content/**/*",
-    "extension/tests/**/*",
+    "content/**/*",
+    "tests/**/*",
     "types/**/*.d.ts"
   ],
   "exclude": ["node_modules"]

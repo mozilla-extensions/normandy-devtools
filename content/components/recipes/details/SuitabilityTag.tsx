@@ -116,7 +116,7 @@ const SuitabilityTag: React.FC<SuitabilityTagProps> = ({
         className="documentation my-0 text-subtle"
         style={{ maxWidth: "300px" }}
       >
-        {suitabilities.map((s) => {
+        {suitabilities?.map((s) => {
           const dt = s.replace("RECIPE_SUITABILITY_", "");
           const dd = SUITABILITIES_DESCRIPTIONS[dt];
 
@@ -131,13 +131,13 @@ const SuitabilityTag: React.FC<SuitabilityTagProps> = ({
     );
   }
 
-  if (!loading && !suitabilities.some((s) => !hide.includes(s))) {
+  if (!loading && !suitabilities?.some((s) => !hide.includes(s))) {
     return null;
   }
 
   let color;
   let suitabilityMessage = null;
-  if (suitabilities.length === 1) {
+  if (suitabilities?.length === 1) {
     if (suitabilities[0] === "RECIPE_SUITABILITY_FILTER_MATCH") {
       color = "blue";
       suitabilityMessage = "Match";
@@ -150,7 +150,7 @@ const SuitabilityTag: React.FC<SuitabilityTagProps> = ({
         .replace("RECIPE_SUITABILITY_", "")
         .replace("_", " ");
     }
-  } else if (suitabilities.length > 1) {
+  } else if (suitabilities?.length > 1) {
     color = "orange";
     suitabilityMessage = "Some checks failed";
   }
@@ -180,7 +180,7 @@ const SuitabilityTag: React.FC<SuitabilityTagProps> = ({
   }
 
   let popover = <></>;
-  if (suitabilities.length) {
+  if (suitabilities?.length) {
     popover = <Popover title={popoverTitle}>{popoverMessage}</Popover>;
   }
 

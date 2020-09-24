@@ -2,6 +2,7 @@
 module.exports = {
   globals: {
     __BUILD__: false,
+    __ENV__: "extension",
     DEVELOPMENT: false,
     browser: {
       experiments: {},
@@ -9,15 +10,15 @@ module.exports = {
       networkStatus: {},
     },
   },
-  setupFiles: ["<rootDir>/extension/content/tests/jest.setup.js"],
-  setupFilesAfterEnv: ["<rootDir>/extension/content/tests/jest-env.setup.js"],
+  setupFiles: ["<rootDir>/content/tests/jest.setup.js"],
+  setupFilesAfterEnv: ["<rootDir>/content/tests/jest-env.setup.js"],
   transform: {
     "^.+\\.[jt]sx?$": "babel-jest",
   },
   moduleNameMapper: {
-    "^devtools/(.*)$": "<rootDir>/extension/content/$1",
+    "^devtools/(.*)$": "<rootDir>/content/$1",
     "\\.(less|css)$": "identity-obj-proxy",
   },
   collectCoverage: false,
-  collectCoverageFrom: ["<rootDir>/extension/content/**/*.{js,ts,tsx}"],
+  collectCoverageFrom: ["<rootDir>/content/**/*.{js,ts,tsx}"],
 };
