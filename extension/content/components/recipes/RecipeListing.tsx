@@ -65,7 +65,7 @@ class RecipeListing extends React.PureComponent<
       latest_revision: { approval_request },
     } = recipe;
 
-    if (approval_request && !approval_request.approved) {
+    if (approval_request && approval_request.approved === null) {
       return <Tag color="yellow"> Pending Review </Tag>;
     }
     return null;

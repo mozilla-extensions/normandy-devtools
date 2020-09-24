@@ -16,7 +16,7 @@ afterEach(async () => {
 
 describe("RecipeListing", () => {
   it("should have pending review tag when no approval", () => {
-    const approvalRequest = approvalRequestFactory.build({ approved: false });
+    const approvalRequest = approvalRequestFactory.build({ approved: null });
     const revision = revisionFactory.build(
       { approval_request: approvalRequest },
       { actionName: "branched-addon-study" },
@@ -34,6 +34,27 @@ describe("RecipeListing", () => {
       />,
     );
     expect(getByText("Pending Review")).toBeInTheDocument();
+  });
+
+  it("should have pending review tag when recipe rejected", () => {
+    const approvalRequest = approvalRequestFactory.build({ approved: false });
+    const revision = revisionFactory.build(
+      { approval_request: approvalRequest },
+      { actionName: "branched-addon-study" },
+    );
+    const recipe = recipeFactory.build();
+    recipe.latest_revision = revision;
+
+    /* global renderWithContext */
+    // @ts-ignore
+    const { queryByText } = renderWithContext(
+      <RecipeListing
+        copyRecipeToArbitrary={() => {}}
+        environmentName="prod"
+        recipe={recipe}
+      />,
+    );
+    expect(queryByText("Pending Review")).toBeNull();
   });
 
   it("should not have pending review tag when recipe approved", () => {
