@@ -2,7 +2,7 @@
 module.exports = {
   globals: {
     __BUILD__: false,
-    ___ENV__: false,
+    __ENV__: false,
     DEVELOPMENT: false,
   },
 };

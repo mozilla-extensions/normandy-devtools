@@ -22,15 +22,18 @@ const RecipeFormPage = React.lazy(() =>
 const RecipeDetailsPage = React.lazy(() =>
   import("devtools/components/pages/RecipeDetailsPage"),
 );
-const FiltersPage = React.lazy(() =>
-  import("devtools/components/pages/FiltersPage"),
-);
-const PrefStudiesPage = React.lazy(() =>
-  import("devtools/components/pages/PrefStudiesPage"),
-);
-const AddonStudiesPage = React.lazy(() =>
-  import("devtools/components/pages/AddonStudiesPage"),
-);
+const FiltersPage =
+  __ENV__ === "web"
+    ? null
+    : React.lazy(() => import("devtools/components/pages/FiltersPage"));
+const PrefStudiesPage =
+  __ENV__ === "web"
+    ? null
+    : React.lazy(() => import("devtools/components/pages/PrefStudiesPage"));
+const AddonStudiesPage =
+  __ENV__ === "web"
+    ? null
+    : React.lazy(() => import("devtools/components/pages/AddonStudiesPage"));
 
 export default function App() {
   return (
@@ -96,19 +99,23 @@ function Page() {
               component={RecipeFormPage}
               path={`${match.path}/recipes/import/:experimenterSlug`}
             />
-            <Route
-              exact
-              component={FiltersPage}
-              path={`${match.path}/filters`}
-            />
-            <Route
-              component={PrefStudiesPage}
-              path={`${match.path}/pref-studies`}
-            />
-            <Route
-              component={AddonStudiesPage}
-              path={`${match.path}/addon-studies`}
-            />
+            {__ENV__ === "web" ? null : (
+              <>
+                <Route
+                  exact
+                  component={FiltersPage}
+                  path={`${match.path}/filters`}
+                />
+                <Route
+                  component={PrefStudiesPage}
+                  path={`${match.path}/pref-studies`}
+                />
+                <Route
+                  component={AddonStudiesPage}
+                  path={`${match.path}/addon-studies`}
+                />
+              </>
+            )}
 
             <Route
               render={(args) => (

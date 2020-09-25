@@ -20,27 +20,31 @@ export const AppSidebar: React.FC = () => {
             >
               Recipes
             </Nav.Item>
-            <Nav.Item
-              componentClass={NavLink}
-              icon={<Icon icon="filter" />}
-              to={`/${selectedKey}/filters`}
-            >
-              Filters
-            </Nav.Item>
-            <Nav.Item
-              componentClass={NavLink}
-              icon={<Icon icon="table" />}
-              to={`/${selectedKey}/pref-studies`}
-            >
-              Pref Studies
-            </Nav.Item>
-            <Nav.Item
-              componentClass={NavLink}
-              icon={<Icon icon="puzzle-piece" />}
-              to={`/${selectedKey}/addon-studies`}
-            >
-              Add-on Studies
-            </Nav.Item>
+            {__ENV__ === "web" ? null : (
+              <>
+                <Nav.Item
+                  componentClass={NavLink}
+                  icon={<Icon icon="filter" />}
+                  to={`/${selectedKey}/filters`}
+                >
+                  Filters
+                </Nav.Item>
+                <Nav.Item
+                  componentClass={NavLink}
+                  icon={<Icon icon="table" />}
+                  to={`/${selectedKey}/pref-studies`}
+                >
+                  Pref Studies
+                </Nav.Item>
+                <Nav.Item
+                  componentClass={NavLink}
+                  icon={<Icon icon="puzzle-piece" />}
+                  to={`/${selectedKey}/addon-studies`}
+                >
+                  Add-on Studies
+                </Nav.Item>
+              </>
+            )}
           </Nav>
 
           <div className="p-2 flex-grow-0">

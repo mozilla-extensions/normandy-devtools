@@ -185,6 +185,10 @@ function makeExtensionConfig(development) {
     new webpack.optimize.LimitChunkCountPlugin({
       maxChunks: 1,
     }),
+
+    new webpack.DefinePlugin({
+      __ENV__: JSON.stringify("extension"),
+    }),
   ];
 
   if (development) {
@@ -231,6 +235,7 @@ function makeWebConfig(development) {
 
     plugins: [
       new webpack.DefinePlugin({
+        __ENV__: JSON.stringify("web"),
         browser: `((() => {
           let proxyMaker = (prefix) => {
             return new Proxy({}, {
