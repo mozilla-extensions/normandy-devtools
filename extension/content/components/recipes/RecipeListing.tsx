@@ -164,12 +164,7 @@ class RecipeListing extends React.PureComponent<
         speaker={speaker}
         trigger={["hover", "focus"]}
       >
-        <Icon
-          aria-label="recipe-menu"
-          className="ml-1"
-          icon="ellipsis-h"
-          role="menu-opener"
-        />
+        <Icon className="ml-1" icon="ellipsis-h" title="recipe-menu" />
       </Whisper>
     );
   }
