@@ -16,16 +16,14 @@ afterEach(async () => {
 
 describe("RecipeListing", () => {
   it("should have pending review tag when no approval", () => {
-    const approvalRequest = approvalRequestFactory.build({ approved: null });
-    const revision = revisionFactory.build(
-      { approval_request: approvalRequest },
-      { actionName: "branched-addon-study" },
-    );
-    const recipe = recipeFactory.build();
-    recipe.latest_revision = revision;
+    const recipe = recipeFactory.build({
+      latest_revision: {
+        approval_request: {
+          approved: null,
+        },
+      },
+    });
 
-    /* global renderWithContext */
-    // @ts-ignore
     const { getByText } = renderWithContext(
       <RecipeListing
         copyRecipeToArbitrary={() => {}}
@@ -36,17 +34,15 @@ describe("RecipeListing", () => {
     expect(getByText("Pending Review")).toBeInTheDocument();
   });
 
-  it("should have pending review tag when recipe rejected", () => {
-    const approvalRequest = approvalRequestFactory.build({ approved: false });
-    const revision = revisionFactory.build(
-      { approval_request: approvalRequest },
-      { actionName: "branched-addon-study" },
-    );
-    const recipe = recipeFactory.build();
-    recipe.latest_revision = revision;
+  it("should not have pending review tag when recipe rejected", () => {
+    const recipe = recipeFactory.build({
+      latest_revision: {
+        approval_request: {
+          approved: false,
+        },
+      },
+    });
 
-    /* global renderWithContext */
-    // @ts-ignore
     const { queryByText } = renderWithContext(
       <RecipeListing
         copyRecipeToArbitrary={() => {}}
@@ -58,13 +54,13 @@ describe("RecipeListing", () => {
   });
 
   it("should not have pending review tag when recipe approved", () => {
-    const approvalRequest = approvalRequestFactory.build({ approved: true });
-    const revision = revisionFactory.build(
-      { approval_request: approvalRequest },
-      { actionName: "branched-addon-study" },
-    );
-    const recipe = recipeFactory.build();
-    recipe.latest_revision = revision;
+    const recipe = recipeFactory.build({
+      latest_revision: {
+        approval_request: {
+          approved: true,
+        },
+      },
+    });
 
     /* global renderWithContext */
     // @ts-ignore
