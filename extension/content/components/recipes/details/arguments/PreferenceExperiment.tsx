@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import React from "react";
 import { Tag } from "rsuite";
 
@@ -10,8 +9,17 @@ import {
   tagFormatter,
 } from "devtools/components/recipes/details/arguments/formatters";
 import GenericArguments from "devtools/components/recipes/details/arguments/GenericArguments";
+import { SinglePreferenceExperimentArguments } from "devtools/types/arguments";
+import { Revision } from "devtools/types/recipes";
 
-export default function PreferenceExperiment({ data }) {
+interface PreferenceExperimentProps {
+  data: Revision<SinglePreferenceExperimentArguments>;
+}
+
+// Default export
+const PreferenceExperiment: React.FC<PreferenceExperimentProps> = ({
+  data,
+}) => {
   return (
     <GenericArguments
       data={data.arguments}
@@ -71,8 +79,6 @@ export default function PreferenceExperiment({ data }) {
       ]}
     />
   );
-}
-
-PreferenceExperiment.propTypes = {
-  data: PropTypes.object,
 };
+
+export default PreferenceExperiment;
