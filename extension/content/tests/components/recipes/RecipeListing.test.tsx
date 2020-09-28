@@ -24,6 +24,8 @@ describe("RecipeListing", () => {
       },
     });
 
+    /* global renderWithContext */
+    // @ts-ignore
     const { getByText } = renderWithContext(
       <RecipeListing
         copyRecipeToArbitrary={() => {}}
@@ -43,6 +45,8 @@ describe("RecipeListing", () => {
       },
     });
 
+    /* global renderWithContext */
+    // @ts-ignore
     const { queryByText } = renderWithContext(
       <RecipeListing
         copyRecipeToArbitrary={() => {}}
