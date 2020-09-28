@@ -1,4 +1,3 @@
-// @ts-nocheck
 import PropTypes from "prop-types";
 import React from "react";
 import {
@@ -45,9 +44,7 @@ export default function MultiPreferenceBranches() {
   const branchLength = data.arguments.branches.length;
   if (data.arguments.branches && data.arguments.branches.length) {
     branchesList = data.arguments.branches.map((branch, index) => {
-      return (
-        <Branch key={`${index}${branchLength}`} branch={branch} index={index} />
-      );
+      return <Branch key={`${index}${branchLength}`} index={index} />;
     });
   }
 
@@ -96,10 +93,7 @@ function Branch({ index }) {
 
   const handleDeletePref = (prefIndex, name) => {
     if (name) {
-      /* eslint-disable no-unused-vars */
       const { [name]: _omitPref, ...cleanedPref } = branch.preferences;
-      /* eslint-enable no-unused-vars */
-
       handlePrefDataUpdate(cleanedPref);
     }
 
@@ -128,12 +122,10 @@ function Branch({ index }) {
       updatedPref = { ...prefValues, [prefFieldName]: prefValue };
     }
 
-    /* eslint-disable no-unused-vars */
     const {
       [preferenceName]: _omitPrefValue,
       ...cleanedPref
     } = branch.preferences;
-    /* eslint-enable no-unused-vars */
 
     const updatedPreferences = {
       ...cleanedPref,
@@ -148,9 +140,7 @@ function Branch({ index }) {
   const handlePrefNameChange = (prefIndex, newPrefName) => {
     const preference = preferences[prefIndex];
     const { preferenceName: oldPrefName, ...prefValues } = preference;
-    /* eslint-disable no-unused-vars */
     const { [oldPrefName]: _omitPrefName, ...cleanedPref } = branch.preferences;
-    /* eslint-enable no-unused-vars */
     const updatedPref = { ...cleanedPref, [newPrefName]: prefValues };
     handlePrefDataUpdate(updatedPref);
     preference.preferenceName = newPrefName;
@@ -192,7 +182,7 @@ function Branch({ index }) {
     });
   };
 
-  const handleChange = (name) => {
+  const handleChange = (name, transform = (v) => v) => {
     return (value) => {
       dispatch({
         type: ACTION_UPDATE_DATA,
@@ -202,7 +192,7 @@ function Branch({ index }) {
             ...data.arguments,
             branches: branches.map((b, i) => {
               if (i === index) {
-                return { ...b, [name]: value };
+                return { ...b, [name]: transform(value) };
               }
 
               return b;
@@ -215,17 +205,21 @@ function Branch({ index }) {
 
   let prefList = <HelpBlock>There are no preferences.</HelpBlock>;
   if (branch && branch.preferences) {
-    prefList = preferences.map((pref, i) => {
-      return (
-        <PreferenceFields
-          key={`${branch.slug}:${i}`}
-          index={i}
-          prefData={pref}
-          onChange={handlePrefChange}
-          onDelete={handleDeletePref}
-        />
-      );
-    });
+    prefList = (
+      <>
+        {preferences.map((pref, i) => {
+          return (
+            <PreferenceFields
+              key={`${branch.slug}:${i}`}
+              index={i}
+              prefData={pref}
+              onChange={handlePrefChange}
+              onDelete={handleDeletePref}
+            />
+          );
+        })}
+      </>
+    );
   }
 
   const parseNumericInput = (value) => {

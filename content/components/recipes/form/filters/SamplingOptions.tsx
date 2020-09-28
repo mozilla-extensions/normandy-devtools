@@ -58,7 +58,6 @@ const SamplingOptions: React.FC = () => {
       type: ACTION_UPDATE_DATA,
       data: {
         ...data,
-        // eslint-disable-next-line @typescript-eslint/camelcase
         filter_object: filterObjects,
       },
     });
@@ -69,7 +68,6 @@ const SamplingOptions: React.FC = () => {
       type: ACTION_UPDATE_DATA,
       data: {
         ...data,
-        // eslint-disable-next-line @typescript-eslint/camelcase
         filter_object: [
           ...data.filter_object.filter((fo) => fo !== filterObject),
           {

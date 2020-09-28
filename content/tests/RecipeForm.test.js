@@ -437,12 +437,9 @@ describe("The `RecipeForm` component", () => {
 
     fireEvent.click(within(modalDialog).getByText("Save"));
 
-    const { latest_revision } = recipeData;
-
-    /* eslint-disable prefer-const */
-
-    let { action, ...updatedRecipeData } = latest_revision;
-    /* eslint-enable prefer-const */
+    let {
+      latest_revision: { action, ...updatedRecipeData },
+    } = recipeData;
 
     const channelValues = ["nightly", "aurora", "beta", "release"];
 
@@ -543,11 +540,9 @@ describe("The `RecipeForm` component", () => {
 
     fireEvent.click(within(modalDialog).getByText("Save"));
 
-    const { latest_revision } = recipeData;
-
-    /* eslint-disable prefer-const */
-    let { action, ...updatedRecipeData } = latest_revision;
-    /* eslint-enable prefer-const */
+    let {
+      latest_revision: { action, ...updatedRecipeData },
+    } = recipeData;
 
     updatedRecipeData = {
       ...updatedRecipeData,
@@ -590,8 +585,6 @@ describe("The `RecipeForm` component", () => {
         Promise.resolve([recipe.latest_revision.action]),
       );
 
-    /* global renderWithContext */
-    // @ts-ignore
     const doc = await renderWithContext(<RecipeFormPage />, {
       route: "/prod/recipes/import/experimenter-slug",
       path: "/prod/recipes/import/:experimenterSlug",
@@ -618,7 +611,6 @@ describe("The `RecipeForm` component", () => {
 
     fireEvent.click(within(modalDialog).getByText("Save"));
 
-    /* eslint-disable prefer-const */
     let { action: _omitAction, ...updatedRecipeData } = recipe.latest_revision;
     updatedRecipeData = {
       ...updatedRecipeData,

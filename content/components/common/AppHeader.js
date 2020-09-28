@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import {
@@ -139,6 +138,7 @@ function EnvironmentConfigurator() {
     history.push(location.pathname.replace(/^\/.+?\/(.+?)$/, `/${key}/$1`));
   };
 
+  /** @type React.ElementType */
   let Wrapper = React.Fragment;
   let wrapperProps = {};
   if (connectionStatus) {
