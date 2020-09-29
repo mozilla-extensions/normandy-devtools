@@ -1,7 +1,7 @@
 status = [
   "ci/circleci: lint",
   "ci/circleci: test",
-  "ci/circleci: build-extension"
+  "ci/circleci: build"
 ]
 # Avoid including verbose details from PR bodies
 cut_body_after = "<details>"

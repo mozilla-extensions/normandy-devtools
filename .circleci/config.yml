@@ -62,7 +62,7 @@ jobs:
       - codecov/upload:
           file: coverage/coverage-final.json
 
-  build-extension:
+  build:
     docker:
       - image: node:14-stretch
 
@@ -81,11 +81,11 @@ jobs:
             - "node_modules"
           key: v2-dependencies-{{ checksum "yarn.lock" }}
       - run:
-          name: Build extension
+          name: Build
           command: yarn build
       - run:
           name: Syntax check built output
-          command: ls dist/*.js | xargs -l node --check
+          command: ls dist-*/*.js | xargs -l node --check
       - store_artifacts:
           path: web-ext-artifacts
 
@@ -136,7 +136,7 @@ workflows:
     jobs:
       - lint
       - test
-      - build-extension
+      - build
       - publish-docs:
           filters:
             branches:
