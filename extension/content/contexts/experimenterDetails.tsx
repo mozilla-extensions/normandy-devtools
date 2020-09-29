@@ -5,6 +5,7 @@ interface ExperimenterData {
   publicDescription: string;
   proposedStartDate: Date;
   proposedDuration: number;
+  variants: string[];
 }
 
 interface ExperimenterState {
@@ -15,6 +16,7 @@ export const INITIAL_EXPERIMENTER_DATA = {
   publicDescription: "",
   proposedStartDate: new Date(),
   proposedDuration: 0,
+  variants: [],
 };
 
 const initialState: ExperimenterState = {
@@ -31,7 +33,10 @@ function reducer(state, action): ExperimenterState {
     case ACTION_UPDATE_DATA:
       return {
         ...state,
-        data: action.data,
+        data: {
+          ...action.data,
+          ...state.data,
+        }
       };
 
     default:

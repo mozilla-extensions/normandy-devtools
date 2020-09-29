@@ -36,6 +36,7 @@ export default function RecipeDetailsPage() {
         publicDescription: data.public_description,
         proposedStartDate: new Date(data.proposed_start_date),
         proposedDuration: data.proposed_duration,
+        variants: data.variants.map(({ description }) => description),
       });
     });
   }, [recipeData]);

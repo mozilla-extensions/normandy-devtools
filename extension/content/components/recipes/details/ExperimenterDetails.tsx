@@ -5,7 +5,12 @@ import { useExperimenterDetailsData } from "devtools/contexts/experimenterDetail
 
 const ExperimenterDetails: React.FunctionComponent<{}> = () => {
   const data = useExperimenterDetailsData();
-  const { publicDescription, proposedStartDate, proposedDuration } = data;
+  const {
+    publicDescription,
+    proposedStartDate,
+    proposedDuration,
+    variants,
+  } = data;
 
   let endDate;
   if (proposedStartDate) {
@@ -33,6 +38,18 @@ const ExperimenterDetails: React.FunctionComponent<{}> = () => {
             {proposedStartDate?.toUTCString()} → {endDate?.toUTCString()} (
             {proposedDuration} days)
           </p>
+        </div>
+        <div className="mt-4">
+          <strong>Variants</strong>
+          {variants.length ? (
+            <ul>
+              {variants.map((v, i) => (
+                <li key={i}>{v}</li>
+              ))}
+            </ul>
+          ) : (
+            <p>None</p>
+          )}
         </div>
       </div>
     </CollapsibleSection>
