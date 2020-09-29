@@ -9,13 +9,15 @@ const ExperimenterDetails: React.FunctionComponent<{}> = () => {
     publicDescription,
     proposedStartDate,
     proposedDuration,
+    startDate,
+    endDate,
     variants,
   } = data;
 
-  let endDate;
+  let proposedEndDate;
   if (proposedStartDate) {
-    endDate = new Date();
-    endDate.setDate(proposedStartDate.getDate() + proposedDuration);
+    proposedEndDate = new Date();
+    proposedEndDate.setDate(proposedStartDate.getDate() + proposedDuration);
   }
 
   return (
@@ -35,8 +37,15 @@ const ExperimenterDetails: React.FunctionComponent<{}> = () => {
         <div className="mt-4">
           <strong>Proposed schedule</strong>
           <p>
-            {proposedStartDate?.toUTCString()} → {endDate?.toUTCString()} (
-            {proposedDuration} days)
+            {proposedStartDate?.toUTCString()} →{" "}
+            {proposedEndDate?.toUTCString()} ({proposedDuration} days)
+          </p>
+        </div>
+        <div className="mt-4">
+          <strong>Actual Schedule</strong>
+          <p>
+            {startDate ? startDate.toUTCString() : "N/A"}
+            {endDate ? " → " + endDate.toUTCString() : ""}
           </p>
         </div>
         <div className="mt-4">

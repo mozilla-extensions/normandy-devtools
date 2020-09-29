@@ -5,6 +5,8 @@ interface ExperimenterData {
   publicDescription: string;
   proposedStartDate: Date;
   proposedDuration: number;
+  startDate?: Date;
+  endDate?: Date;
   variants: string[];
 }
 
@@ -16,6 +18,8 @@ export const INITIAL_EXPERIMENTER_DATA = {
   publicDescription: "",
   proposedStartDate: new Date(),
   proposedDuration: 0,
+  startDate: null,
+  endDate: null,
   variants: [],
 };
 
@@ -34,9 +38,9 @@ function reducer(state, action): ExperimenterState {
       return {
         ...state,
         data: {
-          ...action.data,
           ...state.data,
-        }
+          ...action.data,
+        },
       };
 
     default:
