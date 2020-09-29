@@ -27,7 +27,6 @@ export default function RecipeDetails() {
         </div>
         <div className="flex-grow-1 pr-2">
           <h5>{data.name}</h5>
-          <ExperimenterDetails />
         </div>
         <div className="pr-1">
           <SuitabilityTag />
@@ -38,6 +37,8 @@ export default function RecipeDetails() {
           </Tag>
         </div>
       </div>
+      <Divider />
+      <ExperimenterDetails />
       <Divider />
       <ApprovalRequest />
       <ActionDetails />

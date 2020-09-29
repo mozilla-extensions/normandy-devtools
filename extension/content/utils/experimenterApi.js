@@ -10,4 +10,10 @@ export default class ExperimenterAPI extends API {
       url: `experiments/${slug}/recipe/`,
     });
   }
+
+  async fetchExperiment(slug) {
+    return this.request({
+      url: `experiments/${slug}/`,
+    });
+  }
 }

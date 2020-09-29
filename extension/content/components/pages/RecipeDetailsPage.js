@@ -3,14 +3,20 @@ import { useParams } from "react-router-dom";
 
 import DetailsHeader from "devtools/components/recipes/details/DetailsHeader";
 import RecipeDetails from "devtools/components/recipes/details/RecipeDetails";
-import { useSelectedNormandyEnvironmentAPI } from "devtools/contexts/environment";
+import {
+  useSelectedNormandyEnvironmentAPI,
+  useSelectedExperimenterEnvironmentAPI,
+} from "devtools/contexts/environment";
 import { ExperimenterDetailsProvider } from "devtools/contexts/experimenterDetails";
 import { RecipeDetailsProvider } from "devtools/contexts/recipeDetails";
 
 export default function RecipeDetailsPage() {
   const { recipeId } = useParams();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
-  const [recipeData, setRecipeData] = React.useState({});
+  const experimenterApi = useSelectedExperimenterEnvironmentAPI();
+  const [recipeData, setRecipeData] = React.useState({
+    experimenter_slug: "",
+  });
   const [experimenterData, setExperimenterData] = React.useState({});
 
   React.useEffect(() => {
@@ -21,11 +27,17 @@ export default function RecipeDetailsPage() {
 
   React.useEffect(() => {
     const { experimenter_slug } = recipeData;
-    fetch(`https://experimenter.services.mozilla.com/api/v1/experiments/${experimenter_slug}`)
-      .then((resp) => resp.json())
-      .then((data) => {
-        setExperimenterData(data);
+    if (!experimenter_slug) {
+      return;
+    }
+
+    experimenterApi.fetchExperiment(experimenter_slug).then((data) => {
+      setExperimenterData({
+        publicDescription: data.public_description,
+        proposedStartDate: new Date(data.proposed_start_date),
+        proposedDuration: data.proposed_duration,
       });
+    });
   }, [recipeData]);
 
   return (
