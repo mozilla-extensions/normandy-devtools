@@ -5,7 +5,7 @@ import AddonStudy from "devtools/components/studies/AddonStudy";
 
 const normandy = browser.experiments.normandy;
 
-export default class PrefStudiesPage extends React.PureComponent {
+export default class AddonStudiesPage extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {

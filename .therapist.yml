@@ -12,7 +12,7 @@ actions:
     description: tsc-type-checking
     run: ./node_modules/.bin/tsc --noEmit --project tsconfig.json
     include:
-      - "extension/content/*.js"
+      - "content/*.js"
       - "*.ts"
       - "*.tsx"
   stylelint:

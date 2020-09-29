@@ -1,6 +1,6 @@
 browser.browserAction.onClicked.addListener(async () => {
   await browser.tabs.create({
-    url: "content.html",
+    url: "index.html",
   });
 });
 
