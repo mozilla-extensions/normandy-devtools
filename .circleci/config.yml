@@ -83,6 +83,9 @@ jobs:
       - run:
           name: Build extension
           command: yarn build
+      - run:
+          name: Syntax check built output
+          command: ls dist/*.js | xargs -l node --check
       - store_artifacts:
           path: web-ext-artifacts
 
