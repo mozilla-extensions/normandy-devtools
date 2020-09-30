@@ -46,6 +46,33 @@ export interface MultiPreferenceExperimentPrefs {
   };
 }
 
+export interface SinglePreferenceExperimentArguments {
+  slug: string;
+  experimentDocumentUrl: string;
+  preferenceName: string;
+  preferenceType: "string" | "integer" | "boolean";
+  preferenceBranchType: "user" | "default";
+  isHighPopulation: boolean;
+  isEnrollmentPaused: boolean;
+  branches: Array<SinglePreferenceExperimentBranch>;
+}
+
+export interface SinglePreferenceExperimentBranch {
+  slug: string;
+  value: string | number | boolean;
+  ratio: number;
+}
+
+export interface PreferenceRolloutArguments {
+  slug: string;
+  preferences: Array<PreferenceRolloutPrefs>;
+}
+
+export interface PreferenceRolloutPrefs {
+  preferenceName: string;
+  value: string | number | boolean;
+}
+
 export interface ShowHeartbeatArguments {
   surveyId: string;
 }

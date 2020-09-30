@@ -4,8 +4,15 @@ import { Tag } from "rsuite";
 
 import { tableFormatter } from "devtools/components/recipes/details/arguments/formatters";
 import GenericArguments from "devtools/components/recipes/details/arguments/GenericArguments";
+import { PreferenceRolloutArguments } from "devtools/types/arguments";
+import { Revision } from "devtools/types/recipes";
 
-export default function PreferenceRollout({ data }) {
+interface PreferenceRolloutProps {
+  data: Revision<PreferenceRolloutArguments>;
+}
+
+// default export
+const PreferenceRollout: React.FC<PreferenceRolloutProps> = ({ data }) => {
   return (
     <GenericArguments
       data={data.arguments}
@@ -37,8 +44,6 @@ export default function PreferenceRollout({ data }) {
       ordering={["slug", "preferences"]}
     />
   );
-}
-
-PreferenceRollout.propTypes = {
-  data: PropTypes.object,
 };
+
+export default PreferenceRollout;

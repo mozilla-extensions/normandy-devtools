@@ -10,25 +10,43 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require("webpack");
 const FixStyleOnlyEntriesPlugin = require("webpack-fix-style-only-entries");
+const { merge } = require("webpack-merge");
 
 const manifest = require("./extension/manifest.json");
 const packageData = require("./package.json");
 
-const cacheLoader = {
-  loader: "cache-loader",
-  options: { cacheDirectory: ".webpack-cache" },
-};
-
-module.exports = async (env, argv = {}) => {
+module.exports = (env, argv) => {
   const development = argv.mode === "development";
 
+  const baseConfigs = [makeBaseConfig(development, argv)];
+  if (development) {
+    baseConfigs.push(makeBaseDevelopmentConfig());
+  }
+
+  return [
+    merge(...baseConfigs, injectBuildInfo("web"), makeWebConfig(development)),
+    merge(
+      ...baseConfigs,
+      injectBuildInfo("extension"),
+      makeExtensionConfig(development),
+    ),
+  ];
+};
+
+function makeBaseConfig(development, argv) {
+  let cacheDirectory = ".webpack-cache";
+  if (argv.configName) {
+    cacheDirectory = path.join(cacheDirectory, argv.configName);
+  } else {
+    cacheDirectory = path.join(cacheDirectory, "all-configs");
+  }
+
+  const cacheLoader = { loader: "cache-loader", options: { cacheDirectory } };
+
   const entry = {
-    content: "./extension/content/index.js",
-    "content-scripts": "./extension/content/scripts/inject.js",
-    redirect: "./extension/content/redirect.js",
-    "dark-theme": "./extension/content/less/dark.less",
-    "light-theme": "./extension/content/less/light.less",
-    background: "./extension/background.js",
+    index: "./content/index.js",
+    "dark-theme": "./content/less/dark.less",
+    "light-theme": "./content/less/light.less",
   };
 
   const plugins = [
@@ -38,87 +56,39 @@ module.exports = async (env, argv = {}) => {
       silent: true,
       systemvars: true,
     }),
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: "extension/experiments/",
-          to: "experiments/",
-          globOptions: {
-            ignore: ["**/.eslintrc.js"],
-          },
-        },
-        { from: "extension/images/", to: "images/" },
-      ],
-    }),
-    new HtmlWebpackPlugin({
-      title: "Normandy Devtools",
-      favicon: path.resolve(__dirname, "extension/images/favicon.png"),
-      filename: "content.html",
-      chunks: ["content", ...(development ? ["react-devtools"] : [])],
-      chunksSortMode(a, b) {
-        const order = ["react-devtools", "content"];
-        return order.indexOf(a) - order.indexOf(b);
-      },
-    }),
     new HtmlWebpackPlugin({
       title: "Redirect",
       filename: "redirect.html",
       chunks: ["redirect"],
     }),
-    new GenerateJsonPlugin(
-      "manifest.json",
-      manifest,
-      (key, value) => {
-        if (typeof value === "string" && value.startsWith("$")) {
-          const parts = value.slice(1).split(".");
-          let object = packageData;
-          while (parts.length) {
-            object = object[parts.pop()];
-          }
-
-          return object;
-        }
-
-        return value;
+    new HtmlWebpackPlugin({
+      title: "Normandy Devtools",
+      favicon: path.resolve(__dirname, "./extension/images/favicon.png"),
+      filename: "index.html",
+      chunks: ["index", ...(argv.mode ? ["react-devtools"] : [])],
+      chunksSortMode(a, b) {
+        const order = ["react-devtools", "index"];
+        return order.indexOf(a) - order.indexOf(b);
       },
-      2 /* indent width */,
-    ),
+    }),
     new webpack.DefinePlugin({
-      __BUILD__: webpack.DefinePlugin.runtimeValue(
-        () => JSON.stringify(getBuildInfo()),
-        true,
-      ),
       DEVELOPMENT: JSON.stringify(development),
     }),
   ];
 
-  if (development) {
-    entry["react-devtools"] = "react-devtools";
-    entry.restore = "./extension/content/restore.ts";
-
-    plugins.push(
-      new HtmlWebpackPlugin({
-        title: "Restore",
-        filename: "restore.html",
-        chunks: ["restore"],
-      }),
-    );
-  }
-
   return {
-    mode: argv.mode || (development ? "development" : "production"),
-    devtool: development ? "source-map" : "none",
+    mode: "production",
+    devtool: "none",
     optimization: {
       minimize: false,
     },
     entry,
     output: {
       filename: "[name].js",
-      path: path.resolve(__dirname, "dist"),
     },
     resolve: {
       alias: {
-        devtools: path.resolve(__dirname, "extension/content"),
+        devtools: path.resolve(__dirname, "./content"),
       },
       extensions: [".js", ".ts", ".tsx"],
     },
@@ -128,7 +98,10 @@ module.exports = async (env, argv = {}) => {
         {
           // .js, .jsx, .ts, and .tsx
           test: /\.[jt]sx?$/,
-          include: [path.resolve(__dirname, "./extension/content")],
+          include: [
+            path.resolve(__dirname, "./content"),
+            path.resolve(__dirname, "./extension/content-scripts"),
+          ],
           use: [cacheLoader, "babel-loader"],
         },
         {
@@ -158,48 +131,168 @@ module.exports = async (env, argv = {}) => {
       ],
     },
   };
-};
+}
 
-function getBuildInfo() {
-  const packageJson = require("./package.json");
+function makeBaseDevelopmentConfig() {
+  return {
+    mode: "development",
+    devtool: "source-map",
+    entry: {
+      "react-devtools": "react-devtools",
+    },
+    optimization: {
+      minimize: false,
+    },
+  };
+}
 
-  const rv = {
-    commitHash: execOutput("git rev-parse HEAD").trim(),
+function makeExtensionConfig(development) {
+  const entry = {
+    background: "./extension/background.js",
+    "content-scripts": "./extension/content-scripts/inject.js",
+    redirect: "./content/redirect.js",
   };
 
+  const plugins = [
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: "extension/experiments/",
+          // relative to the output directory
+          to: "experiments/",
+          globOptions: {
+            ignore: ["**/.eslintrc.js"],
+          },
+        },
+        { from: "extension/images/", to: "images/" },
+      ],
+    }),
+
+    new GenerateJsonPlugin(
+      "manifest.json",
+      manifest,
+      (key, value) => {
+        if (typeof value === "string" && value.startsWith("$")) {
+          const parts = value.slice(1).split(".");
+          let object = packageData;
+          while (parts.length) {
+            object = object[parts.pop()];
+          }
+
+          return object;
+        }
+
+        return value;
+      },
+      /* indent width */ 2,
+    ),
+  ];
+
+  if (development) {
+    entry.restore = "./content/restore.ts";
+
+    plugins.push(
+      new HtmlWebpackPlugin({
+        title: "Restore",
+        filename: "restore.html",
+        chunks: ["restore"],
+      }),
+    );
+  }
+
+  return {
+    name: "extension",
+    entry,
+    plugins,
+    output: {
+      path: path.resolve(__dirname, `./dist-extension`),
+    },
+  };
+}
+
+function makeWebConfig() {
+  return {
+    name: "web",
+
+    devServer: {
+      contentBase: "./dist-web",
+    },
+
+    output: {
+      path: path.resolve(__dirname, `./dist-web`),
+    },
+
+    plugins: [
+      new webpack.DefinePlugin({
+        browser: `((() => {
+          let proxyMaker = (prefix) => {
+            return new Proxy({}, {
+              get(target, prop) {
+                console.warn(\`Accessed extension API \${prefix\}\${prop} from\`, new Error().stack);
+                if (["addListener", "getRecipeSuitabilities"].includes(prop)) {
+                  return () => {};
+                }
+                return proxyMaker(prefix + prop + ".");
+              }
+            });
+          };
+          return proxyMaker("");
+        })())`.replace("\n", " "),
+      }),
+    ],
+  };
+}
+
+function injectBuildInfo(configName) {
+  const buildInfo = {
+    commitHash: execSync("git rev-parse HEAD").toString().trim(),
+  };
+
+  /*
+   * In normal builds (usually in development), describe the version metadata
+   * with a lot of detail. This shows up in the UI of the page/extension. In
+   * Taskcluster builds, just take whatever package.json says.
+   */
   if (process.env.MOZ_AUTOMATION && process.env.MOZ_RELEASE_BUILD) {
-    rv.version = packageJson.version;
+    buildInfo.version = `${packageData.version}-${configName}`;
   } else {
-    const described = execOutput("git describe --dirty=-uc").trim();
-    const describedPattern = /^v(.+?)(?:-((?:[0-9]+?)-(?:.+?)))?(-uc)?$/;
+    const described = execSync("git describe --dirty=-uc").toString().trim();
+    const describedPattern = /^v(?<tag>.+?)(?:-(?<revisionInfo>(?:[0-9]+?)-(?:.+?)))?(?<uncommittedChanges>-uc)?$/;
     const matches = described.match(describedPattern);
     const buildMetadata = [];
     if (matches) {
-      rv.version = matches[1];
+      const { tag, revisionInfo, uncommittedChanges } = matches.groups;
+      buildInfo.version = tag;
 
-      if (matches[2]) {
-        buildMetadata.push(matches[2]);
+      if (revisionInfo) {
+        buildMetadata.push(revisionInfo);
       }
 
-      if (matches[3]) {
+      buildMetadata.push(configName);
+
+      if (uncommittedChanges) {
         buildMetadata.push("uc");
-        rv.hasUncommittedChanges = true;
+        buildInfo.hasUncommittedChanges = true;
       }
     }
 
-    if (!rv.version) {
-      rv.version = packageJson.version;
+    if (!buildInfo.version) {
+      buildInfo.version = packageData.version;
     }
 
     if (buildMetadata) {
-      rv.version += `+${buildMetadata.join("-")}`;
+      buildInfo.version += `+${buildMetadata.join("-")}`;
     }
   }
 
-  return rv;
-}
-
-function execOutput(command) {
-  const output = execSync(command);
-  return output.toString();
+  return {
+    plugins: [
+      new webpack.DefinePlugin({
+        __BUILD__: webpack.DefinePlugin.runtimeValue(
+          () => JSON.stringify(buildInfo),
+          true,
+        ),
+      }),
+    ],
+  };
 }

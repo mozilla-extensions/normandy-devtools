@@ -59,6 +59,18 @@ class RecipeListing extends React.PureComponent<
     return <Tag className="text-danger">Disabled</Tag>;
   }
 
+  renderPendingReviewIcon(): ReactElement {
+    const { recipe } = this.props;
+    const {
+      latest_revision: { approval_request },
+    } = recipe;
+
+    if (approval_request && approval_request.approved === null) {
+      return <Tag color="yellow">Pending Review</Tag>;
+    }
+    return null;
+  }
+
   renderHeader(): ReactElement {
     const { recipe } = this.props;
     const linkTarget = `recipes/${recipe.id}`;
@@ -78,6 +90,7 @@ class RecipeListing extends React.PureComponent<
             hide={["RECIPE_SUITABILITY_FILTER_MISMATCH"]}
             revision={recipe.latest_revision}
           />
+          {this.renderPendingReviewIcon()}
           {this.renderEnabledIcon()}
           {this.renderActionMenu()}
         </div>
@@ -151,12 +164,7 @@ class RecipeListing extends React.PureComponent<
         speaker={speaker}
         trigger={["hover", "focus"]}
       >
-        <Icon
-          aria-label="recipe-menu"
-          className="ml-1"
-          icon="ellipsis-h"
-          role="menu-opener"
-        />
+        <Icon className="ml-1" icon="ellipsis-h" title="recipe-menu" />
       </Whisper>
     );
   }

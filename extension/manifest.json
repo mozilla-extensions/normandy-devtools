@@ -76,6 +76,11 @@
       "protocol": "ext+normandy",
       "name": "Normandy Devtools",
       "uriTemplate": "/redirect.html?r=%s"
+    },
+    {
+      "protocol": "web+normandy",
+      "name": "Normandy Devtools",
+      "uriTemplate": "/redirect.html?r=%s"
     }
   ]
 }

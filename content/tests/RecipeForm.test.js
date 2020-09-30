@@ -359,10 +359,10 @@ describe("The `RecipeForm` component", () => {
     const doc = await render(<App />);
 
     await waitFor(() =>
-      expect(doc.getByRole("menu-opener")).toBeInTheDocument(),
+      expect(doc.getByTitle("recipe-menu")).toBeInTheDocument(),
     );
 
-    fireEvent.mouseEnter(await doc.findByRole("menu-opener"));
+    fireEvent.mouseEnter(await doc.findByTitle("recipe-menu"));
     fireEvent.click(await doc.findByText("Edit"));
 
     await waitFor(() => {
@@ -487,7 +487,7 @@ describe("The `RecipeForm` component", () => {
         doc.getByText(recipeData.latest_revision.name),
       ).toBeInTheDocument();
     });
-    fireEvent.mouseEnter(doc.getByRole("menu-opener"));
+    fireEvent.mouseEnter(doc.getByTitle("recipe-menu"));
     fireEvent.click(doc.getByText("Edit"));
     await waitFor(() => {
       expect(doc.getByText("Experimenter Slug")).toBeInTheDocument();
@@ -763,18 +763,11 @@ describe("The `RecipeForm` component", () => {
     });
     setup(recipeData);
     const doc = await render(<App />);
-    await waitFor(() => {
-      expect(
-        doc.getByText(recipeData.latest_revision.name),
-      ).toBeInTheDocument();
-    });
-    fireEvent.mouseEnter(doc.getByRole("menu-opener"));
-    fireEvent.click(doc.getByText("Edit"));
-    await waitFor(() => {
-      expect(doc.getByText("Experimenter Slug")).toBeInTheDocument();
-    });
+    fireEvent.click(await doc.findByText(recipeData.latest_revision.name));
+    fireEvent.click(doc.getByText("Edit Recipe"));
 
-    expect(doc.getByText("Action Arguments")).toBeInTheDocument();
+    expect(await doc.findByText("Experimenter Slug")).toBeInTheDocument();
+    expect(await doc.findByText("Action Arguments")).toBeInTheDocument();
   });
 
   it("creation addon recipe form", async () => {
@@ -881,12 +874,8 @@ describe("The `RecipeForm` component", () => {
     });
     setup(recipeData);
     const doc = await render(<App />);
-    await waitFor(() => {
-      expect(
-        doc.getByText(recipeData.latest_revision.name),
-      ).toBeInTheDocument();
-    });
-    fireEvent.mouseEnter(doc.getByRole("menu-opener"));
+    await doc.findByText(recipeData.latest_revision.name);
+    fireEvent.mouseEnter(await doc.findByTitle("recipe-menu"));
     fireEvent.click(doc.getByText("Edit"));
     await waitFor(() => {
       expect(doc.getByText("Experimenter Slug")).toBeInTheDocument();
