@@ -48,10 +48,8 @@ function reducer(state, action): ExperimenterState {
   }
 }
 
-export function ExperimenterDetailsProvider({
-  children,
-  data,
-}): React.Provider<ExperimenterState> {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+export function ExperimenterDetailsProvider({ children, data }) {
   /** @type {[React.ReducerState<any>, React.Dispatch<React.ReducerAction<any>>]} */
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
@@ -62,6 +60,7 @@ export function ExperimenterDetailsProvider({
     });
   }, [data]);
 
+  // @ts-ignore
   return <Provider value={state}>{children}</Provider>;
 }
 
