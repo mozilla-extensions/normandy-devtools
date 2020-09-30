@@ -14,6 +14,7 @@ import {
   RecipeV3,
   Revision,
   ApprovalRequest,
+  RevisionApprovalRequest,
   RecipeReference,
 } from "devtools/types/recipes";
 
@@ -28,6 +29,10 @@ export const userFactory = Factory.fromFields<User>({
   },
 });
 
+const revisionApprovalRequestFactory = Factory.fromFields<
+  RevisionApprovalRequest
+>({ id: () => faker.random.number(), recipe_id: () => faker.random.number() });
+
 export const approvalRequestFactory = Factory.fromFields<
   ApprovalRequest,
   { empty: boolean }
@@ -38,6 +43,7 @@ export const approvalRequestFactory = Factory.fromFields<
   comment: ({ empty = false }) => (empty ? null : faker.lorem.sentence()),
   created: () => faker.date.recent().toISOString(),
   creator: { subfactory: userFactory },
+  revision: { subfactory: revisionApprovalRequestFactory },
 });
 
 export const revisionFactory = Factory.fromFields<
