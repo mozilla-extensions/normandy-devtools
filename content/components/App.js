@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import {
   HashRouter,
@@ -10,15 +10,30 @@ import {
 
 import AppHeader from "devtools/components/common/AppHeader";
 import { AppSidebar } from "devtools/components/common/AppSidebar";
-import AddonStudiesPage from "devtools/components/pages/AddonStudiesPage";
 import { ErrorFallbackPage } from "devtools/components/pages/ErrorFallbackPage";
-import FiltersPage from "devtools/components/pages/FiltersPage";
-import PrefStudiesPage from "devtools/components/pages/PrefStudiesPage";
-import RecipeDetailsPage from "devtools/components/pages/RecipeDetailsPage";
-import RecipeFormPage from "devtools/components/pages/RecipeFormPage";
 import RecipesPage from "devtools/components/pages/RecipesPage";
 import { EnvironmentProvider } from "devtools/contexts/environment";
 import { useHistoryRecorder } from "devtools/hooks/urls";
+
+// RecipesPage is not lazy since it is the default route.
+const RecipeFormPage = React.lazy(() =>
+  import("devtools/components/pages/RecipeFormPage"),
+);
+const RecipeDetailsPage = React.lazy(() =>
+  import("devtools/components/pages/RecipeDetailsPage"),
+);
+const FiltersPage =
+  __ENV__ === "web"
+    ? null
+    : React.lazy(() => import("devtools/components/pages/FiltersPage"));
+const PrefStudiesPage =
+  __ENV__ === "web"
+    ? null
+    : React.lazy(() => import("devtools/components/pages/PrefStudiesPage"));
+const AddonStudiesPage =
+  __ENV__ === "web"
+    ? null
+    : React.lazy(() => import("devtools/components/pages/AddonStudiesPage"));
 
 export default function App() {
   return (
@@ -43,63 +58,77 @@ function Page() {
   return (
     <div className="page-container">
       <ErrorBoundary FallbackComponent={ErrorFallbackPage}>
-        <Switch>
-          <Route exact path={`${match.path}/`}>
-            <Redirect to={`${match.url}/recipes`} />
-          </Route>
+        <Suspense fallback="">
+          <Switch>
+            <Route exact path={`${match.path}/`}>
+              <Redirect to={`${match.url}/recipes`} />
+            </Route>
 
-          <Route exact component={RecipesPage} path={`${match.path}/recipes`} />
-          <Route
-            exact
-            component={RecipeFormPage}
-            path={`${match.path}/recipes/new`}
-          />
-          <Route
-            exact
-            component={RecipeFormPage}
-            path={`${match.path}/recipes/:recipeId/clone`}
-          />
-          <Route
-            exact
-            component={RecipeDetailsPage}
-            path={`${match.path}/recipes/:recipeId`}
-          />
-          <Route
-            exact
-            component={RecipeDetailsPage}
-            path={`${match.path}/recipes/:recipeId/revision/:revisionId`}
-          />
-          <Route
-            exact
-            component={RecipeFormPage}
-            path={`${match.path}/recipes/:recipeId/edit`}
-          />
-          <Route
-            exact
-            component={RecipeFormPage}
-            path={`${match.path}/recipes/import/:experimenterSlug`}
-          />
-          <Route exact component={FiltersPage} path={`${match.path}/filters`} />
-          <Route
-            component={PrefStudiesPage}
-            path={`${match.path}/pref-studies`}
-          />
-          <Route
-            component={AddonStudiesPage}
-            path={`${match.path}/addon-studies`}
-          />
-
-          <Route
-            render={(args) => (
+            <Route
+              exact
+              component={RecipesPage}
+              path={`${match.path}/recipes`}
+            />
+            <Route
+              exact
+              component={RecipeFormPage}
+              path={`${match.path}/recipes/new`}
+            />
+            <Route
+              exact
+              component={RecipeFormPage}
+              path={`${match.path}/recipes/:recipeId/clone`}
+            />
+            <Route
+              exact
+              component={RecipeDetailsPage}
+              path={`${match.path}/recipes/:recipeId`}
+            />
+            <Route
+              exact
+              component={RecipeDetailsPage}
+              path={`${match.path}/recipes/:recipeId/revision/:revisionId`}
+            />
+            <Route
+              exact
+              component={RecipeFormPage}
+              path={`${match.path}/recipes/:recipeId/edit`}
+            />
+            <Route
+              exact
+              component={RecipeFormPage}
+              path={`${match.path}/recipes/import/:experimenterSlug`}
+            />
+            {__ENV__ === "web" ? null : (
               <>
-                <span>404</span>
-                <pre>
-                  <code>{JSON.stringify(args, null, 4)}</code>
-                </pre>
+                <Route
+                  exact
+                  component={FiltersPage}
+                  path={`${match.path}/filters`}
+                />
+                <Route
+                  component={PrefStudiesPage}
+                  path={`${match.path}/pref-studies`}
+                />
+                <Route
+                  component={AddonStudiesPage}
+                  path={`${match.path}/addon-studies`}
+                />
               </>
             )}
-          />
-        </Switch>
+
+            <Route
+              render={(args) => (
+                <>
+                  <span>404</span>
+                  <pre>
+                    <code>{JSON.stringify(args, null, 4)}</code>
+                  </pre>
+                </>
+              )}
+            />
+          </Switch>
+        </Suspense>
       </ErrorBoundary>
     </div>
   );

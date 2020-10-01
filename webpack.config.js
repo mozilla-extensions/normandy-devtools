@@ -79,9 +79,6 @@ function makeBaseConfig(development, argv) {
   return {
     mode: "production",
     devtool: "none",
-    optimization: {
-      minimize: false,
-    },
     entry,
     output: {
       filename: "[name].js",
@@ -140,9 +137,6 @@ function makeBaseDevelopmentConfig() {
     entry: {
       "react-devtools": "react-devtools",
     },
-    optimization: {
-      minimize: false,
-    },
   };
 }
 
@@ -186,6 +180,15 @@ function makeExtensionConfig(development) {
       },
       /* indent width */ 2,
     ),
+
+    // Code splitting doesn't do any good in extensions
+    new webpack.optimize.LimitChunkCountPlugin({
+      maxChunks: 1,
+    }),
+
+    new webpack.DefinePlugin({
+      __ENV__: JSON.stringify("extension"),
+    }),
   ];
 
   if (development) {
@@ -204,13 +207,16 @@ function makeExtensionConfig(development) {
     name: "extension",
     entry,
     plugins,
+    optimization: {
+      minimize: false,
+    },
     output: {
       path: path.resolve(__dirname, `./dist-extension`),
     },
   };
 }
 
-function makeWebConfig() {
+function makeWebConfig(development) {
   return {
     name: "web",
 
@@ -222,8 +228,14 @@ function makeWebConfig() {
       path: path.resolve(__dirname, `./dist-web`),
     },
 
+    optimization: {
+      minimize: !development,
+      splitChunks: { chunks: "all" },
+    },
+
     plugins: [
       new webpack.DefinePlugin({
+        __ENV__: JSON.stringify("web"),
         browser: `((() => {
           let proxyMaker = (prefix) => {
             return new Proxy({}, {
