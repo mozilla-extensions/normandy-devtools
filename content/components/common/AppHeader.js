@@ -72,8 +72,10 @@ function AddressBar() {
 
   const handleKeyPress = (ev) => {
     if (ev.key === "Enter") {
-      const addressMatch = address.match(/ext\+normandy:\/(.+?)$/);
-      history.push(addressMatch[1]);
+      const addressMatch = address.match(/\+normandy:\/(.+?)$/);
+      if (addressMatch) {
+        history.push(addressMatch[1]);
+      }
     }
   };
 
