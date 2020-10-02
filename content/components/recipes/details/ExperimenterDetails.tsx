@@ -49,7 +49,7 @@ const ExperimenterDetails: React.FunctionComponent<{}> = () => {
           </p>
         </div>
         <div className="mt-4">
-          <strong>Variants</strong>
+          <strong>Branches</strong>
           {variants.length ? (
             <ul>
               {variants.map((v, i) => (

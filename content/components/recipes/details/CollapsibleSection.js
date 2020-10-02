@@ -6,6 +6,7 @@ export default function CollapsibleSection({
   children,
   headerButtons,
   title,
+  testId = null,
   ...props
 }) {
   const [collapsed, setCollapsed] = React.useState(props.collapsed);
@@ -21,6 +22,7 @@ export default function CollapsibleSection({
           <div className="flex-grow-0 w-40px">
             <IconButton
               appearance="subtle"
+              data-testid={testId}
               icon={
                 <Icon icon={collapsed ? "chevron-right" : "chevron-down"} />
               }
@@ -44,4 +46,5 @@ CollapsibleSection.propTypes = {
   collapsed: PropTypes.bool,
   headerButtons: PropTypes.any,
   title: PropTypes.any,
+  testId: PropTypes.string,
 };

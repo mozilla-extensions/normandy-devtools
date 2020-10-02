@@ -149,6 +149,7 @@ export default function ApprovalRequest() {
     <>
       <CollapsibleSection
         collapsed
+        testId="collapse-approval-request"
         title={
           <>
             <h6>Approval Request</h6>
