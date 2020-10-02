@@ -147,12 +147,17 @@ class RecipeListing extends React.PureComponent<
           >
             Edit <Icon icon="edit" />
           </Dropdown.Item>
-          <Dropdown.Item onSelect={this.handleRunButtonClick}>
-            Run {running ? <Icon spin icon="reload" /> : <Icon icon="play" />}
-          </Dropdown.Item>
-          <Dropdown.Item onSelect={this.handleCustomRunClick}>
-            Custom Run <Icon icon="gear" />
-          </Dropdown.Item>
+          {__ENV__ === "extension" && (
+            <>
+              <Dropdown.Item onSelect={this.handleRunButtonClick}>
+                Run
+                {running ? <Icon spin icon="reload" /> : <Icon icon="play" />}
+              </Dropdown.Item>
+              <Dropdown.Item onSelect={this.handleCustomRunClick}>
+                Custom Run <Icon icon="gear" />
+              </Dropdown.Item>
+            </>
+          )}
         </Dropdown.Menu>
       </Popover>
     );
