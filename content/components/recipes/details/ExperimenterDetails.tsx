@@ -8,17 +8,12 @@ const ExperimenterDetails: React.FunctionComponent<{}> = () => {
   const {
     publicDescription,
     proposedStartDate,
+    proposedEndDate,
     proposedDuration,
     startDate,
     endDate,
     variants,
   } = data;
-
-  let proposedEndDate;
-  if (proposedStartDate) {
-    proposedEndDate = new Date();
-    proposedEndDate.setDate(proposedStartDate.getDate() + proposedDuration);
-  }
 
   return (
     <CollapsibleSection
@@ -34,7 +29,7 @@ const ExperimenterDetails: React.FunctionComponent<{}> = () => {
           <strong>Public description</strong>
           <p>{publicDescription}</p>
         </div>
-        <div className="mt-4">
+        <div className="mt-4" data-testid="details-proposed-schedule">
           <strong>Proposed schedule</strong>
           <p>
             {proposedStartDate?.toUTCString()} →{" "}

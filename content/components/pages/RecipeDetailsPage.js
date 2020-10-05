@@ -32,10 +32,18 @@ export default function RecipeDetailsPage() {
     }
 
     experimenterApi.fetchExperiment(experimenter_slug).then((data) => {
+      const proposedStartDate = new Date(data.proposed_start_date);
+      const proposedEndDate = new Date();
+      proposedEndDate.setTime(proposedStartDate.getTime());
+      proposedEndDate.setDate(
+        proposedStartDate.getDate() + data.proposed_duration,
+      );
+
       setExperimenterData({
         publicDescription: data.public_description,
-        proposedStartDate: new Date(data.proposed_start_date),
+        proposedStartDate,
         proposedDuration: data.proposed_duration,
+        proposedEndDate,
         startDate: data.start_date && new Date(data.start_date),
         endDate: data.end_date && new Date(data.end_date),
         variants: data.variants.map(({ description }) => description),

@@ -4,6 +4,7 @@ import React from "react";
 interface ExperimenterData {
   publicDescription: string;
   proposedStartDate: Date;
+  proposedEndDate: Date;
   proposedDuration: number;
   startDate?: Date;
   endDate?: Date;
@@ -17,6 +18,7 @@ interface ExperimenterState {
 export const INITIAL_EXPERIMENTER_DATA = {
   publicDescription: "",
   proposedStartDate: new Date(),
+  proposedEndDate: new Date(),
   proposedDuration: 0,
   startDate: null,
   endDate: null,

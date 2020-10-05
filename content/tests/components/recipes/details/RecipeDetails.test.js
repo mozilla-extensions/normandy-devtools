@@ -41,12 +41,19 @@ describe("The `RecipeDetails` component", () => {
       .spyOn(ExperimenterAPI.prototype, "fetchExperiment")
       .mockImplementation(() =>
         Promise.resolve({
-          publicDescription: "Try this new thing",
-          proposedStartDate: new Date(1599523200000),
-          proposedDuration: 120,
-          startDate: new Date(1599523200000),
-          endDate: new Date(1600128000000),
-          variants: ["Control branch", "Half of en-US"],
+          public_description: "Try this new thing",
+          proposed_start_date: 1599523200000,
+          proposed_duration: 120,
+          start_date: 1599523200000,
+          end_date: 1600128000000,
+          variants: [
+            {
+              description: "Control branch",
+            },
+            {
+              description: "Half of en-US",
+            },
+          ],
         }),
       );
   };
@@ -153,6 +160,30 @@ describe("The `RecipeDetails` component", () => {
       );
       expect(getAllByText(branch.ratio.toString())).not.toHaveLength(0);
     }
+  });
+
+  it("displays details from experimenter", async () => {
+    const recipeData = branchedAddonSetup();
+    setup(recipeData);
+    const { getByText, findByText, findByTestId } = await render(<App />);
+    fireEvent.click(getByText("Recipes"));
+    fireEvent.click(await findByText(recipeData.latest_revision.name));
+
+    await waitFor(() =>
+      expect(ExperimenterAPI.prototype.fetchExperiment).toReturn(),
+    );
+    await waitFor(() => expect(NormandyAPI.prototype.fetchRecipe).toReturn());
+
+    expect(getByText("Experimenter Details")).toBeInTheDocument();
+    expect(await findByText("Try this new thing")).toBeInTheDocument();
+    expect(getByText("Control branch")).toBeInTheDocument();
+    expect(getByText("Half of en-US")).toBeInTheDocument();
+
+    const eltProposedSchedule = await findByTestId("details-proposed-schedule");
+    const proposedSchedule = eltProposedSchedule.querySelector("p").innerHTML;
+    expect(proposedSchedule).toEqual(
+      "Tue, 08 Sep 2020 00:00:00 GMT → Wed, 06 Jan 2021 01:00:00 GMT (120 days)",
+    );
   });
 
   it("should be able approve recipes", async () => {
