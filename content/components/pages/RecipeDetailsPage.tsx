@@ -10,8 +10,9 @@ import {
 import { ExperimenterDetailsProvider } from "devtools/contexts/experimenterDetails";
 import { RecipeDetailsProvider } from "devtools/contexts/recipeDetails";
 
-export default function RecipeDetailsPage() {
-  const { recipeId } = useParams();
+// export default
+const RecipeDetailsPage: React.FC = () => {
+  const { recipeId } = useParams<{ recipeId: string }>();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
   const experimenterApi = useSelectedExperimenterEnvironmentAPI();
   const [recipeData, setRecipeData] = React.useState({
@@ -65,4 +66,6 @@ export default function RecipeDetailsPage() {
       </ExperimenterDetailsProvider>
     </RecipeDetailsProvider>
   );
-}
+};
+
+export default RecipeDetailsPage;

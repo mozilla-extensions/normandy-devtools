@@ -6,6 +6,8 @@ declare const __BUILD__: {
 
 declare const DEVELOPMENT: boolean;
 
+declare const __ENV__: "web" | "extension";
+
 declare namespace browser.experiments.normandy {
   type V1Recipe = {};
 
@@ -37,3 +39,14 @@ declare namespace browser.experiments.normandy {
     total: number,
   ): Promise<boolean>;
 }
+
+declare const renderWithContext: (
+  ui: React.ReactElement,
+  options?: {
+    route: string;
+    path: string;
+    history?: import("history").MemoryHistory;
+  },
+) => import("@testing-library/react").RenderResult & {
+  history: import("history").MemoryHistory;
+};

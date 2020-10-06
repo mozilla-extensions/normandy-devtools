@@ -2,7 +2,6 @@ import { cleanup } from "@testing-library/react";
 import React from "react";
 
 import RecipeListing from "devtools/components/recipes/RecipeListing";
-
 import {
   approvalRequestFactory,
   revisionFactory,
@@ -24,8 +23,6 @@ describe("RecipeListing", () => {
       },
     });
 
-    /* global renderWithContext */
-    // @ts-ignore
     const { getByText } = renderWithContext(
       <RecipeListing
         copyRecipeToArbitrary={() => {}}
@@ -45,8 +42,6 @@ describe("RecipeListing", () => {
       },
     });
 
-    /* global renderWithContext */
-    // @ts-ignore
     const { queryByText } = renderWithContext(
       <RecipeListing
         copyRecipeToArbitrary={() => {}}
@@ -66,8 +61,6 @@ describe("RecipeListing", () => {
       },
     });
 
-    /* global renderWithContext */
-    // @ts-ignore
     const { queryByText } = renderWithContext(
       <RecipeListing
         copyRecipeToArbitrary={() => {}}

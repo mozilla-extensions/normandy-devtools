@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import {
@@ -72,8 +71,10 @@ function AddressBar() {
 
   const handleKeyPress = (ev) => {
     if (ev.key === "Enter") {
-      const addressMatch = address.match(/ext\+normandy:\/(.+?)$/);
-      history.push(addressMatch[1]);
+      const addressMatch = address.match(/\+normandy:\/(.+?)$/);
+      if (addressMatch) {
+        history.push(addressMatch[1]);
+      }
     }
   };
 
@@ -137,6 +138,7 @@ function EnvironmentConfigurator() {
     history.push(location.pathname.replace(/^\/.+?\/(.+?)$/, `/${key}/$1`));
   };
 
+  /** @type React.ElementType */
   let Wrapper = React.Fragment;
   let wrapperProps = {};
   if (connectionStatus) {

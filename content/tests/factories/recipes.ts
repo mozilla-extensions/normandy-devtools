@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import faker from "faker";
 
 import Factory, { autoIncrementField } from "devtools/tests/factories";

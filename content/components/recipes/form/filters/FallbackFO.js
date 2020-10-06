@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from "react";
 import { ControlLabel, FormGroup, HelpBlock } from "rsuite";
 
@@ -28,6 +27,7 @@ export default function FallbackFO() {
   const filter_object_errors = clientErrors.filter_object || [];
 
   const knownFO = [];
+  /** @type {Array<import("devtools/types/filters").FilterObject>} */
   const additionalFO = [];
   if (data.filter_object) {
     data.filter_object.forEach((fo) => {

@@ -77,7 +77,7 @@ class FiltersPage extends React.PureComponent {
 
   handleDoubleClickTreeNode(event, node) {
     const { cursorEnd, cursorStart, filterExpression } = this.state;
-    const insert = node.props.value;
+    const insert = node["data-jexlExpression"];
     const filterExpressionLines = filterExpression.split("\n");
 
     if (cursorStart.line === cursorEnd.line) {

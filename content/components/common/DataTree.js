@@ -1,4 +1,3 @@
-// @ts-nocheck
 import PropTypes from "prop-types";
 import Tree, { TreeNode } from "rc-tree";
 import React from "react";
@@ -69,7 +68,11 @@ function makeTreeNodes({ data, title, key = null }) {
     case "object": {
       if (data === null) {
         return (
-          <TreeNode key={fullKey} title={`${title}: null`} value={fullKey} />
+          <TreeNode
+            key={fullKey}
+            data-jexlExpression={fullKey}
+            title={`${title}: null`}
+          />
         );
       }
 
@@ -77,8 +80,8 @@ function makeTreeNodes({ data, title, key = null }) {
         return (
           <TreeNode
             key={fullKey}
+            data-jexlExpression={fullKey}
             title={`${title}: undefined`}
-            value={fullKey}
           />
         );
       }
@@ -86,12 +89,16 @@ function makeTreeNodes({ data, title, key = null }) {
       if (Array.isArray(data)) {
         if (data.length === 0) {
           return (
-            <TreeNode key={fullKey} title={`${title}: []`} value={fullKey} />
+            <TreeNode
+              key={fullKey}
+              data-jexlExpression={fullKey}
+              title={`${title}: []`}
+            />
           );
         }
 
         return (
-          <TreeNode key={fullKey} title={title} value={fullKey}>
+          <TreeNode key={fullKey} data-jexlExpression={fullKey} title={title}>
             {data.map((value, idx) => {
               return makeTreeNodes({
                 data: value,
@@ -108,16 +115,16 @@ function makeTreeNodes({ data, title, key = null }) {
           return (
             <TreeNode
               key={fullKey}
+              data-jexlExpression={fullKey}
               title={`${title}: ${data.toISOString()}`}
-              value={fullKey}
             />
           );
         } catch (e) {
           return (
             <TreeNode
               key={fullKey}
+              data-jexlExpression={fullKey}
               title={`${title}: Invalid date (${e})`}
-              value={fullKey}
             />
           );
         }
@@ -125,12 +132,16 @@ function makeTreeNodes({ data, title, key = null }) {
 
       if (JSON.stringify(data) === "{}") {
         return (
-          <TreeNode key={fullKey} title={`${title}: {}`} value={fullKey} />
+          <TreeNode
+            key={fullKey}
+            data-jexlExpression={fullKey}
+            title={`${title}: {}`}
+          />
         );
       }
 
       return (
-        <TreeNode key={fullKey} title={title} value={fullKey}>
+        <TreeNode key={fullKey} data-jexlExpression={fullKey} title={title}>
           {Object.entries(data).map(([valueKey, value]) =>
             makeTreeNodes({
               data: value,
@@ -144,13 +155,21 @@ function makeTreeNodes({ data, title, key = null }) {
 
     case "string": {
       return (
-        <TreeNode key={fullKey} title={`${title}: ${data}`} value={fullKey} />
+        <TreeNode
+          key={fullKey}
+          data-jexlExpression={fullKey}
+          title={`${title}: ${data}`}
+        />
       );
     }
 
     case "number": {
       return (
-        <TreeNode key={fullKey} title={`${title}: ${data}`} value={fullKey} />
+        <TreeNode
+          key={fullKey}
+          data-jexlExpression={fullKey}
+          title={`${title}: ${data}`}
+        />
       );
     }
 
@@ -158,8 +177,8 @@ function makeTreeNodes({ data, title, key = null }) {
       return (
         <TreeNode
           key={fullKey}
+          data-jexlExpression={fullKey}
           title={`${title}: ${data ? "true" : "false"}`}
-          value={fullKey}
         />
       );
     }
@@ -168,8 +187,8 @@ function makeTreeNodes({ data, title, key = null }) {
       return (
         <TreeNode
           key={fullKey}
+          data-jexlExpression={fullKey}
           title={`${title}: <undefined>`}
-          value={fullKey}
         />
       );
     }

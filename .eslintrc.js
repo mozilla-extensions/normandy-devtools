@@ -12,7 +12,7 @@ const sharedRules = {
     },
   ],
   eqeqeq: ["error", "always"],
-  "prefer-const": "error",
+  "prefer-const": ["error", { destructuring: "all" }],
   "lines-between-class-members": ["error", "always"],
   "padding-line-between-statements": [
     "error",
@@ -97,6 +97,8 @@ module.exports = {
         ],
         "@typescript-eslint/no-use-before-define": ["off"],
         "react/prop-types": ["off"],
+        "@typescript-eslint/camelcase": ["off"],
+        "@typescript-eslint/explicit-function-return-type": ["warn", {allowExpressions: true}],
       },
     },
   ],

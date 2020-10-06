@@ -4,7 +4,6 @@ import { Icon, IconButton } from "rsuite";
 
 export const ErrorFallbackPage: React.FC<FallbackProps> = ({
   error,
-  componentStack,
   resetErrorBoundary,
 }: FallbackProps) => {
   return (
@@ -15,7 +14,7 @@ export const ErrorFallbackPage: React.FC<FallbackProps> = ({
         <code>{error.message}</code>
       </p>
 
-      <pre>{componentStack}</pre>
+      {error.stack && <pre>{error.stack}</pre>}
 
       <p className="mt-5">
         <IconButton icon={<Icon icon="refresh" />} onClick={resetErrorBoundary}>
