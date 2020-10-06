@@ -8,8 +8,9 @@ import {
   useRecipeDetailsImportInstructions,
 } from "devtools/contexts/recipeDetails";
 
-export default function ImportInstructions() {
-  const { experimenterSlug } = useParams();
+// export default
+const ImportInstructions: React.FC = () => {
+  const { experimenterSlug } = useParams<{ experimenterSlug: string }>();
   const importInstructions = useRecipeDetailsImportInstructions();
   const dispatch = useRecipeDetailsDispatch();
 
@@ -37,4 +38,6 @@ export default function ImportInstructions() {
       <HelpBlock>This field must be cleared before you can save.</HelpBlock>
     </FormGroup>
   );
-}
+};
+
+export default ImportInstructions;

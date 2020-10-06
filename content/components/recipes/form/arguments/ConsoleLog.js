@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import React from "react";
 
 import InputField from "devtools/components/recipes/form/arguments/fields/InputField";

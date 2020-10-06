@@ -1,16 +1,22 @@
-import PropTypes from "prop-types";
-import React from "react";
+import React, { ReactElement } from "react";
 import { Icon, IconButton } from "rsuite";
 
-export default function CollapsibleSection({
+interface CollapsibleSectionProps {
+  headerButtons?: ReactElement;
+  collapsed?: boolean;
+  title: ReactElement;
+}
+
+// default export
+const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   children,
   headerButtons,
   title,
-  ...props
-}) {
-  const [collapsed, setCollapsed] = React.useState(props.collapsed);
+  collapsed: defaultCollapsed = false,
+}) => {
+  const [collapsed, setCollapsed] = React.useState(defaultCollapsed);
 
-  const handleCollapseToggleClick = () => {
+  const handleCollapseToggleClick = (): void => {
     setCollapsed(!collapsed);
   };
 
@@ -30,18 +36,15 @@ export default function CollapsibleSection({
           </div>
           {title}
         </div>
-        <div style={{ visibility: collapsed ? "hidden" : "visible" }}>
-          {headerButtons}
-        </div>
+        {headerButtons && !collapsed && (
+          <div style={{ visibility: collapsed ? "hidden" : "visible" }}>
+            {headerButtons}
+          </div>
+        )}
       </div>
       {collapsed ? null : children}
     </>
   );
-}
-
-CollapsibleSection.propTypes = {
-  children: PropTypes.any,
-  collapsed: PropTypes.bool,
-  headerButtons: PropTypes.any,
-  title: PropTypes.any,
 };
+
+export default CollapsibleSection;

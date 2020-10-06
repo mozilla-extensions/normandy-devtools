@@ -62,12 +62,14 @@ class RecipeListing extends React.PureComponent<
   renderPendingReviewIcon(): ReactElement {
     const { recipe } = this.props;
     const {
+      // eslint-disable-next-line
       latest_revision: { approval_request },
     } = recipe;
 
     if (approval_request && approval_request.approved === null) {
       return <Tag color="yellow">Pending Review</Tag>;
     }
+
     return null;
   }
 
@@ -170,8 +172,6 @@ class RecipeListing extends React.PureComponent<
   }
 
   render(): ReactElement {
-    const { recipe } = this.props;
-
     return (
       <Panel
         bordered

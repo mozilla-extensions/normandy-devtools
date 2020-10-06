@@ -1,6 +1,5 @@
-import PropTypes from "prop-types";
 import React from "react";
-import { ControlLabel, FormGroup, Input } from "rsuite";
+import { ControlLabel, FormGroup, Input, InputProps } from "rsuite";
 
 import {
   ACTION_UPDATE_DATA,
@@ -8,16 +7,29 @@ import {
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
 
-export default function InputField({
-  label,
+type InputFieldProps = InputProps & {
+  name: string;
+  label?: string;
+  changeSideEffect?: (change: ChangeData) => void;
+};
+
+interface ChangeData {
+  data: unknown;
+  value: unknown;
+  name: unknown;
+}
+
+// export default
+const InputField: React.FC<InputFieldProps> = ({
   name,
+  label,
   changeSideEffect,
   ...props
-}) {
+}) => {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
 
-  const handleChange = (value) => {
+  const handleChange = (value): void => {
     let newData = data;
 
     if (typeof changeSideEffect === "function") {
@@ -42,11 +54,6 @@ export default function InputField({
       <Input value={data.arguments[name]} onChange={handleChange} {...props} />
     </FormGroup>
   );
-}
-
-InputField.propTypes = {
-  componentClass: PropTypes.string,
-  changeSideEffect: PropTypes.func,
-  label: PropTypes.string,
-  name: PropTypes.string.isRequired,
 };
+
+export default InputField;
