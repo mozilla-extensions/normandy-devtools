@@ -1,4 +1,3 @@
-// @ts-nocheck
 import PropTypes from "prop-types";
 import React from "react";
 import {
@@ -42,7 +41,7 @@ export default function BranchedAddon() {
         <Col xs={12}>
           <InputField label="User Facing Name" name="userFacingName" />
           <ToggleField label="Prevent New Enrollment" name="isEnrollmentPaused">
-            Prevents new users from joining this study cohort. Exisiting users
+            Prevents new users from joining this study cohort. Existing users
             will remain in the study.
           </ToggleField>
         </Col>
@@ -71,7 +70,7 @@ function Branches() {
   }));
 
   const handleClickAddBranch = () => {
-    /** @type {{ratio: number, slug: string, value: string | number | boolean}} */
+    /** @type {{ratio: number, slug: string, extensionApiId: string}} */
     const newBranch = { ratio: 1, slug: "", extensionApiId: "" };
 
     dispatch({

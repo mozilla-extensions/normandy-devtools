@@ -39,16 +39,12 @@ class JexlColumn extends React.PureComponent {
           <strong>JEXL Filter Expression</strong>
         </header>
         <CodeMirror
-          // @ts-ignore
           editorDidMount={this.handleEditorMounted}
           options={{
             mode: "javascript",
             lineNumbers: false,
             styleActiveLine: true,
             gutters: [],
-          }}
-          style={{
-            height: "auto",
           }}
           value={filterExpression}
           onBeforeChange={onBeforeChange}

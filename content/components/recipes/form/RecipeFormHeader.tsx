@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import React from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Alert, Button, Icon, IconButton, Input, Modal } from "rsuite";
@@ -12,8 +11,9 @@ import {
   useRecipeDetailsErrors,
 } from "devtools/contexts/recipeDetails";
 
-export default function RecipeFormHeader() {
-  const { recipeId } = useParams();
+// export default
+const RecipeFormHeader: React.FC = () => {
+  const { recipeId } = useParams<{ recipeId }>();
   const { selectedKey: environmentKey } = useEnvironmentState();
   const history = useHistory();
   const { data, importInstructions } = useRecipeDetailsState();
@@ -96,10 +96,19 @@ export default function RecipeFormHeader() {
       />
     </div>
   );
+};
+
+interface SaveModalProps {
+  onSave: (comment: string) => void;
+  setShowModal: (show: boolean) => void;
+  show: boolean;
 }
 
-function SaveModal(props) {
-  const { show, setShowModal, onSave } = props;
+const SaveModal: React.FC<SaveModalProps> = ({
+  show,
+  setShowModal,
+  onSave,
+}) => {
   const [comment, setComment] = React.useState("");
 
   const handleSaveClick = () => {
@@ -134,10 +143,6 @@ function SaveModal(props) {
       </Modal.Footer>
     </Modal>
   );
-}
-
-SaveModal.propTypes = {
-  onSave: PropTypes.func,
-  setShowModal: PropTypes.func,
-  show: PropTypes.bool,
 };
+
+export default RecipeFormHeader;

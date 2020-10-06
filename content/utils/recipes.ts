@@ -10,7 +10,6 @@ export function convertToV1Recipe(
   // Normandy client expects a v1-style recipe, but we have a v3-style recipe. Convert it.
   const idSuffix = environmentName !== "prod" ? `-${environmentName}` : "";
 
-  /* eslint-disable @typescript-eslint/camelcase */
   return {
     id: `${revision.recipe.id}${idSuffix}`,
     name: revision.name,
@@ -21,7 +20,6 @@ export function convertToV1Recipe(
     arguments: revision.arguments,
     filter_expression: revision.filter_expression,
   };
-  /* eslint-enable @typescript-eslint/camelcase */
 }
 
 /**

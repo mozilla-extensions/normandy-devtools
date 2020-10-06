@@ -1,15 +1,38 @@
-// @ts-nocheck
 import auth0 from "auth0-js";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { Reducer } from "react";
 import { Route, Redirect, Switch, useParams } from "react-router-dom";
 
 import { DEFAULT_ENV, ENVIRONMENTS } from "devtools/config";
 import { generateNonce, normalizeErrorObject } from "devtools/utils/auth0";
 import ExperimenterAPI from "devtools/utils/experimenterApi";
-import { delay } from "devtools/utils/helpers";
+import { delay, has } from "devtools/utils/helpers";
 import NormandyAPI from "devtools/utils/normandyApi";
 import { MINUTE, SECOND } from "devtools/utils/timeConstants";
+
+interface Environment {
+  readOnlyUrl: string;
+  writeableUrl: string;
+  oidcClientId: string;
+  oidcDomain: string;
+  experimenterUrl?: string;
+}
+
+interface EnvironmentState {
+  environments: Record<string, Environment>;
+  auth: Record<
+    string,
+    {
+      expiresAt?: Date | null;
+      result?: AuthResult | null;
+    }
+  >;
+  connectionStatus: Record<string, unknown>;
+  selectedKey: string;
+  isLoggingIn: boolean;
+}
+
+interface AuthResult { idTokenPayload: { email: string, picture: string } };
 
 const REFRESH_THRESHOLD_MS = 10 * MINUTE;
 
@@ -17,7 +40,7 @@ const ENV_CONFIG_KEY_RE = /^environment\.([^.]+?)\.config$/;
 const AUTH_RESULT_KEY_RE = /^environment\.([^.]+?)\.auth.result$/;
 const AUTH_EXPIRES_AT_KEY_RE = /^environment\.([^.]+?)\.auth.expiresAt$/;
 
-const initialEnvironments = ENVIRONMENTS;
+const initialEnvironments: Record<string, Environment> = ENVIRONMENTS;
 const initialAuth = {};
 
 Object.keys(localStorage).forEach((k) => {
@@ -37,27 +60,76 @@ Object.keys(initialEnvironments).forEach((k) => {
   };
 });
 
-const initialState = {
+const initialState: EnvironmentState = {
   environments: initialEnvironments,
   auth: initialAuth,
   connectionStatus: {},
   selectedKey: DEFAULT_ENV,
   isLoggingIn: false,
 };
-export const environmentContext = React.createContext(initialState);
+
+export const environmentContext = React.createContext({
+  state: initialState,
+  dispatch: null,
+});
 const { Provider } = environmentContext;
 
-export const ACTION_SELECT_ENVIRONMENT = "SELECT_ENVIRONMENT";
-export const ACTION_UPDATE_ENVIRONMENT = "UPDATE_ENVIRONMENT";
-export const ACTION_UPDATE_AUTH = "UPDATE_AUTH";
-export const ACTION_UPDATE_AUTH_EXPIRES_AT = "UPDATE_AUTH_EXPIRES_AT";
-export const ACTION_UPDATE_AUTH_RESULT = "UPDATE_AUTH_RESULT";
-export const ACTION_SET_IS_LOGGING_IN = "SET_LOGGING_IN";
-export const ACTION_SET_CONNECTION_STATUS = "SET_CONNECTION_STATUS";
+interface SelectEnvironmentAction {
+  type: "SELECT_ENVIRONMENT";
+  key: string;
+}
 
-function reducer(state, action) {
+interface UpdateEnvironmentAction {
+  type: "UPDATE_ENVIRONMENT";
+  key: string;
+  config: Record<string, unknown>;
+}
+
+interface UpdateAuthAction {
+  type: "UPDATE_AUTH";
+  key: string;
+  result: AuthResult;
+  expiresAt: Date;
+}
+
+interface UpdateAuthExpiresAtAction {
+  type: "UPDATE_AUTH_EXPIRES_AT";
+  key: string;
+  expiresAt: Date;
+}
+
+interface UpdateAuthResultAction {
+  type: "UPDATE_AUTH_RESULT";
+  key: string;
+  result: AuthResult;
+}
+
+interface SetIsLoggingInAction {
+  type: "SET_IS_LOGGING_IN";
+  isLoggingIn: boolean;
+}
+
+interface SetConnectionStatusAction {
+  type: "SET_CONNECTION_STATUS";
+  key: string;
+  status: unknown;
+}
+
+type EnvironmentAction =
+  | SelectEnvironmentAction
+  | UpdateEnvironmentAction
+  | UpdateAuthAction
+  | UpdateAuthExpiresAtAction
+  | UpdateAuthResultAction
+  | SetIsLoggingInAction
+  | SetConnectionStatusAction;
+
+function reducer(
+  state: EnvironmentState,
+  action: EnvironmentAction,
+): EnvironmentState {
   switch (action.type) {
-    case ACTION_UPDATE_ENVIRONMENT:
+    case "UPDATE_ENVIRONMENT":
       const newConfig = action.config || ENVIRONMENTS[action.key];
       if (newConfig) {
         return {
@@ -86,7 +158,7 @@ function reducer(state, action) {
           state.selectedKey === action.key ? DEFAULT_ENV : state.selectedKey,
       };
 
-    case ACTION_UPDATE_AUTH:
+    case "UPDATE_AUTH":
       return {
         ...state,
         auth: {
@@ -98,7 +170,7 @@ function reducer(state, action) {
         },
       };
 
-    case ACTION_UPDATE_AUTH_RESULT:
+    case "UPDATE_AUTH_RESULT":
       return {
         ...state,
         auth: {
@@ -110,7 +182,7 @@ function reducer(state, action) {
         },
       };
 
-    case ACTION_UPDATE_AUTH_EXPIRES_AT:
+    case "UPDATE_AUTH_EXPIRES_AT":
       return {
         ...state,
         auth: {
@@ -122,19 +194,19 @@ function reducer(state, action) {
         },
       };
 
-    case ACTION_SELECT_ENVIRONMENT:
+    case "SELECT_ENVIRONMENT":
       return {
         ...state,
         selectedKey: action.key,
       };
 
-    case ACTION_SET_IS_LOGGING_IN:
+    case "SET_IS_LOGGING_IN":
       return {
         ...state,
         isLoggingIn: action.isLoggingIn,
       };
 
-    case ACTION_SET_CONNECTION_STATUS:
+    case "SET_CONNECTION_STATUS":
       return {
         ...state,
         connectionStatus: {
@@ -148,8 +220,8 @@ function reducer(state, action) {
   }
 }
 
-function EnvironmentSelector({ children }) {
-  const { envKey } = useParams();
+const EnvironmentSelector: React.FC = ({ children }) => {
+  const { envKey } = useParams<{ envKey: string }>();
   const environments = useEnvironments();
   const dispatch = useEnvironmentDispatch();
 
@@ -160,15 +232,15 @@ function EnvironmentSelector({ children }) {
 
   React.useEffect(() => {
     dispatch({
-      type: ACTION_SELECT_ENVIRONMENT,
+      type: "SELECT_ENVIRONMENT",
       key: envKey,
     });
   }, [envKey]);
 
-  return children;
-}
+  return <>{children}</>;
+};
 
-function EnvironmentRouter({ children }) {
+const EnvironmentRouter: React.FC = ({ children }) => {
   return (
     <Switch>
       <Route exact path="/">
@@ -179,33 +251,33 @@ function EnvironmentRouter({ children }) {
       </Route>
     </Switch>
   );
-}
+};
 
 EnvironmentRouter.propTypes = {
   children: PropTypes.any,
 };
 
-export function EnvironmentProvider({ children }) {
-  /** @type {[React.ReducerState<any>, React.Dispatch<React.ReducerAction<any>>]} */
-  const [state, dispatch] = React.useReducer(reducer, initialState);
+export const EnvironmentProvider: React.FC = ({ children }) => {
+  const [state, dispatch] = React.useReducer<
+    Reducer<EnvironmentState, EnvironmentAction>
+  >(reducer, initialState);
 
   React.useEffect(() => {
     // Add event listener for changes to local storage
-    const storageListener = (ev) => {
+    const storageListener = (ev: StorageEvent) => {
       [
-        [ENV_CONFIG_KEY_RE, ACTION_UPDATE_ENVIRONMENT, "config"],
-        [AUTH_EXPIRES_AT_KEY_RE, ACTION_UPDATE_AUTH_EXPIRES_AT, "expiresAt"],
-        [AUTH_RESULT_KEY_RE, ACTION_UPDATE_AUTH_RESULT, "result"],
-      ].forEach(([regex, actionType, valueName]) => {
+        [ENV_CONFIG_KEY_RE, "UPDATE_ENVIRONMENT", "config"],
+        [AUTH_EXPIRES_AT_KEY_RE, "UPDATE_AUTH_EXPIRES_AT", "expiresAt"],
+        [AUTH_RESULT_KEY_RE, "UPDATE_AUTH_RESULT", "result"],
+      ].forEach(([regex, actionType, valueName]: [RegExp, string, string]) => {
         const match = ev.key.match(regex);
         if (match) {
           const envKey = match[1];
           dispatch({
             type: actionType,
             key: envKey,
-            // @ts-ignore
-            [valueName]: JSON.parse(ev.newValue),
-          });
+            [valueName]: JSON.parse(ev.newValue) as EnvironmentAction,
+          } as EnvironmentAction);
         }
       });
     };
@@ -218,7 +290,7 @@ export function EnvironmentProvider({ children }) {
 
       Object.keys(ENVIRONMENTS).forEach((key) => {
         dispatch({
-          type: ACTION_SET_CONNECTION_STATUS,
+          type: "SET_CONNECTION_STATUS",
           status: false,
           key,
         });
@@ -238,7 +310,7 @@ export function EnvironmentProvider({ children }) {
           }
 
           dispatch({
-            type: ACTION_SET_CONNECTION_STATUS,
+            type: "SET_CONNECTION_STATUS",
             status,
             key,
           });
@@ -261,7 +333,7 @@ export function EnvironmentProvider({ children }) {
     Object.entries(state.environments).forEach(async ([key, environment]) => {
       const { expiresAt } = state.auth[key];
       if (expiresAt) {
-        if (expiresAt - new Date().getTime() <= REFRESH_THRESHOLD_MS) {
+        if (Number(expiresAt) - new Date().getTime() <= REFRESH_THRESHOLD_MS) {
           try {
             await refreshToken(dispatch, key, environment);
           } catch (err) {
@@ -292,12 +364,11 @@ export function EnvironmentProvider({ children }) {
   }, []);
 
   return (
-    // @ts-ignore
     <Provider value={{ state, dispatch }}>
       <EnvironmentRouter>{children}</EnvironmentRouter>
     </Provider>
   );
-}
+};
 
 EnvironmentProvider.propTypes = {
   children: PropTypes.any,
@@ -368,7 +439,7 @@ export function updateEnvironment(dispatch, key, config) {
   }
 
   dispatch({
-    type: ACTION_UPDATE_ENVIRONMENT,
+    type: "UPDATE_ENVIRONMENT",
     key,
     config,
   });
@@ -403,7 +474,7 @@ function setSession(dispatch, selectedKey, authResult) {
   );
 
   dispatch({
-    type: ACTION_UPDATE_AUTH,
+    type: "UPDATE_AUTH",
     key: selectedKey,
     result: authResult,
     expiresAt,
@@ -424,9 +495,10 @@ async function launchWebAuthFlow(
   const buildUrlOptions = {
     state,
     nonce,
+    prompt: undefined,
   };
 
-  if ("interactive" in details && !details.interactive) {
+  if (has("interactive", details) && !details.interactive) {
     buildUrlOptions.prompt = "none";
   }
 
@@ -460,7 +532,7 @@ async function launchWebAuthFlow(
 export async function login(dispatch, selectedKey, environment) {
   dispatch({
     isLoggingIn: true,
-    type: ACTION_SET_IS_LOGGING_IN,
+    type: "SET_IS_LOGGING_IN",
   });
 
   let result;
@@ -478,7 +550,7 @@ export async function login(dispatch, selectedKey, environment) {
     } catch (err) {
       dispatch({
         isLoggingIn: false,
-        type: ACTION_SET_IS_LOGGING_IN,
+        type: "SET_IS_LOGGING_IN",
       });
       throw err;
     }
@@ -486,7 +558,7 @@ export async function login(dispatch, selectedKey, environment) {
 
   dispatch({
     isLoggingIn: false,
-    type: ACTION_SET_IS_LOGGING_IN,
+    type: "SET_IS_LOGGING_IN",
   });
 
   return result;
@@ -503,7 +575,7 @@ export function logout(dispatch, selectedKey) {
   localStorage.removeItem(`environment.${selectedKey}.auth.result`);
   localStorage.removeItem(`environment.${selectedKey}.auth.expiresAt`);
   dispatch({
-    type: ACTION_UPDATE_AUTH,
+    type: "UPDATE_AUTH",
     key: selectedKey,
     result: null,
     expiresAt: null,

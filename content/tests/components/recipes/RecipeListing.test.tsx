@@ -2,8 +2,11 @@ import { cleanup, fireEvent } from "@testing-library/react";
 import React from "react";
 
 import RecipeListing from "devtools/components/recipes/RecipeListing";
-
-import { recipeFactory } from "devtools/tests/factories/recipes";
+import {
+  approvalRequestFactory,
+  revisionFactory,
+  recipeFactory,
+} from "devtools/tests/factories/recipes";
 
 declare global {
   namespace NodeJS {
@@ -27,8 +30,6 @@ describe("RecipeListing", () => {
       },
     });
 
-    /* global renderWithContext */
-    // @ts-ignore
     const { getByText } = renderWithContext(
       <RecipeListing
         copyRecipeToArbitrary={() => {}}
@@ -48,8 +49,6 @@ describe("RecipeListing", () => {
       },
     });
 
-    /* global renderWithContext */
-    // @ts-ignore
     const { queryByText } = renderWithContext(
       <RecipeListing
         copyRecipeToArbitrary={() => {}}
@@ -69,8 +68,6 @@ describe("RecipeListing", () => {
       },
     });
 
-    /* global renderWithContext */
-    // @ts-ignore
     const { queryByText } = renderWithContext(
       <RecipeListing
         copyRecipeToArbitrary={() => {}}

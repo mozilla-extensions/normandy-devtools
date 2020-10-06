@@ -14,9 +14,13 @@ import {
   RecipeDetailsProvider,
 } from "devtools/contexts/recipeDetails";
 
-export default function RecipeFormPage() {
+// export default
+const RecipeFormPage: React.FC = () => {
   const { selectedKey: environmentKey } = useEnvironmentState();
-  const { recipeId, experimenterSlug } = useParams();
+  const { recipeId, experimenterSlug } = useParams<{
+    recipeId: string;
+    experimenterSlug: string;
+  }>();
   const [data, setData] = React.useState({});
   const [importInstructions, setImportInstructions] = React.useState("");
 
@@ -63,4 +67,6 @@ export default function RecipeFormPage() {
       </div>
     </RecipeDetailsProvider>
   );
-}
+};
+
+export default RecipeFormPage;

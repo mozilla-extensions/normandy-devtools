@@ -49,10 +49,8 @@ export const extensionFactory = Factory.fromFields<Extension>({
   id: faker.random.number,
   name: () => faker.lorem.slug(),
   xpi: faker.internet.url,
-  // eslint-disable-next-line @typescript-eslint/camelcase
   extension_id: () => faker.lorem.slug(),
   hash: () => faker.random.alphaNumeric(),
-  // eslint-disable-next-line @typescript-eslint/camelcase
   hash_algorithm: () => faker.random.word(),
 
   version: () => {
