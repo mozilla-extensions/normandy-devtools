@@ -261,7 +261,7 @@ describe("The `RecipeForm` component", () => {
 
     fireEvent.change(rateInput, { target: { value: 5 } });
     fireEvent.click(inputInput);
-    fireEvent.click(getByText("normandy.recipe.id"));
+    fireEvent.click(getByText("global-v4", { exact: false }));
 
     fireEvent.change(versionInput, { target: { value: 88 } });
     fireEvent.click(versionForm.querySelector("button"));
@@ -347,7 +347,7 @@ describe("The `RecipeForm` component", () => {
       comment: saveMessage,
       experimenter_slug: "the-experimenter-slug",
       filter_object: [
-        { input: ["normandy.recipe.id"], rate: 0.05, type: "stableSample" },
+        { input: ['"global-v4"'], rate: 0.05, type: "stableSample" },
         {
           type: "version",
           versions: [89, 90],

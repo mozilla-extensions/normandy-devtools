@@ -1,4 +1,4 @@
-import { cleanup } from "@testing-library/react";
+import { cleanup, fireEvent } from "@testing-library/react";
 import React from "react";
 
 import RecipeListing from "devtools/components/recipes/RecipeListing";
@@ -8,6 +8,13 @@ import {
   recipeFactory,
 } from "devtools/tests/factories/recipes";
 
+declare global {
+  namespace NodeJS {
+    interface Global {
+      __ENV__: string;
+    }
+  }
+}
 afterEach(async () => {
   jest.clearAllMocks();
   await cleanup();
@@ -69,5 +76,44 @@ describe("RecipeListing", () => {
       />,
     );
     expect(queryByText("Pending Review")).toBeNull();
+  });
+
+  it("should not have run buttons when ENV is web ", () => {
+    global.__ENV__ = "web";
+    const recipe = recipeFactory.build();
+
+    /* global renderWithContext */
+    // @ts-ignore
+    const { queryByText, getByTitle } = renderWithContext(
+      <RecipeListing
+        copyRecipeToArbitrary={() => {}}
+        environmentName="prod"
+        recipe={recipe}
+      />,
+    );
+
+    fireEvent.focus(getByTitle("recipe-menu"));
+
+    expect(queryByText("Run")).toBeNull();
+  });
+
+  it("should have run buttons when ENV is extension", () => {
+    global.__ENV__ = "extension";
+    const recipe = recipeFactory.build();
+
+    /* global renderWithContext */
+    // @ts-ignore
+    const { getByText, getByTitle } = renderWithContext(
+      <RecipeListing
+        copyRecipeToArbitrary={() => {}}
+        environmentName="prod"
+        recipe={recipe}
+      />,
+    );
+
+    fireEvent.focus(getByTitle("recipe-menu"));
+
+    expect(getByText("Run")).toBeInTheDocument();
+    expect(getByText("Custom Run")).toBeInTheDocument();
   });
 });

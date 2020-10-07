@@ -38,6 +38,8 @@ declare namespace browser.experiments.normandy {
     count: number,
     total: number,
   ): Promise<boolean>;
+
+  function ratioSample(input: string, branches: Array<number>): Promise<number>;
 }
 
 declare const renderWithContext: (

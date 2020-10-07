@@ -2,6 +2,7 @@ import faker from "faker";
 
 import Factory, { GeneratedField } from "devtools/tests/factories";
 import * as filterTypes from "devtools/types/filters";
+import { assert } from "devtools/utils/helpers";
 
 export const versionFoFactory = Factory.fromFields<
   filterTypes.VersionFilterObject,
@@ -79,9 +80,10 @@ const inputFieldGenerator: GeneratedField<
   Array<string>,
   { generateInputLength: number }
 > = {
-  generator({ generateInputLength = 0 } = {}): Array<string> {
-    const rv = [];
-    while (rv.length < generateInputLength) {
+  generator({ generateInputLength = 2 } = {}): Array<string> {
+    assert(generateInputLength >= 1, "Must have at least one input");
+    const rv = ["normandy.userId"];
+    while (rv.length < generateInputLength - 1) {
       rv.push(`"${faker.random.word()}"`);
     }
 
