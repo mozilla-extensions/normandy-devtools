@@ -182,7 +182,7 @@ describe("The `RecipeDetails` component", () => {
     const eltProposedSchedule = await findByTestId("details-proposed-schedule");
     const proposedSchedule = eltProposedSchedule.querySelector("p").innerHTML;
     expect(proposedSchedule).toEqual(
-      "Tue, 08 Sep 2020 00:00:00 GMT → Wed, 06 Jan 2021 00:00:00 GMT (120 days)",
+      "Tue Sep 08 2020 → Wed Jan 06 2021 (120 days)",
     );
   });
 

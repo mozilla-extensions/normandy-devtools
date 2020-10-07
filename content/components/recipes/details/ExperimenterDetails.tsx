@@ -32,15 +32,15 @@ const ExperimenterDetails: React.FunctionComponent<{}> = () => {
         <div className="mt-4" data-testid="details-proposed-schedule">
           <strong>Proposed schedule</strong>
           <p>
-            {proposedStartDate?.toUTCString()} →{" "}
-            {proposedEndDate?.toUTCString()} ({proposedDuration} days)
+            {proposedStartDate?.toDateString()} →{" "}
+            {proposedEndDate?.toDateString()} ({proposedDuration} days)
           </p>
         </div>
         <div className="mt-4">
           <strong>Actual Schedule</strong>
           <p>
-            {startDate ? startDate.toUTCString() : "N/A"}
-            {endDate ? " → " + endDate.toUTCString() : ""}
+            {startDate ? startDate.toDateString() : "N/A"}
+            {endDate ? " → " + endDate.toDateString() : ""}
           </p>
         </div>
         <div className="mt-4">
