@@ -7,7 +7,8 @@ import { RecipeV3 } from "devtools/types/recipes";
 import { has } from "devtools/utils/helpers";
 import { convertToV1Recipe } from "devtools/utils/recipes";
 
-import SuitabilityTag from "./details/SuitabilityTag";
+import SuitabilityTag from "devtools/components/recipes/details/SuitabilityTag";
+import { OnlyIf } from "devtools/components/common/OnlyIf";
 
 const normandy = browser.experiments.normandy;
 
@@ -88,10 +89,12 @@ class RecipeListing extends React.PureComponent<
           {recipe.latest_revision.name}
         </Link>
         <div className="recipe-actions flex-grow-0 flex-shrink-0">
-          <SuitabilityTag
-            hide={["RECIPE_SUITABILITY_FILTER_MISMATCH"]}
-            revision={recipe.latest_revision}
-          />
+          <OnlyIf type="extension">
+            <SuitabilityTag
+              hide={["RECIPE_SUITABILITY_FILTER_MISMATCH"]}
+              revision={recipe.latest_revision}
+            />
+          </OnlyIf>
           {this.renderPendingReviewIcon()}
           {this.renderEnabledIcon()}
           {this.renderActionMenu()}
@@ -149,17 +152,15 @@ class RecipeListing extends React.PureComponent<
           >
             Edit <Icon icon="edit" />
           </Dropdown.Item>
-          {__ENV__ === "extension" && (
-            <>
-              <Dropdown.Item onSelect={this.handleRunButtonClick}>
-                Run
-                {running ? <Icon spin icon="reload" /> : <Icon icon="play" />}
-              </Dropdown.Item>
-              <Dropdown.Item onSelect={this.handleCustomRunClick}>
-                Custom Run <Icon icon="gear" />
-              </Dropdown.Item>
-            </>
-          )}
+          <OnlyIf type="extension">
+            <Dropdown.Item onSelect={this.handleRunButtonClick}>
+              Run
+              {running ? <Icon spin icon="reload" /> : <Icon icon="play" />}
+            </Dropdown.Item>
+            <Dropdown.Item onSelect={this.handleCustomRunClick}>
+              Custom Run <Icon icon="gear" />
+            </Dropdown.Item>
+          </OnlyIf>
         </Dropdown.Menu>
       </Popover>
     );
