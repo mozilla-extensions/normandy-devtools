@@ -41,3 +41,8 @@ export interface LocaleFilterObject {
   type: "locale";
   locales: Array<string>;
 }
+
+export type SampleFilterObject =
+  | BucketSampleFilterObject
+  | StableSampleFilterObject
+  | NamespaceSampleFilterObject;

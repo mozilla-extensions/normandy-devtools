@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { Whisper, Tooltip, Icon } from "rsuite";
+import React, { useState, useEffect, ReactElement } from "react";
 
-import { bruteForceBucketSample } from "devtools/utils/recipes";
+import AsyncHookView from "devtools/components/common/AsyncHookView";
+import HelpIcon from "devtools/components/common/HelpIcon";
 import {
   BucketSampleFilterObject,
   NamespaceSampleFilterObject,
-} from "types/filters";
+  SampleFilterObject,
+} from "devtools/types/filters";
+import { assert } from "devtools/utils/helpers";
+import { bruteForceBucketSample } from "devtools/utils/recipes";
 
 interface TestingClientIdProps {
   className?: string;
@@ -13,7 +16,7 @@ interface TestingClientIdProps {
 }
 
 // default export
-export const TestingClientId: React.FunctionComponent<TestingClientIdProps> = ({
+export const TestingClientId: React.FC<TestingClientIdProps> = ({
   className,
   filter,
 }) => {
@@ -21,30 +24,20 @@ export const TestingClientId: React.FunctionComponent<TestingClientIdProps> = ({
 
   return (
     <div className={`testing-client-id ${className}`}>
-      <label className="mr-half" id="testing-clientid">
+      <label className="font-weight-bold" id="testing-clientid">
         Testing clientId
       </label>
-      <Whisper
-        enterable={true}
-        placement="top"
-        speaker={
-          <Tooltip>
-            Setting the preference <code>app.normandy.clientId</code> to this
-            value will make this bucket sample always match.
-          </Tooltip>
-        }
-        trigger="click"
-      >
-        <Icon icon="question-circle" role="button" />
-      </Whisper>
+      <HelpIcon>
+        Setting the preference <code>app.normandy.clientId</code> to this value
+        will satisfy this bucket sample filter. It will not automatically
+        satisfy other filters.
+      </HelpIcon>
       <div aria-labelledby="testing-clientid">
-        {testingClientId.loading && "Loading..."}
-        {testingClientId.error && (
-          <div className="error">{testingClientId.error.toString()}</div>
-        )}
-        {testingClientId.value && (
-          <code>app.normandy.clientId = {testingClientId.value}</code>
-        )}
+        <AsyncHookView hook={testingClientId}>
+          {(value): ReactElement => (
+            <code>app.normandy.clientId = {value}</code>
+          )}
+        </AsyncHookView>
       </div>
     </div>
   );
@@ -52,28 +45,13 @@ export const TestingClientId: React.FunctionComponent<TestingClientIdProps> = ({
 
 export default TestingClientId;
 
-function useTestingId(
-  filter: NamespaceSampleFilterObject | BucketSampleFilterObject,
-): { loading: boolean; value: string | null; error: Error | null } {
+function useTestingId(filter: SampleFilterObject): AsyncHook<string> {
   const [testingClientId, setTestingClientId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  let bucketSampleEquivalent: BucketSampleFilterObject;
-  if (filter.type === "namespaceSample") {
-    bucketSampleEquivalent = {
-      type: "bucketSample",
-      start: filter.start,
-      count: filter.count,
-      total: filter.total,
-      input: [`"${filter.namespace}"`, "normandy.userId"],
-    };
-  } else {
-    bucketSampleEquivalent = filter;
-  }
+  const [error, setError] = useState<{ toString: () => string }>(null);
 
   useEffect(() => {
-    bruteForceBucketSample(bucketSampleEquivalent)
+    bruteForceBucketSample(filter)
       .then((clientId) => {
         setTestingClientId(clientId);
         setError(null);
@@ -85,5 +63,16 @@ function useTestingId(
       });
   }, []);
 
-  return { value: testingClientId, loading, error };
+  if (error) {
+    return { value: null, loading: false, error };
+  } else if (loading) {
+    return { value: null, loading: true, error: null };
+  }
+
+  assert(
+    !!testingClientId,
+    "Hook should have a value if it isn't loading or an error",
+  );
+
+  return { value: testingClientId, loading: false, error: null };
 }

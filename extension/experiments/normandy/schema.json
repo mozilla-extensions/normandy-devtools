@@ -146,6 +146,29 @@
             "description": "The total number of buckets"
           }
         ]
+      },
+
+      {
+        "name": "ratioSample",
+        "type": "function",
+        "description": "Run a ratioSample, often used for branch assignment. Returns the index of the matching ratio",
+        "async": true,
+        "parameters": [
+          {
+            "name": "input",
+            "type": "string",
+            "description": "The sampling input"
+          },
+          {
+            "name": "ratios",
+            "type": "array",
+            "description": "The ratios to choose from",
+            "items": {
+              "type": "number",
+              "additionalProperties": true
+            }
+          }
+        ]
       }
     ],
 

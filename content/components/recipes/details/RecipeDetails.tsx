@@ -7,9 +7,9 @@ import FilteringDetails from "devtools/components/recipes/details/FilteringDetai
 import SuitabilityTag from "devtools/components/recipes/details/SuitabilityTag";
 import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
 
-export default function RecipeDetails() {
+// default export
+const RecipeDetails: React.FunctionComponent = () => {
   const data = useRecipeDetailsData();
-
   if (!data.recipe) {
     return (
       <div className="text-center">
@@ -43,4 +43,6 @@ export default function RecipeDetails() {
       <FilteringDetails />
     </>
   );
-}
+};
+
+export default RecipeDetails;
