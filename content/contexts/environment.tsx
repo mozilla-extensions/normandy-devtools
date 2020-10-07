@@ -32,7 +32,9 @@ interface EnvironmentState {
   isLoggingIn: boolean;
 }
 
-interface AuthResult { idTokenPayload: { email: string, picture: string } };
+interface AuthResult {
+  idTokenPayload: { email: string; picture: string };
+}
 
 const REFRESH_THRESHOLD_MS = 10 * MINUTE;
 
@@ -300,9 +302,12 @@ export const EnvironmentProvider: React.FC = ({ children }) => {
         Object.entries(ENVIRONMENTS).forEach(async ([key, environment]) => {
           let status = true;
           try {
-            // Send a notification to prune all active TCP connections
-            // This is required to work around https://bugzilla.mozilla.org/show_bug.cgi?id=1635935
-            browser.experiments.networking.pruneAllConnections();
+            if (__ENV__ === "extension") {
+              // Send a notification to prune all active TCP connections
+              // This is required to work around https://bugzilla.mozilla.org/show_bug.cgi?id=1635935
+              browser.experiments.networking.pruneAllConnections();
+            }
+
             const normandyApi = new NormandyAPI(environment);
             await checkVPNStatus(normandyApi, 5);
           } catch {
@@ -319,6 +324,8 @@ export const EnvironmentProvider: React.FC = ({ children }) => {
     };
 
     browser.networkStatus.onConnectionChanged.addListener(networkListener);
+
+    // Trigger VPN check on load
     networkListener({ status: "up" });
 
     // Clean up
