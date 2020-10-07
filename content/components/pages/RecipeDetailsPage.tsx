@@ -36,8 +36,8 @@ const RecipeDetailsPage: React.FC = () => {
       const proposedStartDate = new Date(data.proposed_start_date);
       const proposedEndDate = new Date();
       proposedEndDate.setTime(proposedStartDate.getTime());
-      proposedEndDate.setDate(
-        proposedStartDate.getDate() + data.proposed_duration,
+      proposedEndDate.setUTCDate(
+        proposedStartDate.getUTCDate() + data.proposed_duration,
       );
 
       setExperimenterData({
