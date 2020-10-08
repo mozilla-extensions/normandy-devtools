@@ -7,6 +7,7 @@ import {
   NamespaceSampleFilterObject,
   SampleFilterObject,
 } from "devtools/types/filters";
+import { AsyncHook } from "devtools/types/hooks";
 import { assert } from "devtools/utils/helpers";
 import { bruteForceBucketSample } from "devtools/utils/recipes";
 

@@ -5,6 +5,8 @@ actions:
     fix: ./node_modules/.bin/eslint --color --max-warnings 0 --fix {files}
     include:
       - "*.js"
+      - "*.ts"
+      - "*.tsx"
     exclude:
       - ".eslintrc.js"
       - ".prettierrc.js"

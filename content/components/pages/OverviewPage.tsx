@@ -1,10 +1,11 @@
 import React from "react";
+import { Loader } from "rsuite";
+
+import { PendingReviews } from "../overview/PendingReviews";
 import {
   useEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
-import { PendingReviews } from "../overview/PendingReviews";
-import { Loader } from "rsuite";
 
 export const OverviewPage: React.FC = () => {
   const { selectedKey: environmentKey } = useEnvironmentState();
@@ -15,12 +16,12 @@ export const OverviewPage: React.FC = () => {
     getPendingReviews();
   }, [environmentKey]);
 
-  const getPendingReviews = async () => {
+  const getPendingReviews = async (): Promise<void> => {
     const approvalRequests = await normandyApi.fetchApprovalRequests({
       approved: "pending",
     });
 
-    let recipeList = [];
+    const recipeList = [];
 
     if (approvalRequests.length) {
       await Promise.all(
@@ -33,6 +34,7 @@ export const OverviewPage: React.FC = () => {
         }),
       );
     }
+
     setData(recipeList);
   };
 
@@ -42,11 +44,11 @@ export const OverviewPage: React.FC = () => {
         <PendingReviews data={data} />
       </div>
     );
-  } else {
-    return (
-      <div className="text-center">
-        <Loader content="Loading Overview&hellip;" />
-      </div>
-    );
   }
+
+  return (
+    <div className="text-center">
+      <Loader content="Loading Overview&hellip;" />
+    </div>
+  );
 };
