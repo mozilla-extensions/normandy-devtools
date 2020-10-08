@@ -1,15 +1,30 @@
-// @ts-nocheck
-import PropTypes from "prop-types";
 import React, { useState } from "react";
+import { IControlledCodeMirror } from "react-codemirror2";
 
 import CodeMirror from "devtools/components/common/CodeMirror";
 
-export default function JsonEditor({ value, onChange, options, ...props }) {
+type JsonValue = Record<string, unknown> | Array<unknown>;
+
+type JsonEditorProps = Omit<
+  IControlledCodeMirror,
+  "onBeforeChange" | "value"
+> & {
+  value?: JsonValue;
+  onChange: (newValue: JsonValue, err?: unknown) => void;
+};
+
+// export default
+const JsonEditor: React.FC<JsonEditorProps> = ({
+  value,
+  onChange,
+  options,
+  ...props
+}) => {
   const [internalState, setInternalState] = useState(() =>
     JSON.stringify(value, null, 2),
   );
 
-  function handleNewValue(_editor, _data, value) {
+  function handleNewValue(_editor, _data, value): void {
     setInternalState(value);
     try {
       const parsed = JSON.parse(value);
@@ -31,10 +46,6 @@ export default function JsonEditor({ value, onChange, options, ...props }) {
       {...props}
     />
   );
-}
-
-JsonEditor.propTypes = {
-  value: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-  onChange: PropTypes.func.isRequired,
-  options: PropTypes.object,
 };
+
+export default JsonEditor;

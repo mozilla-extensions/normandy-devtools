@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from "react";
 import { Alert, Button, Divider, Input, Tag } from "rsuite";
 

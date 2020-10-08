@@ -278,6 +278,10 @@ var normandy = class extends ExtensionAPI {
               total,
             );
           },
+
+          async ratioSample(input, branches) {
+            return Sampling.ratioSample(input, branches);
+          },
         },
       },
     };

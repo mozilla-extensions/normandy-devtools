@@ -15,18 +15,18 @@ import {
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
-import { assert } from "devtools/utils/helpers";
 import {
   BucketSampleFilterObject,
   StableSampleFilterObject,
   NamespaceSampleFilterObject,
-} from "types/filters";
+} from "devtools/types/filters";
+import { assert } from "devtools/utils/helpers";
 
 const BUCKET_SAMPLE = "bucketSample";
 const STABLE_SAMPLE = "stableSample";
 const NAMESPACE_SAMPLE = "namespaceSample";
 
-const SAMPLING_INPUT_DEFAULTS = ["normandy.recipe.id", "normandy.userId"];
+const SAMPLING_INPUT_DEFAULTS = ["normandy.userId", '"global-v4"'];
 
 const SAMPLING_OPTIONS = [
   { label: "Namespace", value: NAMESPACE_SAMPLE },
@@ -58,7 +58,6 @@ const SamplingOptions: React.FC = () => {
       type: ACTION_UPDATE_DATA,
       data: {
         ...data,
-        // eslint-disable-next-line @typescript-eslint/camelcase
         filter_object: filterObjects,
       },
     });
@@ -69,7 +68,6 @@ const SamplingOptions: React.FC = () => {
       type: ACTION_UPDATE_DATA,
       data: {
         ...data,
-        // eslint-disable-next-line @typescript-eslint/camelcase
         filter_object: [
           ...data.filter_object.filter((fo) => fo !== filterObject),
           {

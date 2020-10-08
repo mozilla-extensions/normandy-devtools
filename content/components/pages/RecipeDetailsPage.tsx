@@ -6,8 +6,9 @@ import RecipeDetails from "devtools/components/recipes/details/RecipeDetails";
 import { useSelectedNormandyEnvironmentAPI } from "devtools/contexts/environment";
 import { RecipeDetailsProvider } from "devtools/contexts/recipeDetails";
 
-export default function RecipeDetailsPage() {
-  const { recipeId } = useParams();
+// export default
+const RecipeDetailsPage: React.FC = () => {
+  const { recipeId } = useParams<{ recipeId: string }>();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
   const [data, setData] = React.useState({});
 
@@ -29,4 +30,6 @@ export default function RecipeDetailsPage() {
       </div>
     </RecipeDetailsProvider>
   );
-}
+};
+
+export default RecipeDetailsPage;

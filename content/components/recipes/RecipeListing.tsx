@@ -62,12 +62,14 @@ class RecipeListing extends React.PureComponent<
   renderPendingReviewIcon(): ReactElement {
     const { recipe } = this.props;
     const {
+      // eslint-disable-next-line
       latest_revision: { approval_request },
     } = recipe;
 
     if (approval_request && approval_request.approved === null) {
       return <Tag color="yellow">Pending Review</Tag>;
     }
+
     return null;
   }
 
@@ -147,12 +149,17 @@ class RecipeListing extends React.PureComponent<
           >
             Edit <Icon icon="edit" />
           </Dropdown.Item>
-          <Dropdown.Item onSelect={this.handleRunButtonClick}>
-            Run {running ? <Icon spin icon="reload" /> : <Icon icon="play" />}
-          </Dropdown.Item>
-          <Dropdown.Item onSelect={this.handleCustomRunClick}>
-            Custom Run <Icon icon="gear" />
-          </Dropdown.Item>
+          {__ENV__ === "extension" && (
+            <>
+              <Dropdown.Item onSelect={this.handleRunButtonClick}>
+                Run
+                {running ? <Icon spin icon="reload" /> : <Icon icon="play" />}
+              </Dropdown.Item>
+              <Dropdown.Item onSelect={this.handleCustomRunClick}>
+                Custom Run <Icon icon="gear" />
+              </Dropdown.Item>
+            </>
+          )}
         </Dropdown.Menu>
       </Popover>
     );
@@ -170,8 +177,6 @@ class RecipeListing extends React.PureComponent<
   }
 
   render(): ReactElement {
-    const { recipe } = this.props;
-
     return (
       <Panel
         bordered

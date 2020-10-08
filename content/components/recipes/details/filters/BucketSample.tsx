@@ -1,9 +1,8 @@
-/* eslint-disable react/prop-types */
 import React from "react";
 import { Panel, Tag } from "rsuite";
 
 import TestingClientId from "devtools/components/recipes/details/filters/TestingClientId";
-import { BucketSampleFilterObject } from "types/filters";
+import { BucketSampleFilterObject } from "devtools/types/filters";
 
 const BucketSample: React.FunctionComponent<{
   data: BucketSampleFilterObject;

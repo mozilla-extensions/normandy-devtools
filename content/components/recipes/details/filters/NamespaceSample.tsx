@@ -1,9 +1,8 @@
-/* eslint-disable react/prop-types */
 import React from "react";
 import { Panel, Tag } from "rsuite";
 
 import TestingClientId from "devtools/components/recipes/details/filters/TestingClientId";
-import { NamespaceSampleFilterObject } from "types/filters";
+import { NamespaceSampleFilterObject } from "devtools/types/filters";
 
 // default export
 const NamespaceSample: React.FunctionComponent<{

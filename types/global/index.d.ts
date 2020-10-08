@@ -38,4 +38,17 @@ declare namespace browser.experiments.normandy {
     count: number,
     total: number,
   ): Promise<boolean>;
+
+  function ratioSample(input: string, branches: Array<number>): Promise<number>;
 }
+
+declare const renderWithContext: (
+  ui: React.ReactElement,
+  options?: {
+    route: string;
+    path: string;
+    history?: import("history").MemoryHistory;
+  },
+) => import("@testing-library/react").RenderResult & {
+  history: import("history").MemoryHistory;
+};

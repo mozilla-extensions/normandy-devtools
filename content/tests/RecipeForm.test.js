@@ -252,7 +252,7 @@ describe("The `RecipeForm` component", () => {
 
     fireEvent.change(rateInput, { target: { value: 5 } });
     fireEvent.click(inputInput);
-    fireEvent.click(getByText("normandy.recipe.id"));
+    fireEvent.click(getByText("global-v4", { exact: false }));
 
     fireEvent.change(versionInput, { target: { value: 88 } });
     fireEvent.click(versionForm.querySelector("button"));
@@ -338,7 +338,7 @@ describe("The `RecipeForm` component", () => {
       comment: saveMessage,
       experimenter_slug: "the-experimenter-slug",
       filter_object: [
-        { input: ["normandy.recipe.id"], rate: 0.05, type: "stableSample" },
+        { input: ['"global-v4"'], rate: 0.05, type: "stableSample" },
         {
           type: "version",
           versions: [89, 90],
@@ -437,12 +437,9 @@ describe("The `RecipeForm` component", () => {
 
     fireEvent.click(within(modalDialog).getByText("Save"));
 
-    const { latest_revision } = recipeData;
-
-    /* eslint-disable prefer-const */
-
-    let { action, ...updatedRecipeData } = latest_revision;
-    /* eslint-enable prefer-const */
+    let {
+      latest_revision: { action, ...updatedRecipeData },
+    } = recipeData;
 
     const channelValues = ["nightly", "aurora", "beta", "release"];
 
@@ -543,11 +540,9 @@ describe("The `RecipeForm` component", () => {
 
     fireEvent.click(within(modalDialog).getByText("Save"));
 
-    const { latest_revision } = recipeData;
-
-    /* eslint-disable prefer-const */
-    let { action, ...updatedRecipeData } = latest_revision;
-    /* eslint-enable prefer-const */
+    let {
+      latest_revision: { action, ...updatedRecipeData },
+    } = recipeData;
 
     updatedRecipeData = {
       ...updatedRecipeData,
@@ -590,8 +585,6 @@ describe("The `RecipeForm` component", () => {
         Promise.resolve([recipe.latest_revision.action]),
       );
 
-    /* global renderWithContext */
-    // @ts-ignore
     const doc = await renderWithContext(<RecipeFormPage />, {
       route: "/prod/recipes/import/experimenter-slug",
       path: "/prod/recipes/import/:experimenterSlug",
@@ -618,7 +611,6 @@ describe("The `RecipeForm` component", () => {
 
     fireEvent.click(within(modalDialog).getByText("Save"));
 
-    /* eslint-disable prefer-const */
     let { action: _omitAction, ...updatedRecipeData } = recipe.latest_revision;
     updatedRecipeData = {
       ...updatedRecipeData,

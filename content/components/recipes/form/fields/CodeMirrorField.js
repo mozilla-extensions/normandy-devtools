@@ -33,7 +33,6 @@ export default function CodeMirrorField({ name, label, options, required }) {
     <FormGroup>
       <ControlLabel>{label}</ControlLabel>
       <CodeMirror
-        // @ts-ignore
         options={{
           mode: "javascript",
           lineNumbers: true,

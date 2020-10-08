@@ -1,4 +1,4 @@
-/* global process */
+/* eslint-env node */
 
 export const DEFAULT_ENV = process.env.NDT_DEFAULT_ENV || "prod";
 

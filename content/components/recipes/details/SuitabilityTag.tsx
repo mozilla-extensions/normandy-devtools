@@ -1,8 +1,8 @@
-// @ts-nocheck
 import React from "react";
 import { Icon, Popover, Tag, Whisper } from "rsuite";
 
 import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
+import { Revision } from "devtools/types/recipes";
 import { convertToV1Recipe } from "devtools/utils/recipes";
 
 const { normandy } = browser.experiments;
@@ -102,14 +102,16 @@ const SuitabilityTag: React.FC<SuitabilityTagProps> = ({
 
   React.useEffect(() => {
     (async (): Promise<void> => {
-      const v1Recipe = convertToV1Recipe(revision);
+      // The environment doesn't matter, and passing `"prod"` means that the
+      // conversion won't mess with the ID as much, so do that.
+      const v1Recipe = convertToV1Recipe(revision, "prod");
       const suitabilities = await normandy.getRecipeSuitabilities(v1Recipe);
       setSuitabilities(suitabilities);
       setLoading(false);
     })();
   }, [revision]);
 
-  let popoverMessage = "Loading&hellip;";
+  let popoverMessage = <>Loading&hellip;</>;
   if (suitabilities) {
     popoverMessage = (
       <dl

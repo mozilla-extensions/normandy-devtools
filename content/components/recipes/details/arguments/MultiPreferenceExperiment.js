@@ -2,13 +2,18 @@ import PropTypes from "prop-types";
 import React from "react";
 import { Panel, Tag } from "rsuite";
 
+import AsyncHookView from "devtools/components/common/AsyncHookView";
+import HelpIcon from "devtools/components/common/HelpIcon";
 import {
   booleanFormatter,
   multiColumnFormatter,
 } from "devtools/components/recipes/details/arguments/formatters";
 import GenericArguments from "devtools/components/recipes/details/arguments/GenericArguments";
+import { useBranchTestingIds } from "devtools/hooks/testingIds";
 
 export default function MultiPreferenceExperiment({ data }) {
+  const branchTestingIds = useBranchTestingIds(data);
+
   return (
     <GenericArguments
       data={data.arguments}
@@ -83,6 +88,29 @@ export default function MultiPreferenceExperiment({ data }) {
                     </div>
                     <div className="my-1 text-subtle">
                       <code>{branch.ratio}</code>
+                    </div>
+                  </div>
+                  <div className="flex-basis-0 flex-grow-1">
+                    <div className="d-flex align-items-center">
+                      <div className="pr-2 font-weight-bold">
+                        Testing clientId
+                        <HelpIcon>
+                          Setting the preference{" "}
+                          <code>app.normandy.clientId</code> to this value will
+                          satisfy the sampling filter and choose this branch
+                          when enrolling. It will not automatically satisfy
+                          other filters.
+                        </HelpIcon>
+                      </div>
+                    </div>
+                    <div className="my-1 text-subtle">
+                      <AsyncHookView hook={branchTestingIds}>
+                        {(value) => (
+                          <code>
+                            app.normandy.clientId = {value[branch.slug]}
+                          </code>
+                        )}
+                      </AsyncHookView>
                     </div>
                   </div>
                 </div>
