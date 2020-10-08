@@ -8,7 +8,6 @@ import { has } from "devtools/utils/helpers";
 import { convertToV1Recipe } from "devtools/utils/recipes";
 
 import SuitabilityTag from "devtools/components/recipes/details/SuitabilityTag";
-import { OnlyIf } from "devtools/components/common/OnlyIf";
 
 const normandy = browser.experiments.normandy;
 
