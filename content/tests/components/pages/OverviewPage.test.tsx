@@ -30,15 +30,11 @@ describe("OverviewPage", () => {
 
     jest
       .spyOn(NormandyAPI.prototype, "fetchApprovalRequests")
-      .mockImplementation(() =>
-        Promise.resolve([pendingApprovalRequest]),
-      );
+      .mockImplementation(() => Promise.resolve([pendingApprovalRequest]));
     jest
       .spyOn(NormandyAPI.prototype, "fetchRecipe")
       .mockImplementation(() => Promise.resolve(recipe));
 
-    /* global renderWithContext */
-    // @ts-ignore
     const { getByText } = renderWithContext(<OverviewPage />);
     await waitForElementToBeRemoved(getByText(/Loading Overview/));
 
