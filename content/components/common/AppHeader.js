@@ -18,6 +18,7 @@ import {
   Whisper,
 } from "rsuite";
 
+import { HideFromTests } from "devtools/components/common/HideFromTests";
 import Logo from "devtools/components/svg/Logo";
 import {
   login,
@@ -34,7 +35,9 @@ export default function AppHeader() {
     <Header>
       <div className="app-header">
         <span className="logo">
-          <Logo />
+          <HideFromTests>
+            <Logo />
+          </HideFromTests>
           <span className="logo-text">
             Normandy
             <br />
