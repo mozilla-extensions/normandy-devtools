@@ -84,6 +84,16 @@ jobs:
           name: Build
           command: yarn build
       - run:
+          name: Create version JSON file
+          command: |
+            printf '{"commit":"%s","version":"%s","source":"https://github.com/%s/%s","build":"%s"}\n' \
+              "$CIRCLE_SHA1" \
+              "${CIRCLE_TAG-}" \
+              "$CIRCLE_PROJECT_USERNAME" \
+              "$CIRCLE_PROJECT_REPONAME" \
+              "$CIRCLE_BUILD_URL" \
+              > dist-web/__version__
+      - run:
           name: Syntax check built output
           command: ls dist-*/*.js | xargs -l node --check
       - store_artifacts:
