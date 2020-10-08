@@ -1,6 +1,7 @@
 import React from "react";
 import { Divider, Loader, Tag } from "rsuite";
 
+import { OnlyIf } from "devtools/components/common/OnlyIf";
 import ActionDetails from "devtools/components/recipes/details/ActionDetails";
 import ApprovalRequest from "devtools/components/recipes/details/ApprovalRequest";
 import FilteringDetails from "devtools/components/recipes/details/FilteringDetails";
@@ -28,7 +29,9 @@ const RecipeDetails: React.FunctionComponent = () => {
           <h5>{data.name}</h5>
         </div>
         <div className="pr-1">
-          <SuitabilityTag />
+          <OnlyIf type="extension">
+            <SuitabilityTag />
+          </OnlyIf>
         </div>
         <div>
           <Tag color={data.enabled ? "green" : "red"}>
