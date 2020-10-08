@@ -2,11 +2,8 @@ import { cleanup, fireEvent } from "@testing-library/react";
 import React from "react";
 
 import RecipeListing from "devtools/components/recipes/RecipeListing";
-import {
-  approvalRequestFactory,
-  revisionFactory,
-  recipeFactory,
-} from "devtools/tests/factories/recipes";
+
+import { recipeFactory } from "devtools/tests/factories/recipes";
 
 declare global {
   namespace NodeJS {
@@ -82,8 +79,6 @@ describe("RecipeListing", () => {
     global.__ENV__ = "web";
     const recipe = recipeFactory.build();
 
-    /* global renderWithContext */
-    // @ts-ignore
     const { queryByText, getByTitle } = renderWithContext(
       <RecipeListing
         copyRecipeToArbitrary={() => {}}
@@ -101,8 +96,6 @@ describe("RecipeListing", () => {
     global.__ENV__ = "extension";
     const recipe = recipeFactory.build();
 
-    /* global renderWithContext */
-    // @ts-ignore
     const { getByText, getByTitle } = renderWithContext(
       <RecipeListing
         copyRecipeToArbitrary={() => {}}
