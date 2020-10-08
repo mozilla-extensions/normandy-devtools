@@ -8,6 +8,8 @@ declare const DEVELOPMENT: boolean;
 
 declare const __ENV__: "web" | "extension";
 
+declare const __TESTING__: boolean;
+
 declare namespace browser.experiments.normandy {
   type V1Recipe = {};
 
