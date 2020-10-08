@@ -52,7 +52,7 @@
     "@typescript-eslint/eslint-plugin": "2.34.0",
     "@typescript-eslint/parser": "2.34.0",
     "babel-eslint": "10.1.0",
-    "babel-jest": "26.3.0",
+    "babel-jest": "26.5.2",
     "babel-loader": "8.1.0",
     "babel-preset-rsuite": "4.0.1",
     "cache-loader": "4.1.0",
