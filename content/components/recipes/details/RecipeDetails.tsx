@@ -28,7 +28,7 @@ const RecipeDetails: React.FunctionComponent = () => {
           <h5>{data.name}</h5>
         </div>
         <div className="pr-1">
-          <SuitabilityTag />
+          {__ENV__ == "extension" && <SuitabilityTag />}
         </div>
         <div>
           <Tag color={data.enabled ? "green" : "red"}>

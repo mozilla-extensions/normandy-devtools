@@ -1,8 +1,10 @@
-import { render, cleanup, waitFor, fireEvent } from "@testing-library/react";
+import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import React from "react";
 
 import "@testing-library/jest-dom/extend-expect";
 import App from "devtools/components/App";
+import RecipeDetails from "devtools/components/recipes/details/RecipeDetails";
+import { RecipeDetailsProvider } from "devtools/contexts/recipeDetails";
 import {
   versionFoFactory,
   channelFoFactory,
@@ -337,5 +339,35 @@ describe("The `RecipeDetailForm` component", () => {
     await doc.findByText(recipe.latest_revision.name);
 
     expect(doc.queryAllByText("Pause")).toHaveLength(0);
+  });
+
+  it("shouldn't show suit. tag when web mode", async () => {
+    global.__ENV__ = "web";
+    const recipe = recipeFactory.build();
+
+    const doc = await render(
+      <RecipeDetailsProvider data={recipe.latest_revision}>
+        <RecipeDetails />
+      </RecipeDetailsProvider>,
+    );
+    await waitFor(() =>
+      expect(doc.getByText(recipe.latest_revision.name)).toBeInTheDocument(),
+    );
+    expect(doc.queryByText("Match")).toBeNull();
+  });
+
+  it("should show suit. tag when extension mode", async () => {
+    global.__ENV__ = "extension";
+    const recipe = recipeFactory.build();
+
+    const doc = await render(
+      <RecipeDetailsProvider data={recipe.latest_revision}>
+        <RecipeDetails />
+      </RecipeDetailsProvider>,
+    );
+    await waitFor(() =>
+      expect(doc.getByText(recipe.latest_revision.name)).toBeInTheDocument(),
+    );
+    expect(doc.queryByText("Match")).toBeInTheDocument();
   });
 });
