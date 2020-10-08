@@ -51,7 +51,6 @@ export interface ApprovalRequest {
   created: string;
   creator: User;
   revision: RevisionApprovalRequest;
-
 }
 
 export interface RevisionApprovalRequest {

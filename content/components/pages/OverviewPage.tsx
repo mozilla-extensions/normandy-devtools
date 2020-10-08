@@ -6,7 +6,7 @@ import {
 import { PendingReviews } from "../overview/PendingReviews";
 import { Loader } from "rsuite";
 
-export const OverviewPage: React.FC<any> = ({}) => {
+export const OverviewPage: React.FC = () => {
   const { selectedKey: environmentKey } = useEnvironmentState();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
 
@@ -29,7 +29,7 @@ export const OverviewPage: React.FC<any> = ({}) => {
             revision: { recipe_id },
           } = approvalRequest;
           const recipe = await normandyApi.fetchRecipe(recipe_id);
-          recipeList = [...recipeList, recipe];
+          recipeList.push(recipe);
         }),
       );
     }

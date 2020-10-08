@@ -3,11 +3,7 @@ import React from "react";
 
 import RecipeListing from "devtools/components/recipes/RecipeListing";
 
-import {
-  approvalRequestFactory,
-  revisionFactory,
-  recipeFactory,
-} from "devtools/tests/factories/recipes";
+import { recipeFactory } from "devtools/tests/factories/recipes";
 
 afterEach(async () => {
   jest.clearAllMocks();

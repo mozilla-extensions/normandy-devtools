@@ -5,15 +5,11 @@ import { Col, List, Panel, Row, Tag } from "rsuite";
 import { RecipeV3 } from "devtools/types/recipes";
 import { chunkBy } from "devtools/utils/helpers";
 
-export const PendingReviews: React.FC<any> = (props: {
-  data: Array<RecipeV3>;
+export const PendingReviews: React.FC<{ data: Array<RecipeV3> }> = ({
+  data,
 }) => {
-  const { data } = props;
   const pendingReviews = data.filter((recipe) => {
-    const {
-      latest_revision: { approval_request },
-    } = recipe;
-    return approval_request && approval_request.approved === null;
+    return recipe.latest_revision.approval_request?.approved === null;
   });
 
   const renderPendingReviewListItem = () => {
