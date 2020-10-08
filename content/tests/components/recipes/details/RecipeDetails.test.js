@@ -3,6 +3,7 @@ import React from "react";
 
 import "@testing-library/jest-dom/extend-expect";
 import App from "devtools/components/App";
+import { experimenterResponseFactory } from "devtools/tests/factories/experiments";
 import {
   versionFoFactory,
   channelFoFactory,
@@ -36,26 +37,6 @@ describe("The `RecipeDetails` component", () => {
     jest
       .spyOn(NormandyAPI.prototype, "fetchRecipe")
       .mockImplementation(() => Promise.resolve(recipe));
-
-    jest
-      .spyOn(ExperimenterAPI.prototype, "fetchExperiment")
-      .mockImplementation(() =>
-        Promise.resolve({
-          public_description: "Try this new thing",
-          proposed_start_date: 1599523200000,
-          proposed_duration: 120,
-          start_date: 1599523200000,
-          end_date: 1600128000000,
-          variants: [
-            {
-              description: "Control branch",
-            },
-            {
-              description: "Half of en-US",
-            },
-          ],
-        }),
-      );
   };
 
   /** @return {import("devtools/types/recipes").RecipeV3<import("devtools/types/arguments").BranchedAddonStudyArguments>} */
@@ -108,6 +89,16 @@ describe("The `RecipeDetails` component", () => {
     return recipe;
   };
 
+  const experimenterSetup = (experiment) => {
+    if (!experiment) {
+      experiment = experimenterResponseFactory.build();
+    }
+
+    jest
+      .spyOn(ExperimenterAPI.prototype, "fetchExperiment")
+      .mockImplementation(() => Promise.resolve(experiment));
+  };
+
   const unapproveRecipe = (recipe) => {
     const approvalRequest = approvalRequestFactory.build({}, { empty: true });
     recipe.latest_revision = {
@@ -123,6 +114,7 @@ describe("The `RecipeDetails` component", () => {
   };
 
   it("displays details of an branchedAddon recipe", async () => {
+    experimenterSetup();
     const recipeData = branchedAddonSetup();
     setup(recipeData);
     const { getByText, getAllByText } = await render(<App />);
@@ -165,6 +157,15 @@ describe("The `RecipeDetails` component", () => {
   it("displays details from experimenter", async () => {
     const recipeData = branchedAddonSetup();
     setup(recipeData);
+    const experiment = experimenterResponseFactory.build(
+      {
+        proposed_start_date: new Date(2020, 3, 3, 1, 0).getTime(),
+        proposed_duration: 10,
+      },
+      { generateVariantsCount: 2 },
+    );
+    experimenterSetup(experiment);
+
     const { getByText, findByText, findByTestId } = await render(<App />);
     fireEvent.click(getByText("Recipes"));
     fireEvent.click(await findByText(recipeData.latest_revision.name));
@@ -175,14 +176,14 @@ describe("The `RecipeDetails` component", () => {
     await waitFor(() => expect(NormandyAPI.prototype.fetchRecipe).toReturn());
 
     expect(getByText("Experimenter Details")).toBeInTheDocument();
-    expect(await findByText("Try this new thing")).toBeInTheDocument();
-    expect(getByText("Control branch")).toBeInTheDocument();
-    expect(getByText("Half of en-US")).toBeInTheDocument();
+    expect(await findByText(experiment.public_description)).toBeInTheDocument();
+    expect(getByText(experiment.variants[0].description)).toBeInTheDocument();
+    expect(getByText(experiment.variants[1].description)).toBeInTheDocument();
 
     const eltProposedSchedule = await findByTestId("details-proposed-schedule");
     const proposedSchedule = eltProposedSchedule.querySelector("p").innerHTML;
     expect(proposedSchedule).toEqual(
-      "Tue Sep 08 2020 → Wed Jan 06 2021 (120 days)",
+      "Fri Apr 03 2020 → Mon Apr 13 2020 (10 days)",
     );
   });
 
