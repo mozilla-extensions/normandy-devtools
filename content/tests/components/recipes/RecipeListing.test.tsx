@@ -79,8 +79,6 @@ describe("RecipeListing", () => {
     global.__ENV__ = "web";
     const recipe = recipeFactory.build();
 
-    /* global renderWithContext */
-    // @ts-ignore
     const { queryByText, getByTitle } = renderWithContext(
       <RecipeListing
         copyRecipeToArbitrary={() => {}}
@@ -98,8 +96,6 @@ describe("RecipeListing", () => {
     global.__ENV__ = "extension";
     const recipe = recipeFactory.build();
 
-    /* global renderWithContext */
-    // @ts-ignore
     const { getByText, getByTitle } = renderWithContext(
       <RecipeListing
         copyRecipeToArbitrary={() => {}}
