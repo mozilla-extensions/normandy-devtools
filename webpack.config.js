@@ -74,6 +74,9 @@ function makeBaseConfig(development, argv) {
     new webpack.DefinePlugin({
       DEVELOPMENT: JSON.stringify(development),
     }),
+    new webpack.DefinePlugin({
+      __TESTING__: false,
+    }),
   ];
 
   return {

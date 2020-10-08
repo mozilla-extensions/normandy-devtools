@@ -50,6 +50,12 @@ export interface ApprovalRequest {
   comment: string | null;
   created: string;
   creator: User;
+  revision: RevisionApprovalRequest;
+}
+
+export interface RevisionApprovalRequest {
+  id: number;
+  recipe_id: number;
 }
 
 export interface Action {
