@@ -2,7 +2,7 @@ module.exports = {
   globals: {
     renderWithContext: false,
   },
-  env:{
+  env: {
     node: true,
-  }
+  },
 };
