@@ -1,4 +1,5 @@
 interface Variant {
+  slug: string;
   description: string;
 }
 

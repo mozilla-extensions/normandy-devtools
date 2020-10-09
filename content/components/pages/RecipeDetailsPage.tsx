@@ -47,7 +47,10 @@ const RecipeDetailsPage: React.FC = () => {
         proposedEndDate,
         startDate: data.start_date && new Date(data.start_date),
         endDate: data.end_date && new Date(data.end_date),
-        variants: data.variants.map(({ description }) => description),
+        variants: data.variants.reduce((acc, v) => {
+          acc[v.slug] = v.description;
+          return acc;
+        }, {}),
       });
     });
   }, [recipeData]);

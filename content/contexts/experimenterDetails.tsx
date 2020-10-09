@@ -7,7 +7,7 @@ interface ExperimenterData {
   proposedDuration: number;
   startDate?: Date;
   endDate?: Date;
-  variants: string[];
+  variants: Record<string, string>;
 }
 
 interface ExperimenterState {

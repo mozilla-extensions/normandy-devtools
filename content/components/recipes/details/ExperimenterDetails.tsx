@@ -3,7 +3,7 @@ import React from "react";
 import CollapsibleSection from "devtools/components/recipes/details/CollapsibleSection";
 import { useExperimenterDetailsData } from "devtools/contexts/experimenterDetails";
 
-const ExperimenterDetails: React.FunctionComponent<{}> = () => {
+const ExperimenterDetails: React.FunctionComponent = () => {
   const data = useExperimenterDetailsData();
   return (
     <CollapsibleSection
@@ -15,7 +15,7 @@ const ExperimenterDetails: React.FunctionComponent<{}> = () => {
       }
     >
       <div className="py-1 pl-4">
-        {Object.keys(data).length ? (
+        {data && Object.keys(data).length ? (
           <>
             <div className="mt-4">
               <strong>Public description</strong>
@@ -36,18 +36,19 @@ const ExperimenterDetails: React.FunctionComponent<{}> = () => {
                 {data.endDate ? " → " + data.endDate.toDateString() : ""}
               </p>
             </div>
-            <div className="mt-4">
-              <strong>Branches</strong>
-              {data.variants.length ? (
-                <ul>
-                  {data.variants.map((v, i) => (
-                    <li key={i}>{v}</li>
+            {Object.keys(data.variants).length ? (
+              <div className="mt-4">
+                <strong>Branches</strong>
+                <dl>
+                  {Object.entries(data.variants).map(([slug, description]) => (
+                    <>
+                      <dt>{slug}</dt>
+                      <dd>{description}</dd>
+                    </>
                   ))}
-                </ul>
-              ) : (
-                <p>None</p>
-              )}
-            </div>
+                </dl>
+              </div>
+            ) : null}
           </>
         ) : (
           <p>N/A</p>

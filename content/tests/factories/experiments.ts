@@ -15,6 +15,7 @@ export const experimenterResponseFactory = Factory.fromFields<
   variants: ({ generateVariantsCount = 1 }) =>
     // eslint-disable-next-line prefer-spread
     Array.apply(null, { length: generateVariantsCount }).map(() => ({
+      slug: faker.lorem.word(),
       description: faker.lorem.sentence(),
     })),
 });
