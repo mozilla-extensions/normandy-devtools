@@ -16,9 +16,9 @@ const RecipeDetailsPage: React.FC = () => {
   const normandyApi = useSelectedNormandyEnvironmentAPI();
   const experimenterApi = useSelectedExperimenterEnvironmentAPI();
   const [recipeData, setRecipeData] = React.useState({
-    experimenter_slug: "",
+    experimenter_slug: null,
   });
-  const [experimenterData, setExperimenterData] = React.useState({});
+  const [experimenterData, setExperimenterData] = React.useState(null);
 
   React.useEffect(() => {
     normandyApi.fetchRecipe(recipeId).then((recipeData) => {
