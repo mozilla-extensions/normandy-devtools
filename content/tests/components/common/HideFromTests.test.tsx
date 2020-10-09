@@ -18,7 +18,7 @@ describe("HideFromTests", () => {
     await cleanup();
   });
 
-  it("show not hide it's children when testing", () => {
+  it("should not hide it's children when not testing", () => {
     global.__TESTING__ = false;
     const { getByText } = render(
       <HideFromTests>
