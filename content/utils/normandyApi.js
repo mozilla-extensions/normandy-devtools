@@ -143,6 +143,23 @@ export default class NormandyAPI extends API {
     return extensions;
   }
 
+  async fetchApprovalRequests(searchParams = {}) {
+    let response = await this.request({
+      url: "approval_request/",
+      data: searchParams,
+    });
+    let approvalRequests = response.results;
+
+    while (response.next) {
+      response = await this.request({
+        url: response.next,
+      });
+      approvalRequests = [...approvalRequests, ...response.results];
+    }
+
+    return approvalRequests;
+  }
+
   requestApproval(revisionId) {
     return this.request({
       url: `recipe_revision/${revisionId}/request_approval/`,

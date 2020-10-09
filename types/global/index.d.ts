@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 declare const __BUILD__: {
   version: string;
   commitHash: string;
@@ -8,12 +9,14 @@ declare const DEVELOPMENT: boolean;
 
 declare const __ENV__: "web" | "extension";
 
+declare const __TESTING__: boolean;
+
 declare namespace browser.experiments.normandy {
-  type V1Recipe = {};
+  type V1Recipe = Record<string, unknown>;
 
-  type AddonStudy = {};
+  type AddonStudy = Record<string, unknown>;
 
-  type PreferenceStudy = {};
+  type PreferenceStudy = Record<string, unknown>;
 
   function runRecipe(recipe: V1Recipe): Promise<void>;
 
@@ -23,10 +26,10 @@ declare namespace browser.experiments.normandy {
 
   function evaluateFilter(
     expression: string,
-    context: {},
+    context: Record<string, unknown>,
   ): Promise<number | string | boolean | null | undefined>;
 
-  function getClientContext(): Promise<{}>;
+  function getClientContext(): Promise<Record<string, unknown>>;
 
   function standardRun(): Promise<void>;
 

@@ -1,5 +1,7 @@
 import React, { ReactElement } from "react";
 
+import { AsyncHook } from "devtools/types/hooks";
+
 type ToString = { toString: () => string };
 
 // default export

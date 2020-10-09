@@ -15,6 +15,13 @@ export const AppSidebar: React.FC = () => {
           <Nav vertical className="flex-grow-1">
             <Nav.Item
               componentClass={NavLink}
+              icon={<Icon icon="trend" />}
+              to={`/${selectedKey}/overview`}
+            >
+              Overview
+            </Nav.Item>
+            <Nav.Item
+              componentClass={NavLink}
               icon={<Icon icon="book" />}
               to={`/${selectedKey}/recipes`}
             >

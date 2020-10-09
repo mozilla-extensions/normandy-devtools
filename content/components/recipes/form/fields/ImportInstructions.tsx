@@ -18,7 +18,7 @@ const ImportInstructions: React.FC = () => {
     return null;
   }
 
-  const handleChange = (value) => {
+  const handleChange = (value): void => {
     dispatch({
       type: ACTION_UPDATE_IMPORT_INSTRUCTIONS,
       importInstructions: value,
@@ -27,7 +27,7 @@ const ImportInstructions: React.FC = () => {
 
   return (
     <FormGroup>
-      <ControlLabel>Import Instuctions</ControlLabel>
+      <ControlLabel>Import Instructions</ControlLabel>
       <Input
         componentClass="textarea"
         rows={5}

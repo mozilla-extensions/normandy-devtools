@@ -14,7 +14,7 @@ export interface RecipeV1<T = ActionArguments> {
   is_approved: boolean;
   revision_id: number;
   action: string;
-  arguments: ActionArguments;
+  arguments: T;
   filter_expression: string;
 }
 
@@ -50,6 +50,12 @@ export interface ApprovalRequest {
   comment: string | null;
   created: string;
   creator: User;
+  revision: RevisionApprovalRequest;
+}
+
+export interface RevisionApprovalRequest {
+  id: number;
+  recipe_id: number;
 }
 
 export interface Action {
