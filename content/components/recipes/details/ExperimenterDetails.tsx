@@ -5,16 +5,6 @@ import { useExperimenterDetailsData } from "devtools/contexts/experimenterDetail
 
 const ExperimenterDetails: React.FunctionComponent<{}> = () => {
   const data = useExperimenterDetailsData();
-  const {
-    publicDescription,
-    proposedStartDate,
-    proposedEndDate,
-    proposedDuration,
-    startDate,
-    endDate,
-    variants,
-  } = data;
-
   return (
     <CollapsibleSection
       headerButtons={<></>}
@@ -25,36 +15,43 @@ const ExperimenterDetails: React.FunctionComponent<{}> = () => {
       }
     >
       <div className="py-1 pl-4">
-        <div className="mt-4">
-          <strong>Public description</strong>
-          <p>{publicDescription}</p>
-        </div>
-        <div className="mt-4" data-testid="details-proposed-schedule">
-          <strong>Proposed schedule</strong>
-          <p>
-            {proposedStartDate?.toDateString()} →{" "}
-            {proposedEndDate?.toDateString()} ({proposedDuration} days)
-          </p>
-        </div>
-        <div className="mt-4">
-          <strong>Actual Schedule</strong>
-          <p>
-            {startDate ? startDate.toDateString() : "N/A"}
-            {endDate ? " → " + endDate.toDateString() : ""}
-          </p>
-        </div>
-        <div className="mt-4">
-          <strong>Branches</strong>
-          {variants.length ? (
-            <ul>
-              {variants.map((v, i) => (
-                <li key={i}>{v}</li>
-              ))}
-            </ul>
-          ) : (
-            <p>None</p>
-          )}
-        </div>
+        {Object.keys(data).length ? (
+          <>
+            <div className="mt-4">
+              <strong>Public description</strong>
+              <p>{data.publicDescription}</p>
+            </div>
+            <div className="mt-4" data-testid="details-proposed-schedule">
+              <strong>Proposed schedule</strong>
+              <p>
+                {data.proposedStartDate?.toDateString()} →{" "}
+                {data.proposedEndDate?.toDateString()} ({data.proposedDuration}{" "}
+                days)
+              </p>
+            </div>
+            <div className="mt-4">
+              <strong>Actual Schedule</strong>
+              <p>
+                {data.startDate ? data.startDate.toDateString() : "N/A"}
+                {data.endDate ? " → " + data.endDate.toDateString() : ""}
+              </p>
+            </div>
+            <div className="mt-4">
+              <strong>Branches</strong>
+              {data.variants.length ? (
+                <ul>
+                  {data.variants.map((v, i) => (
+                    <li key={i}>{v}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p>None</p>
+              )}
+            </div>
+          </>
+        ) : (
+          <p>N/A</p>
+        )}
       </div>
     </CollapsibleSection>
   );

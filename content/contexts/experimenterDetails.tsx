@@ -18,18 +18,8 @@ interface ExperimenterState {
   data: ExperimenterData;
 }
 
-export const INITIAL_EXPERIMENTER_DATA = {
-  publicDescription: "",
-  proposedStartDate: new Date(),
-  proposedEndDate: new Date(),
-  proposedDuration: 0,
-  startDate: null,
-  endDate: null,
-  variants: [],
-};
-
 const initialState: ExperimenterState = {
-  data: INITIAL_EXPERIMENTER_DATA,
+  data: null,
 };
 
 export const experimenterDetailsContext = React.createContext(initialState);
@@ -68,7 +58,6 @@ export const ExperimenterDetailsProvider: React.FC<ExperimenterState> = ({
     });
   }, [data]);
 
-  // @ts-ignore
   return <Provider value={state}>{children}</Provider>;
 };
 
