@@ -8,7 +8,7 @@ import { Revision, RecipeV1 } from "devtools/types/recipes";
 
 export function convertToV1Recipe(
   revision: Revision,
-  environmentName,
+  environmentName: string,
 ): RecipeV1 {
   // Normandy client expects a v1-style recipe, but we have a v3-style recipe. Convert it.
   const idSuffix = environmentName !== "prod" ? `-${environmentName}` : "";

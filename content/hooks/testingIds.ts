@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 
 import { MultiPreferenceExperimentArguments } from "devtools/types/arguments";
 import { SampleFilterObject } from "devtools/types/filters";
+import { AsyncHook } from "devtools/types/hooks";
 import { Revision } from "devtools/types/recipes";
 import { bruteForceSampleAndBranches } from "devtools/utils/recipes";
 

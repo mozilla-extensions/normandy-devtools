@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { cleanup, fireEvent, waitFor } from "@testing-library/react";
 import React from "react";
 
@@ -5,6 +6,7 @@ import RecipeListing from "devtools/components/recipes/RecipeListing";
 import { recipeFactory } from "devtools/tests/factories/recipes";
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace NodeJS {
     interface Global {
       __ENV__: string;

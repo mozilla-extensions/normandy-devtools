@@ -14,7 +14,7 @@ export interface RecipeV1<T = ActionArguments> {
   is_approved: boolean;
   revision_id: number;
   action: string;
-  arguments: ActionArguments;
+  arguments: T;
   filter_expression: string;
 }
 

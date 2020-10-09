@@ -1,6 +1,6 @@
-import React from "react";
+import React, { ReactElement } from "react";
 import { Link } from "react-router-dom";
-import { Col, List, Panel, Row, Tag } from "rsuite";
+import { Col, Panel, Row, Tag } from "rsuite";
 
 import { RecipeV3 } from "devtools/types/recipes";
 import { chunkBy } from "devtools/utils/helpers";
@@ -12,17 +12,17 @@ export const PendingReviews: React.FC<{ data: Array<RecipeV3> }> = ({
     return recipe.latest_revision.approval_request?.approved === null;
   });
 
-  const renderPendingReviewListItem = () => {
+  const renderPendingReviewListItem = (): Array<ReactElement> => {
     return chunkBy(pendingReviews, 3).map((recipeChunk, rowIdx) => {
       return (
         <Row key={rowIdx}>
           {recipeChunk.map((recipe, colIdx) => (
             <Col key={`col-${colIdx}`} md={8} sm={24}>
               <Link
-                to={`recipes/${recipe.id}`}
                 style={{ textDecoration: "none" }}
+                to={`recipes/${recipe.id}`}
               >
-                <Panel className="recipe-listing mb-2" bordered>
+                <Panel bordered className="recipe-listing mb-2">
                   <Tag className="mr-half" color="violet">
                     {recipe.id}
                   </Tag>
