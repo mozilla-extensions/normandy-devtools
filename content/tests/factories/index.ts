@@ -140,7 +140,11 @@ export default class Factory<T, O extends object = object>
   ): Array<T> {
     const rv: Array<T> = [];
     for (let i = 0; i < overrides.length; i++) {
-      rv.push(this._buildFunc(overrides[i], options[i]));
+      if (options) {
+        rv.push(this._buildFunc(overrides[i], options[i]));
+      } else {
+        rv.push(this._buildFunc(overrides[i]));
+      }
     }
 
     return rv;

@@ -7,6 +7,8 @@ export const experimenterResponseFactory = Factory.fromFields<
   ExperimenterResponse,
   { generateVariantsCount: number }
 >({
+  name: faker.lorem.words(4),
+  normandy_id: faker.random.number(),
   public_description: faker.lorem.sentence(),
   proposed_start_date: faker.date.past().getTime(),
   proposed_duration: faker.random.number(),

@@ -1,19 +1,25 @@
 import React from "react";
 import { Loader } from "rsuite";
 
-import { PendingReviews } from "../overview/PendingReviews";
+import { EndingRecipes } from "devtools/components/overview/EndingRecipes";
+import { PendingReviews } from "devtools/components/overview/PendingReviews";
 import {
   useEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
+  useSelectedExperimenterEnvironmentAPI,
 } from "devtools/contexts/environment";
 
 export const OverviewPage: React.FC = () => {
   const { selectedKey: environmentKey } = useEnvironmentState();
-  const normandyApi = useSelectedNormandyEnvironmentAPI();
 
-  const [data, setData] = React.useState([]);
+  const normandyApi = useSelectedNormandyEnvironmentAPI();
+  const experimenterApi = useSelectedExperimenterEnvironmentAPI();
+
+  const [recipes, setRecipes] = React.useState([]);
+  const [liveRecipes, setLiveRecipes] = React.useState([]);
   React.useEffect(() => {
     getPendingReviews();
+    getLiveExperiments();
   }, [environmentKey]);
 
   const getPendingReviews = async (): Promise<void> => {
@@ -35,13 +41,37 @@ export const OverviewPage: React.FC = () => {
       );
     }
 
-    setData(recipeList);
+    setRecipes(recipeList);
   };
 
-  if (data.length) {
+  const getLiveExperiments = async (): Promise<void> => {
+    const experiments = await experimenterApi.fetchExperiments({
+      status: "Live",
+    });
+
+    const newLiveRecipes = (
+      await Promise.all(
+        experiments.map(async (experiment) => {
+          if (experiment.normandy_id) {
+            const recipe = await normandyApi.fetchRecipe(
+              experiment.normandy_id,
+            );
+            return [{ endDate: experiment.end_date, recipe }];
+          }
+
+          return [];
+        }),
+      )
+    ).flat();
+
+    setLiveRecipes(newLiveRecipes);
+  };
+
+  if (recipes.length || liveRecipes.length) {
     return (
       <div className="page-wrapper">
-        <PendingReviews data={data} />
+        <PendingReviews data={recipes} />
+        <EndingRecipes data={liveRecipes} />
       </div>
     );
   }
