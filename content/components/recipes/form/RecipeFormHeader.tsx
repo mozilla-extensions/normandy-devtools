@@ -21,7 +21,7 @@ const RecipeFormHeader: React.FC = () => {
   const normandyApi = useSelectedNormandyEnvironmentAPI();
   const [showCommentModal, setShowCommentModal] = React.useState(false);
 
-  const handleSaveClick = () => {
+  const handleSaveClick = (): void => {
     try {
       if (importInstructions) {
         throw Error("Import Instructions not empty!");
@@ -33,7 +33,7 @@ const RecipeFormHeader: React.FC = () => {
     }
   };
 
-  const saveRecipe = (comment) => {
+  const saveRecipe = (comment): void => {
     const { action, ...cleanedData } = data;
     let id;
     if (!history.location.pathname.includes("clone")) {
@@ -57,7 +57,7 @@ const RecipeFormHeader: React.FC = () => {
       });
   };
 
-  const handleBackClick = () => {
+  const handleBackClick = (): void => {
     if (recipeId) {
       history.push(`/${environmentKey}/recipes/${recipeId}`);
     } else {
@@ -111,12 +111,12 @@ const SaveModal: React.FC<SaveModalProps> = ({
 }) => {
   const [comment, setComment] = React.useState("");
 
-  const handleSaveClick = () => {
+  const handleSaveClick = (): void => {
     onSave(comment);
     closeModal();
   };
 
-  const closeModal = () => {
+  const closeModal = (): void => {
     setShowModal(false);
   };
 

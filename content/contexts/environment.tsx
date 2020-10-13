@@ -1,4 +1,4 @@
-import auth0 from "auth0-js";
+import auth0, { AuthorizeUrlOptions } from "auth0-js";
 import PropTypes from "prop-types";
 import React, { Reducer } from "react";
 import { Route, Redirect, Switch, useParams } from "react-router-dom";
@@ -20,21 +20,30 @@ interface Environment {
 
 interface EnvironmentState {
   environments: Record<string, Environment>;
-  auth: Record<
-    string,
-    {
-      expiresAt?: Date | null;
-      result?: AuthResult | null;
-    }
-  >;
+  auth: Record<string, AuthState>;
   connectionStatus: Record<string, unknown>;
   selectedKey: string;
   isLoggingIn: boolean;
 }
 
+interface AuthState {
+  expiresAt?: Date | null;
+  result?: AuthResult | null;
+}
+
 interface AuthResult {
   idTokenPayload: { email: string; picture: string };
 }
+
+interface SingleEnvironmentState {
+  auth: AuthState;
+  connectionStatus: unknown;
+  environment: Environment;
+  isLoggingIn: boolean;
+  selectedKey: string;
+}
+
+type Dispatch = React.Dispatch<EnvironmentAction>;
 
 const REFRESH_THRESHOLD_MS = 10 * MINUTE;
 
@@ -84,7 +93,7 @@ interface SelectEnvironmentAction {
 interface UpdateEnvironmentAction {
   type: "UPDATE_ENVIRONMENT";
   key: string;
-  config: Record<string, unknown>;
+  config: Environment;
 }
 
 interface UpdateAuthAction {
@@ -266,7 +275,7 @@ export const EnvironmentProvider: React.FC = ({ children }) => {
 
   React.useEffect(() => {
     // Add event listener for changes to local storage
-    const storageListener = (ev: StorageEvent) => {
+    const storageListener = (ev: StorageEvent): void => {
       [
         [ENV_CONFIG_KEY_RE, "UPDATE_ENVIRONMENT", "config"],
         [AUTH_EXPIRES_AT_KEY_RE, "UPDATE_AUTH_EXPIRES_AT", "expiresAt"],
@@ -287,7 +296,7 @@ export const EnvironmentProvider: React.FC = ({ children }) => {
     window.addEventListener("storage", storageListener);
 
     // Add event listener for network changes
-    const networkListener = ({ status }) => {
+    const networkListener = ({ status }): void => {
       console.info("Checking connection status...");
 
       Object.keys(ENVIRONMENTS).forEach((key) => {
@@ -335,7 +344,7 @@ export const EnvironmentProvider: React.FC = ({ children }) => {
     };
   }, []);
 
-  const checkExpiredAuth = () => {
+  const checkExpiredAuth = (): void => {
     console.info(`Checking for expired Auth0 tokens...`);
     Object.entries(state.environments).forEach(async ([key, environment]) => {
       const { expiresAt } = state.auth[key];
@@ -381,22 +390,22 @@ EnvironmentProvider.propTypes = {
   children: PropTypes.any,
 };
 
-export function useEnvironmentDispatch() {
+export function useEnvironmentDispatch(): Dispatch {
   const { dispatch } = React.useContext(environmentContext);
   return dispatch;
 }
 
-export function useEnvironmentState() {
+export function useEnvironmentState(): EnvironmentState {
   const { state } = React.useContext(environmentContext);
   return state;
 }
 
-export function useEnvironments() {
+export function useEnvironments(): Record<string, Environment> {
   const { state } = React.useContext(environmentContext);
   return state.environments;
 }
 
-export function useSelectedEnvironmentState() {
+export function useSelectedEnvironmentState(): SingleEnvironmentState {
   const { state } = React.useContext(environmentContext);
   const { environments, auth, connectionStatus, ...otherState } = state;
   return {
@@ -407,17 +416,21 @@ export function useSelectedEnvironmentState() {
   };
 }
 
-export function useSelectedNormandyEnvironmentAPI() {
+export function useSelectedNormandyEnvironmentAPI(): NormandyAPI {
   const { environment, auth, connectionStatus } = useSelectedEnvironmentState();
   return new NormandyAPI(environment, auth, connectionStatus);
 }
 
-export function useSelectedExperimenterEnvironmentAPI() {
+export function useSelectedExperimenterEnvironmentAPI(): ExperimenterAPI {
   const { environment } = useSelectedEnvironmentState();
   return new ExperimenterAPI(environment);
 }
 
-async function checkVPNStatus(normandyApi, maxAttempts, currentAttempt = 0) {
+async function checkVPNStatus(
+  normandyApi,
+  maxAttempts,
+  currentAttempt = 0,
+): Promise<void> {
   await delay(50 * currentAttempt);
   try {
     await normandyApi.checkLBHeartbeat({
@@ -432,7 +445,11 @@ async function checkVPNStatus(normandyApi, maxAttempts, currentAttempt = 0) {
   }
 }
 
-export function updateEnvironment(dispatch, key, config) {
+export function updateEnvironment(
+  dispatch: React.Dispatch<EnvironmentAction>,
+  key: string,
+  config: Environment,
+): void {
   const storageKey = `environment.${key}.config`;
   if (config) {
     localStorage.setItem(storageKey, JSON.stringify(config));
@@ -452,7 +469,7 @@ export function updateEnvironment(dispatch, key, config) {
   });
 }
 
-function getWebAuthForEnvironment(environment) {
+function getWebAuthForEnvironment(environment): auth0.WebAuth {
   return new auth0.WebAuth({
     domain: environment.oidcDomain,
     audience: `https://${environment.oidcDomain}/userinfo`,
@@ -463,7 +480,7 @@ function getWebAuthForEnvironment(environment) {
   });
 }
 
-function setSession(dispatch, selectedKey, authResult) {
+function setSession(dispatch, selectedKey, authResult): void {
   const { expiresIn } = authResult;
 
   let expiresAt = Date.now();
@@ -489,20 +506,19 @@ function setSession(dispatch, selectedKey, authResult) {
 }
 
 async function launchWebAuthFlow(
-  dispatch,
-  selectedKey,
-  environment,
+  dispatch: Dispatch,
+  selectedKey: string,
+  environment: Environment,
   details = {},
-) {
+): Promise<void> {
   const nonce = generateNonce(16);
   const state = generateNonce(16);
 
   const webAuth = getWebAuthForEnvironment(environment);
 
-  const buildUrlOptions = {
+  const buildUrlOptions: { state: string; nonce: string; prompt?: string } = {
     state,
     nonce,
-    prompt: undefined,
   };
 
   if (has("interactive", details) && !details.interactive) {
@@ -511,7 +527,10 @@ async function launchWebAuthFlow(
 
   const redirectUri = await browser.identity.launchWebAuthFlow({
     interactive: true,
-    url: webAuth.client.buildAuthorizeUrl(buildUrlOptions),
+    url: webAuth.client.buildAuthorizeUrl(
+      // The types say this isn't right, but the docs say it is ok, and it works.
+      buildUrlOptions as AuthorizeUrlOptions,
+    ),
     ...details,
   });
 
@@ -536,7 +555,11 @@ async function launchWebAuthFlow(
   });
 }
 
-export async function login(dispatch, selectedKey, environment) {
+export async function login(
+  dispatch: Dispatch,
+  selectedKey: string,
+  environment: Environment,
+): Promise<void> {
   dispatch({
     isLoggingIn: true,
     type: "SET_IS_LOGGING_IN",
@@ -571,14 +594,18 @@ export async function login(dispatch, selectedKey, environment) {
   return result;
 }
 
-export function refreshToken(dispatch, selectedKey, environment) {
+export function refreshToken(
+  dispatch: Dispatch,
+  selectedKey: string,
+  environment: Environment,
+): Promise<unknown> {
   console.info(`Refreshing the Auth0 access token for "${selectedKey}"...`);
   return launchWebAuthFlow(dispatch, selectedKey, environment, {
     interactive: false,
   });
 }
 
-export function logout(dispatch, selectedKey) {
+export function logout(dispatch: Dispatch, selectedKey: string): void {
   localStorage.removeItem(`environment.${selectedKey}.auth.result`);
   localStorage.removeItem(`environment.${selectedKey}.auth.expiresAt`);
   dispatch({

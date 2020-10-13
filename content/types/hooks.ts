@@ -1,4 +1,4 @@
-type AsyncHook<T> = LoadingHook | LoadedHook<T> | ErrorHook;
+export type AsyncHook<T> = LoadingHook | LoadedHook<T> | ErrorHook;
 
 interface LoadingHook {
   loading: true;

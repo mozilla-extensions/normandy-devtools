@@ -3,6 +3,7 @@ module.exports = {
   globals: {
     __BUILD__: false,
     __ENV__: "extension",
+    __TESTING__: true,
     DEVELOPMENT: false,
     browser: {
       experiments: {},

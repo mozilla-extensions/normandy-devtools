@@ -1,11 +1,16 @@
 coverage:
   status:
-    patch: off
+    default_rules:
+      patch: off
+      target: auto
+      threshold: 0%
+      base: auto
     project:
-      default:
-        target: auto
-        threshold: 0%
-        base: auto
+      # don't fail main-branch CI builds for coverage
+      main_branch:
+        branches: [main]
+        informational: true
+
 comment:
   layout: "diff,flags,tree"
   require_changes: true

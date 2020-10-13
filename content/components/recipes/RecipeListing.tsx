@@ -3,11 +3,10 @@ import React, { ReactElement } from "react";
 import { Link } from "react-router-dom";
 import { Icon, Tag, Panel, Dropdown, Popover, Whisper } from "rsuite";
 
+import SuitabilityTag from "devtools/components/recipes/details/SuitabilityTag";
 import { RecipeV3 } from "devtools/types/recipes";
 import { has } from "devtools/utils/helpers";
 import { convertToV1Recipe } from "devtools/utils/recipes";
-
-import SuitabilityTag from "./details/SuitabilityTag";
 
 const normandy = browser.experiments.normandy;
 
@@ -88,10 +87,13 @@ class RecipeListing extends React.PureComponent<
           {recipe.latest_revision.name}
         </Link>
         <div className="recipe-actions flex-grow-0 flex-shrink-0">
-          <SuitabilityTag
-            hide={["RECIPE_SUITABILITY_FILTER_MISMATCH"]}
-            revision={recipe.latest_revision}
-          />
+          {__ENV__ === "extension" && (
+            <SuitabilityTag
+              hide={["RECIPE_SUITABILITY_FILTER_MISMATCH"]}
+              revision={recipe.latest_revision}
+            />
+          )}
+
           {this.renderPendingReviewIcon()}
           {this.renderEnabledIcon()}
           {this.renderActionMenu()}

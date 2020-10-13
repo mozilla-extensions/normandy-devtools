@@ -11,6 +11,7 @@ import {
 import AppHeader from "devtools/components/common/AppHeader";
 import { AppSidebar } from "devtools/components/common/AppSidebar";
 import { ErrorFallbackPage } from "devtools/components/pages/ErrorFallbackPage";
+import { OverviewPage } from "devtools/components/pages/OverviewPage";
 import RecipesPage from "devtools/components/pages/RecipesPage";
 import { EnvironmentProvider } from "devtools/contexts/environment";
 import { useHistoryRecorder } from "devtools/hooks/urls";
@@ -63,7 +64,11 @@ function Page() {
             <Route exact path={`${match.path}/`}>
               <Redirect to={`${match.url}/recipes`} />
             </Route>
-
+            <Route
+              exact
+              component={OverviewPage}
+              path={`${match.path}/overview`}
+            />
             <Route
               exact
               component={RecipesPage}

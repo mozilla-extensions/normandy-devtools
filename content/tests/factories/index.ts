@@ -1,6 +1,10 @@
 import { RecursivePartial } from "devtools/types/utils";
 import { has } from "devtools/utils/helpers";
 
+/* This rule is because "object is hard to use". This file works around those
+ * difficulties, primarily with the help of `has`. */
+/* eslint-disable @typescript-eslint/ban-types */
+
 /**
  * Used to create a factory which can create objects of a specific type.
  *
