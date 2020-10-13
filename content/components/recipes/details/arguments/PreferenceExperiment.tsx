@@ -9,6 +9,7 @@ import {
   tagFormatter,
 } from "devtools/components/recipes/details/arguments/formatters";
 import GenericArguments from "devtools/components/recipes/details/arguments/GenericArguments";
+import { useExperimenterDetailsData } from "devtools/contexts/experimenterDetails";
 import { SinglePreferenceExperimentArguments } from "devtools/types/arguments";
 import { Revision } from "devtools/types/recipes";
 
@@ -20,6 +21,7 @@ interface PreferenceExperimentProps {
 const PreferenceExperiment: React.FC<PreferenceExperimentProps> = ({
   data,
 }) => {
+  const experimenterData = useExperimenterDetailsData();
   return (
     <GenericArguments
       data={data.arguments}
@@ -42,9 +44,15 @@ const PreferenceExperiment: React.FC<PreferenceExperimentProps> = ({
             isHighPopulation: booleanFormatter,
           },
         ),
-        branches: tableFormatter(["slug", "ratio", "value"], {
+        branches: tableFormatter(["slug", "description", "ratio", "value"], {
           slug(index, value) {
             return <code>{value}</code>;
+          },
+          description(index) {
+            const { slug } = data.arguments.branches[index];
+            return experimenterData.variants
+              ? experimenterData.variants[slug]
+              : null;
           },
           ratio(index, value) {
             return <code>{value}</code>;
