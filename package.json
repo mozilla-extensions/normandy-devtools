@@ -57,7 +57,7 @@
     "babel-loader": "8.1.0",
     "babel-preset-rsuite": "4.0.1",
     "cache-loader": "4.1.0",
-    "copy-webpack-plugin": "6.2.0",
+    "copy-webpack-plugin": "6.2.1",
     "css-loader": "4.3.0",
     "dotenv-webpack": "2.0.0",
     "eslint-config-prettier": "6.12.0",
