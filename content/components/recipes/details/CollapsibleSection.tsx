@@ -5,6 +5,7 @@ interface CollapsibleSectionProps {
   headerButtons?: ReactElement;
   collapsed?: boolean;
   title: ReactElement;
+  testId?: string;
 }
 
 // default export
@@ -13,6 +14,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   headerButtons,
   title,
   collapsed: defaultCollapsed = false,
+  testId = null,
 }) => {
   const [collapsed, setCollapsed] = React.useState(defaultCollapsed);
 
@@ -27,6 +29,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
           <div className="flex-grow-0 w-40px">
             <IconButton
               appearance="subtle"
+              data-testid={testId}
               icon={
                 <Icon icon={collapsed ? "chevron-right" : "chevron-down"} />
               }

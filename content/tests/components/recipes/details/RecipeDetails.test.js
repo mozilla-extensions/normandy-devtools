@@ -5,6 +5,7 @@ import "@testing-library/jest-dom/extend-expect";
 import App from "devtools/components/App";
 import RecipeDetails from "devtools/components/recipes/details/RecipeDetails";
 import { RecipeDetailsProvider } from "devtools/contexts/recipeDetails";
+import { experimenterResponseFactory } from "devtools/tests/factories/experiments";
 import {
   versionFoFactory,
   channelFoFactory,
@@ -19,10 +20,11 @@ import {
   multiPrefBranchFactory,
   approvalRequestFactory,
 } from "devtools/tests/factories/recipes";
+import ExperimenterAPI from "devtools/utils/experimenterApi";
 import { Deferred } from "devtools/utils/helpers";
 import NormandyAPI from "devtools/utils/normandyApi";
 
-describe("The `RecipeDetailForm` component", () => {
+describe("The `RecipeDetails` component", () => {
   afterEach(async () => {
     jest.clearAllMocks();
     await cleanup();
@@ -89,6 +91,14 @@ describe("The `RecipeDetailForm` component", () => {
     return recipe;
   };
 
+  const experimenterSetup = (
+    experiment = experimenterResponseFactory.build(),
+  ) => {
+    jest
+      .spyOn(ExperimenterAPI.prototype, "fetchExperiment")
+      .mockImplementation(() => Promise.resolve(experiment));
+  };
+
   const unapproveRecipe = (recipe) => {
     const approvalRequest = approvalRequestFactory.build({}, { empty: true });
     recipe.latest_revision = {
@@ -104,6 +114,7 @@ describe("The `RecipeDetailForm` component", () => {
   };
 
   it("displays details of an branchedAddon recipe", async () => {
+    experimenterSetup();
     const recipeData = branchedAddonSetup();
     setup(recipeData);
     const { getByText, getAllByText } = await render(<App />);
@@ -143,6 +154,39 @@ describe("The `RecipeDetailForm` component", () => {
     }
   });
 
+  it("displays details from experimenter", async () => {
+    const recipeData = branchedAddonSetup();
+    setup(recipeData);
+    const experiment = experimenterResponseFactory.build(
+      {
+        proposed_start_date: new Date(2020, 3, 3, 1, 0).getTime(),
+        proposed_duration: 10,
+      },
+      { generateVariantsCount: 2 },
+    );
+    experimenterSetup(experiment);
+
+    const { getByText, findByText, findByTestId } = await render(<App />);
+    fireEvent.click(getByText("Recipes"));
+    fireEvent.click(await findByText(recipeData.latest_revision.name));
+
+    await waitFor(() =>
+      expect(ExperimenterAPI.prototype.fetchExperiment).toReturn(),
+    );
+    await waitFor(() => expect(NormandyAPI.prototype.fetchRecipe).toReturn());
+
+    expect(getByText("Experimenter Details")).toBeInTheDocument();
+    expect(await findByText(experiment.public_description)).toBeInTheDocument();
+    expect(getByText(experiment.variants[0].description)).toBeInTheDocument();
+    expect(getByText(experiment.variants[1].description)).toBeInTheDocument();
+
+    const eltProposedSchedule = await findByTestId("details-proposed-schedule");
+    const proposedSchedule = eltProposedSchedule.querySelector("p").innerHTML;
+    expect(proposedSchedule).toEqual(
+      "Fri Apr 03 2020 → Mon Apr 13 2020 (10 days)",
+    );
+  });
+
   it("should be able approve recipes", async () => {
     jest
       .spyOn(NormandyAPI.prototype, "approveApprovalRequest")
@@ -151,7 +195,7 @@ describe("The `RecipeDetailForm` component", () => {
     let recipeData = multiprefRecipeSetUp();
     recipeData = unapproveRecipe(recipeData);
     setup(recipeData);
-    const { getByText } = await render(<App />);
+    const { getByText, findByTestId } = await render(<App />);
     fireEvent.click(getByText("Recipes"));
 
     await waitFor(() =>
@@ -162,9 +206,7 @@ describe("The `RecipeDetailForm` component", () => {
     await waitFor(() => expect(NormandyAPI.prototype.fetchRecipe).toReturn());
     expect(getByText("Approval Request")).toBeInTheDocument();
 
-    const expandApproval = document.querySelector(
-      ".rs-btn.rs-btn-subtle.rs-btn-icon.rs-btn-icon-placement-left.rs-btn-xs",
-    );
+    const expandApproval = await findByTestId("collapse-approval-request");
     fireEvent.click(expandApproval);
     expect(getByText("Comment:")).toBeInTheDocument();
 
@@ -185,7 +227,7 @@ describe("The `RecipeDetailForm` component", () => {
     let recipeData = multiprefRecipeSetUp();
     recipeData = unapproveRecipe(recipeData);
     setup(recipeData);
-    const { getByText, findByText } = await render(<App />);
+    const { getByText, findByText, findByTestId } = await render(<App />);
     fireEvent.click(getByText("Recipes"));
 
     fireEvent.click(await findByText(recipeData.latest_revision.name));
@@ -193,9 +235,7 @@ describe("The `RecipeDetailForm` component", () => {
     await waitFor(() => expect(NormandyAPI.prototype.fetchRecipe).toReturn());
     expect(getByText("Approval Request")).toBeInTheDocument();
 
-    const expandApproval = document.querySelector(
-      ".rs-btn.rs-btn-subtle.rs-btn-icon.rs-btn-icon-placement-left.rs-btn-xs",
-    );
+    const expandApproval = await findByTestId("collapse-approval-request");
     fireEvent.click(expandApproval);
     expect(getByText("Comment:")).toBeInTheDocument();
 
@@ -216,7 +256,7 @@ describe("The `RecipeDetailForm` component", () => {
     let recipeData = multiprefRecipeSetUp();
     recipeData = unapproveRecipe(recipeData);
     setup(recipeData);
-    const { getByText } = await render(<App />);
+    const { getByText, findByTestId } = await render(<App />);
     fireEvent.click(getByText("Recipes"));
 
     await waitFor(() =>
@@ -227,9 +267,7 @@ describe("The `RecipeDetailForm` component", () => {
     await waitFor(() => expect(NormandyAPI.prototype.fetchRecipe).toReturn());
     expect(getByText("Approval Request")).toBeInTheDocument();
 
-    const expandApproval = document.querySelector(
-      ".rs-btn.rs-btn-subtle.rs-btn-icon.rs-btn-icon-placement-left.rs-btn-xs",
-    );
+    const expandApproval = await findByTestId("collapse-approval-request");
     fireEvent.click(expandApproval);
     expect(getByText("Comment:")).toBeInTheDocument();
 

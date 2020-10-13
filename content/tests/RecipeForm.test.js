@@ -172,6 +172,15 @@ describe("The `RecipeForm` component", () => {
     jest
       .spyOn(NormandyAPI.prototype, "fetchRecipe")
       .mockImplementation(() => Promise.resolve(recipe));
+
+    jest
+      .spyOn(ExperimenterAPI.prototype, "fetchExperiment")
+      .mockImplementation(() =>
+        Promise.resolve({
+          public_description: "",
+          variants: [],
+        }),
+      );
   };
 
   const extensionSetup = () => {
