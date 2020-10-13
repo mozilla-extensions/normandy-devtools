@@ -91,11 +91,9 @@ describe("The `RecipeDetails` component", () => {
     return recipe;
   };
 
-  const experimenterSetup = (experiment) => {
-    if (!experiment) {
-      experiment = experimenterResponseFactory.build();
-    }
-
+  const experimenterSetup = (
+    experiment = experimenterResponseFactory.build(),
+  ) => {
     jest
       .spyOn(ExperimenterAPI.prototype, "fetchExperiment")
       .mockImplementation(() => Promise.resolve(experiment));

@@ -8,11 +8,7 @@ const ExperimenterDetails: React.FunctionComponent = () => {
   return (
     <CollapsibleSection
       headerButtons={<></>}
-      title={
-        <>
-          <h6>Experimenter Details</h6>
-        </>
-      }
+      title={<h6>Experimenter Details</h6>}
     >
       <div className="py-1 pl-4">
         {data && Object.keys(data).length ? (

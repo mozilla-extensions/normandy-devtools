@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Reducer } from "react";
 
 interface ExperimenterData {
   publicDescription: string;
@@ -14,9 +14,12 @@ interface ExperimenterState {
   data: ExperimenterData;
 }
 
-interface ExperimenterState {
+interface UpdateDataAction {
+  type: "UPDATE_DATA";
   data: ExperimenterData;
 }
+
+type ExperimenterAction = UpdateDataAction;
 
 const initialState: ExperimenterState = {
   data: null,
@@ -25,11 +28,9 @@ const initialState: ExperimenterState = {
 export const experimenterDetailsContext = React.createContext(initialState);
 const { Provider } = experimenterDetailsContext;
 
-export const ACTION_UPDATE_DATA = "UPDATE_DATA";
-
 function reducer(state, action): ExperimenterState {
   switch (action.type) {
-    case ACTION_UPDATE_DATA:
+    case "UPDATE_DATA":
       return {
         ...state,
         data: {
@@ -43,17 +44,17 @@ function reducer(state, action): ExperimenterState {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const ExperimenterDetailsProvider: React.FC<ExperimenterState> = ({
   children,
   data,
 }) => {
-  /** @type {[React.ReducerState<any>, React.Dispatch<React.ReducerAction<any>>]} */
-  const [state, dispatch] = React.useReducer(reducer, initialState);
+  const [state, dispatch] = React.useReducer<
+    Reducer<ExperimenterState, ExperimenterAction>
+  >(reducer, initialState);
 
   React.useEffect(() => {
     dispatch({
-      type: ACTION_UPDATE_DATA,
+      type: "UPDATE_DATA",
       data,
     });
   }, [data]);
