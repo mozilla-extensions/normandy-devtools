@@ -107,6 +107,9 @@ export default class NormandyAPI extends API {
     });
   }
 
+  /**
+   * @return {Promise<Array<import("devtools/types/recipes").Action>>}
+   */
   async fetchAllActions() {
     let response = await this.request({
       url: "action/",

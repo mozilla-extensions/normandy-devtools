@@ -5,6 +5,7 @@ import "@testing-library/jest-dom/extend-expect";
 import RecipeDetailsPage from "devtools/components/pages/RecipeDetailsPage";
 import RecipeDetails from "devtools/components/recipes/details/RecipeDetails";
 import { RecipeDetailsProvider } from "devtools/contexts/recipeDetails";
+import { actionFactory } from "devtools/tests/factories/api";
 import { experimenterResponseFactory } from "devtools/tests/factories/experiments";
 import {
   versionFoFactory,
@@ -39,6 +40,10 @@ describe("The `RecipeDetails` component", () => {
     jest
       .spyOn(NormandyAPI.prototype, "fetchRecipe")
       .mockImplementation(() => Promise.resolve(recipe));
+
+    jest
+      .spyOn(NormandyAPI.prototype, "fetchAllActions")
+      .mockImplementation(() => Promise.resolve(actionFactory.buildCount(4)));
   };
 
   /** @return {import("devtools/types/recipes").RecipeV3<import("devtools/types/arguments").BranchedAddonStudyArguments>} */

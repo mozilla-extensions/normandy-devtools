@@ -97,3 +97,30 @@ export function chunkBy<T>(iter: Iterable<T>, n: number): Array<Array<T>> {
 
   return rv;
 }
+
+export type CompareFunc<T = unknown> = (a: T, b: T) => number;
+
+/**
+ * The basic comparator that should be the default for Array.sort.
+ */
+export const compare: CompareFunc = (a, b) => {
+  if (a < b) {
+    return -1;
+  }
+
+  if (a > b) {
+    return 1;
+  }
+
+  return 0;
+};
+
+export function makeCompare<T = unknown>(
+  keyFunc: (v: T) => unknown,
+): CompareFunc<T> {
+  return (a: T, b: T) => {
+    const aKey = keyFunc(a);
+    const bKey = keyFunc(b);
+    return compare(aKey, bKey);
+  };
+}
