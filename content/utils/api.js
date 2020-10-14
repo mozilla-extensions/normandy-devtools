@@ -23,6 +23,7 @@ export default class API {
    * @param {Object} [args.extraHeaders]
    * @param {number} [args.timeoutAfter]
    * @param {string|FormData} [args.body]
+   * @param {Object} [args.data] Data to convert JSON serialize into the querystring (for GET and HEAD requests) or the request body (for other methods).
    */
   async request({
     url,

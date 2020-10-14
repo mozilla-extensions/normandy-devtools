@@ -16,4 +16,11 @@ export default class ExperimenterAPI extends API {
       url: `experiments/${slug}/`,
     });
   }
+
+  async fetchExperiments(searchParams = {}) {
+    return this.request({
+      url: "experiments/",
+      data: searchParams,
+    });
+  }
 }

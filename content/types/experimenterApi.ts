@@ -4,6 +4,8 @@ interface Variant {
 }
 
 export interface ExperimenterResponse {
+  name: string;
+  normandy_id: number;
   proposed_start_date: number;
   proposed_duration: number;
   public_description: string;
