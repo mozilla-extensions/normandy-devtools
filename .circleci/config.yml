@@ -140,6 +140,33 @@ jobs:
             git config user.name "ci-build"
             npm run publish-docs
 
+  check-dev-commands:
+    docker:
+      - image: node:14-stretch
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ checksum "yarn.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v2-dependencies-
+      - run:
+          name: Install node dependencies
+          command: yarn install --frozen-lockfile
+      - save_cache:
+          paths:
+            - "node_modules"
+          key: v2-dependencies-{{ checksum "yarn.lock" }}
+
+      - run:
+          name: Web build
+          command: yarn build-web && [ -f dist-web/index.js ]
+
+      - run:
+          name: Extension build
+          command: yarn build-ext && [ -f dist-extension/index.js ]
+
 workflows:
   version: 2
   main:
@@ -147,6 +174,7 @@ workflows:
       - lint
       - test
       - build
+      - check-dev-commands
       - publish-docs:
           filters:
             branches:
