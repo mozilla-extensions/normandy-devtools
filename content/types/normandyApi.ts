@@ -24,3 +24,10 @@ export interface Action {
   id: number;
   name: string;
 }
+
+export type RecipeListQuery = Partial<{
+  text: string;
+  ordering: string;
+  enabled: boolean;
+  action: string;
+}>;

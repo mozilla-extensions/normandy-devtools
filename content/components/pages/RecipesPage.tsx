@@ -15,26 +15,22 @@ import {
 } from "rsuite";
 
 import CodeMirror from "devtools/components/common/CodeMirror";
+import RecipeQueryEditor from "devtools/components/recipes/details/RecipeQueryEditor";
 import RecipeListing from "devtools/components/recipes/RecipeListing";
 import {
-  Environment,
-  useEnvironments,
   useSelectedEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
+import { RecipeListQuery } from "devtools/types/normandyApi";
 import { RecipeV3 } from "devtools/types/recipes";
 import { chunkBy } from "devtools/utils/helpers";
 import NormandyAPI from "devtools/utils/normandyApi";
 import { convertToV1Recipe } from "devtools/utils/recipes";
 
-const normandy = browser.experiments.normandy;
-
 interface RecipesPageProps {
   api: NormandyAPI;
   connectionStatus: boolean;
-  environment: Environment;
   environmentKey: string;
-  environments: Record<string, Environment>;
 }
 
 // Wrapped in a HOC and then exported as default
@@ -44,9 +40,12 @@ const RecipesPage: React.FC<RecipesPageProps> = ({
   connectionStatus,
 }) => {
   const [currentPageRecipes, setCurrentPageRecipes] = useState([]);
-  const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [pageNum, setPageNum] = useState(1);
+  const [count, setCount] = useState(0);
+  const [recipeQuery, setRecipeQuery] = useState<RecipeListQuery>({
+    ordering: "-id",
+  });
 
   const [arbitraryRecipe, setArbitraryRecipe] = useState("");
   const [showWriteRecipes, setShowWriteRecipes] = useState(false);
@@ -55,12 +54,12 @@ const RecipesPage: React.FC<RecipesPageProps> = ({
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const data = await api.fetchRecipePage(pageNum, { ordering: "-id" });
+      const data = await api.fetchRecipePage(pageNum, recipeQuery);
       setCurrentPageRecipes(data.results);
       setCount(data.count);
       setLoading(false);
     })();
-  }, [pageNum, environmentKey, connectionStatus]);
+  }, [pageNum, environmentKey, connectionStatus, recipeQuery]);
 
   function copyRecipeToArbitrary(v3Recipe): void {
     const v1Recipe = convertToV1Recipe(
@@ -95,25 +94,38 @@ const RecipesPage: React.FC<RecipesPageProps> = ({
       </Header>
 
       <div className="page-wrapper">
-        <RecipeList
-          copyRecipeToArbitrary={copyRecipeToArbitrary}
-          environmentKey={environmentKey}
-          loading={loading}
-          recipes={currentPageRecipes}
+        <RecipeQueryEditor
+          className="ml-half mb-n1"
+          normandyApi={api}
+          query={recipeQuery}
+          setQuery={setRecipeQuery}
         />
-        <div>
-          <Pagination
-            boundaryLinks
-            ellipsis
-            next
-            prev
-            activePage={pageNum}
-            maxButtons={5}
-            pages={Math.ceil(count / 25)}
-            size="lg"
-            onSelect={setPageNum}
-          />
-        </div>
+        {loading ? (
+          <div className="text-center mt-4">
+            <Loader content="Loading recipes&hellip;" />
+          </div>
+        ) : (
+          <>
+            <RecipeList
+              copyRecipeToArbitrary={copyRecipeToArbitrary}
+              environmentKey={environmentKey}
+              recipes={currentPageRecipes}
+            />
+            <div>
+              <Pagination
+                boundaryLinks
+                ellipsis
+                next
+                prev
+                activePage={pageNum}
+                maxButtons={5}
+                pages={Math.ceil(count / 25)}
+                size="lg"
+                onSelect={setPageNum}
+              />
+            </div>
+          </>
+        )}
       </div>
 
       <WriteRecipeModal
@@ -128,20 +140,13 @@ const RecipesPage: React.FC<RecipesPageProps> = ({
 
 // export default
 const WrappedRecipePage: React.FC = () => {
-  const {
-    connectionStatus,
-    environment,
-    selectedKey,
-  } = useSelectedEnvironmentState();
-  const environments = useEnvironments();
+  const { connectionStatus, selectedKey } = useSelectedEnvironmentState();
   const api = useSelectedNormandyEnvironmentAPI();
   return (
     <RecipesPage
       api={api}
-      connectionStatus={connectionStatus as boolean}
-      environment={environment}
+      connectionStatus={connectionStatus}
       environmentKey={selectedKey}
-      environments={environments}
     />
   );
 };
@@ -149,39 +154,28 @@ const WrappedRecipePage: React.FC = () => {
 export default WrappedRecipePage;
 
 const RecipeList: React.FC<{
-  loading: boolean;
   recipes: Array<RecipeV3>;
   copyRecipeToArbitrary: (recipe: RecipeV3) => void;
   environmentKey: string;
-}> = ({ loading, recipes, copyRecipeToArbitrary, environmentKey }) => {
-  if (loading) {
-    return (
-      <div className="text-center">
-        <Loader content="Loading recipes&hellip;" />
-      </div>
-    );
-  } else if (recipes) {
-    return (
-      <Grid className="recipe-list">
-        {chunkBy(recipes, 2).map((recipeChunk, rowIdx) => (
-          <Row key={`row-${rowIdx}`}>
-            {recipeChunk.map((recipe, colIdx) => (
-              <Col key={`col-${colIdx}`} md={12} sm={24}>
-                <RecipeListing
-                  key={recipe.id}
-                  copyRecipeToArbitrary={copyRecipeToArbitrary}
-                  environmentName={environmentKey}
-                  recipe={recipe}
-                />
-              </Col>
-            ))}
-          </Row>
-        ))}
-      </Grid>
-    );
-  }
-
-  return null;
+}> = ({ recipes, copyRecipeToArbitrary, environmentKey }) => {
+  return (
+    <Grid className="recipe-list">
+      {chunkBy(recipes, 2).map((recipeChunk, rowIdx) => (
+        <Row key={`row-${rowIdx}`}>
+          {recipeChunk.map((recipe, colIdx) => (
+            <Col key={`col-${colIdx}`} md={12} sm={24}>
+              <RecipeListing
+                key={recipe.id}
+                copyRecipeToArbitrary={copyRecipeToArbitrary}
+                environmentName={environmentKey}
+                recipe={recipe}
+              />
+            </Col>
+          ))}
+        </Row>
+      ))}
+    </Grid>
+  );
 };
 
 const RunButton: React.FC<{
@@ -194,7 +188,7 @@ const RunButton: React.FC<{
   return (
     <Nav.Item
       icon={<Icon icon="play" />}
-      onClick={() => normandy.standardRun()}
+      onClick={() => browser.experiments.normandy.standardRun()}
     >
       Run Normandy
     </Nav.Item>
@@ -217,7 +211,7 @@ const WriteRecipeModal: React.FC<{
   async function runArbitraryRecipe(): Promise<void> {
     setRunningArbitrary(true);
     try {
-      await normandy.runRecipe(JSON.parse(arbitraryRecipe));
+      await browser.experiments.normandy.runRecipe(JSON.parse(arbitraryRecipe));
     } finally {
       setRunningArbitrary(false);
     }
