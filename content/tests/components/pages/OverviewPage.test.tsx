@@ -100,4 +100,65 @@ describe("OverviewPage", () => {
 
     expect(NormandyAPI.prototype.disableRecipe).toBeCalled();
   });
+
+  it("should display need to pause recipes", async () => {
+    const recipes = recipeFactory.buildMany([{}, {}, {}]);
+    const enrollmentPaused = [10000, 2, 5];
+    const hundredDaysFuture = new Date();
+    hundredDaysFuture.setDate(hundredDaysFuture.getDate() + 100);
+    const experiments = experimenterResponseFactory.buildMany(
+      recipes.map((r, i) => ({
+        normandy_id: r.id,
+        proposed_enrollment: enrollmentPaused[i],
+        end_date: hundredDaysFuture.getTime(),
+      })),
+    );
+    jest
+      .spyOn(NormandyAPI.prototype, "fetchApprovalRequests")
+      .mockImplementation(() => Promise.resolve([]));
+    jest
+      .spyOn(NormandyAPI.prototype, "fetchRecipe")
+      .mockReturnValueOnce(Promise.resolve(recipes[0]))
+      .mockReturnValueOnce(Promise.resolve(recipes[1]))
+      .mockReturnValueOnce(Promise.resolve(recipes[2]))
+      .mockReturnValueOnce(Promise.resolve(recipes[0]))
+      .mockReturnValueOnce(Promise.resolve(recipes[1]))
+      .mockReturnValueOnce(Promise.resolve(recipes[2]));
+
+    jest
+      .spyOn(ExperimenterAPI.prototype, "fetchExperiments")
+      .mockImplementation(() => Promise.resolve(experiments));
+
+    jest
+      .spyOn(NormandyAPI.prototype, "patchRecipe")
+      .mockImplementation(() => Promise.resolve(recipes[1]));
+
+    const doc = renderWithContext(<OverviewPage />);
+    await waitForElementToBeRemoved(doc.getByText(/Loading Overview/));
+
+    expect(ExperimenterAPI.prototype.fetchExperiments).toBeCalled();
+
+    expect(doc.queryByText(recipes[0].id.toString())).not.toBeInTheDocument();
+    expect(
+      doc.queryByText(recipes[0].latest_revision.name),
+    ).not.toBeInTheDocument();
+
+    expect(doc.getByText(recipes[1].id.toString())).toBeInTheDocument();
+    expect(doc.getByText(recipes[1].latest_revision.name)).toBeInTheDocument();
+
+    expect(doc.getByText(recipes[2].id.toString())).toBeInTheDocument();
+    expect(doc.getByText(recipes[2].latest_revision.name)).toBeInTheDocument();
+
+    const pauseButton = document.querySelectorAll("button");
+
+    fireEvent.click(pauseButton[0]);
+
+    expect(NormandyAPI.prototype.patchRecipe).toBeCalledWith(recipes[1].id, {
+      comment: "One-click pause",
+      arguments: {
+        ...recipes[1].latest_revision.arguments,
+        isEnrollmentPaused: true,
+      },
+    });
+  });
 });

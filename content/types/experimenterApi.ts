@@ -8,6 +8,7 @@ export interface ExperimenterResponse {
   normandy_id: number;
   proposed_start_date: number;
   proposed_duration: number;
+  proposed_enrollment: number;
   public_description: string;
   start_date?: number;
   end_date?: number;

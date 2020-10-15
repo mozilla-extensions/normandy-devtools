@@ -11,6 +11,7 @@ export const experimenterResponseFactory = Factory.fromFields<
   normandy_id: faker.random.number(),
   public_description: faker.lorem.sentence(),
   proposed_start_date: faker.date.past().getTime(),
+  proposed_enrollment: faker.random.number(),
   proposed_duration: faker.random.number(),
   start_date: faker.date.past().getTime(),
   end_date: faker.date.recent().getTime(),
