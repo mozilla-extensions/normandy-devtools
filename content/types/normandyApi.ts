@@ -30,4 +30,5 @@ export type RecipeListQuery = Partial<{
   ordering: string;
   enabled: boolean;
   action: string;
+  page: number;
 }>;

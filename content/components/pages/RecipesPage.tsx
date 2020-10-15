@@ -39,13 +39,10 @@ const RecipesPage: React.FC<RecipesPageProps> = ({
   api,
   connectionStatus,
 }) => {
-  const [currentPageRecipes, setCurrentPageRecipes] = useState([]);
+  const [currentRecipes, setCurrentRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [pageNum, setPageNum] = useState(1);
   const [count, setCount] = useState(0);
-  const [recipeQuery, setRecipeQuery] = useState<RecipeListQuery>({
-    ordering: "-id",
-  });
+  const [recipeQuery, setRecipeQuery] = useState<RecipeListQuery>(null);
 
   const [arbitraryRecipe, setArbitraryRecipe] = useState("");
   const [showWriteRecipes, setShowWriteRecipes] = useState(false);
@@ -54,12 +51,15 @@ const RecipesPage: React.FC<RecipesPageProps> = ({
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const data = await api.fetchRecipePage(pageNum, recipeQuery);
-      setCurrentPageRecipes(data.results);
+      const data = await api.fetchRecipePage({
+        ordering: "-id",
+        ...recipeQuery,
+      });
+      setCurrentRecipes(data.results);
       setCount(data.count);
       setLoading(false);
     })();
-  }, [pageNum, environmentKey, connectionStatus, recipeQuery]);
+  }, [environmentKey, connectionStatus, recipeQuery]);
 
   function copyRecipeToArbitrary(v3Recipe): void {
     const v1Recipe = convertToV1Recipe(
@@ -109,7 +109,7 @@ const RecipesPage: React.FC<RecipesPageProps> = ({
             <RecipeList
               copyRecipeToArbitrary={copyRecipeToArbitrary}
               environmentKey={environmentKey}
-              recipes={currentPageRecipes}
+              recipes={currentRecipes}
             />
             <div>
               <Pagination
@@ -117,11 +117,13 @@ const RecipesPage: React.FC<RecipesPageProps> = ({
                 ellipsis
                 next
                 prev
-                activePage={pageNum}
+                activePage={recipeQuery?.page ?? 1}
                 maxButtons={5}
                 pages={Math.ceil(count / 25)}
                 size="lg"
-                onSelect={setPageNum}
+                onSelect={(newPage) =>
+                  setRecipeQuery((q) => ({ ...q, page: newPage }))
+                }
               />
             </div>
           </>
