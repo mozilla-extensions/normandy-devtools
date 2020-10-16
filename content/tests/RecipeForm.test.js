@@ -1,14 +1,7 @@
-import {
-  render,
-  cleanup,
-  waitFor,
-  fireEvent,
-  within,
-} from "@testing-library/react";
+import { cleanup, waitFor, fireEvent, within } from "@testing-library/react";
 import React from "react";
 import "@testing-library/jest-dom/extend-expect";
 
-import App from "devtools/components/App";
 import RecipeFormPage from "devtools/components/pages/RecipeFormPage";
 import {
   filtersApiResponseFactory,
@@ -223,8 +216,7 @@ describe("The `RecipeForm` component", () => {
   it("creation pref recipe form", async () => {
     const recipe = recipeFactory.build();
     setup(recipe);
-    const { getByText, getAllByRole } = await render(<App />);
-    fireEvent.click(getByText("Create Recipe"));
+    const { getByText, getAllByRole } = renderWithContext(<RecipeFormPage />);
     await waitFor(() =>
       expect(getByText("Experimenter Slug")).toBeInTheDocument(),
     );
@@ -365,14 +357,10 @@ describe("The `RecipeForm` component", () => {
     const recipeData = branchedAddonSetup();
     const extensions = extensionSetup();
     setup(recipeData);
-    const doc = await render(<App />);
-
-    await waitFor(() =>
-      expect(doc.getByTitle("recipe-menu")).toBeInTheDocument(),
-    );
-
-    fireEvent.mouseEnter(await doc.findByTitle("recipe-menu"));
-    fireEvent.click(await doc.findByText("Edit"));
+    const doc = renderWithContext(<RecipeFormPage />, {
+      route: `/prod/recipes/${recipeData.id}/edit`,
+      path: "/prod/recipes/:recipeId/edit",
+    });
 
     await waitFor(() => {
       expect(doc.getByText("Experimenter Slug")).toBeInTheDocument();
@@ -485,16 +473,11 @@ describe("The `RecipeForm` component", () => {
   it("save button is re-enabled when form errors are addressed", async () => {
     const recipeData = consoleLogRecipeSetup();
     await setup(recipeData);
-    const doc = await render(<App />);
-
-    fireEvent.click(doc.getByText("Recipes"));
-    await waitFor(() => {
-      expect(
-        doc.getByText(recipeData.latest_revision.name),
-      ).toBeInTheDocument();
+    const doc = renderWithContext(<RecipeFormPage />, {
+      route: `/prod/recipes/${recipeData.id}/edit`,
+      path: "/prod/recipes/:recipeId/edit",
     });
-    fireEvent.mouseEnter(doc.getByTitle("recipe-menu"));
-    fireEvent.click(doc.getByText("Edit"));
+
     await waitFor(() => {
       expect(doc.getByText("Experimenter Slug")).toBeInTheDocument();
     });
@@ -643,10 +626,7 @@ describe("The `RecipeForm` component", () => {
     const recipe = recipeFactory.build();
     setup(recipe);
 
-    const { getByText, getAllByRole } = await render(<App />);
-
-    fireEvent.click(getByText("Recipes"));
-    fireEvent.click(getByText("Create Recipe"));
+    const { getByText, getAllByRole } = renderWithContext(<RecipeFormPage />);
 
     await waitFor(() =>
       expect(getByText("Experimenter Slug")).toBeInTheDocument(),
@@ -763,9 +743,10 @@ describe("The `RecipeForm` component", () => {
       latest_revision: { action: { name: "unknown" } },
     });
     setup(recipeData);
-    const doc = await render(<App />);
-    fireEvent.click(await doc.findByText(recipeData.latest_revision.name));
-    fireEvent.click(doc.getByText("Edit Recipe"));
+    const doc = renderWithContext(<RecipeFormPage />, {
+      route: `/prod/recipes/${recipeData.id}/edit`,
+      path: "/prod/recipes/:recipeId/edit",
+    });
 
     expect(await doc.findByText("Experimenter Slug")).toBeInTheDocument();
     expect(await doc.findByText("Action Arguments")).toBeInTheDocument();
@@ -776,10 +757,7 @@ describe("The `RecipeForm` component", () => {
     setup(recipe);
     const extensions = extensionSetup();
 
-    const { getByText, getAllByRole } = await render(<App />);
-
-    fireEvent.click(getByText("Recipes"));
-    fireEvent.click(getByText("Create Recipe"));
+    const { getByText, getAllByRole } = renderWithContext(<RecipeFormPage />);
 
     await waitFor(() =>
       expect(getByText("Experimenter Slug")).toBeInTheDocument(),
@@ -869,15 +847,16 @@ describe("The `RecipeForm` component", () => {
       name: "Recipe Name",
     });
   });
+
   it("fallback editor is rendered for unknown action types", async () => {
     const recipeData = recipeFactory.build({
       latest_revision: { action: { name: "unknown" } },
     });
     setup(recipeData);
-    const doc = await render(<App />);
-    await doc.findByText(recipeData.latest_revision.name);
-    fireEvent.mouseEnter(await doc.findByTitle("recipe-menu"));
-    fireEvent.click(doc.getByText("Edit"));
+    const doc = renderWithContext(<RecipeFormPage />, {
+      route: `/prod/recipes/${recipeData.id}/edit`,
+      path: "/prod/recipes/:recipeId/edit",
+    });
     await waitFor(() => {
       expect(doc.getByText("Experimenter Slug")).toBeInTheDocument();
     });
