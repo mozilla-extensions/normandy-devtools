@@ -31,7 +31,7 @@ export default function MultiPreferenceExperiment({ data }) {
             isHighPopulation: booleanFormatter,
           },
         ),
-        branches(key, value) {
+        branches(key, value = []) {
           const panels = value.map((branch, index) => {
             const preferences = Object.entries(branch.preferences);
 

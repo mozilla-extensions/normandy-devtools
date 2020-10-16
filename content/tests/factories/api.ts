@@ -1,6 +1,9 @@
 import faker from "faker";
 
-import Factory from "devtools/tests/factories";
+import Factory, {
+  autoIncrementField,
+  cycleValues,
+} from "devtools/tests/factories";
 import {
   FilterApiResponse,
   Extension,
@@ -63,7 +66,14 @@ export const extensionFactory = Factory.fromFields<Extension>({
   },
 });
 
+const ACTION_NAMES: Array<Action["name"]> = [
+  "multi-preference-experiment",
+  "show-heartbeat",
+  "console-log",
+  "opt-out-study",
+];
+
 export const actionFactory = Factory.fromFields<Action>({
-  id: () => faker.random.number(),
-  name: () => faker.random.word(),
+  id: autoIncrementField(),
+  name: cycleValues(ACTION_NAMES),
 });

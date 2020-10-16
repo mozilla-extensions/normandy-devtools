@@ -113,7 +113,7 @@ const RecipeQueryEditor: React.FC<Props> = ({
 
   return (
     <Form className={className} layout="inline">
-      <FormGroup>
+      <FormGroup controlId="text">
         <ControlLabel>Search</ControlLabel>
         <InputGroup>
           <InputGroup.Addon>
@@ -127,7 +127,7 @@ const RecipeQueryEditor: React.FC<Props> = ({
           />
         </InputGroup>
       </FormGroup>
-      <FormGroup>
+      <FormGroup controlId="enabled">
         <ControlLabel>Enabled</ControlLabel>
         <FormControl
           accepter={InputPicker}
@@ -138,7 +138,7 @@ const RecipeQueryEditor: React.FC<Props> = ({
           onChange={makeHandler("enabled", { debounce: false })}
         />
       </FormGroup>
-      <FormGroup>
+      <FormGroup controlId="action">
         <ControlLabel>Action</ControlLabel>
         <FormControl
           accepter={ActionSelector}
@@ -167,7 +167,7 @@ type DraftQuery = Partial<{
  * null) to a RecipeQuery, suitable to query Normandy or put in URLs
  * @param draftQuery The query to convert
  */
-function convertDraftToQuery(draftQuery: DraftQuery): RecipeListQuery {
+export function convertDraftToQuery(draftQuery: DraftQuery): RecipeListQuery {
   const rv: RecipeListQuery = {};
   for (const [key, value] of Object.entries(draftQuery)) {
     if (value === null || value === undefined) {
@@ -190,7 +190,7 @@ function convertDraftToQuery(draftQuery: DraftQuery): RecipeListQuery {
  *   either `history.location.search` from React Router's `history` or, if that
  *   is not available, `window.location.search`.
  */
-function getRecipeQueryFromUrlSearch(search: string): RecipeListQuery {
+export function getRecipeQueryFromUrlSearch(search: string): RecipeListQuery {
   const workUrl = new URL(window.location.toString());
   workUrl.search = search;
   console.log(search);

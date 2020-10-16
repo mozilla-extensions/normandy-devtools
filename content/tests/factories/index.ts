@@ -1,5 +1,5 @@
 import { RecursivePartial } from "devtools/types/utils";
-import { has } from "devtools/utils/helpers";
+import { assert, has } from "devtools/utils/helpers";
 
 /* This rule is because "object is hard to use". This file works around those
  * difficulties, primarily with the help of `has`. */
@@ -205,6 +205,10 @@ export interface SubFactoryField<
   ) => RecursivePartial<O2>;
 }
 
+/**
+ * Make a factory generator that returns a number that increments each time
+ * it is used. The first value will be 1.
+ */
 export function autoIncrementField<T, O extends object>(): GeneratorFunction<
   T,
   number,
@@ -212,7 +216,23 @@ export function autoIncrementField<T, O extends object>(): GeneratorFunction<
 > {
   let counter = 0;
   return (): number => {
-    counter += 1;
-    return counter;
+    return ++counter;
+  };
+}
+
+/**
+ * Make a factory generator that will return values from `choices`, in order.
+ * When it reaches the end it will repeat.
+ */
+export function cycleValues<F, T, O extends object>(
+  values: Array<F>,
+): GeneratorFunction<T, F, O> {
+  assert(
+    values.length >= 1,
+    "There should be at least one value to cycle through",
+  );
+  const counter = autoIncrementField();
+  return (...args): F => {
+    return values[(counter(...args) - 1) % values.length];
   };
 }
