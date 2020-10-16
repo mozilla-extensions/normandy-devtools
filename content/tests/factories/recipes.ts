@@ -7,6 +7,7 @@ import { filterObjectFactory } from "devtools/tests/factories/filterObjects";
 import {
   BranchedAddonStudyBranch,
   MultiPreferenceExperimentBranch,
+  PreferenceRolloutBranch,
 } from "devtools/types/arguments";
 import {
   User,
@@ -107,6 +108,36 @@ export const addonStudyBranchFactory = Factory.fromFields<
   slug: () => faker.lorem.slug(),
   ratio: () => faker.random.number(10),
   extensionApiId: autoIncrementField(),
+});
+
+export const preferenceRolloutBranchFactory = Factory.fromFields<
+  PreferenceRolloutBranch
+>({
+  preferenceName: () => faker.lorem.words(4),
+  value: () => {
+    const preferenceType = faker.random.arrayElement([
+      "string",
+      "integer",
+      "boolean",
+    ]);
+
+    let preferenceValue;
+    switch (preferenceType) {
+      case "string":
+        return faker.random.word();
+
+      case "integer":
+        preferenceValue = faker.random.number();
+        break;
+      case "boolean":
+        preferenceValue = faker.random.boolean();
+        break;
+      default:
+        throw Error(`Unexpected prefType ${preferenceType}`);
+    }
+
+    return preferenceValue;
+  },
 });
 
 export const multiPrefBranchFactory = Factory.fromFields<

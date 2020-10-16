@@ -1,6 +1,5 @@
-import PropTypes from "prop-types";
-import React from "react";
-import { ControlLabel, FormGroup, SelectPicker } from "rsuite";
+import React, { ReactElement } from "react";
+import { ControlLabel, FormGroup, InputProps, SelectPicker } from "rsuite";
 
 import {
   ACTION_UPDATE_DATA,
@@ -8,16 +7,29 @@ import {
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
 
+type SelectFieldProps = InputProps & {
+  label: string;
+  name: string;
+  changeSideEffect?: (change: ChangeData) => void;
+  options?: Array<{ label: string; value: string }>;
+};
+
+interface ChangeData {
+  data: unknown;
+  value: unknown;
+  name: unknown;
+}
 export default function SelectField({
   label,
   name,
   options,
   changeSideEffect,
-}) {
+  ...props
+}: SelectFieldProps): ReactElement {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
 
-  const handleChange = (value) => {
+  const handleChange = (value): void => {
     let newData = data;
 
     if (typeof changeSideEffect === "function") {
@@ -46,14 +58,8 @@ export default function SelectField({
         searchable={false}
         value={data.arguments[name]}
         onChange={handleChange}
+        {...props}
       />
     </FormGroup>
   );
 }
-
-SelectField.propTypes = {
-  changeSideEffect: PropTypes.func,
-  options: PropTypes.array.isRequired,
-  label: PropTypes.string,
-  name: PropTypes.string.isRequired,
-};
