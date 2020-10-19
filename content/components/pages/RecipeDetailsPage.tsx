@@ -18,11 +18,13 @@ const RecipeDetailsPage: React.FC = () => {
   const [recipeData, setRecipeData] = React.useState({
     experimenter_slug: null,
   });
+  const [recipeStatusData, setRecipeStatusData] = React.useState(null);
   const [experimenterData, setExperimenterData] = React.useState(null);
 
   React.useEffect(() => {
     normandyApi.fetchRecipe(recipeId).then((recipeData) => {
       setRecipeData(recipeData.latest_revision);
+      setRecipeStatusData(recipeData.approved_revision);
     });
   }, [recipeId, normandyApi.getBaseUrl({ method: "GET" })]);
 
@@ -56,7 +58,7 @@ const RecipeDetailsPage: React.FC = () => {
   }, [recipeData]);
 
   return (
-    <RecipeDetailsProvider data={recipeData}>
+    <RecipeDetailsProvider data={recipeData} statusData={recipeStatusData}>
       <ExperimenterDetailsProvider data={experimenterData}>
         <div className="d-flex flex-column h-100">
           <DetailsHeader />

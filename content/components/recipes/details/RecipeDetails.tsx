@@ -6,11 +6,11 @@ import ApprovalRequest from "devtools/components/recipes/details/ApprovalRequest
 import ExperimenterDetails from "devtools/components/recipes/details/ExperimenterDetails";
 import FilteringDetails from "devtools/components/recipes/details/FilteringDetails";
 import SuitabilityTag from "devtools/components/recipes/details/SuitabilityTag";
-import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
+import { useRecipeDetailsState } from "devtools/contexts/recipeDetails";
 
 // default export
 const RecipeDetails: React.FunctionComponent = () => {
-  const data = useRecipeDetailsData();
+  const { data, statusData } = useRecipeDetailsState();
   if (!data.recipe) {
     return (
       <div className="text-center">
@@ -32,8 +32,8 @@ const RecipeDetails: React.FunctionComponent = () => {
           {__ENV__ === "extension" && <SuitabilityTag />}
         </div>
         <div>
-          <Tag color={data.enabled ? "green" : "red"}>
-            {data.enabled ? "Enabled" : "Disabled"}
+          <Tag color={statusData.enabled ? "green" : "red"}>
+            {statusData.enabled ? "Enabled" : "Disabled"}
           </Tag>
         </div>
       </div>

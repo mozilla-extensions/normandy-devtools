@@ -9,6 +9,7 @@ export const INITIAL_RECIPE_DATA = {
 
 const initialState = {
   data: INITIAL_RECIPE_DATA,
+  statusData: INITIAL_RECIPE_DATA,
   importInstructions: "",
   clientErrors: {},
 };
@@ -26,7 +27,8 @@ function reducer(state, action) {
     case ACTION_UPDATE_DATA:
       return {
         ...state,
-        data: action.data,
+        data: action.data || state.data,
+        statusData: action.statusData || state.statusData,
       };
 
     case ACTION_UPDATE_IMPORT_INSTRUCTIONS:
@@ -56,7 +58,12 @@ function reducer(state, action) {
   }
 }
 
-export function RecipeDetailsProvider({ children, data, importInstructions }) {
+export function RecipeDetailsProvider({
+  children,
+  data,
+  importInstructions,
+  statusData,
+}) {
   /** @type {[React.ReducerState<any>, React.Dispatch<React.ReducerAction<any>>]} */
   const [state, dispatch] = React.useReducer(reducer, initialState);
 
@@ -64,8 +71,9 @@ export function RecipeDetailsProvider({ children, data, importInstructions }) {
     dispatch({
       type: ACTION_UPDATE_DATA,
       data,
+      statusData: statusData || data,
     });
-  }, [data]);
+  }, [data, statusData]);
 
   React.useEffect(() => {
     dispatch({
@@ -81,6 +89,7 @@ export function RecipeDetailsProvider({ children, data, importInstructions }) {
 RecipeDetailsProvider.propTypes = {
   children: PropTypes.any,
   data: PropTypes.object.isRequired,
+  statusData: PropTypes.object,
   importInstructions: PropTypes.string,
 };
 
