@@ -59,7 +59,7 @@
     "cache-loader": "4.1.0",
     "copy-webpack-plugin": "6.2.1",
     "css-loader": "5.0.0",
-    "dotenv-webpack": "2.0.0",
+    "dotenv-webpack": "4.0.0",
     "eslint-config-prettier": "6.13.0",
     "eslint-plugin-fetch-options": "0.0.5",
     "eslint-plugin-html": "6.1.0",
