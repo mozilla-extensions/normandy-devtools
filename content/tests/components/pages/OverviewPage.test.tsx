@@ -1,7 +1,6 @@
 import {
   cleanup,
   fireEvent,
-  prettyDOM,
   waitForElementToBeRemoved,
 } from "@testing-library/react";
 import React from "react";
@@ -178,8 +177,6 @@ describe("OverviewPage", () => {
 
     const doc = renderWithContext(<OverviewPage />);
     await waitForElementToBeRemoved(doc.getByText(/Loading Overview/));
-
-    console.log(prettyDOM(document));
 
     fireEvent.click(doc.getByText("Pause"));
 
