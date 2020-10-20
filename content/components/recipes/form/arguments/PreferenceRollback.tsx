@@ -31,7 +31,7 @@ export default function PreferenceRollback(): ReactElement {
     return (
       <div>
         {label}
-        <small style={{ opacity: 0.5, fontSize: "95%" }}>{item.value}</small>
+        <small className="text-subtle">{item.value}</small>
       </div>
     );
   };
