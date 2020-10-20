@@ -1,6 +1,7 @@
 import {
   cleanup,
   fireEvent,
+  prettyDOM,
   waitForElementToBeRemoved,
 } from "@testing-library/react";
 import React from "react";
@@ -11,6 +12,7 @@ import {
   recipeFactory,
   approvalRequestFactory,
 } from "devtools/tests/factories/recipes";
+import { RecipeV3 } from "devtools/types/recipes";
 import ExperimenterAPI from "devtools/utils/experimenterApi";
 import NormandyAPI from "devtools/utils/normandyApi";
 
@@ -102,7 +104,7 @@ describe("OverviewPage", () => {
   });
 
   it("should display need to pause recipes", async () => {
-    const recipes = recipeFactory.buildMany([{}, {}, {}]);
+    const recipes = recipeFactory.buildCount(3);
     const enrollmentPaused = [10000, 2, 5];
     const hundredDaysFuture = new Date();
     hundredDaysFuture.setDate(hundredDaysFuture.getDate() + 100);
@@ -116,14 +118,16 @@ describe("OverviewPage", () => {
     jest
       .spyOn(NormandyAPI.prototype, "fetchApprovalRequests")
       .mockImplementation(() => Promise.resolve([]));
+
+    const mockFetchRecipe = jest
+      .fn()
+      .mockImplementation((i): RecipeV3 => recipes[i % 3]);
+
     jest
       .spyOn(NormandyAPI.prototype, "fetchRecipe")
-      .mockReturnValueOnce(Promise.resolve(recipes[0]))
-      .mockReturnValueOnce(Promise.resolve(recipes[1]))
-      .mockReturnValueOnce(Promise.resolve(recipes[2]))
-      .mockReturnValueOnce(Promise.resolve(recipes[0]))
-      .mockReturnValueOnce(Promise.resolve(recipes[1]))
-      .mockReturnValueOnce(Promise.resolve(recipes[2]));
+      .mockImplementation(() =>
+        Promise.resolve(mockFetchRecipe(mockFetchRecipe.mock.calls.length)),
+      );
 
     jest
       .spyOn(ExperimenterAPI.prototype, "fetchExperiments")
@@ -148,15 +152,41 @@ describe("OverviewPage", () => {
 
     expect(doc.getByText(recipes[2].id.toString())).toBeInTheDocument();
     expect(doc.getByText(recipes[2].latest_revision.name)).toBeInTheDocument();
+  });
 
-    const pauseButton = document.querySelectorAll("button");
+  it("should allow calls to patchRecipe for pauses", async () => {
+    const recipe = recipeFactory.build();
+    const experiment = experimenterResponseFactory.build({
+      normandy_id: recipe.id,
+      proposed_enrollment: 2,
+    });
+    jest
+      .spyOn(NormandyAPI.prototype, "fetchApprovalRequests")
+      .mockImplementation(() => Promise.resolve([]));
 
-    fireEvent.click(pauseButton[0]);
+    jest
+      .spyOn(NormandyAPI.prototype, "fetchRecipe")
+      .mockImplementation(() => Promise.resolve(recipe));
 
-    expect(NormandyAPI.prototype.patchRecipe).toBeCalledWith(recipes[1].id, {
+    jest
+      .spyOn(ExperimenterAPI.prototype, "fetchExperiments")
+      .mockImplementation(() => Promise.resolve([experiment]));
+
+    jest
+      .spyOn(NormandyAPI.prototype, "patchRecipe")
+      .mockImplementation(() => Promise.resolve(recipe));
+
+    const doc = renderWithContext(<OverviewPage />);
+    await waitForElementToBeRemoved(doc.getByText(/Loading Overview/));
+
+    console.log(prettyDOM(document));
+
+    fireEvent.click(doc.getByText("Pause"));
+
+    expect(NormandyAPI.prototype.patchRecipe).toBeCalledWith(recipe.id, {
       comment: "One-click pause",
       arguments: {
-        ...recipes[1].latest_revision.arguments,
+        ...recipe.latest_revision.arguments,
         isEnrollmentPaused: true,
       },
     });

@@ -98,9 +98,7 @@ const PausingRecipeCard: React.FC<{
   );
 };
 
-const CardHeader: React.FC<{ recipe: RecipeV3 }> = ({
-  recipe,
-}): ReactElement => {
+const CardHeader: React.FC<{ recipe: RecipeV3 }> = ({ recipe }) => {
   return (
     <>
       <Link to={`recipes/${recipe.id}`}>
