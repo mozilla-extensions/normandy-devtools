@@ -4,6 +4,7 @@ export type ActionArguments =
   | ConsoleLogArguments
   | BranchedAddonStudyArguments
   | MultiPreferenceExperimentPrefs
+  | PreferenceRolloutArguments
   | UnknownArguments;
 
 export interface ConsoleLogArguments {
@@ -46,6 +47,16 @@ export interface MultiPreferenceExperimentPrefs {
     preferenceType: "string" | "boolean" | "integer";
     value: string | boolean | number;
   };
+}
+
+export interface PreferenceRolloutExperimentArguments {
+  preferences: Array<PreferenceRolloutBranch>;
+  slug: string;
+}
+
+export interface PreferenceRolloutBranch {
+  preferenceName: string;
+  value: string | boolean | number;
 }
 
 export interface SinglePreferenceExperimentArguments {

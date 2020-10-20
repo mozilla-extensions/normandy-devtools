@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactElement } from "react";
 
 import SelectField from "devtools/components/recipes/form/arguments/fields/SelectField";
 import {
@@ -6,7 +6,7 @@ import {
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
 
-export default function PreferenceRollback() {
+export default function PreferenceRollback(): ReactElement {
   const { selectedKey: environmentKey } = useEnvironmentState();
   const [rollouts, setRollouts] = React.useState([]);
   const normandyApi = useSelectedNormandyEnvironmentAPI();
@@ -19,12 +19,30 @@ export default function PreferenceRollback() {
       });
   }, [environmentKey]);
 
-  const rolloutOptions = rollouts.map((rollout) => ({
-    label: rollout.latest_revision.arguments.slug,
+  const rolloutData: Array<{
+    label: string;
+    value: string;
+  }> = rollouts.map((rollout) => ({
+    label: `${rollout.id}: ${rollout.latest_revision.name} `,
     value: rollout.latest_revision.arguments.slug,
   }));
 
+  const rolloutMenu = (label, item): ReactElement => {
+    return (
+      <div>
+        {label}
+        <small className="text-subtle">{item.value}</small>
+      </div>
+    );
+  };
+
   return (
-    <SelectField label="Rollout" name="rolloutSlug" options={rolloutOptions} />
+    <SelectField
+      searchable
+      data={rolloutData}
+      label="Rollout"
+      name="rolloutSlug"
+      renderMenuItem={rolloutMenu}
+    />
   );
 }

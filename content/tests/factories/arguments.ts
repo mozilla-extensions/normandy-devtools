@@ -8,6 +8,7 @@ import {
   BranchedAddonStudyArguments,
   UnknownArguments,
   ShowHeartbeatArguments,
+  PreferenceRolloutArguments,
 } from "devtools/types/arguments";
 
 export const consoleLogArgumentsFactory = Factory.fromFields<
@@ -28,6 +29,12 @@ export const multiPrefExperimentArgumentsFactory = Factory.fromFields<
   experimentDocumentUrl: "",
 });
 
+const preferenceRolloutArgumentsFactory = Factory.fromFields<
+  PreferenceRolloutArguments
+>({
+  preferences: [],
+  slug: () => faker.lorem.slug(),
+});
 const branchedAddonStudyArgumentsFactory = Factory.fromFields<
   BranchedAddonStudyArguments
 >({
@@ -56,6 +63,7 @@ const argumentFactoriesByAction = {
   "console-log": consoleLogArgumentsFactory,
   "multi-preference-experiment": multiPrefExperimentArgumentsFactory,
   "branched-addon-study": branchedAddonStudyArgumentsFactory,
+  "preference-rollout": preferenceRolloutArgumentsFactory,
   "show-heartbeat": showHeartbeatArgumentsFactory,
   unknown: unknownArgumentsFactory,
 };
