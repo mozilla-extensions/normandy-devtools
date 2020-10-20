@@ -1,6 +1,6 @@
 import autobind from "autobind-decorator";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { ReactElement } from "react";
 import { Link } from "react-router-dom";
 import {
   Button,
@@ -19,17 +19,39 @@ import {
 import CodeMirror from "devtools/components/common/CodeMirror";
 import RecipeListing from "devtools/components/recipes/RecipeListing";
 import {
+  Environment,
   useEnvironments,
   useSelectedEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
+import { RecipeV3 } from "devtools/types/recipes";
 import { chunkBy } from "devtools/utils/helpers";
+import NormandyAPI from "devtools/utils/normandyApi";
 import { convertToV1Recipe } from "devtools/utils/recipes";
 
 const normandy = browser.experiments.normandy;
 
+interface Props {
+  api: NormandyAPI;
+  connectionStatus: boolean;
+  environment: Environment;
+  environmentKey: string;
+  environments: Record<string, Environment>;
+}
+
+interface State {
+  arbitraryRecipe: string;
+  count: number;
+  loading: boolean;
+  page: number;
+  runningArbitrary: boolean;
+  showWriteRecipes: boolean;
+  recipeSelected: boolean;
+  recipePages: Record<string, Record<number, Array<RecipeV3>>>;
+}
+
 @autobind
-class RecipesPage extends React.PureComponent {
+class RecipesPage extends React.PureComponent<Props, State> {
   static propTypes = {
     api: PropTypes.object,
     connectionStatus: PropTypes.bool,
@@ -58,17 +80,17 @@ class RecipesPage extends React.PureComponent {
     };
   }
 
-  async runNormandy() {
+  async runNormandy(): Promise<void> {
     await normandy.standardRun();
   }
 
-  async componentDidMount() {
+  async componentDidMount(): Promise<void> {
     const { page } = this.state;
     const { environment } = this.props;
     this.refreshRecipeList(environment, page);
   }
 
-  async componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps): Promise<void> {
     const { connectionStatus, environmentKey, environment } = this.props;
     if (
       environmentKey !== prevProps.environmentKey ||
@@ -78,7 +100,7 @@ class RecipesPage extends React.PureComponent {
     }
   }
 
-  async refreshRecipeList(environment, page) {
+  async refreshRecipeList(environment, page): Promise<void> {
     const { api, environmentKey } = this.props;
     if (
       environmentKey in this.state.recipePages &&
@@ -109,12 +131,12 @@ class RecipesPage extends React.PureComponent {
     }));
   }
 
-  handlePageChange(page) {
+  handlePageChange(page): void {
     const { environment } = this.props;
     this.refreshRecipeList(environment, page);
   }
 
-  copyRecipeToArbitrary(v3Recipe) {
+  copyRecipeToArbitrary(v3Recipe): void {
     const { environmentKey } = this.props;
     const v1Recipe = convertToV1Recipe(
       v3Recipe.latest_revision,
@@ -126,7 +148,7 @@ class RecipesPage extends React.PureComponent {
     });
   }
 
-  renderRecipeList() {
+  renderRecipeList(): ReactElement {
     const { loading, page, recipePages } = this.state;
     const { environmentKey } = this.props;
     const { [environmentKey]: { [page]: recipes = [] } = {} } = recipePages;
@@ -160,19 +182,19 @@ class RecipesPage extends React.PureComponent {
     return null;
   }
 
-  showWriteRecipePopup() {
+  showWriteRecipePopup(): void {
     this.setState({ showWriteRecipes: true });
   }
 
-  hideWriteRecipePopup() {
+  hideWriteRecipePopup(): void {
     this.setState({ showWriteRecipes: false });
   }
 
-  handleArbitraryRecipeChange(editor, data, value) {
+  handleArbitraryRecipeChange(editor, data, value): void {
     this.setState({ arbitraryRecipe: value });
   }
 
-  async runArbitraryRecipe() {
+  async runArbitraryRecipe(): Promise<void> {
     const { arbitraryRecipe } = this.state;
     this.setState({ runningArbitrary: true });
     try {
@@ -182,7 +204,7 @@ class RecipesPage extends React.PureComponent {
     }
   }
 
-  renderWriteRecipeModal() {
+  renderWriteRecipeModal(): ReactElement {
     const { arbitraryRecipe, runningArbitrary } = this.state;
 
     return (
@@ -196,7 +218,6 @@ class RecipesPage extends React.PureComponent {
         </Modal.Header>
         <Modal.Body>
           <CodeMirror
-            // @ts-ignore
             options={{
               mode: "javascript",
               lineNumbers: true,
@@ -221,7 +242,7 @@ class RecipesPage extends React.PureComponent {
     );
   }
 
-  renderRunButton() {
+  renderRunButton(): ReactElement {
     const { environmentKey } = this.props;
     if (environmentKey !== "prod") {
       return null;
@@ -234,7 +255,7 @@ class RecipesPage extends React.PureComponent {
     );
   }
 
-  render() {
+  render(): ReactElement {
     const { page, count } = this.state;
     const { environmentKey } = this.props;
 
@@ -286,7 +307,7 @@ class RecipesPage extends React.PureComponent {
   }
 }
 
-export default function WrappedRecipePage(props) {
+export default function WrappedRecipePage(): ReactElement {
   const {
     connectionStatus,
     environment,
@@ -296,9 +317,8 @@ export default function WrappedRecipePage(props) {
   const api = useSelectedNormandyEnvironmentAPI();
   return (
     <RecipesPage
-      {...props}
       api={api}
-      connectionStatus={connectionStatus}
+      connectionStatus={connectionStatus as boolean}
       environment={environment}
       environmentKey={selectedKey}
       environments={environments}
