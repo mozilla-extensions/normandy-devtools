@@ -124,8 +124,8 @@ export const preferenceRolloutBranchFactory = Factory.fromFields<
     let preferenceValue;
     switch (preferenceType) {
       case "string":
-        return faker.random.word();
-
+        preferenceValue = faker.random.word();
+        break;
       case "integer":
         preferenceValue = faker.random.number();
         break;
