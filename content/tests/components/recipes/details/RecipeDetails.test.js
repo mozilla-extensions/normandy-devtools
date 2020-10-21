@@ -215,9 +215,7 @@ describe("The `RecipeDetails` component", () => {
     await waitFor(() => expect(NormandyAPI.prototype.fetchRecipe).toReturn());
 
     const argsDetails = await findByTestId("action-details");
-    const descriptionElt = argsDetails.querySelector(
-      ".text-subtle.margin-right",
-    );
+    const descriptionElt = argsDetails.querySelector(".text-subtle.mr-2");
     expect(descriptionElt.innerHTML).toEqual("Some control branch");
   });
 

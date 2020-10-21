@@ -88,10 +88,8 @@ export default function MultiPreferenceExperiment({ data }) {
                     <div className="d-flex align-items-center">
                       <div className="pr-2 font-weight-bold">Description</div>
                     </div>
-                    <div className="my-1 text-subtle margin-right">
-                      {experimenterData.variants
-                        ? experimenterData.variants[branch.slug]
-                        : null}
+                    <div className="my-1 text-subtle mr-2">
+                      {experimenterData.variants?.[branch.slug] ?? null}
                     </div>
                   </div>
                   <div className="flex-basis-0 flex-grow-1">

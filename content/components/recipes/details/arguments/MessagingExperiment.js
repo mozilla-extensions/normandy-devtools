@@ -29,10 +29,8 @@ export default function MessagingExperiment({ data }) {
                     </div>
                     <div className="flex-grow-1">
                       <div className="font-weight-bold">Description</div>
-                      <div className="my-1 text-subtle margin-right">
-                        {experimentData.variants
-                          ? experimentData.variants[branch.slug]
-                          : null}
+                      <div className="my-1 text-subtle mr-2">
+                        {experimentData.variants?.[branch.slug] ?? null}
                       </div>
                     </div>
                     <div className="pr-5">

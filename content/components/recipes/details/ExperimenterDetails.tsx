@@ -14,7 +14,7 @@ const ExperimenterDetails: React.FunctionComponent = () => {
         {data && Object.keys(data).length ? (
           <div className="d-flex w-100">
             <div className="flex-basis-0 flex-grow-1">
-              <div className="mt-4 margin-right">
+              <div className="mt-4 mr-2">
                 <strong>Public description</strong>
                 <p>{data.publicDescription}</p>
               </div>
@@ -29,7 +29,7 @@ const ExperimenterDetails: React.FunctionComponent = () => {
               <div className="mt-4">
                 <strong>Actual Schedule</strong>
                 <p>
-                  {data.startDate ? data.startDate.toDateString() : "N/A"}
+                  {data.startDate?.toDateString() ?? "N/A"}
                   {data.endDate ? " → " + data.endDate.toDateString() : ""}
                 </p>
               </div>

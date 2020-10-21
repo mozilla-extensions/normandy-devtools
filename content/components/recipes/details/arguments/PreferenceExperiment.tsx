@@ -50,9 +50,7 @@ const PreferenceExperiment: React.FC<PreferenceExperimentProps> = ({
           },
           description(index) {
             const { slug } = data.arguments.branches[index];
-            return experimenterData.variants
-              ? experimenterData.variants[slug]
-              : null;
+            return experimenterData.variants?.[slug] ?? null;
           },
           ratio(index, value) {
             return <code>{value}</code>;
