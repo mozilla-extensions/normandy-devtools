@@ -107,8 +107,7 @@ const CardHeader: React.FC<{ recipe: RecipeV3 }> = ({ recipe }) => {
         </Tag>
       </Link>
       <Link
-        // to get rid of blue text and underline
-        style={{ textDecoration: "inherit", color: "inherit" }}
+        className="text-reset text-decoration-none"
         to={`recipes/${recipe.id}`}
       >
         {recipe.latest_revision.name}
