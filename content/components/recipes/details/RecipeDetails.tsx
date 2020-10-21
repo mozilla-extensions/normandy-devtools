@@ -3,6 +3,7 @@ import { Divider, Loader, Tag } from "rsuite";
 
 import ActionDetails from "devtools/components/recipes/details/ActionDetails";
 import ApprovalRequest from "devtools/components/recipes/details/ApprovalRequest";
+import EnrollmentDetails from "devtools/components/recipes/details/EnrollmentDetails";
 import ExperimenterDetails from "devtools/components/recipes/details/ExperimenterDetails";
 import FilteringDetails from "devtools/components/recipes/details/FilteringDetails";
 import SuitabilityTag from "devtools/components/recipes/details/SuitabilityTag";
@@ -44,6 +45,8 @@ const RecipeDetails: React.FunctionComponent = () => {
       <ActionDetails />
       <Divider />
       <FilteringDetails />
+      <Divider />
+      <EnrollmentDetails />
     </>
   );
 };
