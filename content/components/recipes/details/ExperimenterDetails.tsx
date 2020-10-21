@@ -12,40 +12,46 @@ const ExperimenterDetails: React.FunctionComponent = () => {
     >
       <div className="py-1 pl-4">
         {data && Object.keys(data).length ? (
-          <>
-            <div className="mt-4">
-              <strong>Public description</strong>
-              <p>{data.publicDescription}</p>
-            </div>
-            <div className="mt-4" data-testid="details-proposed-schedule">
-              <strong>Proposed schedule</strong>
-              <p>
-                {data.proposedStartDate?.toDateString()} →{" "}
-                {data.proposedEndDate?.toDateString()} ({data.proposedDuration}{" "}
-                days)
-              </p>
-            </div>
-            <div className="mt-4">
-              <strong>Actual Schedule</strong>
-              <p>
-                {data.startDate ? data.startDate.toDateString() : "N/A"}
-                {data.endDate ? " → " + data.endDate.toDateString() : ""}
-              </p>
-            </div>
-            {Object.keys(data.variants).length ? (
-              <div className="mt-4">
-                <strong>Branches</strong>
-                <dl>
-                  {Object.entries(data.variants).map(([slug, description]) => (
-                    <>
-                      <dt>{slug}</dt>
-                      <dd>{description}</dd>
-                    </>
-                  ))}
-                </dl>
+          <div className="d-flex w-100">
+            <div className="flex-basis-0 flex-grow-1">
+              <div className="mt-4 mr-2">
+                <strong>Public description</strong>
+                <p>{data.publicDescription}</p>
               </div>
-            ) : null}
-          </>
+              <div className="mt-4" data-testid="details-proposed-schedule">
+                <strong>Proposed schedule</strong>
+                <p>
+                  {data.proposedStartDate?.toDateString()} →{" "}
+                  {data.proposedEndDate?.toDateString()} (
+                  {data.proposedDuration} days)
+                </p>
+              </div>
+              <div className="mt-4">
+                <strong>Actual Schedule</strong>
+                <p>
+                  {data.startDate?.toDateString() ?? "N/A"}
+                  {data.endDate ? " → " + data.endDate.toDateString() : ""}
+                </p>
+              </div>
+            </div>
+            <div className="flex-basis-0 flex-grow-1">
+              {Object.keys(data.variants).length ? (
+                <div className="mt-4">
+                  <strong>Branches</strong>
+                  <dl>
+                    {Object.entries(data.variants).map(
+                      ([slug, description]) => (
+                        <>
+                          <dt>{slug}</dt>
+                          <dd>{description}</dd>
+                        </>
+                      ),
+                    )}
+                  </dl>
+                </div>
+              ) : null}
+            </div>
+          </div>
         ) : (
           <p>N/A</p>
         )}

@@ -77,7 +77,9 @@ export default function ActionDetails() {
         </>
       }
     >
-      <div className="py-1 pl-4">{details}</div>
+      <div className="py-1 pl-4" data-testid="action-details">
+        {details}
+      </div>
     </CollapsibleSection>
   );
 }

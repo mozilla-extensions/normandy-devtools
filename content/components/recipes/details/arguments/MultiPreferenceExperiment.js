@@ -9,10 +9,12 @@ import {
   multiColumnFormatter,
 } from "devtools/components/recipes/details/arguments/formatters";
 import GenericArguments from "devtools/components/recipes/details/arguments/GenericArguments";
+import { useExperimenterDetailsData } from "devtools/contexts/experimenterDetails";
 import { useBranchTestingIds } from "devtools/hooks/testingIds";
 
 export default function MultiPreferenceExperiment({ data }) {
   const branchTestingIds = useBranchTestingIds(data);
+  const experimenterData = useExperimenterDetailsData();
 
   return (
     <GenericArguments
@@ -80,6 +82,14 @@ export default function MultiPreferenceExperiment({ data }) {
                     </div>
                     <div className="my-1 text-subtle">
                       <code>{branch.slug}</code>
+                    </div>
+                  </div>
+                  <div className="flex-basis-0 flex-grow-1">
+                    <div className="d-flex align-items-center">
+                      <div className="pr-2 font-weight-bold">Description</div>
+                    </div>
+                    <div className="my-1 text-subtle mr-2">
+                      {experimenterData.variants?.[branch.slug] ?? null}
                     </div>
                   </div>
                   <div className="flex-basis-0 flex-grow-1">
