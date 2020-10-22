@@ -2,6 +2,7 @@ import React from "react";
 import { Loader } from "rsuite";
 
 import { EndingRecipes } from "devtools/components/overview/EndingRecipes";
+import { PausingRecipes } from "devtools/components/overview/PausingRecipes";
 import { PendingReviews } from "devtools/components/overview/PendingReviews";
 import {
   useEnvironmentState,
@@ -17,9 +18,10 @@ export const OverviewPage: React.FC = () => {
 
   const [recipes, setRecipes] = React.useState([]);
   const [liveRecipes, setLiveRecipes] = React.useState([]);
+  const [pauseRecipes, setPauseRecipes] = React.useState([]);
   React.useEffect(() => {
     getPendingReviews();
-    getLiveExperiments();
+    getExperimenterInfo();
   }, [environmentKey]);
 
   const getPendingReviews = async (): Promise<void> => {
@@ -44,11 +46,22 @@ export const OverviewPage: React.FC = () => {
     setRecipes(recipeList);
   };
 
-  const getLiveExperiments = async (): Promise<void> => {
-    const experiments = await experimenterApi.fetchExperiments({
-      status: "Live",
-    });
+  const getExperimenterInfo = async (): Promise<void> => {
+    try {
+      const experiments = await experimenterApi.fetchExperiments({
+        status: "Live",
+      });
 
+      await getEndingRecipes(experiments);
+      await getPausingExperiments(experiments);
+    } catch (e) {
+      console.warn(e);
+      setLiveRecipes([]);
+      setPauseRecipes([]);
+    }
+  };
+
+  const getEndingRecipes = async (experiments): Promise<void> => {
     const newLiveRecipes = (
       await Promise.all(
         experiments.map(async (experiment) => {
@@ -67,11 +80,36 @@ export const OverviewPage: React.FC = () => {
     setLiveRecipes(newLiveRecipes);
   };
 
-  if (recipes.length || liveRecipes.length) {
+  const getPausingExperiments = async (experiments): Promise<void> => {
+    const newPauseRecipes = (
+      await Promise.all(
+        experiments.map(async (experiment) => {
+          if (experiment.normandy_id && experiment.proposed_enrollment) {
+            const recipe = await normandyApi.fetchRecipe(
+              experiment.normandy_id,
+            );
+            const pauseDate = new Date(experiment.start_date);
+            pauseDate.setDate(
+              pauseDate.getDate() + experiment.proposed_enrollment,
+            );
+
+            return [{ pauseDate: pauseDate.getTime(), recipe }];
+          }
+
+          return [];
+        }),
+      )
+    ).flat();
+
+    setPauseRecipes(newPauseRecipes);
+  };
+
+  if (recipes.length || liveRecipes.length || pauseRecipes.length) {
     return (
       <div className="page-wrapper">
         <PendingReviews data={recipes} />
         <EndingRecipes data={liveRecipes} />
+        <PausingRecipes data={pauseRecipes} />
       </div>
     );
   }
