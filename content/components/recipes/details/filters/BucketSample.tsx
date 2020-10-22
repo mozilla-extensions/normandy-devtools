@@ -48,7 +48,12 @@ const BucketSample: React.FunctionComponent<{
               ))}
             </div>
           </div>
-          <TestingClientId className="flex-grow-1 flex-basis-0" filter={data} />
+          {__ENV__ === "extension" && (
+            <TestingClientId
+              className="flex-grow-1 flex-basis-0"
+              filter={data}
+            />
+          )}
         </div>
       </Panel>
     </div>
