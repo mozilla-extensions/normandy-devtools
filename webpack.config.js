@@ -233,7 +233,6 @@ function makeWebConfig(development) {
 
     optimization: {
       minimize: !development,
-      splitChunks: { chunks: "all" },
     },
 
     plugins: [
