@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, waitFor } from "@testing-library/react";
 import React from "react";
 
 import "@testing-library/jest-dom/extend-expect";
@@ -392,7 +392,7 @@ describe("The `RecipeDetails` component", () => {
     global.__ENV__ = "extension";
     const recipe = recipeFactory.build();
 
-    const doc = await render(
+    const doc = renderWithContext(
       <RecipeDetailsProvider data={recipe.latest_revision}>
         <RecipeDetails />
       </RecipeDetailsProvider>,
