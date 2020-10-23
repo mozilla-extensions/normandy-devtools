@@ -19,7 +19,7 @@ export const PendingReviews: React.FC<{ data: Array<RecipeV3> }> = ({
           {recipeChunk.map((recipe, colIdx) => (
             <Col key={`col-${colIdx}`} md={8} sm={24}>
               <Link
-                style={{ textDecoration: "none" }}
+                className="text-decoration-none"
                 to={`recipes/${recipe.id}`}
               >
                 <Panel bordered className="recipe-listing mb-2">

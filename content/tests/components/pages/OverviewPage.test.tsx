@@ -11,6 +11,7 @@ import {
   recipeFactory,
   approvalRequestFactory,
 } from "devtools/tests/factories/recipes";
+import { RecipeV3 } from "devtools/types/recipes";
 import ExperimenterAPI from "devtools/utils/experimenterApi";
 import NormandyAPI from "devtools/utils/normandyApi";
 
@@ -99,5 +100,92 @@ describe("OverviewPage", () => {
     fireEvent.click(disabledButton[0]);
 
     expect(NormandyAPI.prototype.disableRecipe).toBeCalled();
+  });
+
+  it("should display need to pause recipes", async () => {
+    const recipes = recipeFactory.buildCount(3);
+    const enrollmentPaused = [10000, 2, 5];
+    const hundredDaysFuture = new Date();
+    hundredDaysFuture.setDate(hundredDaysFuture.getDate() + 100);
+    const experiments = experimenterResponseFactory.buildMany(
+      recipes.map((r, i) => ({
+        normandy_id: r.id,
+        proposed_enrollment: enrollmentPaused[i],
+        end_date: hundredDaysFuture.getTime(),
+      })),
+    );
+    jest
+      .spyOn(NormandyAPI.prototype, "fetchApprovalRequests")
+      .mockImplementation(() => Promise.resolve([]));
+
+    const mockFetchRecipe = jest
+      .fn()
+      .mockImplementation((i): RecipeV3 => recipes[i % 3]);
+
+    jest
+      .spyOn(NormandyAPI.prototype, "fetchRecipe")
+      .mockImplementation(() =>
+        Promise.resolve(mockFetchRecipe(mockFetchRecipe.mock.calls.length)),
+      );
+
+    jest
+      .spyOn(ExperimenterAPI.prototype, "fetchExperiments")
+      .mockImplementation(() => Promise.resolve(experiments));
+
+    jest
+      .spyOn(NormandyAPI.prototype, "patchRecipe")
+      .mockImplementation(() => Promise.resolve(recipes[1]));
+
+    const doc = renderWithContext(<OverviewPage />);
+    await waitForElementToBeRemoved(doc.getByText(/Loading Overview/));
+
+    expect(ExperimenterAPI.prototype.fetchExperiments).toBeCalled();
+
+    expect(doc.queryByText(recipes[0].id.toString())).not.toBeInTheDocument();
+    expect(
+      doc.queryByText(recipes[0].latest_revision.name),
+    ).not.toBeInTheDocument();
+
+    expect(doc.getByText(recipes[1].id.toString())).toBeInTheDocument();
+    expect(doc.getByText(recipes[1].latest_revision.name)).toBeInTheDocument();
+
+    expect(doc.getByText(recipes[2].id.toString())).toBeInTheDocument();
+    expect(doc.getByText(recipes[2].latest_revision.name)).toBeInTheDocument();
+  });
+
+  it("should allow calls to patchRecipe for pauses", async () => {
+    const recipe = recipeFactory.build();
+    const experiment = experimenterResponseFactory.build({
+      normandy_id: recipe.id,
+      proposed_enrollment: 2,
+    });
+    jest
+      .spyOn(NormandyAPI.prototype, "fetchApprovalRequests")
+      .mockImplementation(() => Promise.resolve([]));
+
+    jest
+      .spyOn(NormandyAPI.prototype, "fetchRecipe")
+      .mockImplementation(() => Promise.resolve(recipe));
+
+    jest
+      .spyOn(ExperimenterAPI.prototype, "fetchExperiments")
+      .mockImplementation(() => Promise.resolve([experiment]));
+
+    jest
+      .spyOn(NormandyAPI.prototype, "patchRecipe")
+      .mockImplementation(() => Promise.resolve(recipe));
+
+    const doc = renderWithContext(<OverviewPage />);
+    await waitForElementToBeRemoved(doc.getByText(/Loading Overview/));
+
+    fireEvent.click(doc.getByText("Pause"));
+
+    expect(NormandyAPI.prototype.patchRecipe).toBeCalledWith(recipe.id, {
+      comment: "One-click pause",
+      arguments: {
+        ...recipe.latest_revision.arguments,
+        isEnrollmentPaused: true,
+      },
+    });
   });
 });

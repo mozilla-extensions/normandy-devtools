@@ -5,11 +5,8 @@ coverage:
       target: auto
       threshold: 0%
       base: auto
-    project:
-      # don't fail main-branch CI builds for coverage
-      main_branch:
-        branches: [main]
-        informational: true
+      # don't fail CI builds for coverage
+      informational: true
 
 comment:
   layout: "diff,flags,tree"

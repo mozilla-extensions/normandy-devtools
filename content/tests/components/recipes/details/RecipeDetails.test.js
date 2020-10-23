@@ -189,6 +189,32 @@ describe("The `RecipeDetails` component", () => {
     );
   });
 
+  it("displays branch descriptions from experimenter", async () => {
+    const recipeData = multiprefRecipeSetUp();
+    setup(recipeData);
+
+    const experiment = experimenterResponseFactory.build({
+      variants: [
+        {
+          // @ts-ignore
+          slug: recipeData.latest_revision.arguments.branches[0].slug,
+          description: "Some control branch",
+        },
+      ],
+    });
+    experimenterSetup(experiment);
+
+    const doc = renderWithContext(<RecipeDetailsPage />);
+    await waitFor(() =>
+      expect(ExperimenterAPI.prototype.fetchExperiment).toReturn(),
+    );
+    await waitFor(() => expect(NormandyAPI.prototype.fetchRecipe).toReturn());
+
+    const argsDetails = await doc.findByTestId("action-details");
+    const descriptionElt = argsDetails.querySelector(".text-subtle.mr-2");
+    expect(descriptionElt.innerHTML).toEqual("Some control branch");
+  });
+
   it("should be able approve recipes", async () => {
     jest
       .spyOn(NormandyAPI.prototype, "approveApprovalRequest")
