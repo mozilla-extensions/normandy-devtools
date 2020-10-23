@@ -10,7 +10,7 @@ import { delay, has } from "devtools/utils/helpers";
 import NormandyAPI from "devtools/utils/normandyApi";
 import { MINUTE, SECOND } from "devtools/utils/timeConstants";
 
-interface Environment {
+export interface Environment {
   readOnlyUrl: string;
   writeableUrl: string;
   oidcClientId: string;

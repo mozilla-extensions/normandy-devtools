@@ -2,7 +2,7 @@ import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import React from "react";
 
 import "@testing-library/jest-dom/extend-expect";
-import App from "devtools/components/App";
+import RecipeDetailsPage from "devtools/components/pages/RecipeDetailsPage";
 import RecipeDetails from "devtools/components/recipes/details/RecipeDetails";
 import { RecipeDetailsProvider } from "devtools/contexts/recipeDetails";
 import { experimenterResponseFactory } from "devtools/tests/factories/experiments";
@@ -117,40 +117,42 @@ describe("The `RecipeDetails` component", () => {
     experimenterSetup();
     const recipeData = branchedAddonSetup();
     setup(recipeData);
-    const { getByText, getAllByText } = await render(<App />);
-    fireEvent.click(getByText(recipeData.latest_revision.name));
+    const doc = renderWithContext(<RecipeDetailsPage />);
 
+    await doc.findByText(recipeData.latest_revision.name);
     await waitFor(() => expect(NormandyAPI.prototype.fetchRecipe).toReturn());
-    expect(getByText("Action")).toBeInTheDocument();
+    expect(doc.getByText("Action")).toBeInTheDocument();
 
-    expect(getByText("branched-addon-study")).toBeInTheDocument();
+    expect(doc.getByText("branched-addon-study")).toBeInTheDocument();
     const { latest_revision } = recipeData;
     const { filter_object, arguments: recipe_args } = latest_revision;
 
-    expect(getAllByText(recipe_args.userFacingName)).not.toHaveLength(0);
-    expect(getAllByText(recipe_args.userFacingDescription)).not.toHaveLength(0);
-    expect(getAllByText(recipe_args.slug)).not.toHaveLength(0);
+    expect(doc.getAllByText(recipe_args.userFacingName)).not.toHaveLength(0);
     expect(
-      getAllByText(latest_revision.extra_filter_expression),
+      doc.getAllByText(recipe_args.userFacingDescription),
+    ).not.toHaveLength(0);
+    expect(doc.getAllByText(recipe_args.slug)).not.toHaveLength(0);
+    expect(
+      doc.getAllByText(latest_revision.extra_filter_expression),
     ).not.toHaveLength(0);
 
     const channels = findFOValue(filter_object, "channel", "channels");
     for (const channel of channels) {
-      expect(getAllByText(channel)).not.toHaveLength(0);
+      expect(doc.getAllByText(channel)).not.toHaveLength(0);
     }
 
     const versions = findFOValue(filter_object, "version", "versions");
     for (const version of versions) {
-      expect(getAllByText(version.toString())).not.toHaveLength(0);
+      expect(doc.getAllByText(version.toString())).not.toHaveLength(0);
     }
 
     const { branches } = recipe_args;
     for (const branch of branches) {
-      expect(getAllByText(branch.slug)).not.toHaveLength(0);
-      expect(getAllByText(branch.extensionApiId.toString())).not.toHaveLength(
-        0,
-      );
-      expect(getAllByText(branch.ratio.toString())).not.toHaveLength(0);
+      expect(doc.getAllByText(branch.slug)).not.toHaveLength(0);
+      expect(
+        doc.getAllByText(branch.extensionApiId.toString()),
+      ).not.toHaveLength(0);
+      expect(doc.getAllByText(branch.ratio.toString())).not.toHaveLength(0);
     }
   });
 
@@ -166,21 +168,21 @@ describe("The `RecipeDetails` component", () => {
     );
     experimenterSetup(experiment);
 
-    const { getByText, findByText, findByTestId } = await render(<App />);
-    fireEvent.click(getByText("Recipes"));
-    fireEvent.click(await findByText(recipeData.latest_revision.name));
+    const doc = renderWithContext(<RecipeDetailsPage />);
+    expect(await doc.findByText("Experimenter Details")).toBeInTheDocument();
+    expect(
+      await doc.findByText(experiment.public_description),
+    ).toBeInTheDocument();
+    expect(
+      doc.getByText(experiment.variants[0].description),
+    ).toBeInTheDocument();
+    expect(
+      doc.getByText(experiment.variants[1].description),
+    ).toBeInTheDocument();
 
-    await waitFor(() =>
-      expect(ExperimenterAPI.prototype.fetchExperiment).toReturn(),
+    const eltProposedSchedule = await doc.findByTestId(
+      "details-proposed-schedule",
     );
-    await waitFor(() => expect(NormandyAPI.prototype.fetchRecipe).toReturn());
-
-    expect(getByText("Experimenter Details")).toBeInTheDocument();
-    expect(await findByText(experiment.public_description)).toBeInTheDocument();
-    expect(getByText(experiment.variants[0].description)).toBeInTheDocument();
-    expect(getByText(experiment.variants[1].description)).toBeInTheDocument();
-
-    const eltProposedSchedule = await findByTestId("details-proposed-schedule");
     const proposedSchedule = eltProposedSchedule.querySelector("p").innerHTML;
     expect(proposedSchedule).toEqual(
       "Fri Apr 03 2020 → Mon Apr 13 2020 (10 days)",
@@ -202,19 +204,13 @@ describe("The `RecipeDetails` component", () => {
     });
     experimenterSetup(experiment);
 
-    const { findByTestId, getByText } = await render(<App />);
-    fireEvent.click(getByText("Recipes"));
-
-    await waitFor(() =>
-      expect(getByText(recipeData.latest_revision.name)).toBeInTheDocument(),
-    );
-    fireEvent.click(getByText(recipeData.latest_revision.name));
+    const doc = renderWithContext(<RecipeDetailsPage />);
     await waitFor(() =>
       expect(ExperimenterAPI.prototype.fetchExperiment).toReturn(),
     );
     await waitFor(() => expect(NormandyAPI.prototype.fetchRecipe).toReturn());
 
-    const argsDetails = await findByTestId("action-details");
+    const argsDetails = await doc.findByTestId("action-details");
     const descriptionElt = argsDetails.querySelector(".text-subtle.mr-2");
     expect(descriptionElt.innerHTML).toEqual("Some control branch");
   });
@@ -227,26 +223,20 @@ describe("The `RecipeDetails` component", () => {
     let recipeData = multiprefRecipeSetUp();
     recipeData = unapproveRecipe(recipeData);
     setup(recipeData);
-    const { getByText, findByTestId } = await render(<App />);
-    fireEvent.click(getByText("Recipes"));
+    const doc = renderWithContext(<RecipeDetailsPage />);
 
-    await waitFor(() =>
-      expect(getByText(recipeData.latest_revision.name)).toBeInTheDocument(),
-    );
-    fireEvent.click(getByText(recipeData.latest_revision.name));
+    await doc.findByText(recipeData.latest_revision.name);
+    expect(doc.getByText("Approval Request")).toBeInTheDocument();
 
-    await waitFor(() => expect(NormandyAPI.prototype.fetchRecipe).toReturn());
-    expect(getByText("Approval Request")).toBeInTheDocument();
-
-    const expandApproval = await findByTestId("collapse-approval-request");
+    const expandApproval = await doc.findByTestId("collapse-approval-request");
     fireEvent.click(expandApproval);
-    expect(getByText("Comment:")).toBeInTheDocument();
+    expect(doc.getByText("Comment:")).toBeInTheDocument();
 
     const comment = document.querySelector("input");
 
     fireEvent.change(comment, { target: { value: "r+" } });
 
-    fireEvent.click(getByText("Approve"));
+    fireEvent.click(doc.getByText("Approve"));
 
     expect(NormandyAPI.prototype.approveApprovalRequest).toBeCalled();
   });
@@ -259,23 +249,21 @@ describe("The `RecipeDetails` component", () => {
     let recipeData = multiprefRecipeSetUp();
     recipeData = unapproveRecipe(recipeData);
     setup(recipeData);
-    const { getByText, findByText, findByTestId } = await render(<App />);
-    fireEvent.click(getByText("Recipes"));
 
-    fireEvent.click(await findByText(recipeData.latest_revision.name));
+    const doc = renderWithContext(<RecipeDetailsPage />);
 
-    await waitFor(() => expect(NormandyAPI.prototype.fetchRecipe).toReturn());
-    expect(getByText("Approval Request")).toBeInTheDocument();
+    await doc.findByText(recipeData.latest_revision.name);
+    expect(doc.getByText("Approval Request")).toBeInTheDocument();
 
-    const expandApproval = await findByTestId("collapse-approval-request");
+    const expandApproval = await doc.findByTestId("collapse-approval-request");
     fireEvent.click(expandApproval);
-    expect(getByText("Comment:")).toBeInTheDocument();
+    expect(doc.getByText("Comment:")).toBeInTheDocument();
 
     const comment = document.querySelector("input");
 
     fireEvent.change(comment, { target: { value: "Rejected" } });
 
-    fireEvent.click(getByText("Reject"));
+    fireEvent.click(doc.getByText("Reject"));
 
     expect(NormandyAPI.prototype.rejectApprovalRequest).toBeCalled();
   });
@@ -288,22 +276,17 @@ describe("The `RecipeDetails` component", () => {
     let recipeData = multiprefRecipeSetUp();
     recipeData = unapproveRecipe(recipeData);
     setup(recipeData);
-    const { getByText, findByTestId } = await render(<App />);
-    fireEvent.click(getByText("Recipes"));
-
-    await waitFor(() =>
-      expect(getByText(recipeData.latest_revision.name)).toBeInTheDocument(),
-    );
-    fireEvent.click(getByText(recipeData.latest_revision.name));
+    const doc = renderWithContext(<RecipeDetailsPage />);
 
     await waitFor(() => expect(NormandyAPI.prototype.fetchRecipe).toReturn());
-    expect(getByText("Approval Request")).toBeInTheDocument();
+    await doc.findByText(recipeData.latest_revision.name);
+    expect(doc.getByText("Approval Request")).toBeInTheDocument();
 
-    const expandApproval = await findByTestId("collapse-approval-request");
+    const expandApproval = await doc.findByTestId("collapse-approval-request");
     fireEvent.click(expandApproval);
-    expect(getByText("Comment:")).toBeInTheDocument();
+    expect(doc.getByText("Comment:")).toBeInTheDocument();
 
-    fireEvent.click(getByText("Cancel Request"));
+    fireEvent.click(doc.getByText("Cancel Request"));
 
     expect(NormandyAPI.prototype.closeApprovalRequest).toBeCalled();
   });
@@ -327,12 +310,7 @@ describe("The `RecipeDetails` component", () => {
     });
     setup(recipe);
 
-    const doc = await render(<App />);
-
-    // Navigate to the detail page
-    fireEvent.click(doc.getByText("Recipes"));
-    fireEvent.click(await doc.findByText(recipe.latest_revision.name));
-
+    const doc = renderWithContext(<RecipeDetailsPage />);
     // wait for load to complete
     await doc.findByText(recipe.latest_revision.name);
 
@@ -378,12 +356,7 @@ describe("The `RecipeDetails` component", () => {
     });
     setup(recipe);
 
-    const doc = await render(<App />);
-
-    // Navigate to the detail page
-    fireEvent.click(doc.getByText("Recipes"));
-    fireEvent.click(await doc.findByText(recipe.latest_revision.name));
-
+    const doc = renderWithContext(<RecipeDetailsPage />);
     // wait for load to complete
     await doc.findByText(recipe.latest_revision.name);
 
@@ -399,30 +372,19 @@ describe("The `RecipeDetails` component", () => {
     });
     setup(recipe);
 
-    const doc = await render(<App />);
-
-    // Navigate to the detail page
-    fireEvent.click(doc.getByText("Recipes"));
-    fireEvent.click(await doc.findByText(recipe.latest_revision.name));
-
-    // wait for load to complete
+    const doc = renderWithContext(<RecipeDetailsPage />);
     await doc.findByText(recipe.latest_revision.name);
 
     expect(doc.queryAllByText("Pause")).toHaveLength(0);
   });
 
-  it("shouldn't show suit. tag when web mode", async () => {
+  it("shouldn't show suitability tag when web mode", async () => {
     global.__ENV__ = "web";
     const recipe = recipeFactory.build();
+    setup(recipe);
 
-    const doc = await render(
-      <RecipeDetailsProvider data={recipe.latest_revision}>
-        <RecipeDetails />
-      </RecipeDetailsProvider>,
-    );
-    await waitFor(() =>
-      expect(doc.getByText(recipe.latest_revision.name)).toBeInTheDocument(),
-    );
+    const doc = renderWithContext(<RecipeDetailsPage />);
+    await doc.findByText(recipe.latest_revision.name);
     expect(doc.queryByText("Match")).toBeNull();
   });
 

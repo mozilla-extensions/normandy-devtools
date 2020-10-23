@@ -76,7 +76,7 @@ export const revisionFactory = Factory.fromFields<
   filter_object: () => filterObjectFactory.buildCount(3),
   id: autoIncrementField(),
   is_approved: true,
-  name: () => faker.random.word(),
+  name: () => faker.lorem.words(4),
   updated: () => faker.date.past().toUTCString(),
   recipe: {
     dependencies: ["id"],
