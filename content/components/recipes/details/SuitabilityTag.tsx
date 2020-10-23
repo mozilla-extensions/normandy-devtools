@@ -1,7 +1,7 @@
 import React from "react";
 import { Icon, Popover, Tag, Whisper } from "rsuite";
 
-import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
+import { useRecipeDetailsState } from "devtools/contexts/recipeDetails";
 import { Revision } from "devtools/types/recipes";
 import { convertToV1Recipe } from "devtools/utils/recipes";
 
@@ -97,7 +97,8 @@ const SuitabilityTag: React.FC<SuitabilityTagProps> = ({
   const [loading, setLoading] = React.useState(true);
 
   if (!revision) {
-    revision = useRecipeDetailsData();
+    const recipeDetailsState = useRecipeDetailsState();
+    revision = recipeDetailsState.statusData;
   }
 
   React.useEffect(() => {

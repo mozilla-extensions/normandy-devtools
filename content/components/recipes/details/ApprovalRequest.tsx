@@ -1,4 +1,5 @@
 import React from "react";
+import { useParams } from "react-router-dom";
 import { Alert, Button, Divider, Input, Tag } from "rsuite";
 
 import CollapsibleSection from "devtools/components/recipes/details/CollapsibleSection";
@@ -9,7 +10,8 @@ import {
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
 
-export default function ApprovalRequest() {
+const ApprovalRequest: React.FC = () => {
+  const { recipeId } = useParams<{ recipeId: string }>();
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
@@ -30,7 +32,7 @@ export default function ApprovalRequest() {
     statusTag = <Tag color="red">Rejected</Tag>;
   }
 
-  const handleClickApprove = async () => {
+  const handleClickApprove = async (): Promise<void> => {
     setIsApproving(true);
     try {
       const updatedApprovalRequest = await normandyApi.approveApprovalRequest(
@@ -44,6 +46,14 @@ export default function ApprovalRequest() {
         },
         type: ACTION_UPDATE_DATA,
       });
+      normandyApi.fetchRecipe(recipeId).then((recipeData) => {
+        dispatch({
+          data: recipeData.latest_revision,
+          statusData:
+            recipeData.approved_revision || recipeData.latest_revision,
+          type: ACTION_UPDATE_DATA,
+        });
+      });
     } catch (err) {
       console.warn(err.message, err.data);
       Alert.error(`An Error Occurred: ${err.message}`, 5000);
@@ -52,7 +62,7 @@ export default function ApprovalRequest() {
     }
   };
 
-  const handleClickReject = async () => {
+  const handleClickReject = async (): Promise<void> => {
     setIsRejecting(true);
     try {
       const updatedApprovalRequest = await normandyApi.rejectApprovalRequest(
@@ -74,7 +84,7 @@ export default function ApprovalRequest() {
     }
   };
 
-  const handleClickCancel = async () => {
+  const handleClickCancel = async (): Promise<void> => {
     await normandyApi.closeApprovalRequest(approvalRequest.id);
     dispatch({
       data: {
@@ -161,4 +171,6 @@ export default function ApprovalRequest() {
       <Divider />
     </>
   );
-}
+};
+
+export default ApprovalRequest;
