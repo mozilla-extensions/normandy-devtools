@@ -2,6 +2,7 @@ import React from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Alert, Button, Icon, IconButton, Popover, Whisper } from "rsuite";
 
+import TelemetryLink from "devtools/components/recipes/details/TelemetryLink";
 import {
   useSelectedEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
@@ -147,6 +148,11 @@ export default function DetailsHeader() {
     );
   }
 
+  let telemetryLink = null;
+  if (environment.experimenterUrl && data.experimenter_slug) {
+    telemetryLink = <TelemetryLink slug={data.experimenter_slug} />;
+  }
+
   let requestApprovalButton = null;
   let statusToggleButton = null;
   if (!revisionId) {
@@ -234,6 +240,7 @@ export default function DetailsHeader() {
       </div>
       <div className="d-flex align-items-center text-right">
         {viewExperimentButton}
+        {telemetryLink}
         {pauseButton}
         {requestApprovalButton}
         {statusToggleButton}
