@@ -151,20 +151,7 @@ export default function DetailsHeader() {
 
   let telemetryLink = null;
   if (environment.experimenterUrl && data.experimenter_slug) {
-    const {
-      normandySlug,
-      startDate,
-      endDate,
-      status,
-    } = useExperimenterDetailsData();
-    telemetryLink = (
-      <TelemetryLink
-        endDate={endDate}
-        normandySlug={normandySlug}
-        startDate={startDate}
-        status={status}
-      />
-    );
+    telemetryLink = <TelemetryLink {...useExperimenterDetailsData()} />;
   }
 
   let requestApprovalButton = null;
