@@ -150,7 +150,7 @@ export default function DetailsHeader() {
 
   let telemetryLink = null;
   if (environment.experimenterUrl && data.experimenter_slug) {
-    telemetryLink = <TelemetryLink slug={data.experimenter_slug} />;
+    telemetryLink = <TelemetryLink />;
   }
 
   let requestApprovalButton = null;

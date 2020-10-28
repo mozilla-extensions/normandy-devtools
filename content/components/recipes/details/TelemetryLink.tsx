@@ -6,27 +6,26 @@ import { useExperimenterDetailsData } from "devtools/contexts/experimenterDetail
 const MONITORING_URL = "https://grafana.telemetry.mozilla.org";
 const DASHBOARD_ID = "XspgvdxZz";
 
-interface TelemetryLinkProps {
-  slug: string;
-}
-
-const TelemetryLink: React.FC<TelemetryLinkProps> = ({ slug }) => {
-  const { startDate, endDate } = useExperimenterDetailsData();
+const TelemetryLink: React.FC = () => {
+  const {
+    normandySlug,
+    startDate,
+    endDate,
+    status,
+  } = useExperimenterDetailsData();
 
   let from = "";
   let to = "";
 
-  if (startDate) {
-    // todo: if status in live, complete
+  if (startDate && ["live", "complete"].includes(status)) {
     from = `${startDate.getTime() - 24 * 3600 * 1000}`;
   }
 
-  if (endDate) {
-    // todo: if status is complete
+  if (endDate && status === "complete") {
     to = `${startDate.getTime() + 2 * 24 * 3600 * 1000}`;
   }
 
-  const url = `${MONITORING_URL}/d/${DASHBOARD_ID}/experiment-enrollment?orgId=1&var-experiment_id=${slug}&from=${from}&to=${to}`;
+  const url = `${MONITORING_URL}/d/${DASHBOARD_ID}/experiment-enrollment?orgId=1&var-experiment_id=${normandySlug}&from=${from}&to=${to}`;
   return (
     <IconButton
       appearance="subtle"

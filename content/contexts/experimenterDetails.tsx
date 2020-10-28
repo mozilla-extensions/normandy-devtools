@@ -8,6 +8,8 @@ interface ExperimenterData {
   startDate?: Date;
   endDate?: Date;
   variants: Record<string, string>;
+  status: string;
+  normandySlug: string;
 }
 
 interface ExperimenterState {

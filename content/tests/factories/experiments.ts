@@ -5,10 +5,11 @@ import { ExperimenterResponse } from "devtools/types/experimenterApi";
 
 export const experimenterResponseFactory = Factory.fromFields<
   ExperimenterResponse,
-  { generateVariantsCount: number }
+  { generateVariantsCount: number; status: string }
 >({
   name: faker.lorem.words(4),
   normandy_id: faker.random.number(),
+  normandy_slug: faker.lorem.word(),
   public_description: faker.lorem.sentence(),
   proposed_start_date: faker.date.past().getTime(),
   proposed_enrollment: faker.random.number(),
@@ -21,4 +22,5 @@ export const experimenterResponseFactory = Factory.fromFields<
       slug: faker.lorem.word(),
       description: faker.lorem.sentence(),
     })),
+  status: status || "Complete",
 });
