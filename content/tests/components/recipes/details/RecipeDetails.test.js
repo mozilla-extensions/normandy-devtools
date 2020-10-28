@@ -5,6 +5,7 @@ import "@testing-library/jest-dom/extend-expect";
 import RecipeDetailsPage from "devtools/components/pages/RecipeDetailsPage";
 import RecipeDetails from "devtools/components/recipes/details/RecipeDetails";
 import { RecipeDetailsProvider } from "devtools/contexts/recipeDetails";
+import { actionFactory } from "devtools/tests/factories/api";
 import { experimenterResponseFactory } from "devtools/tests/factories/experiments";
 import {
   versionFoFactory,
@@ -30,7 +31,7 @@ describe("The `RecipeDetails` component", () => {
     await cleanup();
   });
 
-  const setup = (recipe) => {
+  const setup = (recipe, experiment = experimenterResponseFactory.build()) => {
     const pageResponse = { results: [recipe] };
     jest
       .spyOn(NormandyAPI.prototype, "fetchRecipePage")
@@ -39,6 +40,14 @@ describe("The `RecipeDetails` component", () => {
     jest
       .spyOn(NormandyAPI.prototype, "fetchRecipe")
       .mockImplementation(() => Promise.resolve(recipe));
+
+    jest
+      .spyOn(NormandyAPI.prototype, "fetchAllActions")
+      .mockImplementation(() => Promise.resolve(actionFactory.buildCount(4)));
+
+    jest
+      .spyOn(ExperimenterAPI.prototype, "fetchExperiment")
+      .mockImplementation(() => Promise.resolve(experiment));
   };
 
   /** @return {import("devtools/types/recipes").RecipeV3<import("devtools/types/arguments").BranchedAddonStudyArguments>} */
@@ -91,14 +100,6 @@ describe("The `RecipeDetails` component", () => {
     return recipe;
   };
 
-  const experimenterSetup = (
-    experiment = experimenterResponseFactory.build(),
-  ) => {
-    jest
-      .spyOn(ExperimenterAPI.prototype, "fetchExperiment")
-      .mockImplementation(() => Promise.resolve(experiment));
-  };
-
   const unapproveRecipe = (recipe) => {
     const approvalRequest = approvalRequestFactory.build({}, { empty: true });
     recipe.latest_revision = {
@@ -114,7 +115,6 @@ describe("The `RecipeDetails` component", () => {
   };
 
   it("displays details of an branchedAddon recipe", async () => {
-    experimenterSetup();
     const recipeData = branchedAddonSetup();
     setup(recipeData);
     const doc = renderWithContext(<RecipeDetailsPage />);
@@ -158,7 +158,6 @@ describe("The `RecipeDetails` component", () => {
 
   it("displays details from experimenter", async () => {
     const recipeData = branchedAddonSetup();
-    setup(recipeData);
     const experiment = experimenterResponseFactory.build(
       {
         proposed_start_date: new Date(2020, 3, 3, 1, 0).getTime(),
@@ -166,7 +165,7 @@ describe("The `RecipeDetails` component", () => {
       },
       { generateVariantsCount: 2 },
     );
-    experimenterSetup(experiment);
+    setup(recipeData, experiment);
 
     const doc = renderWithContext(<RecipeDetailsPage />);
     expect(await doc.findByText("Experimenter Details")).toBeInTheDocument();
@@ -191,8 +190,6 @@ describe("The `RecipeDetails` component", () => {
 
   it("displays branch descriptions from experimenter", async () => {
     const recipeData = multiprefRecipeSetUp();
-    setup(recipeData);
-
     const experiment = experimenterResponseFactory.build({
       variants: [
         {
@@ -202,7 +199,7 @@ describe("The `RecipeDetails` component", () => {
         },
       ],
     });
-    experimenterSetup(experiment);
+    setup(recipeData, experiment);
 
     const doc = renderWithContext(<RecipeDetailsPage />);
     await waitFor(() =>

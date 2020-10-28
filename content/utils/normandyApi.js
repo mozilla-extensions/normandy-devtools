@@ -41,13 +41,13 @@ export default class NormandyAPI extends API {
     });
   }
 
-  fetchRecipePage(page, searchParams = {}) {
+  /**
+   * @param {import("devtools/types/normandyApi").RecipeListQuery} searchParams
+   */
+  fetchRecipePage(searchParams = {}) {
     return this.request({
       url: "recipe/",
-      data: {
-        ...searchParams,
-        page,
-      },
+      data: searchParams,
     });
   }
 
@@ -107,6 +107,9 @@ export default class NormandyAPI extends API {
     });
   }
 
+  /**
+   * @return {Promise<Array<import("devtools/types/recipes").Action>>}
+   */
   async fetchAllActions() {
     let response = await this.request({
       url: "action/",

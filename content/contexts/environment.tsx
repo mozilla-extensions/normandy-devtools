@@ -21,7 +21,7 @@ export interface Environment {
 interface EnvironmentState {
   environments: Record<string, Environment>;
   auth: Record<string, AuthState>;
-  connectionStatus: Record<string, unknown>;
+  connectionStatus: Record<string, boolean>;
   selectedKey: string;
   isLoggingIn: boolean;
 }
@@ -37,7 +37,7 @@ interface AuthResult {
 
 interface SingleEnvironmentState {
   auth: AuthState;
-  connectionStatus: unknown;
+  connectionStatus: boolean;
   environment: Environment;
   isLoggingIn: boolean;
   selectedKey: string;
@@ -123,7 +123,7 @@ interface SetIsLoggingInAction {
 interface SetConnectionStatusAction {
   type: "SET_CONNECTION_STATUS";
   key: string;
-  status: unknown;
+  status: boolean;
 }
 
 type EnvironmentAction =
