@@ -60,7 +60,7 @@
     "copy-webpack-plugin": "6.2.1",
     "css-loader": "5.0.0",
     "dotenv-webpack": "4.0.0",
-    "eslint-config-prettier": "6.14.0",
+    "eslint-config-prettier": "6.15.0",
     "eslint-plugin-fetch-options": "0.0.5",
     "eslint-plugin-html": "6.1.0",
     "eslint-plugin-import": "2.22.1",
