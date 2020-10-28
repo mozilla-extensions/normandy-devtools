@@ -5,9 +5,9 @@ const MONITORING_URL = "https://grafana.telemetry.mozilla.org";
 const DASHBOARD_ID = "XspgvdxZz";
 
 interface TelemetryLinkProps {
-  endDate: Date;
+  endDate?: Date;
   normandySlug: string;
-  startDate: Date;
+  startDate?: Date;
   status: string;
 }
 
