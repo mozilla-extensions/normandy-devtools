@@ -1,19 +1,22 @@
 import React from "react";
 import { Icon, IconButton } from "rsuite";
 
-import { useExperimenterDetailsData } from "devtools/contexts/experimenterDetails";
-
 const MONITORING_URL = "https://grafana.telemetry.mozilla.org";
 const DASHBOARD_ID = "XspgvdxZz";
 
-const TelemetryLink: React.FC = () => {
-  const {
-    normandySlug,
-    startDate,
-    endDate,
-    status,
-  } = useExperimenterDetailsData();
+interface TelemetryLinkProps {
+  endDate: Date;
+  normandySlug: string;
+  startDate: Date;
+  status: string;
+}
 
+const TelemetryLink: React.FC<TelemetryLinkProps> = ({
+  startDate,
+  endDate,
+  normandySlug,
+  status,
+}) => {
   let from = "";
   let to = "";
 

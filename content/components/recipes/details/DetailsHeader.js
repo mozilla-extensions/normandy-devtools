@@ -7,6 +7,7 @@ import {
   useSelectedEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
+import { useExperimenterDetailsData } from "devtools/contexts/experimenterDetails";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
@@ -150,7 +151,20 @@ export default function DetailsHeader() {
 
   let telemetryLink = null;
   if (environment.experimenterUrl && data.experimenter_slug) {
-    telemetryLink = <TelemetryLink />;
+    const {
+      normandySlug,
+      startDate,
+      endDate,
+      status,
+    } = useExperimenterDetailsData();
+    telemetryLink = (
+      <TelemetryLink
+        endDate={endDate}
+        normandySlug={normandySlug}
+        startDate={startDate}
+        status={status}
+      />
+    );
   }
 
   let requestApprovalButton = null;

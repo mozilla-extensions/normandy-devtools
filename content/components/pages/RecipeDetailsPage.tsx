@@ -49,7 +49,7 @@ const RecipeDetailsPage: React.FC = () => {
         proposedDuration: data.proposed_duration,
         proposedEndDate,
         startDate: data.start_date && new Date(data.start_date),
-        status: data.status.toLowerCase(),
+        status: data.status && data.status.toLowerCase(),
         endDate: data.end_date && new Date(data.end_date),
         variants: data.variants.reduce((acc, v) => {
           acc[v.slug] = v.description;
