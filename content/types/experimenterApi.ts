@@ -6,6 +6,7 @@ interface Variant {
 export interface ExperimenterResponse {
   name: string;
   normandy_id: number;
+  normandy_slug: string;
   proposed_start_date: number;
   proposed_duration: number;
   proposed_enrollment: number;
@@ -13,4 +14,5 @@ export interface ExperimenterResponse {
   start_date?: number;
   end_date?: number;
   variants: Variant[];
+  status: string;
 }
