@@ -22,7 +22,7 @@ const TelemetryLink: React.FC = () => {
   }
 
   if (endDate && status === "complete") {
-    to = `${startDate.getTime() + 2 * 24 * 3600 * 1000}`;
+    to = `${endDate.getTime() + 2 * 24 * 3600 * 1000}`;
   }
 
   const url = `${MONITORING_URL}/d/${DASHBOARD_ID}/experiment-enrollment?orgId=1&var-experiment_id=${normandySlug}&from=${from}&to=${to}`;
