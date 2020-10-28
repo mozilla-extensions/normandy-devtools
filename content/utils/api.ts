@@ -1,7 +1,21 @@
+import { Environment } from "devtools/contexts/environment";
+import { has } from "devtools/utils/helpers";
 import { SECOND } from "devtools/utils/timeConstants";
 
+export type ApiRequestOptions = RequestInit & {
+  method?: string;
+  url?: string | URL;
+  version?: number;
+  extraHeaders?: Record<string, string>;
+  timeoutAfter?: number;
+  body?: string | FormData;
+  data?: Record<string, unknown>;
+};
+
 export default class API {
-  constructor(environment) {
+  environment: Environment;
+
+  constructor(environment: Environment) {
     this.environment = environment;
   }
 
@@ -9,29 +23,23 @@ export default class API {
    * @param {Object} args
    * @param {number} args.version
    * @param {string} args.method
-   * @returns {String}
    * */
-  // eslint-disable-next-line no-unused-vars
-  getBaseUrl({ version, method }) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getBaseUrl(options: { version: number; method: string }): string {
     throw new Error("getBaseURL() needs to be implemented");
   }
 
   /**
-   * @param {Object} args
-   * @param {string} args.url
-   * @param {number} [args.version]
-   * @param {Object} [args.extraHeaders]
-   * @param {number} [args.timeoutAfter]
-   * @param {string|FormData} [args.body]
-   * @param {Object} [args.data] Data to convert JSON serialize into the querystring (for GET and HEAD requests) or the request body (for other methods).
+   * @param [args.data] Data to convert JSON serialize into the querystring
+   *    (for GET and HEAD requests) or the request body (for other methods).
    */
-  async request({
+  async request<T = unknown>({
     url,
     version,
     extraHeaders = {},
     timeoutAfter = 10 * SECOND,
     ...options
-  }) {
+  }: ApiRequestOptions): Promise<T> {
     const headers = new Headers();
     headers.append("Accept", "application/json");
     if (!(options.body && options.body instanceof FormData)) {
@@ -43,14 +51,14 @@ export default class API {
     }
 
     /** @type {any} */
-    const settings = {
+    const settings: ApiRequestOptions = {
       headers,
       method: "GET",
       ...options,
     };
 
     const apiUrl = new URL(
-      url,
+      url.toString(),
       this.getBaseUrl({ version, method: settings.method }),
     );
 
@@ -61,9 +69,9 @@ export default class API {
         );
       }
 
-      if (["GET", "HEAD"].includes(settings.method.toUpperCase())) {
+      if (settings.method === "GET" || settings.method === "HEAD") {
         Object.entries(settings.data).forEach(([key, value]) => {
-          apiUrl.searchParams.append(key, value);
+          apiUrl.searchParams.append(key, value as string);
         });
       } else {
         settings.body = JSON.stringify(settings.data);
@@ -110,7 +118,7 @@ export default class API {
 
       try {
         data = await response.json();
-        message = data.detail || response.statusText;
+        message = has("detail", data) ? data.detail : response.statusText;
       } catch (error) {
         message = error.message;
         err = error;
@@ -133,7 +141,9 @@ export default class API {
 }
 
 export class RequestError extends Error {
-  constructor(message, data = {}, originalError) {
+  data: unknown;
+
+  constructor(message: string, data = {}, originalError?: Error) {
     super(message);
     this.name = "RequestError";
     this.data = data;

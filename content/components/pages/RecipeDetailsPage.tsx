@@ -2,6 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 
 import PageWrapper from "devtools/components/common/PageWrapper";
+import NotFoundPage from "devtools/components/pages/NotFoundPage";
 import DetailsHeader from "devtools/components/recipes/details/DetailsHeader";
 import RecipeDetails from "devtools/components/recipes/details/RecipeDetails";
 import {
@@ -13,7 +14,6 @@ import { RecipeDetailsProvider } from "devtools/contexts/recipeDetails";
 
 // export default
 const RecipeDetailsPage: React.FC = () => {
-  const { recipeId } = useParams<{ recipeId: string }>();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
   const experimenterApi = useSelectedExperimenterEnvironmentAPI();
   const [recipeData, setRecipeData] = React.useState({
@@ -22,18 +22,44 @@ const RecipeDetailsPage: React.FC = () => {
   const [recipeStatusData, setRecipeStatusData] = React.useState(null);
   const [experimenterData, setExperimenterData] = React.useState(null);
 
+  const { recipeId } = useParams<{ recipeId: string }>();
+  const [errorPage, setErrorPage] = React.useState(null);
+
   React.useEffect(() => {
-    normandyApi.fetchRecipe(recipeId).then((recipeData) => {
+    let mounted = true;
+    (async () => {
+      const recipeIdParsed = parseInt(recipeId);
+      if (isNaN(recipeIdParsed)) {
+        setErrorPage(
+          <NotFoundPage>
+            Recipe ID <code>{JSON.stringify(recipeId)}</code> is not valid
+          </NotFoundPage>,
+        );
+        setRecipeData(null);
+        setRecipeStatusData(null);
+        return;
+      }
+
+      const recipeData = await normandyApi.fetchRecipe(recipeIdParsed);
+      if (!mounted) {
+        return;
+      }
+
       setRecipeData(recipeData.latest_revision);
       setRecipeStatusData(recipeData.approved_revision);
-    });
+    })();
+
+    return () => {
+      mounted = false;
+    };
   }, [recipeId, normandyApi.getBaseUrl({ method: "GET" })]);
 
   React.useEffect(() => {
-    const { experimenter_slug } = recipeData;
-    if (!experimenter_slug) {
+    if (!recipeData?.experimenter_slug) {
       return;
     }
+
+    const { experimenter_slug } = recipeData;
 
     experimenterApi.fetchExperiment(experimenter_slug).then((data) => {
       const proposedStartDate = new Date(data.proposed_start_date);
@@ -58,7 +84,11 @@ const RecipeDetailsPage: React.FC = () => {
         }, {}),
       });
     });
-  }, [recipeData]);
+  }, [recipeData?.experimenter_slug]);
+
+  if (errorPage) {
+    return errorPage;
+  }
 
   return (
     <RecipeDetailsProvider data={recipeData} statusData={recipeStatusData}>

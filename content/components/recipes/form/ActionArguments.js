@@ -90,5 +90,5 @@ export default function ActionArguments() {
     return <FallbackEditor />;
   }
 
-  return null;
+  return <code>{JSON.stringify(data)}</code>;
 }

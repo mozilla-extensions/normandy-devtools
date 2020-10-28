@@ -2,6 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 
 import PageWrapper from "devtools/components/common/PageWrapper";
+import NotFoundPage from "devtools/components/pages/NotFoundPage";
 import { INITIAL_ACTION_ARGUMENTS } from "devtools/components/recipes/form/ActionArguments";
 import RecipeForm from "devtools/components/recipes/form/RecipeForm";
 import RecipeFormHeader from "devtools/components/recipes/form/RecipeFormHeader";
@@ -18,12 +19,24 @@ import {
 // export default
 const RecipeFormPage: React.FC = () => {
   const { selectedKey: environmentKey } = useEnvironmentState();
-  const { recipeId, experimenterSlug } = useParams<{
+  const [data, setData] = React.useState({});
+  const [importInstructions, setImportInstructions] = React.useState("");
+  const { recipeId: recipeIdStr, experimenterSlug } = useParams<{
     recipeId: string;
     experimenterSlug: string;
   }>();
-  const [data, setData] = React.useState({});
-  const [importInstructions, setImportInstructions] = React.useState("");
+
+  let recipeId;
+  if (recipeIdStr) {
+    recipeId = parseInt(recipeIdStr);
+    if (isNaN(recipeId)) {
+      return (
+        <NotFoundPage>
+          Invalid recipe ID <code>{JSON.stringify(recipeIdStr)}</code>
+        </NotFoundPage>
+      );
+    }
+  }
 
   const normandyApi = useSelectedNormandyEnvironmentAPI();
   const experimenterApi = useSelectedExperimenterEnvironmentAPI();

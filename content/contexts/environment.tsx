@@ -26,13 +26,14 @@ interface EnvironmentState {
   isLoggingIn: boolean;
 }
 
-interface AuthState {
+export interface AuthState {
   expiresAt?: Date | null;
   result?: AuthResult | null;
 }
 
 interface AuthResult {
   idTokenPayload: { email: string; picture: string };
+  accessToken: string;
 }
 
 interface SingleEnvironmentState {

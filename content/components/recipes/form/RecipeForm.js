@@ -26,7 +26,9 @@ export default function RecipeForm() {
 
       <ActionPicker />
 
-      <ActionArguments />
+      <div data-testid="recipe-form-argument-editor">
+        <ActionArguments />
+      </div>
     </Form>
   );
 }
