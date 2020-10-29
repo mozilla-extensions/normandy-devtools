@@ -1,9 +1,39 @@
 # Changelog
 
-## Next
+## v2.2.0
 
-- Add a one-click pause and request review button to recipe detail pages
-- Switch custom protocol to `web+normandy://` (`ext+normandy://` will redirect).
+### New Page: Operations Overview
+
+This released includes a new page that tries to centralize the basics needed
+for Normandy Operations, including
+
+- Pending approval requests
+- Recipes scheduled to end
+- Recipes scheduled to be paused
+
+### Recipe Listing
+
+- Changed to rich cards for recipes instead of expandable rows
+- Added a tag highlighting recipes with pending reviews
+- Added recipe search and filtering
+
+### Recipe Editor
+
+- Fixed overlapping fields on recipe edit page
+
+### Recipe Details
+
+- Added a one-click pause and request review button to recipe detail pages
+- Added testing userIds for individual branches of multi-pref-experiment recipes
+- Experimenter details are now shown alongside other data
+- Fixed an issue where the recipe status would be wrong after editing a recipe
+- Added a link to recipe telemetry in Grafana
+
+### General
+
+- Fixed a problem where the in-page address bar wasn't editable
+- Switched the NDT custom protocol to `web+normandy://` (`ext+normandy://` will redirect). This will aid future integration with NDT-web.
+- Turned off ligatures in Codemirror editors.
 
 ## v2.1.1
 
