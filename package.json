@@ -105,7 +105,7 @@
     "@types/lodash": "^4.14.161",
     "auth0-js": "9.14.0",
     "autobind-decorator": "2.4.0",
-    "codemirror": "5.58.1",
+    "codemirror": "5.58.2",
     "firacode": "5.2.0",
     "highlight.js": "10.3.1",
     "js-yaml": "3.14.0",
