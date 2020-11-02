@@ -40,7 +40,7 @@ const SamplingOptions: React.FC = () => {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
 
-  const filterObject = getFilterObjectFromData();
+  const filterObject = useFilterObjectFromData();
   const typeValue = filterObject ? filterObject.type : null;
 
   const handleTypeChange = (value): void => {
@@ -129,7 +129,7 @@ interface Changeable {
 }
 
 const BucketSampleOptions: React.FC<Changeable> = ({ onChange }) => {
-  const filterObject = getFilterObjectFromData();
+  const filterObject = useFilterObjectFromData();
   assert(filterObject.type === BUCKET_SAMPLE);
   const input = filterObject.input || [];
 
@@ -152,7 +152,7 @@ const BucketSampleOptions: React.FC<Changeable> = ({ onChange }) => {
 };
 
 const StableSampleOptions: React.FC<Changeable> = ({ onChange }) => {
-  const filterObject = getFilterObjectFromData();
+  const filterObject = useFilterObjectFromData();
   assert(filterObject.type === STABLE_SAMPLE);
   const input = filterObject.input || [];
 
@@ -174,7 +174,7 @@ const StableSampleOptions: React.FC<Changeable> = ({ onChange }) => {
 };
 
 const NamespaceSampleOptions: React.FC<Changeable> = ({ onChange }) => {
-  const filterObject = getFilterObjectFromData();
+  const filterObject = useFilterObjectFromData();
   assert(filterObject.type === NAMESPACE_SAMPLE);
 
   return (
@@ -207,7 +207,7 @@ const SamplingNumberInput: React.FC<SamplingNumberInputProps> = ({
   onChange,
   isPercentage,
 }) => {
-  const filterObject = getFilterObjectFromData();
+  const filterObject = useFilterObjectFromData();
 
   let value = filterObject[name];
 
@@ -253,7 +253,7 @@ const SamplingNumberInput: React.FC<SamplingNumberInputProps> = ({
 };
 
 const SamplingInputInput: React.FC<Changeable> = ({ onChange }) => {
-  const filterObject = getFilterObjectFromData();
+  const filterObject = useFilterObjectFromData();
   assert(
     filterObject.type === STABLE_SAMPLE || filterObject.type === BUCKET_SAMPLE,
   );
@@ -298,7 +298,7 @@ const SamplingInputInput: React.FC<Changeable> = ({ onChange }) => {
 };
 
 const NamespaceInput: React.FC<Changeable> = ({ onChange }) => {
-  const filterObject = getFilterObjectFromData();
+  const filterObject = useFilterObjectFromData();
   assert(filterObject.type === NAMESPACE_SAMPLE);
 
   const value = filterObject.namespace;
@@ -328,7 +328,7 @@ type SamplingFilterObject =
   | StableSampleFilterObject
   | NamespaceSampleFilterObject;
 
-function getFilterObjectFromData(): SamplingFilterObject {
+function useFilterObjectFromData(): SamplingFilterObject {
   const data = useRecipeDetailsData();
 
   let filterObject;

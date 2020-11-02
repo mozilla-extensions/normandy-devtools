@@ -21,13 +21,6 @@ export function useBranchTestingIds(
       f.type === "namespaceSample" ||
       f.type === "stableSample",
   );
-  if (sampleFilters.length > 1) {
-    return {
-      loading: false,
-      value: null,
-      error: new Error("Found too many sample filter"),
-    };
-  }
 
   let filter = null;
   if (sampleFilters.length) {
@@ -44,6 +37,12 @@ export function useBranchTestingIds(
 
   useEffect(() => {
     (async (): Promise<void> => {
+      if (sampleFilters.length > 1) {
+        setLoading(false);
+        setBranchIds(null);
+        setError(new Error("Found too many sample filter"));
+      }
+
       if (
         !revision.filter_object.length ||
         !revision.arguments.branches?.length
@@ -77,7 +76,13 @@ export function useBranchTestingIds(
         setBranchIds(null);
       }
     })();
-  }, [revision.arguments?.branches, revision.filter_object]);
+  }, [
+    filter,
+    revision.arguments.branches,
+    revision.filter_object,
+    sampleFilters.length,
+    testingIdGenerator,
+  ]);
 
   if (error) {
     return { error, loading: false, value: null };

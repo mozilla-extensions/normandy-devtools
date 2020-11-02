@@ -150,8 +150,9 @@ export default function DetailsHeader() {
   }
 
   let telemetryLink = null;
+  const experimentData = useExperimenterDetailsData();
   if (environment.experimenterUrl && data.experimenter_slug) {
-    telemetryLink = <TelemetryLink {...useExperimenterDetailsData()} />;
+    telemetryLink = <TelemetryLink {...experimentData} />;
   }
 
   let requestApprovalButton = null;

@@ -19,7 +19,7 @@ export default function OptOutStudy() {
     normandyApi.fetchAllExtensions().then((allExtensions) => {
       setExtensions(allExtensions);
     });
-  }, [environmentKey]);
+  }, [environmentKey, normandyApi]);
 
   const options = extensions.map((extension) => ({
     label: extension.name,
@@ -62,7 +62,7 @@ export default function OptOutStudy() {
             options={options}
           />
           <ToggleField label="Prevent New Enrollment" name="isEnrollmentPaused">
-            Prevents new users from joining this study cohort. Exisiting users
+            Prevents new users from joining this study cohort. Existing users
             will remain in the study.
           </ToggleField>
         </Col>

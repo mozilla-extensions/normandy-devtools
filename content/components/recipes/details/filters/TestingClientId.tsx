@@ -62,7 +62,7 @@ function useTestingId(filter: SampleFilterObject): AsyncHook<string> {
         setError(err);
         setLoading(false);
       });
-  }, []);
+  }, [filter]);
 
   if (error) {
     return { value: null, loading: false, error };

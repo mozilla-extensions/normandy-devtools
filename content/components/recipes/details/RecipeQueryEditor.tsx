@@ -50,6 +50,9 @@ const RecipeQueryEditor: React.FC<Props> = ({
     setDraftQuery(
       query ?? getRecipeQueryFromUrlSearch(history.location.search),
     );
+    // This is used for an initial sync, and the next hook handles the ongoing
+    // updates when history.location changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
   // As the draft query changes, sync it into the URL
@@ -68,7 +71,7 @@ const RecipeQueryEditor: React.FC<Props> = ({
     const target =
       history.location.pathname + workUrl.search + history.location.hash;
     history.replace(target);
-  }, [draftQuery]);
+  }, [draftQuery, history]);
 
   // Respond to changes of query parameters in the url
   useEffect(() => {
@@ -83,7 +86,7 @@ const RecipeQueryEditor: React.FC<Props> = ({
     if (hasChanges) {
       setDraftQuery(newQuery);
     }
-  }, [history.location.search]);
+  }, [draftQuery, history.location.search]);
 
   // Handle changes to the fields
   function makeHandler(name: keyof RecipeListQuery, { debounce = true } = {}) {

@@ -79,7 +79,7 @@ function Branch({ index }) {
       });
       setPreferences(all_preferences);
     }
-  }, []);
+  }, [branch.preferences]);
 
   const handleClickAddPref = () => {
     const newPref = {

@@ -19,90 +19,87 @@ export const OverviewPage: React.FC = () => {
   const [recipes, setRecipes] = React.useState([]);
   const [liveRecipes, setLiveRecipes] = React.useState([]);
   const [pauseRecipes, setPauseRecipes] = React.useState([]);
+
   React.useEffect(() => {
-    getPendingReviews();
-    getExperimenterInfo();
-  }, [environmentKey]);
-
-  const getPendingReviews = async (): Promise<void> => {
-    const approvalRequests = await normandyApi.fetchApprovalRequests({
-      approved: "pending",
-    });
-
-    const recipeList = [];
-
-    if (approvalRequests.length) {
-      await Promise.all(
-        approvalRequests.map(async (approvalRequest) => {
-          const {
-            revision: { recipe_id },
-          } = approvalRequest;
-          const recipe = await normandyApi.fetchRecipe(recipe_id);
-          recipeList.push(recipe);
-        }),
-      );
-    }
-
-    setRecipes(recipeList);
-  };
-
-  const getExperimenterInfo = async (): Promise<void> => {
-    try {
-      const experiments = await experimenterApi.fetchExperiments({
-        status: "Live",
+    (async (): Promise<void> => {
+      const approvalRequests = await normandyApi.fetchApprovalRequests({
+        approved: "pending",
       });
 
-      await getEndingRecipes(experiments);
-      await getPausingExperiments(experiments);
-    } catch (e) {
-      console.warn(e);
-      setLiveRecipes([]);
-      setPauseRecipes([]);
-    }
-  };
+      const recipeList = [];
 
-  const getEndingRecipes = async (experiments): Promise<void> => {
-    const newLiveRecipes = (
-      await Promise.all(
-        experiments.map(async (experiment) => {
-          if (experiment.normandy_id) {
-            const recipe = await normandyApi.fetchRecipe(
-              experiment.normandy_id,
-            );
-            return [{ endDate: experiment.end_date, recipe }];
-          }
+      if (approvalRequests.length) {
+        await Promise.all(
+          approvalRequests.map(async (approvalRequest) => {
+            const {
+              revision: { recipe_id },
+            } = approvalRequest;
+            const recipe = await normandyApi.fetchRecipe(recipe_id);
+            recipeList.push(recipe);
+          }),
+        );
+      }
 
-          return [];
-        }),
-      )
-    ).flat();
+      setRecipes(recipeList);
+    })();
+    // XXX Adding normandyApi here makes the tests hang
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [environmentKey]);
 
-    setLiveRecipes(newLiveRecipes);
-  };
+  React.useEffect(() => {
+    (async (): Promise<void> => {
+      try {
+        const experiments = await experimenterApi.fetchExperiments({
+          status: "Live",
+        });
 
-  const getPausingExperiments = async (experiments): Promise<void> => {
-    const newPauseRecipes = (
-      await Promise.all(
-        experiments.map(async (experiment) => {
-          if (experiment.normandy_id && experiment.proposed_enrollment) {
-            const recipe = await normandyApi.fetchRecipe(
-              experiment.normandy_id,
-            );
-            const pauseDate = new Date(experiment.start_date);
-            pauseDate.setDate(
-              pauseDate.getDate() + experiment.proposed_enrollment,
-            );
+        const newLiveRecipes = (
+          await Promise.all(
+            experiments.map(async (experiment) => {
+              if (experiment.normandy_id) {
+                const recipe = await normandyApi.fetchRecipe(
+                  experiment.normandy_id,
+                );
+                return [{ endDate: experiment.end_date, recipe }];
+              }
 
-            return [{ pauseDate: pauseDate.getTime(), recipe }];
-          }
+              return [];
+            }),
+          )
+        ).flat();
 
-          return [];
-        }),
-      )
-    ).flat();
+        setLiveRecipes(newLiveRecipes);
 
-    setPauseRecipes(newPauseRecipes);
-  };
+        const newPauseRecipes = (
+          await Promise.all(
+            experiments.map(async (experiment) => {
+              if (experiment.normandy_id && experiment.proposed_enrollment) {
+                const recipe = await normandyApi.fetchRecipe(
+                  experiment.normandy_id,
+                );
+                const pauseDate = new Date(experiment.start_date);
+                pauseDate.setDate(
+                  pauseDate.getDate() + experiment.proposed_enrollment,
+                );
+
+                return [{ pauseDate: pauseDate.getTime(), recipe }];
+              }
+
+              return [];
+            }),
+          )
+        ).flat();
+
+        setPauseRecipes(newPauseRecipes);
+      } catch (e) {
+        console.warn(e);
+        setLiveRecipes([]);
+        setPauseRecipes([]);
+      }
+    })();
+    // XXX adding normandyApi and experimenterApi here makes the tests hang
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [environmentKey]);
 
   if (recipes.length || liveRecipes.length || pauseRecipes.length) {
     return (

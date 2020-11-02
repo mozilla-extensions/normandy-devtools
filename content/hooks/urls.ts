@@ -10,6 +10,7 @@ export function useExtensionUrl(): URL {
 }
 
 export function useHistoryRecorder(): void {
+  /* eslint-disable react-hooks/rules-of-hooks */
   if (DEVELOPMENT) {
     const extensionUrl = useExtensionUrl();
     React.useEffect(() => {
@@ -19,4 +20,5 @@ export function useHistoryRecorder(): void {
       );
     }, [extensionUrl]);
   }
+  /* eslint-enable react-hooks/rules-of-hooks */
 }

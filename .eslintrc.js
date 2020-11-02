@@ -57,6 +57,7 @@ module.exports = {
     "plugin:prettier/recommended",
     "plugin:mozilla/recommended",
     "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
   ],
   plugins: ["mozilla", "import"],
   settings: {
@@ -98,7 +99,10 @@ module.exports = {
         "@typescript-eslint/no-use-before-define": ["off"],
         "react/prop-types": ["off"],
         "@typescript-eslint/camelcase": ["off"],
-        "@typescript-eslint/explicit-function-return-type": ["warn", {allowExpressions: true}],
+        "@typescript-eslint/explicit-function-return-type": [
+          "warn",
+          { allowExpressions: true },
+        ],
       },
     },
   ],

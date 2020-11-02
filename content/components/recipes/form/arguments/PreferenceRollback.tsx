@@ -17,6 +17,8 @@ export default function PreferenceRollback(): ReactElement {
       .then((allRollouts) => {
         setRollouts(allRollouts);
       });
+    // XXX adding normandyApi here makes the tests never finish
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [environmentKey]);
 
   const rolloutData: Array<{

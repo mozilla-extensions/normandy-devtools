@@ -62,7 +62,7 @@ function Branches() {
     normandyApi.fetchAllExtensions().then((allExtensions) => {
       setExtensions(allExtensions);
     });
-  }, [environmentKey]);
+  }, [environmentKey, normandyApi]);
 
   const extensionOptions = extensions.map((extension) => ({
     label: extension.name,

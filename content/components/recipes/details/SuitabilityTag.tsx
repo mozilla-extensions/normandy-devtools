@@ -95,9 +95,9 @@ const SuitabilityTag: React.FC<SuitabilityTagProps> = ({
 }) => {
   const [suitabilities, setSuitabilities] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
+  const recipeDetailsState = useRecipeDetailsState();
 
   if (!revision) {
-    const recipeDetailsState = useRecipeDetailsState();
     revision = recipeDetailsState.statusData;
   }
 

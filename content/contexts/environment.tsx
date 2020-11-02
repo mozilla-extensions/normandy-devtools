@@ -236,17 +236,20 @@ const EnvironmentSelector: React.FC = ({ children }) => {
   const environments = useEnvironments();
   const dispatch = useEnvironmentDispatch();
 
-  const allKeys = Object.keys(environments);
-  if (!allKeys.includes(envKey)) {
-    return <Redirect to={`/${DEFAULT_ENV}`} />;
-  }
+  const recognizedEnv = Object.keys(environments).includes(envKey);
 
   React.useEffect(() => {
-    dispatch({
-      type: "SELECT_ENVIRONMENT",
-      key: envKey,
-    });
-  }, [envKey]);
+    if (recognizedEnv) {
+      dispatch({
+        type: "SELECT_ENVIRONMENT",
+        key: envKey,
+      });
+    }
+  }, [envKey, dispatch, recognizedEnv]);
+
+  if (!recognizedEnv) {
+    return <Redirect to={`/${DEFAULT_ENV}`} />;
+  }
 
   return <>{children}</>;
 };
@@ -344,31 +347,33 @@ export const EnvironmentProvider: React.FC = ({ children }) => {
     };
   }, []);
 
-  const checkExpiredAuth = (): void => {
-    console.info(`Checking for expired Auth0 tokens...`);
-    Object.entries(state.environments).forEach(async ([key, environment]) => {
-      const { expiresAt } = state.auth[key];
-      if (expiresAt) {
-        if (Number(expiresAt) - new Date().getTime() <= REFRESH_THRESHOLD_MS) {
-          try {
-            await refreshToken(dispatch, key, environment);
-          } catch (err) {
-            console.warn(`Unable to refresh Auth0 access token for "${key}"`);
-            console.warn(err);
-            logout(dispatch, key);
-          }
-        }
-      } else {
-        logout(dispatch, key);
-      }
-    });
-  };
-
-  let refreshInterval;
   React.useEffect(() => {
+    const checkExpiredAuth = (): void => {
+      console.info(`Checking for expired Auth0 tokens...`);
+      Object.entries(state.environments).forEach(async ([key, environment]) => {
+        const { expiresAt } = state.auth[key];
+        if (expiresAt) {
+          if (
+            Number(expiresAt) - new Date().getTime() <=
+            REFRESH_THRESHOLD_MS
+          ) {
+            try {
+              await refreshToken(dispatch, key, environment);
+            } catch (err) {
+              console.warn(`Unable to refresh Auth0 access token for "${key}"`);
+              console.warn(err);
+              logout(dispatch, key);
+            }
+          }
+        } else {
+          logout(dispatch, key);
+        }
+      });
+    };
+
     // Check for expired auth tokens and set an interval to recheck
     checkExpiredAuth();
-    refreshInterval = window.setInterval(
+    const refreshInterval = window.setInterval(
       checkExpiredAuth,
       REFRESH_THRESHOLD_MS,
     );
@@ -377,7 +382,10 @@ export const EnvironmentProvider: React.FC = ({ children }) => {
     return () => {
       window.clearInterval(refreshInterval);
     };
-  }, []);
+    // does not include state.auth because it indirectly sets state.auth, through
+    // refreshToken and logout.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.environments]);
 
   return (
     <Provider value={{ state, dispatch }}>

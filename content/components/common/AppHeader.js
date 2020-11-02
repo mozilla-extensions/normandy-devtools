@@ -70,7 +70,7 @@ function AddressBar() {
     if (document.activeElement !== inputRef) {
       setAddress(extensionUrl.toString());
     }
-  }, [extensionUrl]);
+  }, [extensionUrl, inputRef]);
 
   const handleKeyPress = (ev) => {
     if (ev.key === "Enter") {

@@ -15,6 +15,8 @@ import { useBranchTestingIds } from "devtools/hooks/testingIds";
 export default function MultiPreferenceExperiment({ data }) {
   let branchTestingIds;
   if (__ENV__ === "extension") {
+    // __ENV__ conditions are build-time, not run-time, so are safe
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     branchTestingIds = useBranchTestingIds(data);
   }
 

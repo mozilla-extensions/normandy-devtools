@@ -24,7 +24,7 @@ export default function GeoOptions() {
     normandyApi.fetchFilters().then((filters) => {
       setFilters(filters);
     });
-  }, [environmentKey]);
+  }, [environmentKey, normandyApi]);
 
   return (
     <Row>

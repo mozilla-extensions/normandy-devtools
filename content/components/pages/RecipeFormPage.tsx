@@ -53,6 +53,8 @@ const RecipeFormPage: React.FC = () => {
       setData(INITIAL_RECIPE_DATA);
       setImportInstructions("");
     }
+    // XXX adding normandyApi or experimenterApi here causes the tests to hang
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recipeId, experimenterSlug, environmentKey]);
 
   return (

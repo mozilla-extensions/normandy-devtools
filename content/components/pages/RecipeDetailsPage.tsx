@@ -26,7 +26,7 @@ const RecipeDetailsPage: React.FC = () => {
       setRecipeData(recipeData.latest_revision);
       setRecipeStatusData(recipeData.approved_revision);
     });
-  }, [recipeId, normandyApi.getBaseUrl({ method: "GET" })]);
+  }, [recipeId, normandyApi]);
 
   React.useEffect(() => {
     const { experimenter_slug } = recipeData;
@@ -57,6 +57,8 @@ const RecipeDetailsPage: React.FC = () => {
         }, {}),
       });
     });
+    // XXX Adding experimenterApi here causes the tests to hang
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recipeData]);
 
   return (

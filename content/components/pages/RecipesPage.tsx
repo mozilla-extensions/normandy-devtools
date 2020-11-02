@@ -59,7 +59,7 @@ const RecipesPage: React.FC<RecipesPageProps> = ({
       setCount(data.count);
       setLoading(false);
     })();
-  }, [environmentKey, connectionStatus, recipeQuery]);
+  }, [environmentKey, connectionStatus, recipeQuery, api]);
 
   function copyRecipeToArbitrary(v3Recipe): void {
     const v1Recipe = convertToV1Recipe(
