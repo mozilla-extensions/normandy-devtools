@@ -203,9 +203,18 @@ workflows:
   version: 2
   main:
     jobs:
-      - lint
-      - test
-      - build
+      - lint:
+          filters:
+            tags:
+              only: /.*/
+      - test:
+          filters:
+            tags:
+              only: /.*/
+      - build:
+          filters:
+            tags:
+              only: /.*/
       - check-dev-commands
       - publish-docs:
           filters:
