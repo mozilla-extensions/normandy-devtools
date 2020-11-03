@@ -84,20 +84,12 @@ jobs:
           name: Build
           command: yarn build
       - run:
-          name: Create version JSON file
-          command: |
-            printf '{"commit":"%s","version":"%s","source":"https://github.com/%s/%s","build":"%s"}\n' \
-              "$CIRCLE_SHA1" \
-              "${CIRCLE_TAG-}" \
-              "$CIRCLE_PROJECT_USERNAME" \
-              "$CIRCLE_PROJECT_REPONAME" \
-              "$CIRCLE_BUILD_URL" \
-              > dist-web/__version__
-      - run:
           name: Syntax check built output
           command: ls dist-*/*.js | xargs -l node --check
-      - store_artifacts:
-          path: web-ext-artifacts
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./dist-web
 
   validate-tag:
     docker:
@@ -140,6 +132,46 @@ jobs:
             git config user.name "ci-build"
             npm run publish-docs
 
+  deploy-to-aws:
+    parameters:
+      access-key-id:
+        type: env_var_name
+      bucket-name:
+        type: env_var_name
+      distribution-id:
+        type: env_var_name
+      secret-access-key:
+        type: env_var_name
+
+    docker:
+      - image: amazon/aws-cli:2.0.61
+
+    environment:
+      AWS_ACCESS_KEY_ID: << parameters.access-key-id >>
+      AWS_SECRET_ACCESS_KEY: << parameters.secret-access-key >>
+
+    steps:
+      - attach_workspace:
+          at: .
+
+      - run:
+          name: Create version JSON file
+          command: |
+            printf '{"commit":"%s","version":"%s","source":"https://github.com/%s/%s","build":"%s"}\n' \
+              "$CIRCLE_SHA1" \
+              "${CIRCLE_TAG-}" \
+              "$CIRCLE_PROJECT_USERNAME" \
+              "$CIRCLE_PROJECT_REPONAME" \
+              "$CIRCLE_BUILD_URL" \
+              > dist-web/__version__
+
+      - run:
+          name: Upload to AWS
+          command: |
+            aws s3 sync --exclude __version__ dist-web/ s3://${<< parameters.bucket-name >>}/ --delete
+            aws s3 cp --content-type application/json dist-web/__version__ s3://${<< parameters.bucket-name >>}/__version__
+            aws cloudfront create-invalidation --distribution-id ${<< parameters.distribution-id >>} --paths '/*'
+
   check-dev-commands:
     docker:
       - image: node:14-stretch
@@ -180,6 +212,20 @@ workflows:
             branches:
               only: main
       - validate-tag:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+      - deploy-to-aws:
+          access-key-id: ACCESS_KEY_ID
+          bucket-name: BUCKET_NAME
+          distribution-id: DISTRIBUTION_ID
+          secret-access-key: SECRET_ACCESS_KEY
+          requires:
+            - lint
+            - test
+            - build
           filters:
             branches:
               ignore: /.*/
