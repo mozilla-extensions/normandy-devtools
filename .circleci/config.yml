@@ -144,7 +144,7 @@ jobs:
         type: env_var_name
 
     docker:
-      - image: amazon/aws-cli:2.0.61
+      - image: circleci/python:3
 
     environment:
       AWS_ACCESS_KEY_ID: << parameters.access-key-id >>
@@ -153,6 +153,10 @@ jobs:
     steps:
       - attach_workspace:
           at: .
+
+      - run:
+          name: Install AWS CLI tools
+          command: sudo pip install awscli
 
       - run:
           name: Create version JSON file
