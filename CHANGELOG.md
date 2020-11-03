@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.2.1
+
+Normandy Devtools is now available as a website, at https://normandy-devtools.services.mozilla.com. This version is not as full featured as the extension, missing features that require the tight integration with Firefox that extensions enjoy.
+
+This version is nearly identical to v2.2.0, with the exception of some dependency updates.
+
 ## v2.2.0
 
 ### New Page: Operations Overview
