@@ -133,22 +133,12 @@ jobs:
             npm run publish-docs
 
   deploy-to-aws:
-    parameters:
-      access-key-id:
-        type: env_var_name
-      bucket-name:
-        type: env_var_name
-      distribution-id:
-        type: env_var_name
-      secret-access-key:
-        type: env_var_name
-
     docker:
       - image: circleci/python:3
 
     environment:
-      AWS_ACCESS_KEY_ID: << parameters.access-key-id >>
-      AWS_SECRET_ACCESS_KEY: << parameters.secret-access-key >>
+      AWS_ACCESS_KEY_ID: $ACCESS_KEY_ID
+      AWS_SECRET_ACCESS_KEY: $SECRET_ACCESS_KEY
 
     steps:
       - attach_workspace:
@@ -172,9 +162,9 @@ jobs:
       - run:
           name: Upload to AWS
           command: |
-            aws s3 sync --exclude __version__ dist-web/ s3://${<< parameters.bucket-name >>}/ --delete
-            aws s3 cp --content-type application/json dist-web/__version__ s3://${<< parameters.bucket-name >>}/__version__
-            aws cloudfront create-invalidation --distribution-id ${<< parameters.distribution-id >>} --paths '/*'
+            aws s3 sync --exclude __version__ dist-web/ s3://$BUCKET_NAME/ --delete
+            aws s3 cp --content-type application/json dist-web/__version__ s3://${BUCKET_NAME}/__version__
+            aws cloudfront create-invalidation --distribution-id ${DISTRIBUTION_ID} --paths '/*'
 
   check-dev-commands:
     docker:
@@ -231,10 +221,6 @@ workflows:
             tags:
               only: /^v.*/
       - deploy-to-aws:
-          access-key-id: ACCESS_KEY_ID
-          bucket-name: BUCKET_NAME
-          distribution-id: DISTRIBUTION_ID
-          secret-access-key: SECRET_ACCESS_KEY
           requires:
             - lint
             - test
