@@ -137,8 +137,6 @@ jobs:
       - image: circleci/python:3
 
     environment:
-      AWS_ACCESS_KEY_ID: $ACCESS_KEY_ID
-      AWS_SECRET_ACCESS_KEY: $SECRET_ACCESS_KEY
 
     steps:
       - attach_workspace:
@@ -162,6 +160,8 @@ jobs:
       - run:
           name: Upload to AWS
           command: |
+            export AWS_ACCESS_KEY_ID=$ACCESS_KEY_ID
+            export AWS_SECRET_ACCESS_KEY=$SECRET_ACCESS_KEY
             aws s3 sync --exclude __version__ dist-web/ s3://$BUCKET_NAME/ --delete
             aws s3 cp --content-type application/json dist-web/__version__ s3://${BUCKET_NAME}/__version__
             aws cloudfront create-invalidation --distribution-id ${DISTRIBUTION_ID} --paths '/*'
