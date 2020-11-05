@@ -102,7 +102,7 @@
     "webpack-merge": "^5.2.0"
   },
   "dependencies": {
-    "@types/lodash": "^4.14.161",
+    "@types/lodash": "^4.14.164",
     "auth0-js": "9.14.0",
     "autobind-decorator": "2.4.0",
     "codemirror": "5.58.2",
