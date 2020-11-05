@@ -103,7 +103,26 @@ describe("OverviewPage", () => {
   });
 
   it("should display need to pause recipes", async () => {
-    const recipes = recipeFactory.buildCount(3);
+    const recipes = recipeFactory.buildMany([
+      {
+        latest_revision: {
+          action: { name: "multi-preference-experiment" },
+          arguments: { isEnrollmentPaused: false },
+        },
+      },
+      {
+        latest_revision: {
+          action: { name: "multi-preference-experiment" },
+          arguments: { isEnrollmentPaused: false },
+        },
+      },
+      {
+        latest_revision: {
+          action: { name: "multi-preference-experiment" },
+          arguments: { isEnrollmentPaused: true },
+        },
+      },
+    ]);
     const enrollmentPaused = [10000, 2, 5];
     const hundredDaysFuture = new Date();
     hundredDaysFuture.setDate(hundredDaysFuture.getDate() + 100);
@@ -149,8 +168,10 @@ describe("OverviewPage", () => {
     expect(doc.getByText(recipes[1].id.toString())).toBeInTheDocument();
     expect(doc.getByText(recipes[1].latest_revision.name)).toBeInTheDocument();
 
-    expect(doc.getByText(recipes[2].id.toString())).toBeInTheDocument();
-    expect(doc.getByText(recipes[2].latest_revision.name)).toBeInTheDocument();
+    expect(doc.queryByText(recipes[2].id.toString())).not.toBeInTheDocument();
+    expect(
+      doc.queryByText(recipes[2].latest_revision.name),
+    ).not.toBeInTheDocument();
   });
 
   it("should allow calls to patchRecipe for pauses", async () => {
