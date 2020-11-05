@@ -88,12 +88,14 @@ export const OverviewPage: React.FC = () => {
             const recipe = await normandyApi.fetchRecipe(
               experiment.normandy_id,
             );
-            const pauseDate = new Date(experiment.start_date);
-            pauseDate.setDate(
-              pauseDate.getDate() + experiment.proposed_enrollment,
-            );
+            if (!recipe.latest_revision.arguments.isEnrollmentPaused) {
+              const pauseDate = new Date(experiment.start_date);
+              pauseDate.setDate(
+                pauseDate.getDate() + experiment.proposed_enrollment,
+              );
 
-            return [{ pauseDate: pauseDate.getTime(), recipe }];
+              return [{ pauseDate: pauseDate.getTime(), recipe }];
+            }
           }
 
           return [];
