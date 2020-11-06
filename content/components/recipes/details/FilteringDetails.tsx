@@ -1,9 +1,10 @@
-import PropTypes from "prop-types";
 import React from "react";
-import { ButtonGroup, Icon, IconButton, Popover, Whisper } from "rsuite";
+import { ButtonGroup, Icon, IconButton } from "rsuite";
 
 import Highlight from "devtools/components/common/Highlight";
-import CollapsibleSection from "devtools/components/recipes/details/CollapsibleSection";
+import CollapsibleSection, {
+  HeaderButtonPopover,
+} from "devtools/components/recipes/details/CollapsibleSection";
 import BucketSample from "devtools/components/recipes/details/filters/BucketSample";
 import Channel from "devtools/components/recipes/details/filters/Channel";
 import Country from "devtools/components/recipes/details/filters/Country";
@@ -28,7 +29,7 @@ const FILTER_OBJECT_MAPPING = {
   namespaceSample: NamespaceSample,
 };
 
-export default function FilteringDetails() {
+const FilteringDetails: React.FC = () => {
   const data = useRecipeDetailsData();
   const [mode, setMode] = React.useState(MODE_RICH);
 
@@ -77,27 +78,27 @@ export default function FilteringDetails() {
     <CollapsibleSection
       headerButtons={
         <ButtonGroup>
-          <ModePopover message="Display the rich details">
+          <HeaderButtonPopover message="Display the rich details">
             <IconButton
               active={mode === MODE_RICH}
               icon={<Icon icon="file-text-o" />}
               onClick={generateHandlerModeClick(MODE_RICH)}
             />
-          </ModePopover>
-          <ModePopover message="Display the composite details">
+          </HeaderButtonPopover>
+          <HeaderButtonPopover message="Display the composite details">
             <IconButton
               active={mode === MODE_COMPOSITE}
               icon={<Icon icon="cubes" />}
               onClick={generateHandlerModeClick(MODE_COMPOSITE)}
             />
-          </ModePopover>
-          <ModePopover message="Display the raw details">
+          </HeaderButtonPopover>
+          <HeaderButtonPopover message="Display the raw details">
             <IconButton
               active={mode === MODE_RAW}
               icon={<Icon icon="code" />}
               onClick={generateHandlerModeClick(MODE_RAW)}
             />
-          </ModePopover>
+          </HeaderButtonPopover>
         </ButtonGroup>
       }
       title={<h6 className="flex-grow-1">Filtering</h6>}
@@ -108,24 +109,9 @@ export default function FilteringDetails() {
       </div>
     </CollapsibleSection>
   );
-}
-
-function ModePopover({ children, message }) {
-  const popover = <Popover>{message}</Popover>;
-
-  return (
-    <Whisper placement="autoVerticalEnd" speaker={popover} trigger="hover">
-      {children}
-    </Whisper>
-  );
-}
-
-ModePopover.propTypes = {
-  children: PropTypes.any,
-  message: PropTypes.string,
 };
 
-function RawDetails() {
+const RawDetails: React.FC = () => {
   const data = useRecipeDetailsData();
 
   return (
@@ -136,9 +122,9 @@ function RawDetails() {
       </Highlight>
     </div>
   );
-}
+};
 
-function RichDetails() {
+const RichDetails: React.FC = () => {
   const { filter_object: filterObjects, recipe } = useRecipeDetailsData();
 
   return filterObjects
@@ -178,4 +164,6 @@ function RichDetails() {
         </div>
       );
     });
-}
+};
+
+export default FilteringDetails;

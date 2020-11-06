@@ -1,6 +1,5 @@
-import PropTypes from "prop-types";
 import React from "react";
-import { ButtonGroup, Icon, IconButton, Popover, Tag, Whisper } from "rsuite";
+import { ButtonGroup, Icon, IconButton, Tag } from "rsuite";
 
 import Highlight from "devtools/components/common/Highlight";
 import AddonStudy from "devtools/components/recipes/details/arguments/AddonStudy";
@@ -10,7 +9,9 @@ import MessagingExperiment from "devtools/components/recipes/details/arguments/M
 import MultiPreferenceExperiment from "devtools/components/recipes/details/arguments/MultiPreferenceExperiment";
 import PreferenceExperiment from "devtools/components/recipes/details/arguments/PreferenceExperiment";
 import PreferenceRollout from "devtools/components/recipes/details/arguments/PreferenceRollout";
-import CollapsibleSection from "devtools/components/recipes/details/CollapsibleSection";
+import CollapsibleSection, {
+  HeaderButtonPopover,
+} from "devtools/components/recipes/details/CollapsibleSection";
 import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
 
 const MODE_RICH = "RICH";
@@ -26,7 +27,7 @@ const ACTION_DETAILS_MAPPING = {
   "preference-rollout": PreferenceRollout,
 };
 
-export default function ActionDetails() {
+const ActionDetails: React.FC = () => {
   const data = useRecipeDetailsData();
   const [mode, setMode] = React.useState(MODE_RICH);
 
@@ -52,20 +53,20 @@ export default function ActionDetails() {
     <CollapsibleSection
       headerButtons={
         <ButtonGroup>
-          <ModePopover message="Display the rich details">
+          <HeaderButtonPopover message="Display the rich details">
             <IconButton
               active={mode === MODE_RICH}
               icon={<Icon icon="file-text-o" />}
               onClick={generateHandlerModeClick(MODE_RICH)}
             />
-          </ModePopover>
-          <ModePopover message="Display the raw details">
+          </HeaderButtonPopover>
+          <HeaderButtonPopover message="Display the raw details">
             <IconButton
               active={mode === MODE_RAW}
               icon={<Icon icon="code" />}
               onClick={generateHandlerModeClick(MODE_RAW)}
             />
-          </ModePopover>
+          </HeaderButtonPopover>
         </ButtonGroup>
       }
       title={
@@ -82,24 +83,9 @@ export default function ActionDetails() {
       </div>
     </CollapsibleSection>
   );
-}
-
-function ModePopover({ children, message }) {
-  const popover = <Popover>{message}</Popover>;
-
-  return (
-    <Whisper placement="autoVerticalEnd" speaker={popover} trigger="hover">
-      {children}
-    </Whisper>
-  );
-}
-
-ModePopover.propTypes = {
-  children: PropTypes.any,
-  message: PropTypes.string,
 };
 
-function RawDetails() {
+const RawDetails: React.FC = () => {
   const data = useRecipeDetailsData();
 
   return (
@@ -109,4 +95,6 @@ function RawDetails() {
       </Highlight>
     </div>
   );
-}
+};
+
+export default ActionDetails;

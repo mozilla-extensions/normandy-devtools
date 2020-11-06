@@ -1,8 +1,10 @@
 import React from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { Alert, Button, Icon, IconButton, Popover, Whisper } from "rsuite";
+import { Alert, Icon, IconButton, Nav, Popover, Whisper } from "rsuite";
 
-import TelemetryLink from "devtools/components/recipes/details/TelemetryLink";
+import TelemetryLink, {
+  TelemetryLinkTypes,
+} from "devtools/components/recipes/details/TelemetryLink";
 import {
   useSelectedEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
@@ -15,11 +17,13 @@ import {
 } from "devtools/contexts/recipeDetails";
 import { actionIsPausable } from "devtools/utils/recipes";
 
-export default function DetailsHeader() {
+const DetailsHeader: React.FC = () => {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
-  // @ts-ignore
-  const { recipeId, revisionId } = useParams();
+  const { recipeId, revisionId } = useParams<{
+    recipeId: string;
+    revisionId: string;
+  }>();
   const {
     environment,
     selectedKey: environmentKey,
@@ -28,33 +32,33 @@ export default function DetailsHeader() {
   const normandyApi = useSelectedNormandyEnvironmentAPI();
   const [buttonsLoading, setButtonsLoading] = React.useState(new Set());
 
-  const addButtonLoading = (buttonName) => {
+  const addButtonLoading = (buttonName): void => {
     const newLoading = new Set(buttonsLoading);
     newLoading.add(buttonName);
     setButtonsLoading(newLoading);
   };
 
-  const removeButtonLoading = (buttonName) => {
+  const removeButtonLoading = (buttonName): void => {
     const newLoading = new Set(buttonsLoading);
     newLoading.delete(buttonName);
     setButtonsLoading(newLoading);
   };
 
-  const handleEditClick = () => {
+  const handleEditClick = (): void => {
     history.push(`/${environmentKey}/recipes/${recipeId}/edit`);
   };
 
-  const handleCopyClick = () => {
+  const handleCopyClick = (): void => {
     history.push({
       pathname: `/${environmentKey}/recipes/${recipeId}/clone`,
     });
   };
 
-  const handleBackClick = () => {
+  const handleBackClick = (): void => {
     history.push(`/${environmentKey}/recipes`);
   };
 
-  const handleRequestApprovalClick = async () => {
+  const handleRequestApprovalClick = async (): Promise<void> => {
     addButtonLoading("request-approval");
     try {
       const approvalRequest = await normandyApi.requestApproval(data.id);
@@ -73,7 +77,7 @@ export default function DetailsHeader() {
     }
   };
 
-  const handleEnableClick = async () => {
+  const handleEnableClick = async (): Promise<void> => {
     addButtonLoading("enable");
     try {
       const updatedRecipe = await normandyApi.enableRecipe(data.recipe.id);
@@ -89,7 +93,7 @@ export default function DetailsHeader() {
     }
   };
 
-  const handleDisableClick = async () => {
+  const handleDisableClick = async (): Promise<void> => {
     addButtonLoading("disable");
     try {
       const updatedRecipe = await normandyApi.disableRecipe(data.recipe.id);
@@ -105,7 +109,7 @@ export default function DetailsHeader() {
     }
   };
 
-  const handlePauseClick = async () => {
+  const handlePauseClick = async (): Promise<void> => {
     addButtonLoading("pause");
     try {
       const updatedData = await normandyApi.patchRecipe(data.recipe.id, {
@@ -134,24 +138,27 @@ export default function DetailsHeader() {
     }
   };
 
-  let viewExperimentButton = null;
-  if (environment.experimenterUrl && data.experimenter_slug) {
-    viewExperimentButton = (
-      <IconButton
-        appearance="subtle"
-        componentClass="a"
-        href={`${environment.experimenterUrl}experiments/${data.experimenter_slug}`}
-        icon={<Icon icon="external-link" />}
-        target="_blank"
-      >
-        View Experiment
-      </IconButton>
-    );
-  }
-
+  let experimenterLink = null;
   let telemetryLink = null;
   if (environment.experimenterUrl && data.experimenter_slug) {
-    telemetryLink = <TelemetryLink {...useExperimenterDetailsData()} />;
+    experimenterLink = (
+      <Nav.Item
+        componentClass="a"
+        href={`${environment.experimenterUrl}experiments/${data.experimenter_slug}`}
+        target="_blank"
+      >
+        View in Experimenter
+      </Nav.Item>
+    );
+    telemetryLink = (
+      <TelemetryLink
+        {...useExperimenterDetailsData()}
+        appearance="subtle"
+        type={TelemetryLinkTypes.navItem}
+      >
+        View Telemetry
+      </TelemetryLink>
+    );
   }
 
   let requestApprovalButton = null;
@@ -161,7 +168,7 @@ export default function DetailsHeader() {
       requestApprovalButton = (
         <IconButton
           className="ml-1"
-          disable={buttonsLoading.size > 0}
+          disabled={buttonsLoading.size > 0}
           icon={<Icon icon="question-circle2" />}
           loading={buttonsLoading.has("approval-request")}
           onClick={handleRequestApprovalClick}
@@ -175,7 +182,7 @@ export default function DetailsHeader() {
           <IconButton
             className="ml-1"
             color="red"
-            disable={buttonsLoading.size > 0}
+            disabled={buttonsLoading.size > 0}
             icon={<Icon icon="close-circle" />}
             loading={buttonsLoading.has("disable")}
             onClick={handleDisableClick}
@@ -188,7 +195,7 @@ export default function DetailsHeader() {
           <IconButton
             className="ml-1"
             color="green"
-            disable={buttonsLoading.size > 0}
+            disabled={buttonsLoading.size > 0}
             icon={<Icon icon="check-circle" />}
             loading={buttonsLoading.has("enable")}
             onClick={handleEnableClick}
@@ -240,8 +247,6 @@ export default function DetailsHeader() {
         </IconButton>
       </div>
       <div className="d-flex align-items-center text-right">
-        {viewExperimentButton}
-        {telemetryLink}
         {pauseButton}
         {requestApprovalButton}
         {statusToggleButton}
@@ -257,9 +262,11 @@ export default function DetailsHeader() {
           placement="bottomEnd"
           speaker={
             <Popover>
-              <Button appearance="subtle" onClick={handleCopyClick}>
-                Clone Experiment
-              </Button>
+              <Nav vertical>
+                <Nav.Item onClick={handleCopyClick}>Clone Experiment</Nav.Item>
+                {experimenterLink}
+                {telemetryLink}
+              </Nav>
             </Popover>
           }
           trigger="click"
@@ -269,4 +276,6 @@ export default function DetailsHeader() {
       </div>
     </div>
   );
-}
+};
+
+export default DetailsHeader;
