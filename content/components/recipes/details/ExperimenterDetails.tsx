@@ -1,5 +1,5 @@
 import React from "react";
-import { Divider, Icon, IconButton } from "rsuite";
+import { Divider, Icon, IconButton, Tag } from "rsuite";
 
 import CollapsibleSection, {
   HeaderButtonPopover,
@@ -67,12 +67,14 @@ const ExperimenterDetails: React.FunctionComponent = () => {
               {Object.keys(data.variants).length ? (
                 <div className="mt-4">
                   <strong>Branches</strong>
-                  <dl>
+                  <dl className="mt-1">
                     {Object.entries(data.variants).map(
                       ([slug, description]) => (
                         <>
-                          <dt>{slug}</dt>
-                          <dd>{description}</dd>
+                          <dt className="mt-2">
+                            <Tag>{slug}</Tag>
+                          </dt>
+                          <dd className="mt-1 text-subtle">{description}</dd>
                         </>
                       ),
                     )}
