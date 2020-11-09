@@ -1,10 +1,11 @@
-import React, { ReactElement } from "react";
-import { Link } from "react-router-dom";
-import { Alert, Col, Icon, IconButton, Panel, Row, Tag } from "rsuite";
+import dayjs from "dayjs";
+import React from "react";
+import { Alert, Icon, IconButton } from "rsuite";
 
+import CollapsibleSection from "devtools/components/common/CollapsibleSection";
+import RecipeCard from "devtools/components/recipes/RecipeCard";
 import { useSelectedNormandyEnvironmentAPI } from "devtools/contexts/environment";
 import { RecipeV3 } from "devtools/types/recipes";
-import { chunkBy } from "devtools/utils/helpers";
 
 export const EndingRecipes: React.FC<{
   data: Array<{ endDate: number; recipe: RecipeV3 }>;
@@ -12,41 +13,33 @@ export const EndingRecipes: React.FC<{
   const sevenDaysFuture = new Date();
   sevenDaysFuture.setDate(sevenDaysFuture.getDate() + 7);
 
-  const renderEndingSoonListItem = (): Array<ReactElement> => {
-    const endingRecipes = data.filter((recipeData) => {
-      const endingDate = new Date(recipeData.endDate);
-      return endingDate <= sevenDaysFuture;
-    });
-    endingRecipes.sort((exp1, exp2) => {
-      return exp1.endDate - exp2.endDate;
-    });
-    return chunkBy(endingRecipes, 3).map((recipeChunk, rowIdx) => {
-      return (
-        <Row key={rowIdx}>
-          {recipeChunk.map((recipeData, colIdx) => {
-            return (
-              <Col key={`col-${colIdx}`} md={8} sm={24}>
-                <EndingRecipeCard recipeData={recipeData} />
-              </Col>
-            );
-          })}
-        </Row>
-      );
-    });
-  };
+  const endingRecipes = data
+    .filter(({ endDate }) => new Date(endDate) <= sevenDaysFuture)
+    .sort((e1, e2) => e1.endDate - e2.endDate);
+
+  let endingSoonList = (
+    <span className="text-subtle">There is nothing ending soon.</span>
+  );
+  if (endingRecipes.length) {
+    endingSoonList = (
+      <div className="grid-layout grid-3 card-grid">
+        {endingRecipes.map((d) => (
+          <EndingRecipeCard key={d.recipe.id} data={d} />
+        ))}
+      </div>
+    );
+  }
 
   return (
-    <>
-      <h3>Ending Recipes</h3>
-      {renderEndingSoonListItem()}
-    </>
+    <CollapsibleSection title={<h6>Ending Soon</h6>}>
+      <div className="pl-4 mt-4">{endingSoonList}</div>
+    </CollapsibleSection>
   );
 };
 
 const EndingRecipeCard: React.FC<{
-  recipeData: { endDate: number; recipe: RecipeV3 };
-}> = ({ recipeData }) => {
-  const { endDate, recipe } = recipeData;
+  data: { endDate: number; recipe: RecipeV3 };
+}> = ({ data: { endDate, recipe } }) => {
   const [isButtonLoading, setIsButtonLoading] = React.useState(false);
   const normandyApi = useSelectedNormandyEnvironmentAPI();
 
@@ -63,23 +56,22 @@ const EndingRecipeCard: React.FC<{
     }
   };
 
-  const endingDate = new Date(endDate);
+  const endingDate = dayjs(endDate);
   return (
-    <Panel
-      bordered
-      className="recipe-listing mb-2"
-      header={<CardHeader recipe={recipe} />}
-    >
-      <div className="d-flex flex-wrap m-0">
-        <div className="flex-grow-1">
-          <p>Experimenter End Date: </p>
-          {endingDate.toLocaleDateString()}
+    <RecipeCard recipe={recipe}>
+      <div className="flex-grow-1" />
+      <div>
+        <div className="mt-2">
+          <div className="font-weight-bold">Experimenter End Date</div>
+          <span className="text-subtle">
+            {endingDate.format("D MMMM YYYY")}
+          </span>
         </div>
-
+      </div>
+      <div className="pt-2">
         <IconButton
-          className="ml-1"
           color="red"
-          disabled={!recipe.latest_revision.enabled}
+          disabled={!recipe.approved_revision?.enabled}
           icon={<Icon icon="close-circle" />}
           loading={isButtonLoading}
           onClick={handleDisableClick}
@@ -87,26 +79,6 @@ const EndingRecipeCard: React.FC<{
           Disable
         </IconButton>
       </div>
-    </Panel>
-  );
-};
-
-const CardHeader: React.FC<{ recipe: RecipeV3 }> = ({
-  recipe,
-}): ReactElement => {
-  return (
-    <>
-      <Link to={`recipes/${recipe.id}`}>
-        <Tag className="mr-half" color="violet">
-          {recipe.id}
-        </Tag>
-      </Link>
-      <Link
-        style={{ textDecoration: "inherit", color: "inherit" }}
-        to={`recipes/${recipe.id}`}
-      >
-        {recipe.latest_revision.name}
-      </Link>
-    </>
+    </RecipeCard>
   );
 };

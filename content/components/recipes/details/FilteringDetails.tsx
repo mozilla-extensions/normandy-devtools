@@ -1,10 +1,10 @@
 import React from "react";
 import { ButtonGroup, Icon, IconButton } from "rsuite";
 
-import Highlight from "devtools/components/common/Highlight";
 import CollapsibleSection, {
   HeaderButtonPopover,
-} from "devtools/components/recipes/details/CollapsibleSection";
+} from "devtools/components/common/CollapsibleSection";
+import Highlight from "devtools/components/common/Highlight";
 import BucketSample from "devtools/components/recipes/details/filters/BucketSample";
 import Channel from "devtools/components/recipes/details/filters/Channel";
 import Country from "devtools/components/recipes/details/filters/Country";

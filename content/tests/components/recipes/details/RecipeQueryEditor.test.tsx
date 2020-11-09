@@ -6,7 +6,7 @@ import { MemoryRouter } from "react-router";
 import RecipeQueryEditor, {
   convertDraftToQuery,
   getRecipeQueryFromUrlSearch,
-} from "devtools/components/recipes/details/RecipeQueryEditor";
+} from "devtools/components/recipes/listings/RecipeQueryEditor";
 import { actionFactory } from "devtools/tests/factories/api";
 import { Action } from "devtools/types/normandyApi";
 import NormandyAPI from "devtools/utils/normandyApi";

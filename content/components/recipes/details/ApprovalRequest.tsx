@@ -2,7 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { Alert, Button, Divider, Input, Tag } from "rsuite";
 
-import CollapsibleSection from "devtools/components/recipes/details/CollapsibleSection";
+import CollapsibleSection from "devtools/components/common/CollapsibleSection";
 import { useSelectedNormandyEnvironmentAPI } from "devtools/contexts/environment";
 import {
   ACTION_UPDATE_DATA,

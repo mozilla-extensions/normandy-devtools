@@ -3,7 +3,7 @@ import { Divider, Icon, IconButton, Tag } from "rsuite";
 
 import CollapsibleSection, {
   HeaderButtonPopover,
-} from "devtools/components/recipes/details/CollapsibleSection";
+} from "devtools/components/common/CollapsibleSection";
 import TelemetryLink from "devtools/components/recipes/details/TelemetryLink";
 import { useSelectedEnvironmentState } from "devtools/contexts/environment";
 import { useExperimenterDetailsData } from "devtools/contexts/experimenterDetails";
