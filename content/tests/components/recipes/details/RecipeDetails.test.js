@@ -225,8 +225,6 @@ describe("The `RecipeDetails` component", () => {
     await doc.findByText(recipeData.latest_revision.name);
     expect(doc.getByText("Approval Request")).toBeInTheDocument();
 
-    const expandApproval = await doc.findByTestId("collapse-approval-request");
-    fireEvent.click(expandApproval);
     expect(doc.getByText("Comment:")).toBeInTheDocument();
 
     const comment = document.querySelector("input");
@@ -252,8 +250,6 @@ describe("The `RecipeDetails` component", () => {
     await doc.findByText(recipeData.latest_revision.name);
     expect(doc.getByText("Approval Request")).toBeInTheDocument();
 
-    const expandApproval = await doc.findByTestId("collapse-approval-request");
-    fireEvent.click(expandApproval);
     expect(doc.getByText("Comment:")).toBeInTheDocument();
 
     const comment = document.querySelector("input");
@@ -279,8 +275,6 @@ describe("The `RecipeDetails` component", () => {
     await doc.findByText(recipeData.latest_revision.name);
     expect(doc.getByText("Approval Request")).toBeInTheDocument();
 
-    const expandApproval = await doc.findByTestId("collapse-approval-request");
-    fireEvent.click(expandApproval);
     expect(doc.getByText("Comment:")).toBeInTheDocument();
 
     fireEvent.click(doc.getByText("Cancel Request"));
