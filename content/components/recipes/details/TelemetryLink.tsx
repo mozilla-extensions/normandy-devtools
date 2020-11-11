@@ -1,6 +1,9 @@
 import React from "react";
-import { Icon, IconButton, Nav } from "rsuite";
+import { Icon } from "rsuite";
 import { TypeAttributes as RSTypeAttributes } from "rsuite/lib/@types/common";
+// Import the follow to deal with https://github.com/istanbuljs/babel-plugin-istanbul/issues/258
+import IconButton from "rsuite/lib/IconButton";
+import Nav from "rsuite/lib/Nav";
 
 const MONITORING_URL = "https://grafana.telemetry.mozilla.org";
 const DASHBOARD_ID = "XspgvdxZz";
