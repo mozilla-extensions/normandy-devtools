@@ -109,6 +109,7 @@ const RecipeQueryEditor: React.FC<Props> = ({
             <Icon icon="search" />
           </InputGroup.Addon>
           <Input
+            data-testid="filter-field-search"
             value={draftQuery.text ?? ""}
             onChange={makeHandler("text", { debounce: true })}
             onPressEnter={debouncedSetQuery.flush}

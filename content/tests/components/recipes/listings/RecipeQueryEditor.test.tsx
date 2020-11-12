@@ -51,7 +51,7 @@ describe("RecipeQueryEditor", () => {
       </MemoryRouter>,
     );
 
-    const searchInput = doc.getByLabelText("Search");
+    const searchInput = doc.getByTestId("filter-field-search");
     // type twice in quick succession to test debouncing
     userEvent.type(searchInput, "poc");
     userEvent.type(searchInput, "ket");
@@ -72,7 +72,7 @@ describe("RecipeQueryEditor", () => {
       </MemoryRouter>,
     );
 
-    const searchInput = doc.getByLabelText("Search");
+    const searchInput = doc.getByTestId("filter-field-search");
     userEvent.type(searchInput, "etp");
   });
 });
