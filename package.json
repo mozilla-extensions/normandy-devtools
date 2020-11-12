@@ -52,7 +52,7 @@
     "@types/react-router-dom": "5.1.6",
     "@types/requestidlecallback": "0.3.1",
     "@typescript-eslint/eslint-plugin": "4.6.0",
-    "@typescript-eslint/parser": "4.6.1",
+    "@typescript-eslint/parser": "4.7.0",
     "babel-eslint": "10.1.0",
     "babel-jest": "26.6.3",
     "babel-loader": "8.1.0",
@@ -95,11 +95,11 @@
     "web-ext": "5.3.0",
     "web-ext-types": "3.2.1",
     "webpack": "4.44.2",
-    "webpack-bundle-analyzer": "3.9.0",
+    "webpack-bundle-analyzer": "4.1.0",
     "webpack-cli": "3.3.12",
     "webpack-dev-server": "^3.11.0",
     "webpack-fix-style-only-entries": "0.6.0",
-    "webpack-merge": "^5.2.0"
+    "webpack-merge": "^5.3.0"
   },
   "dependencies": {
     "@types/lodash": "^4.14.164",
