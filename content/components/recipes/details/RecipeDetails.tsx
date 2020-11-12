@@ -38,9 +38,8 @@ const RecipeDetails: React.FunctionComponent = () => {
         </div>
       </div>
       <Divider />
-      <ExperimenterDetails />
-      <Divider />
       <ApprovalRequest />
+      <ExperimenterDetails />
       <ActionDetails />
       <Divider />
       <FilteringDetails />

@@ -138,17 +138,23 @@ const ApprovalRequest: React.FC = () => {
       <>
         <div className="d-flex mt-4">
           <strong className="w-120px">Requested by:</strong>
-          <div className="flex-grow-1">{approvalRequest.creator.email}</div>
+          <div className="flex-grow-1 text-subtle">
+            {approvalRequest.creator.email}
+          </div>
         </div>
         <div className="d-flex mt-1">
           <strong className="w-120px">
             {approvalRequest.approved ? "Approved" : "Rejected"} by:
           </strong>
-          <div className="flex-grow-1">{approvalRequest.approver.email}</div>
+          <div className="flex-grow-1 text-subtle">
+            {approvalRequest.approver.email}
+          </div>
         </div>
         <div className="d-flex mt-1">
           <strong className="w-120px">Comment:</strong>
-          <div className="flex-grow-1">{approvalRequest.comment}</div>
+          <div className="flex-grow-1 text-subtle">
+            {approvalRequest.comment}
+          </div>
         </div>
       </>
     );
@@ -157,7 +163,7 @@ const ApprovalRequest: React.FC = () => {
   return (
     <>
       <CollapsibleSection
-        collapsed
+        collapsed={approvalRequest.approved !== null}
         testId="collapse-approval-request"
         title={
           <>
