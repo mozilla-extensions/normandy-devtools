@@ -1,5 +1,5 @@
 import React from "react";
-import { ControlLabel, FormControl, FormGroup } from "rsuite";
+import { ControlLabel, FormControl, FormGroup, HelpBlock } from "rsuite";
 
 import ActionSelector from "devtools/components/common/ActionSelector";
 import { INITIAL_ACTION_ARGUMENTS } from "devtools/components/recipes/form/ActionArguments";
@@ -8,12 +8,14 @@ import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
+  useRecipeDetailsErrors,
 } from "devtools/contexts/recipeDetails";
 
 export default function ActionPicker() {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
+  const { clientErrors } = useRecipeDetailsErrors();
   const value = data.action && data.action.name;
 
   const handleChange = (action) => {
@@ -26,6 +28,18 @@ export default function ActionPicker() {
       },
     });
   };
+
+  const { action_id: fieldErrors = [] } = clientErrors;
+  let errMessages;
+  if (fieldErrors.length) {
+    errMessages = (
+      <HelpBlock className="text-red">
+        {fieldErrors.map((err) => {
+          return <li key={err}>{err}</li>;
+        })}
+      </HelpBlock>
+    );
+  }
 
   return (
     <FormGroup>
@@ -42,6 +56,7 @@ export default function ActionPicker() {
         value={value}
         onChangeAction={handleChange}
       />
+      {errMessages}
     </FormGroup>
   );
 }
