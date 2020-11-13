@@ -12,6 +12,7 @@ const initialState = {
   statusData: INITIAL_RECIPE_DATA,
   importInstructions: "",
   clientErrors: {},
+  serverErrors: {},
 };
 
 export const recipeDetailsContext = React.createContext(initialState);
@@ -19,8 +20,8 @@ const { Provider } = recipeDetailsContext;
 
 export const ACTION_UPDATE_DATA = "UPDATE_DATA";
 export const ACTION_UPDATE_IMPORT_INSTRUCTIONS = "UPDATE_IMPORT_INSTRUCTIONS";
-export const ACTION_ADD_CLIENT_ERRORS = "ACTION_ADD_CLIENT_ERRORS";
-export const ACTION_CLEAR_CLIENT_ERRORS = "ACTION_CLEAR_CLIENT_ERRORS";
+export const ACTION_SET_SERVER_ERRORS = "ACTION_SET_SERVER_ERRORS";
+export const ACTION_CLEAR_SERVER_ERRORS = "ACTION_CLEAR_SERVER_ERRORS";
 export const ACTION_UPDATE_CLIENT_ERRORS = "UPDATE_CLIENT_ERRORS";
 export const ACTION_REMOVE_CLIENT_ERRORS = "REMOVE_CLIENT_ERRORS";
 
@@ -39,16 +40,16 @@ function reducer(state, action) {
         importInstructions: action.importInstructions,
       };
 
-    case ACTION_CLEAR_CLIENT_ERRORS:
+    case ACTION_CLEAR_SERVER_ERRORS:
       return {
         ...state,
-        clientErrors: {},
+        serverErrors: {},
       };
 
-    case ACTION_ADD_CLIENT_ERRORS:
+    case ACTION_SET_SERVER_ERRORS:
       return {
         ...state,
-        clientErrors: action.errors,
+        serverErrors: action.errors,
       };
 
     case ACTION_UPDATE_CLIENT_ERRORS:
@@ -129,6 +130,6 @@ export function useRecipeDetailsImportInstructions() {
 
 export function useRecipeDetailsErrors() {
   const { state } = React.useContext(recipeDetailsContext);
-  const { clientErrors } = state;
-  return { clientErrors };
+  const { clientErrors, serverErrors } = state;
+  return { clientErrors, serverErrors };
 }

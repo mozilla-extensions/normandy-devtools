@@ -7,8 +7,8 @@ import {
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
 import {
-  ACTION_ADD_CLIENT_ERRORS,
-  ACTION_CLEAR_CLIENT_ERRORS,
+  ACTION_SET_SERVER_ERRORS,
+  ACTION_CLEAR_SERVER_ERRORS,
   useRecipeDetailsState,
   useRecipeDetailsErrors,
   useRecipeDetailsDispatch,
@@ -46,7 +46,7 @@ const RecipeFormHeader: React.FC = () => {
     }
 
     // Clean form errors on save.is
-    dispatch({ type: ACTION_CLEAR_CLIENT_ERRORS });
+    dispatch({ type: ACTION_CLEAR_SERVER_ERRORS });
 
     const requestSave = normandyApi.saveRecipe(id, {
       ...cleanedData,
@@ -65,7 +65,7 @@ const RecipeFormHeader: React.FC = () => {
         const { status, ...formErrors } = err.data;
         if (status === 400) {
           dispatch({
-            type: ACTION_ADD_CLIENT_ERRORS,
+            type: ACTION_SET_SERVER_ERRORS,
             errors: formErrors,
           });
         }

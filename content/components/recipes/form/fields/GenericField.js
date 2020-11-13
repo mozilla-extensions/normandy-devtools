@@ -12,10 +12,10 @@ import {
 export default function GenericField({ name, label, required }) {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
-  const { clientErrors } = useRecipeDetailsErrors();
+  const { serverErrors } = useRecipeDetailsErrors();
   const value = data[name] || "";
 
-  const { [name]: fieldErrors = [] } = clientErrors;
+  const { [name]: fieldErrors = [] } = serverErrors;
   let errMessages;
   if (fieldErrors.length) {
     errMessages = (

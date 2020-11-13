@@ -15,7 +15,7 @@ export default function ActionPicker() {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
-  const { clientErrors } = useRecipeDetailsErrors();
+  const { serverErrors } = useRecipeDetailsErrors();
   const value = data.action && data.action.name;
 
   const handleChange = (action) => {
@@ -29,7 +29,7 @@ export default function ActionPicker() {
     });
   };
 
-  const { action_id: fieldErrors = [] } = clientErrors;
+  const { action_id: fieldErrors = [] } = serverErrors;
   let errMessages;
   if (fieldErrors.length) {
     errMessages = (
