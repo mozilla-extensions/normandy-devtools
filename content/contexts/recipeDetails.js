@@ -19,6 +19,8 @@ const { Provider } = recipeDetailsContext;
 
 export const ACTION_UPDATE_DATA = "UPDATE_DATA";
 export const ACTION_UPDATE_IMPORT_INSTRUCTIONS = "UPDATE_IMPORT_INSTRUCTIONS";
+export const ACTION_ADD_CLIENT_ERRORS = "ACTION_ADD_CLIENT_ERRORS";
+export const ACTION_CLEAR_CLIENT_ERRORS = "ACTION_CLEAR_CLIENT_ERRORS";
 export const ACTION_UPDATE_CLIENT_ERRORS = "UPDATE_CLIENT_ERRORS";
 export const ACTION_REMOVE_CLIENT_ERRORS = "REMOVE_CLIENT_ERRORS";
 
@@ -35,6 +37,18 @@ function reducer(state, action) {
       return {
         ...state,
         importInstructions: action.importInstructions,
+      };
+
+    case ACTION_CLEAR_CLIENT_ERRORS:
+      return {
+        ...state,
+        clientErrors: {},
+      };
+
+    case ACTION_ADD_CLIENT_ERRORS:
+      return {
+        ...state,
+        clientErrors: action.errors,
       };
 
     case ACTION_UPDATE_CLIENT_ERRORS:

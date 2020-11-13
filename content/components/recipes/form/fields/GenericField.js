@@ -6,12 +6,26 @@ import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
+  useRecipeDetailsErrors,
 } from "devtools/contexts/recipeDetails";
 
 export default function GenericField({ name, label, required }) {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
+  const { clientErrors } = useRecipeDetailsErrors();
   const value = data[name] || "";
+
+  const { [name]: fieldErrors = [] } = clientErrors;
+  let errMessages;
+  if (fieldErrors.length) {
+    errMessages = (
+      <HelpBlock className="text-red">
+        {fieldErrors.map((err) => {
+          return <li key={err}>{err}</li>;
+        })}
+      </HelpBlock>
+    );
+  }
 
   let helpBlock = null;
   if (required) {
@@ -32,6 +46,7 @@ export default function GenericField({ name, label, required }) {
     <FormGroup>
       <ControlLabel>{label}</ControlLabel>
       <Input value={value} onChange={handleChange} />
+      {errMessages}
       {helpBlock}
     </FormGroup>
   );

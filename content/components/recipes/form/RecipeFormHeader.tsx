@@ -7,8 +7,11 @@ import {
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
 import {
+  ACTION_ADD_CLIENT_ERRORS,
+  ACTION_CLEAR_CLIENT_ERRORS,
   useRecipeDetailsState,
   useRecipeDetailsErrors,
+  useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
 
 // export default
@@ -20,6 +23,8 @@ const RecipeFormHeader: React.FC = () => {
   const { clientErrors } = useRecipeDetailsErrors();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
   const [showCommentModal, setShowCommentModal] = React.useState(false);
+
+  const dispatch = useRecipeDetailsDispatch();
 
   const handleSaveClick = (): void => {
     try {
@@ -40,6 +45,9 @@ const RecipeFormHeader: React.FC = () => {
       id = recipeId;
     }
 
+    // Clean form errors on save.is
+    dispatch({ type: ACTION_CLEAR_CLIENT_ERRORS });
+
     const requestSave = normandyApi.saveRecipe(id, {
       ...cleanedData,
       comment,
@@ -54,6 +62,13 @@ const RecipeFormHeader: React.FC = () => {
       .catch((err) => {
         console.warn(err.message, err.data);
         Alert.error(`An Error Occurred: ${JSON.stringify(err.data)}`, 5000);
+        const { status, ...formErrors } = err.data;
+        if (status === 400) {
+          dispatch({
+            type: ACTION_ADD_CLIENT_ERRORS,
+            errors: formErrors,
+          });
+        }
       });
   };
 
