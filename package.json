@@ -42,7 +42,7 @@
     "@testing-library/jest-dom": "5.11.5",
     "@testing-library/react": "11.1.2",
     "@testing-library/user-event": "^12.2.0",
-    "@types/auth0-js": "^9.14.1",
+    "@types/auth0-js": "^9.14.2",
     "@types/faker": "5.1.3",
     "@types/jest": "26.0.15",
     "@types/js-yaml": "3.12.5",
