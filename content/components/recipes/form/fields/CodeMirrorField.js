@@ -7,12 +7,26 @@ import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
+  useRecipeDetailsErrors,
 } from "devtools/contexts/recipeDetails";
 
 export default function CodeMirrorField({ name, label, options, required }) {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
   const value = data[name];
+  const { serverErrors } = useRecipeDetailsErrors();
+
+  const { [name]: fieldErrors = [] } = serverErrors;
+  let errMessages;
+  if (fieldErrors.length) {
+    errMessages = (
+      <HelpBlock className="text-red">
+        {fieldErrors.map((err) => {
+          return <li key={err}>{err}</li>;
+        })}
+      </HelpBlock>
+    );
+  }
 
   let helpBlock = null;
   if (required) {
@@ -43,6 +57,7 @@ export default function CodeMirrorField({ name, label, options, required }) {
           handleChange(value);
         }}
       />
+      {errMessages}
       {helpBlock}
     </FormGroup>
   );
