@@ -1,3 +1,7 @@
+/* eslint-env node */
+const rulesDirPlugin = require("eslint-plugin-rulesdir");
+rulesDirPlugin.RULES_DIR = "eslint-rules";
+
 const sharedRules = {
   "mozilla/no-define-cc-etc": "off",
   "react/jsx-fragments": ["error", "syntax"],
@@ -44,6 +48,7 @@ const sharedRules = {
       "newlines-between": "always",
     },
   ],
+  "rulesdir/no-relative-imports": ["error", { roots: { devtools: "content" } }],
 };
 
 module.exports = {
@@ -58,7 +63,7 @@ module.exports = {
     "plugin:mozilla/recommended",
     "plugin:react/recommended",
   ],
-  plugins: ["mozilla", "import"],
+  plugins: ["mozilla", "import", "rulesdir"],
   settings: {
     react: {
       version: "detect",
