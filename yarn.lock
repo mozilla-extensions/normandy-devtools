@@ -4877,7 +4877,7 @@ eslint-plugin-react@7.21.5:
     resolve "^1.18.1"
     string.prototype.matchall "^4.0.2"
 
-eslint-plugin-rulesdir@^0.1.0:
+eslint-plugin-rulesdir@0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-rulesdir/-/eslint-plugin-rulesdir-0.1.0.tgz#ad144d7e98464fda82963eff3fab331aecb2bf08"
   integrity sha1-rRRNfphGT9qClj7/P6szGuyyvwg=
