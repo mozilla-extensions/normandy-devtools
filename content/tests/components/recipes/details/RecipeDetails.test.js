@@ -338,7 +338,13 @@ describe("The `RecipeDetails` component", () => {
 
     // After the pause completes, an approval recipe should be sent
     patchRecipeDeferred.resolve(
-      recipeFactory.build({ latest_revision: { id: nextRevisionId } }),
+      recipeFactory.build({
+        latest_revision: {
+          ...recipe.latest_revision,
+          id: nextRevisionId,
+          arguments: { isEnrollmentPaused: true },
+        },
+      }),
     );
     await Promise.resolve();
     expect(NormandyAPI.prototype.requestApproval).toBeCalledWith(

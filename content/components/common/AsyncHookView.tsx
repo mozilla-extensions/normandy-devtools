@@ -20,9 +20,9 @@ function AsyncHookView<T>({
       errMsg = `Error: ${errMsg}`;
     }
 
-    return <>{errMsg}</>;
+    return <p>{errMsg}</p>;
   } else if (loading) {
-    return <>Loading</>;
+    return <p>Loading</p>;
   }
 
   return children(value);
