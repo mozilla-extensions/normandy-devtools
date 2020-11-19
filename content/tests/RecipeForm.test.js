@@ -488,6 +488,9 @@ describe("The `RecipeForm` component", () => {
           status: 400,
           action_id: ["Bad action"],
           experimenter_slug: ["Wrong slug"],
+          arguments: {
+            message: ["Bad message"],
+          },
         },
       }),
     );
@@ -508,6 +511,9 @@ describe("The `RecipeForm` component", () => {
       expect(
         experimenterSlugForm.querySelector(".text-red"),
       ).toBeInTheDocument();
+
+      const messageForm = findForm(formGroups, "Message");
+      expect(messageForm.querySelector(".text-red")).toBeInTheDocument();
     });
   });
 

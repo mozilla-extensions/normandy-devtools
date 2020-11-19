@@ -1,10 +1,17 @@
 import React, { ReactElement } from "react";
-import { ControlLabel, FormGroup, InputProps, SelectPicker } from "rsuite";
+import {
+  ControlLabel,
+  FormGroup,
+  HelpBlock,
+  InputProps,
+  SelectPicker,
+} from "rsuite";
 
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
+  useRecipeDetailsErrors,
 } from "devtools/contexts/recipeDetails";
 
 type SelectFieldProps = InputProps & {
@@ -28,6 +35,19 @@ export default function SelectField({
 }: SelectFieldProps): ReactElement {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
+  const { serverErrors } = useRecipeDetailsErrors();
+
+  const { arguments: { [name]: fieldErrors = [] } = {} } = serverErrors;
+  let errMessages;
+  if (fieldErrors.length) {
+    errMessages = (
+      <HelpBlock className="text-red">
+        {fieldErrors.map((err) => {
+          return <li key={err}>{err}</li>;
+        })}
+      </HelpBlock>
+    );
+  }
 
   const handleChange = (value): void => {
     let newData = data;
@@ -60,6 +80,7 @@ export default function SelectField({
         onChange={handleChange}
         {...props}
       />
+      {errMessages}
     </FormGroup>
   );
 }

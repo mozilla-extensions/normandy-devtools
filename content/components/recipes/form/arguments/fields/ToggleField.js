@@ -6,6 +6,7 @@ import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
+  useRecipeDetailsErrors,
 } from "devtools/contexts/recipeDetails";
 
 export default function ToggleField({
@@ -16,6 +17,19 @@ export default function ToggleField({
 }) {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
+  const { serverErrors } = useRecipeDetailsErrors();
+
+  const { arguments: { [name]: fieldErrors = [] } = {} } = serverErrors;
+  let errMessages;
+  if (fieldErrors.length) {
+    errMessages = (
+      <HelpBlock className="text-red">
+        {fieldErrors.map((err) => {
+          return <li key={err}>{err}</li>;
+        })}
+      </HelpBlock>
+    );
+  }
 
   const handleChange = (value) => {
     let newData = data;
@@ -44,6 +58,7 @@ export default function ToggleField({
           <Toggle checked={data.arguments[name]} onChange={handleChange} />
         </span>
         <HelpBlock className="flex-grow-1">{children}</HelpBlock>
+        {errMessages}
       </div>
     </FormGroup>
   );

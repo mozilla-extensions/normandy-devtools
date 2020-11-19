@@ -1,10 +1,11 @@
 import React from "react";
-import { ControlLabel, FormGroup, Input, InputProps } from "rsuite";
+import { ControlLabel, FormGroup, Input, InputProps, HelpBlock } from "rsuite";
 
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
+  useRecipeDetailsErrors,
 } from "devtools/contexts/recipeDetails";
 
 type InputFieldProps = InputProps & {
@@ -28,6 +29,19 @@ const InputField: React.FC<InputFieldProps> = ({
 }) => {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
+  const { serverErrors } = useRecipeDetailsErrors();
+
+  const { arguments: { [name]: fieldErrors = [] } = {} } = serverErrors;
+  let errMessages;
+  if (fieldErrors.length) {
+    errMessages = (
+      <HelpBlock className="text-red">
+        {fieldErrors.map((err) => {
+          return <li key={err}>{err}</li>;
+        })}
+      </HelpBlock>
+    );
+  }
 
   const handleChange = (value): void => {
     let newData = data;
@@ -52,6 +66,7 @@ const InputField: React.FC<InputFieldProps> = ({
     <FormGroup>
       <ControlLabel>{label}</ControlLabel>
       <Input value={data.arguments[name]} onChange={handleChange} {...props} />
+      {errMessages}
     </FormGroup>
   );
 };
