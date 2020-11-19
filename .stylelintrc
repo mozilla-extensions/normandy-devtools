@@ -27,5 +27,11 @@
     "unit-no-unknown": [true, {
       "ignoreUnits": ["/fr/"],
     }],
+    "selector-pseudo-class-no-unknown": [
+      true,
+      {
+        "ignorePseudoClasses": ["global"]
+      }
+    ]
   }
 }

@@ -191,6 +191,24 @@ export default class NormandyAPI extends API {
     });
   }
 
+  async createExtension({
+    name,
+    xpi,
+  }: {
+    name: string;
+    xpi: File;
+  }): Promise<Extension> {
+    const body = new FormData();
+    body.append("name", name);
+    body.append("xpi", xpi);
+    const extension = await this.request<Extension>({
+      method: "POST",
+      url: "extension/",
+      body,
+    });
+    return extension;
+  }
+
   async fetchApprovalRequests(
     searchParams = {},
   ): Promise<Array<ApprovalRequest>> {
