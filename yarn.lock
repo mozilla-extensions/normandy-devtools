@@ -7810,10 +7810,10 @@ kleur@^3.0.3:
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-3.0.3.tgz#a79c9ecc86ee1ce3fa6206d1216c501f147fc07e"
   integrity sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
 
-klona@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/klona/-/klona-2.0.3.tgz#98274552c513583ad7a01456a789a2a0b4a2a538"
-  integrity sha512-CgPOT3ZadDpXxKcfV56lEQ9OQSZ42Mk26gnozI+uN/k39vzD8toUhRQoqsX0m9Q3eMPEfsLWmtyUpK/yqST4yg==
+klona@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/klona/-/klona-2.0.4.tgz#7bb1e3affb0cb8624547ef7e8f6708ea2e39dfc0"
+  integrity sha512-ZRbnvdg/NxqzC7L9Uyqzf4psi1OM4Cuc+sJAkQPjO6XkQIJTNbfK2Rsmbw8fx1p2mkZdp2FZYo2+LwXYY/uwIA==
 
 known-css-properties@^0.19.0:
   version "0.19.0"
@@ -7848,14 +7848,14 @@ lcid@^3.0.0:
   dependencies:
     invert-kv "^3.0.0"
 
-less-loader@7.0.1:
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/less-loader/-/less-loader-7.0.1.tgz#115ef3b2817f6f9e14ade6de3509b878c1bc0c13"
-  integrity sha512-TO0+5HuDJhHArpOWnjzPMQ0xfdvyo0nxF75NNnSZ/n8b08aDuhk91/zV9sqYHzPfWvBh1PjpX/pTEEi2QnmaYA==
+less-loader@7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/less-loader/-/less-loader-7.1.0.tgz#958d41e86d7de0bcb490711ee0f235aa9dc596aa"
+  integrity sha512-EHbnRaTzHgsxnd3RK6OXSiygcCJs72+2ezXVLg+Hgl/ijUTtthKZXZh4MvQkWJr3h/SSKvxGZr7IIHzuS2KbVQ==
   dependencies:
-    klona "^2.0.3"
+    klona "^2.0.4"
     loader-utils "^2.0.0"
-    schema-utils "^2.7.1"
+    schema-utils "^3.0.0"
 
 less@3.12.2:
   version "3.12.2"
@@ -10834,7 +10834,7 @@ schema-utils@^1.0.0:
     ajv-errors "^1.0.0"
     ajv-keywords "^3.1.0"
 
-schema-utils@^2.0.0, schema-utils@^2.6.5, schema-utils@^2.7.1:
+schema-utils@^2.0.0, schema-utils@^2.6.5:
   version "2.7.1"
   resolved "https://registry.yarnpkg.com/schema-utils/-/schema-utils-2.7.1.tgz#1ca4f32d1b24c590c203b8e7a50bf0ea4cd394d7"
   integrity sha512-SHiNtMOUGWBQJwzISiVYKu82GiV4QYGePp3odlY1tuKO7gPtphAT5R/py0fA6xtbgLL/RvtJZnU9b8s0F1q0Xg==
