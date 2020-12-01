@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { ControlLabel, FormGroup, HelpBlock, Input } from "rsuite";
 
+import ServerErrors from "devtools/components/recipes/form/ServerErrors";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
@@ -32,6 +33,7 @@ export default function GenericField({ name, label, required }) {
     <FormGroup>
       <ControlLabel>{label}</ControlLabel>
       <Input value={value} onChange={handleChange} />
+      <ServerErrors field={name} />
       {helpBlock}
     </FormGroup>
   );

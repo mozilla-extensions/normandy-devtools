@@ -470,6 +470,53 @@ describe("The `RecipeForm` component", () => {
     );
   });
 
+  it("server errors are shown in along the fields", async () => {
+    const recipeData = consoleLogRecipeSetup();
+    await setup(recipeData);
+    const doc = renderWithContext(<RecipeFormPage />, {
+      route: `/prod/recipes/${recipeData.id}/edit`,
+      path: "/prod/recipes/:recipeId/edit",
+    });
+
+    await waitFor(() => {
+      expect(doc.getByText("Experimenter Slug")).toBeInTheDocument();
+    });
+
+    jest.spyOn(NormandyAPI.prototype, "saveRecipe").mockImplementation(() =>
+      Promise.reject({
+        data: {
+          status: 400,
+          action_id: ["Bad action"],
+          experimenter_slug: ["Wrong slug"],
+          arguments: {
+            message: ["Bad message"],
+          },
+        },
+      }),
+    );
+
+    fireEvent.click(doc.getByText("Save"));
+
+    const modalDialog = doc.getAllByRole("dialog")[0];
+    const commentInput = modalDialog.querySelector("textArea");
+    const saveMessage = "Form with error";
+    fireEvent.change(commentInput, { target: { value: saveMessage } });
+
+    fireEvent.click(within(modalDialog).getByText("Save"));
+
+    await waitFor(() => {
+      const formGroups = doc.getAllByRole("group");
+      const { actionForm, experimenterSlugForm } = getForms(formGroups);
+      expect(actionForm.querySelector(".text-red")).toBeInTheDocument();
+      expect(
+        experimenterSlugForm.querySelector(".text-red"),
+      ).toBeInTheDocument();
+
+      const messageForm = findForm(formGroups, "Message");
+      expect(messageForm.querySelector(".text-red")).toBeInTheDocument();
+    });
+  });
+
   it("save button is re-enabled when form errors are addressed", async () => {
     const recipeData = consoleLogRecipeSetup();
     await setup(recipeData);

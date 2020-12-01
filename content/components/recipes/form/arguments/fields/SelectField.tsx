@@ -1,6 +1,7 @@
 import React, { ReactElement } from "react";
 import { ControlLabel, FormGroup, InputProps, SelectPicker } from "rsuite";
 
+import ServerErrors from "devtools/components/recipes/form/ServerErrors";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
@@ -9,6 +10,7 @@ import {
 
 type SelectFieldProps = InputProps & {
   label: string;
+  parent?: string;
   name: string;
   changeSideEffect?: (change: ChangeData) => void;
   options?: Array<{ label: string; value: string }>;
@@ -60,6 +62,7 @@ export default function SelectField({
         onChange={handleChange}
         {...props}
       />
+      <ServerErrors field={`arguments.${name}`} />
     </FormGroup>
   );
 }

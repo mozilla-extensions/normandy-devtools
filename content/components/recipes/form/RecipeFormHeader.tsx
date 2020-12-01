@@ -7,9 +7,13 @@ import {
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
 import {
+  ACTION_SET_SERVER_ERRORS,
+  ACTION_CLEAR_SERVER_ERRORS,
   useRecipeDetailsState,
   useRecipeDetailsErrors,
+  useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
+import { normalizeServerValidationErrors } from "devtools/utils/helpers";
 
 // export default
 const RecipeFormHeader: React.FC = () => {
@@ -20,6 +24,8 @@ const RecipeFormHeader: React.FC = () => {
   const { clientErrors } = useRecipeDetailsErrors();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
   const [showCommentModal, setShowCommentModal] = React.useState(false);
+
+  const dispatch = useRecipeDetailsDispatch();
 
   const handleSaveClick = (): void => {
     try {
@@ -40,6 +46,9 @@ const RecipeFormHeader: React.FC = () => {
       id = recipeId;
     }
 
+    // Clean form errors on save.is
+    dispatch({ type: ACTION_CLEAR_SERVER_ERRORS });
+
     const requestSave = normandyApi.saveRecipe(id, {
       ...cleanedData,
       comment,
@@ -54,6 +63,13 @@ const RecipeFormHeader: React.FC = () => {
       .catch((err) => {
         console.warn(err.message, err.data);
         Alert.error(`An Error Occurred: ${JSON.stringify(err.data)}`, 5000);
+        const { status, ...formErrors } = err.data;
+        if (status === 400) {
+          dispatch({
+            type: ACTION_SET_SERVER_ERRORS,
+            errors: normalizeServerValidationErrors(formErrors),
+          });
+        }
       });
   };
 

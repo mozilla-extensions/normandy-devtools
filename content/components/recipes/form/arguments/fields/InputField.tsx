@@ -1,6 +1,7 @@
 import React from "react";
 import { ControlLabel, FormGroup, Input, InputProps } from "rsuite";
 
+import ServerErrors from "devtools/components/recipes/form/ServerErrors";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
@@ -52,6 +53,7 @@ const InputField: React.FC<InputFieldProps> = ({
     <FormGroup>
       <ControlLabel>{label}</ControlLabel>
       <Input value={data.arguments[name]} onChange={handleChange} {...props} />
+      <ServerErrors field={`arguments.${name}`} />
     </FormGroup>
   );
 };
