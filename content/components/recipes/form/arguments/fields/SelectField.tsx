@@ -1,21 +1,16 @@
 import React, { ReactElement } from "react";
-import {
-  ControlLabel,
-  FormGroup,
-  HelpBlock,
-  InputProps,
-  SelectPicker,
-} from "rsuite";
+import { ControlLabel, FormGroup, InputProps, SelectPicker } from "rsuite";
 
+import ServerErrors from "devtools/components/recipes/form/ServerErrors";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
-  useRecipeDetailsErrors,
 } from "devtools/contexts/recipeDetails";
 
 type SelectFieldProps = InputProps & {
   label: string;
+  parent?: string;
   name: string;
   changeSideEffect?: (change: ChangeData) => void;
   options?: Array<{ label: string; value: string }>;
@@ -35,19 +30,6 @@ export default function SelectField({
 }: SelectFieldProps): ReactElement {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
-  const { serverErrors } = useRecipeDetailsErrors();
-
-  const { arguments: { [name]: fieldErrors = [] } = {} } = serverErrors;
-  let errMessages;
-  if (fieldErrors.length) {
-    errMessages = (
-      <HelpBlock className="text-red">
-        {fieldErrors.map((err) => {
-          return <li key={err}>{err}</li>;
-        })}
-      </HelpBlock>
-    );
-  }
 
   const handleChange = (value): void => {
     let newData = data;
@@ -80,7 +62,7 @@ export default function SelectField({
         onChange={handleChange}
         {...props}
       />
-      {errMessages}
+      <ServerErrors field={`arguments.${name}`} />
     </FormGroup>
   );
 }

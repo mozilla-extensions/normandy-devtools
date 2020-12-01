@@ -124,3 +124,28 @@ export function makeCompare<T = unknown>(
     return compare(aKey, bKey);
   };
 }
+
+interface ErrorDict {
+  [key: string]: unknown;
+}
+
+export function normalizeServerValidationErrors(errors: ErrorDict): ErrorDict {
+  const output = {};
+
+  function flatten(obj: unknown, parent = ""): void {
+    for (const [key, value] of Object.entries(obj)) {
+      const flatKey = parent ? `${parent}.${key}` : key;
+      if (Array.isArray(value)) {
+        output[flatKey] = value;
+      } else if (typeof value === "string") {
+        output[flatKey] = [value];
+      } else if (typeof value === "object") {
+        flatten(value, flatKey);
+      }
+    }
+  }
+
+  flatten(errors);
+
+  return output;
+}

@@ -18,6 +18,7 @@ import {
 import JsonEditor from "devtools/components/common/JsonEditor";
 import InputField from "devtools/components/recipes/form/arguments/fields/InputField";
 import ToggleField from "devtools/components/recipes/form/arguments/fields/ToggleField";
+import ServerErrors from "devtools/components/recipes/form/ServerErrors";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
@@ -151,6 +152,7 @@ function Branch({ index, branchesUpdated, setBranchesUpdated }) {
   let valueFieldKey = data.recipe && data.recipe.id ? data.recipe.id : "create";
   valueFieldKey += `-${index}-${branchesUpdated}`;
 
+  const errorPrefix = `arguments.branches.${index}.`;
   return (
     <>
       <FormGroup>
@@ -177,10 +179,12 @@ function Branch({ index, branchesUpdated, setBranchesUpdated }) {
                   value={branch.ratio}
                   onChange={handleChange("ratio", parseNumericInput)}
                 />
+                <ServerErrors field={errorPrefix + "ratio"} />
               </div>
               <div className="flex-grow-1">
                 <ControlLabel>Branch Slug</ControlLabel>
                 <Input value={branch.slug} onChange={handleChange("slug")} />
+                <ServerErrors field={errorPrefix + "slug"} />
               </div>
             </FormGroup>
             <FormGroup>
@@ -196,6 +200,7 @@ function Branch({ index, branchesUpdated, setBranchesUpdated }) {
                 value={branch.groups}
                 onChange={handleChange("groups")}
               />
+              <ServerErrors field={errorPrefix + "groups"} />
             </FormGroup>
             <FormGroup className="cm-height-8">
               <ControlLabel>Value</ControlLabel>
@@ -204,6 +209,7 @@ function Branch({ index, branchesUpdated, setBranchesUpdated }) {
                 value={branch.value}
                 onChange={handleChange("value")}
               />
+              <ServerErrors field={errorPrefix + "value"} />
             </FormGroup>
           </div>
         </div>

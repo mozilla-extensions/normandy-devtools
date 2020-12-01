@@ -13,6 +13,7 @@ import {
   useRecipeDetailsErrors,
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
+import { normalizeServerValidationErrors } from "devtools/utils/helpers";
 
 // export default
 const RecipeFormHeader: React.FC = () => {
@@ -66,7 +67,7 @@ const RecipeFormHeader: React.FC = () => {
         if (status === 400) {
           dispatch({
             type: ACTION_SET_SERVER_ERRORS,
-            errors: formErrors,
+            errors: normalizeServerValidationErrors(formErrors),
           });
         }
       });

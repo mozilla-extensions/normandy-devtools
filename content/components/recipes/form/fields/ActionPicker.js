@@ -1,21 +1,20 @@
 import React from "react";
-import { ControlLabel, FormControl, FormGroup, HelpBlock } from "rsuite";
+import { ControlLabel, FormControl, FormGroup } from "rsuite";
 
 import ActionSelector from "devtools/components/common/ActionSelector";
 import { INITIAL_ACTION_ARGUMENTS } from "devtools/components/recipes/form/ActionArguments";
+import ServerErrors from "devtools/components/recipes/form/ServerErrors";
 import { useSelectedNormandyEnvironmentAPI } from "devtools/contexts/environment";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
-  useRecipeDetailsErrors,
 } from "devtools/contexts/recipeDetails";
 
 export default function ActionPicker() {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
-  const { serverErrors } = useRecipeDetailsErrors();
   const value = data.action && data.action.name;
 
   const handleChange = (action) => {
@@ -28,18 +27,6 @@ export default function ActionPicker() {
       },
     });
   };
-
-  const { action_id: fieldErrors = [] } = serverErrors;
-  let errMessages;
-  if (fieldErrors.length) {
-    errMessages = (
-      <HelpBlock className="text-red">
-        {fieldErrors.map((err) => {
-          return <li key={err}>{err}</li>;
-        })}
-      </HelpBlock>
-    );
-  }
 
   return (
     <FormGroup>
@@ -56,7 +43,7 @@ export default function ActionPicker() {
         value={value}
         onChangeAction={handleChange}
       />
-      {errMessages}
+      <ServerErrors field="action_id" />
     </FormGroup>
   );
 }

@@ -1,4 +1,9 @@
-import { compare, makeCompare, splitCamelCase } from "devtools/utils/helpers";
+import {
+  compare,
+  makeCompare,
+  splitCamelCase,
+  normalizeServerValidationErrors,
+} from "devtools/utils/helpers";
 
 describe("splitCamelCase", () => {
   describe("case: no-change", () => {
@@ -78,5 +83,40 @@ describe("makeCompare", () => {
 
     data.sort(makeCompare((obj) => obj.id));
     expect(data.map((obj) => obj.id)).toEqual([1, 2, 3]);
+  });
+});
+
+describe("normalizeServerValidationErrors", () => {
+  it("preserve basic errors", () => {
+    expect(normalizeServerValidationErrors({})).toEqual({});
+
+    const error = {
+      recipe_id: ["wrong slug"],
+    };
+    expect(normalizeServerValidationErrors(error)).toEqual(error);
+  });
+
+  it("puts single errors as lists", () => {
+    const error = {
+      argument: "bad",
+    };
+    expect(normalizeServerValidationErrors(error)).toEqual({
+      argument: ["bad"],
+    });
+  });
+
+  it("flattens errors", () => {
+    const error = {
+      arguments: {
+        branches: {
+          0: {
+            slug: "bad",
+          },
+        },
+      },
+    };
+    expect(normalizeServerValidationErrors(error)).toEqual({
+      "arguments.branches.0.slug": ["bad"],
+    });
   });
 });
