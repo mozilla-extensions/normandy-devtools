@@ -12,6 +12,8 @@ import {
   RadioGroup,
 } from "rsuite";
 
+import ServerErrors from "devtools/components/recipes/form/ServerErrors";
+
 const PREFERENCE_TYPE_OPTIONS = [
   { label: "Boolean", value: "boolean" },
   { label: "Integer", value: "integer" },
@@ -102,6 +104,7 @@ export default function PreferenceFields({
               value={preferenceName}
               onChange={handleChange("preferenceName")}
             />
+            <ServerErrors field={`arguments.preferences.${index}.name`} />
           </FormGroup>
         </div>
         <div className="pr-1">
@@ -130,6 +133,7 @@ export default function PreferenceFields({
           <FormGroup>
             <ControlLabel>Value</ControlLabel>
             {valueField}
+            <ServerErrors field={`arguments.preferences.${index}.value`} />
           </FormGroup>
         </div>
       </div>

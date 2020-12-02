@@ -2,6 +2,7 @@ import React from "react";
 import { ControlLabel, FormGroup } from "rsuite";
 
 import JsonEditor from "devtools/components/common/JsonEditor";
+import ServerErrors from "devtools/components/recipes/form/ServerErrors";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
@@ -29,6 +30,7 @@ export default function FallbackEditor() {
     <FormGroup>
       <ControlLabel>Action Arguments</ControlLabel>
       <JsonEditor key={key} value={data.arguments} onChange={handleChange} />
+      <ServerErrors field="arguments" />
     </FormGroup>
   );
 }

@@ -1,6 +1,7 @@
 import React, { ReactElement } from "react";
 
 import SelectField from "devtools/components/recipes/form/arguments/fields/SelectField";
+import ServerErrors from "devtools/components/recipes/form/ServerErrors";
 import {
   useEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
@@ -37,12 +38,15 @@ export default function PreferenceRollback(): ReactElement {
   };
 
   return (
-    <SelectField
-      searchable
-      data={rolloutData}
-      label="Rollout"
-      name="rolloutSlug"
-      renderMenuItem={rolloutMenu}
-    />
+    <>
+      <SelectField
+        searchable
+        data={rolloutData}
+        label="Rollout"
+        name="rolloutSlug"
+        renderMenuItem={rolloutMenu}
+      />
+      <ServerErrors field="arguments.slug" />
+    </>
   );
 }
