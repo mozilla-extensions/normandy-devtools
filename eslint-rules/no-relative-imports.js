@@ -11,14 +11,9 @@ module.exports = {
   },
 
   create(context) {
-    const absoluteRoots = Object.fromEntries(
-      Array.from(
-        Object.entries(context.options.roots || {}),
-      ).map(([rootName, relativePath]) => [
-        rootName,
-        path.resolve(relativePath),
-      ]),
-    );
+    const absoluteRoots = Array.from(
+      Object.entries(context.options.roots || {}),
+    ).map(([rootName, relativePath]) => [rootName, path.resolve(relativePath)]);
 
     return {
       ImportDeclaration(node) {
@@ -33,7 +28,7 @@ module.exports = {
             fix(fixer) {
               const filename = context.getFilename();
               const importSpecifier = node.source.value;
-              for (const [root, rootPath] of Object.entries(absoluteRoots)) {
+              for (const [root, rootPath] of absoluteRoots) {
                 if (filename.startsWith(rootPath)) {
                   const absoluteFsImport = path.normalize(
                     path.join(path.dirname(filename), importSpecifier),
