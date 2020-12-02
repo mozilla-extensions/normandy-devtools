@@ -7,19 +7,18 @@ import {
   filtersApiResponseFactory,
   extensionFactory,
 } from "devtools/tests/factories/api";
-import ExperimenterAPI from "devtools/utils/experimenterApi";
-import NormandyAPI from "devtools/utils/normandyApi";
-
 import {
   versionFoFactory,
   channelFoFactory,
   bucketSampleFoFactory,
-} from "./factories/filterObjects";
+} from "devtools/tests/factories/filterObjects";
 import {
   recipeFactory,
   addonStudyBranchFactory,
   multiPrefBranchFactory,
-} from "./factories/recipes";
+} from "devtools/tests/factories/recipes";
+import ExperimenterAPI from "devtools/utils/experimenterApi";
+import NormandyAPI from "devtools/utils/normandyApi";
 
 describe("The `RecipeForm` component", () => {
   afterEach(async () => {
