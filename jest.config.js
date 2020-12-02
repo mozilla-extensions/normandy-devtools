@@ -22,5 +22,5 @@ module.exports = {
     "^devtools/(.*)(?<!\\.less|\\.css)$": "<rootDir>/content/$1",
   },
   collectCoverage: false,
-  collectCoverageFrom: ["<rootDir>/content/**/*.{js,ts,tsx}"],
+  collectCoverageFrom: ["<rootDir>/content/**/*\\.{js,ts,tsx}(?<!\\.d\\.ts)"],
 };
