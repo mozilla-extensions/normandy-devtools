@@ -1,0 +1,62 @@
+version: "3"
+
+services:
+  normandy:
+    image: mozilla/normandy:latest
+    command: >
+      bash -c "
+        /app/bin/wait-for-it.sh db:5432;
+        python ./manage.py migrate;
+        python ./manage.py update_actions;
+        python ./manage.py initial_data;
+        gunicorn normandy.wsgi:application
+      "
+    links:
+      - db
+      - autograph
+    networks:
+      - public_nw
+      - private_nw
+    environment:
+      DJANGO_DEBUG: "true"
+      DATABASE_URL: "postgres://postgres:postgres@db/normandy"
+      DJANGO_ALLOWED_HOSTS: "*"
+      DJANGO_CONFIGURATION: "ProductionInsecure"
+      DJANGO_SILENCED_SYSTEM_CHECKS: "security.W001,security.W003,security.W004,security.W008,security.W009,security.W012,security.W016,normandy.recipes.E006,dockerflow.health.W001,normandy.recipes.I001,normandy.recipes.I003"
+      DJANGO_AUTOGRAPH_URL: "http://autograph:8001"
+      DJANGO_AUTOGRAPH_HAWK_ID: "normandev"
+      # This is not a secret, it's the published Normandy dev key from the Autograph repository
+      DJANGO_AUTOGRAPH_HAWK_SECRET_KEY: "3dhoaupudifjjvm7xznd9bn73159xn3xwr77b61kzdjwzzsjts"
+      DJANGO_METRICS_USE_STATSD: "false"
+      DJANGO_METRICS_USE_DEBUG_LOG: "true"
+      DJANGO_PEER_APPROVAL_REQUIRED: "false"
+      DJANGO_CSP_REPORT_URI: ""
+      DEFAULT_FILE_STORAGE: "django.core.files.storage.FileSystemStorage"
+      API_CACHE_ENABLED: "false"
+      API_CACHE_TIME: "0"
+    ports:
+      - "8000:8000"
+
+  db:
+    image: postgres:9.6
+    volumes:
+      - /var/lib/postgresql
+    environment:
+      POSTGRES_DB: normandy
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    networks:
+      - private_nw
+
+  autograph:
+    image: mozilla/autograph
+    ports:
+      - "8000:8000"
+    networks:
+      - private_nw
+
+networks:
+  private_nw:
+    internal: true
+  public_nw:
