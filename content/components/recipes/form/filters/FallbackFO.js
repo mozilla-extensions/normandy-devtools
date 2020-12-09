@@ -18,6 +18,7 @@ const KNOWN_FILTER_TYPES = [
   "locale",
   "bucketSample",
   "stableSample",
+  "namespaceSample",
 ];
 
 export default function FallbackFO() {
