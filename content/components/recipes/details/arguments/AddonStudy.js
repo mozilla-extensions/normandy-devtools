@@ -3,7 +3,7 @@ import React from "react";
 
 import {
   nl2pbrFormatter,
-  tagFormatter,
+  extensionApiFormatter,
 } from "devtools/components/recipes/details/arguments/formatters";
 import GenericArguments from "devtools/components/recipes/details/arguments/GenericArguments";
 
@@ -13,7 +13,7 @@ export default function AddonStudy({ data }) {
       data={data.arguments}
       formatters={{
         description: nl2pbrFormatter,
-        extensionApiId: tagFormatter({ color: "violet" }),
+        extensionApiId: extensionApiFormatter,
       }}
       ordering={[
         "name",

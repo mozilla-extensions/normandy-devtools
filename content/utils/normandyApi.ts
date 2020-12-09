@@ -185,6 +185,12 @@ export default class NormandyAPI extends API {
     });
   }
 
+  async fetchExtension(id: number): Promise<Extension> {
+    return this.request({
+      url: `extension/${id}/`,
+    });
+  }
+
   async fetchApprovalRequests(
     searchParams = {},
   ): Promise<Array<ApprovalRequest>> {
