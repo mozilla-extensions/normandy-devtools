@@ -96,6 +96,7 @@ function Branches() {
   return (
     <FormGroup>
       <ControlLabel>Branches</ControlLabel>
+      <ServerErrors field="arguments.branches" />
       <Panel bordered>
         {branchesList}
         <Divider />
