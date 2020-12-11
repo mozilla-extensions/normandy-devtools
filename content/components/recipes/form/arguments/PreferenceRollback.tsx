@@ -46,7 +46,7 @@ export default function PreferenceRollback(): ReactElement {
         name="rolloutSlug"
         renderMenuItem={rolloutMenu}
       />
-      <ServerErrors field="arguments.slug" />
+      <ServerErrors field="arguments.rolloutSlug" />
     </>
   );
 }
