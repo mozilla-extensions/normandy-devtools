@@ -95,11 +95,11 @@ describe("The `RecipeDetails` component", () => {
     return /** @type import("devtools/types/recipes").RecipeV3<import("devtools/types/arguments").BranchedAddonStudyArguments> */ (recipe);
   };
 
-  const extensionSetup = () => {
-    const extensions = extensionFactory.buildCount(2);
+  const extensionSetup = (count) => {
+    const extensions = extensionFactory.buildCount(count);
     const mockFetchExtension = jest
       .fn()
-      .mockImplementation((i) => extensions[i % 3]);
+      .mockImplementation((i) => extensions[i % extensions.length]);
 
     jest
       .spyOn(NormandyAPI.prototype, "fetchExtension")
@@ -146,7 +146,7 @@ describe("The `RecipeDetails` component", () => {
 
   it("displays details of an branchedAddon recipe", async () => {
     const recipeData = branchedAddonSetup();
-    const extensions = extensionSetup();
+    const extensions = extensionSetup(2);
     setup(recipeData);
 
     const doc = renderForTest(recipeData);
