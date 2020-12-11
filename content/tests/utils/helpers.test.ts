@@ -24,6 +24,18 @@ describe("splitCamelCase", () => {
     it("should handle a final letter", () => {
       expect(splitCamelCase("getX")).toEqual("get x");
     });
+
+    it("should have special cases for some acronyms", () => {
+      expect(splitCamelCase("experimentDocumentUrl")).toEqual(
+        "experiment document URL",
+      );
+      expect(splitCamelCase("extensionApiId")).toEqual("extension API ID");
+
+      // it shouldn't be too eager and replace those acronyms inside words
+      expect(splitCamelCase("curlLidMegapixels")).toEqual(
+        "curl lid megapixels",
+      );
+    });
   });
 
   describe("case: title-case", () => {
@@ -47,6 +59,20 @@ describe("splitCamelCase", () => {
 
     it("should handle a final letter", () => {
       expect(splitCamelCase("getX", { case: "title-case" })).toEqual("Get X");
+    });
+
+    it("should have special cases for some acronyms", () => {
+      expect(
+        splitCamelCase("experimentDocumentUrl", { case: "title-case" }),
+      ).toEqual("Experiment Document URL");
+      expect(splitCamelCase("extensionApiId", { case: "title-case" })).toEqual(
+        "Extension API ID",
+      );
+
+      // it shouldn't be too eager though
+      expect(
+        splitCamelCase("curlLidMegapixels", { case: "title-case" }),
+      ).toEqual("Curl Lid Megapixels");
     });
   });
 });
