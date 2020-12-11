@@ -1,6 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 
+import PageWrapper from "devtools/components/common/PageWrapper";
 import DetailsHeader from "devtools/components/recipes/details/DetailsHeader";
 import RecipeDetails from "devtools/components/recipes/details/RecipeDetails";
 import {
@@ -65,9 +66,9 @@ const RecipeDetailsPage: React.FC = () => {
         <div className="d-flex flex-column h-100">
           <DetailsHeader />
           <div className="flex-grow-1 overflow-auto">
-            <div className="page-wrapper">
+            <PageWrapper>
               <RecipeDetails />
-            </div>
+            </PageWrapper>
           </div>
         </div>
       </ExperimenterDetailsProvider>

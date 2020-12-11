@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useContext } from "react";
 import {
   ControlLabel,
   FormGroup,
@@ -11,6 +11,8 @@ import {
   Radio,
   RadioGroup,
 } from "rsuite";
+
+import { layoutContext } from "devtools/contexts/layout";
 
 const PREFERENCE_TYPE_OPTIONS = [
   { label: "Boolean", value: "boolean" },
@@ -29,6 +31,8 @@ export default function PreferenceFields({
   onChange,
   onDelete,
 }) {
+  const { container } = useContext(layoutContext);
+
   const {
     preferenceName,
     preferenceBranchType,
@@ -109,6 +113,7 @@ export default function PreferenceFields({
             <ControlLabel>Preference Branch Type</ControlLabel>
             <InputPicker
               cleanable={false}
+              container={container}
               data={PREFERENCE_BRANCH_TYPE_OPTIONS}
               value={preferenceBranchType}
               onChange={handleChange("preferenceBranchType")}
@@ -120,6 +125,7 @@ export default function PreferenceFields({
             <ControlLabel>Preference Type</ControlLabel>
             <InputPicker
               cleanable={false}
+              container={container}
               data={PREFERENCE_TYPE_OPTIONS}
               value={preferenceType}
               onChange={handleChange("preferenceType")}

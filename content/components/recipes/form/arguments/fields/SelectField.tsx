@@ -1,7 +1,8 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useContext } from "react";
 import { ControlLabel, FormGroup, InputProps, SelectPicker } from "rsuite";
 
 import ServerErrors from "devtools/components/recipes/form/ServerErrors";
+import { layoutContext } from "devtools/contexts/layout";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
@@ -30,6 +31,7 @@ export default function SelectField({
 }: SelectFieldProps): ReactElement {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
+  const { container } = useContext(layoutContext);
 
   const handleChange = (value): void => {
     let newData = data;
@@ -56,6 +58,7 @@ export default function SelectField({
       <SelectPicker
         block
         cleanable={false}
+        container={container}
         data={options}
         searchable={false}
         value={data.arguments[name]}

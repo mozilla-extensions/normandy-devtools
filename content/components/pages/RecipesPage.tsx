@@ -15,6 +15,7 @@ import {
 } from "rsuite";
 
 import CodeMirror from "devtools/components/common/CodeMirror";
+import PageWrapper from "devtools/components/common/PageWrapper";
 import RecipeQueryEditor from "devtools/components/recipes/details/RecipeQueryEditor";
 import RecipeListing from "devtools/components/recipes/RecipeListing";
 import {
@@ -93,7 +94,7 @@ const RecipesPage: React.FC<RecipesPageProps> = ({
         </Navbar>
       </Header>
 
-      <div className="page-wrapper">
+      <PageWrapper>
         <RecipeQueryEditor
           className="ml-half mb-n1"
           normandyApi={api}
@@ -128,7 +129,7 @@ const RecipesPage: React.FC<RecipesPageProps> = ({
             </div>
           </>
         )}
-      </div>
+      </PageWrapper>
 
       <WriteRecipeModal
         arbitraryRecipe={arbitraryRecipe}
