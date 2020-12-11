@@ -52,9 +52,9 @@ export default function MultiPreferenceBranches() {
   return (
     <FormGroup>
       <ControlLabel>Branches</ControlLabel>
-      <ServerErrors field="arguments.branches" />
       <Panel bordered>
         {branchesList}
+        <ServerErrors field="arguments.branches" />
         <Divider />
         <IconButton
           icon={<Icon icon="plus-circle" />}
