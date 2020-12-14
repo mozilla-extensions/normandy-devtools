@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Col,
   ControlLabel,
@@ -10,6 +10,7 @@ import {
   TagPicker,
 } from "rsuite";
 
+import { layoutContext } from "devtools/contexts/layout";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
@@ -39,6 +40,7 @@ const SAMPLING_OPTIONS = [
 const SamplingOptions: React.FC = () => {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
+  const { container } = useContext(layoutContext);
 
   const filterObject = getFilterObjectFromData();
   const typeValue = filterObject ? filterObject.type : null;
@@ -112,6 +114,7 @@ const SamplingOptions: React.FC = () => {
         <ControlLabel>Sampling Type</ControlLabel>
         <InputPicker
           cleanable={false}
+          container={container}
           data={SAMPLING_OPTIONS}
           value={typeValue}
           onChange={handleTypeChange}
@@ -253,6 +256,7 @@ const SamplingNumberInput: React.FC<SamplingNumberInputProps> = ({
 };
 
 const SamplingInputInput: React.FC<Changeable> = ({ onChange }) => {
+  const { container } = useContext(layoutContext);
   const filterObject = getFilterObjectFromData();
   assert(
     filterObject.type === STABLE_SAMPLE || filterObject.type === BUCKET_SAMPLE,
@@ -285,6 +289,7 @@ const SamplingInputInput: React.FC<Changeable> = ({ onChange }) => {
       <TagPicker
         block
         creatable
+        container={container}
         data={options.map((v) => ({
           label: v,
           value: v,

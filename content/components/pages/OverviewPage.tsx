@@ -1,6 +1,7 @@
 import React from "react";
 import { Loader } from "rsuite";
 
+import PageWrapper from "devtools/components/common/PageWrapper";
 import { EndingRecipes } from "devtools/components/overview/EndingRecipes";
 import { PausingRecipes } from "devtools/components/overview/PausingRecipes";
 import { PendingReviews } from "devtools/components/overview/PendingReviews";
@@ -108,11 +109,11 @@ export const OverviewPage: React.FC = () => {
 
   if (recipes.length || liveRecipes.length || pauseRecipes.length) {
     return (
-      <div className="page-wrapper">
+      <PageWrapper>
         <PendingReviews data={recipes} />
         <EndingRecipes data={liveRecipes} />
         <PausingRecipes data={pauseRecipes} />
-      </div>
+      </PageWrapper>
     );
   }
 

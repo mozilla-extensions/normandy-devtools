@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useContext } from "react";
 import {
   ControlLabel,
   Divider,
@@ -16,6 +16,7 @@ import {
 } from "rsuite";
 
 import InputField from "devtools/components/recipes/form/arguments/fields/InputField";
+import { layoutContext } from "devtools/contexts/layout";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
@@ -82,6 +83,8 @@ function Preferences() {
 function Preference({ index }) {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
+  const { container } = useContext(layoutContext);
+
   const preference = data.arguments.preferences[index];
   const { preferences } = data.arguments;
   const [preferenceType, setPreferenceType] = React.useState(
@@ -189,6 +192,7 @@ function Preference({ index }) {
             <ControlLabel>Preference Type</ControlLabel>
             <InputPicker
               cleanable={false}
+              container={container}
               data={PREFERENCE_TYPE_OPTIONS}
               value={preferenceType}
               onChange={handlePreferenceTypeChange}

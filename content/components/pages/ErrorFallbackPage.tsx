@@ -2,12 +2,14 @@ import React from "react";
 import { FallbackProps } from "react-error-boundary";
 import { Icon, IconButton } from "rsuite";
 
+import PageWrapper from "devtools/components/common/PageWrapper";
+
 export const ErrorFallbackPage: React.FC<FallbackProps> = ({
   error,
   resetErrorBoundary,
 }: FallbackProps) => {
   return (
-    <div className="page-wrapper">
+    <PageWrapper>
       <h5>Something went wrong!</h5>
 
       <p>
@@ -21,6 +23,6 @@ export const ErrorFallbackPage: React.FC<FallbackProps> = ({
           Try again
         </IconButton>
       </p>
-    </div>
+    </PageWrapper>
   );
 };

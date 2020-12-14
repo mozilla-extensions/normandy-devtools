@@ -1,6 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 
+import PageWrapper from "devtools/components/common/PageWrapper";
 import { INITIAL_ACTION_ARGUMENTS } from "devtools/components/recipes/form/ActionArguments";
 import RecipeForm from "devtools/components/recipes/form/RecipeForm";
 import RecipeFormHeader from "devtools/components/recipes/form/RecipeFormHeader";
@@ -60,9 +61,9 @@ const RecipeFormPage: React.FC = () => {
       <div className="d-flex flex-column h-100">
         <RecipeFormHeader />
         <div className="flex-grow-1 overflow-auto">
-          <div className="page-wrapper">
+          <PageWrapper>
             <RecipeForm />
-          </div>
+          </PageWrapper>
         </div>
       </div>
     </RecipeDetailsProvider>
