@@ -188,11 +188,12 @@ describe("The `RecipeDetails` component", () => {
     }
 
     for (const extension of extensions) {
-      const nameRegex = new RegExp(extension.name);
-      const versionRegex = new RegExp(extension.version);
-
-      expect(doc.getByText(nameRegex)).toBeInTheDocument();
-      expect(doc.getByText(versionRegex)).toBeInTheDocument();
+      expect(
+        doc.getByText(extension.name, { exact: false }),
+      ).toBeInTheDocument();
+      expect(
+        doc.getByText(extension.version, { exact: false }),
+      ).toBeInTheDocument();
     }
   });
 
