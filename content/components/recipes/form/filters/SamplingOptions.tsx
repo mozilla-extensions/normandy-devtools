@@ -46,14 +46,13 @@ const SamplingOptions: React.FC = () => {
   const typeValue = filterObject ? filterObject.type : null;
 
   const handleTypeChange = (value): void => {
+    const oldFilterObject = filterObject;
     const filterObjects = [
-      ...data.filter_object.filter((fo) => fo !== filterObject),
+      ...data.filter_object.filter((fo) => fo !== oldFilterObject),
     ];
 
     if (value) {
-      filterObjects.push({
-        type: value,
-      });
+      filterObjects.push(convertBetweenSamplingTypes(oldFilterObject, value));
     }
 
     dispatch({
@@ -187,9 +186,6 @@ const NamespaceSampleOptions: React.FC<Changeable> = ({ onChange }) => {
       </Col>
       <Col xs={4}>
         <SamplingNumberInput label="Count" name="count" onChange={onChange} />
-      </Col>
-      <Col xs={4}>
-        <SamplingNumberInput label="Total" name="total" onChange={onChange} />
       </Col>
       <Col xs={4}>
         <NamespaceInput onChange={onChange} />
@@ -344,4 +340,52 @@ function getFilterObjectFromData(): SamplingFilterObject {
   }
 
   return filterObject;
+}
+
+export function convertBetweenSamplingTypes(
+  oldFilter: null | Partial<SamplingFilterObject>,
+  newType: SamplingFilterObject["type"],
+): Partial<SamplingFilterObject> {
+  let newFilter: Partial<SamplingFilterObject> = { type: newType };
+  if (!oldFilter?.type) {
+    return newFilter;
+  }
+
+  switch (`${oldFilter.type} -> ${newType}`) {
+    case "bucketSample -> namespaceSample": {
+      oldFilter = oldFilter as Partial<BucketSampleFilterObject>;
+      newFilter = newFilter as Partial<NamespaceSampleFilterObject>;
+
+      if (oldFilter.input?.length === 2) {
+        newFilter.namespace = oldFilter.input
+          .find((i) => i !== "normandy.userId")
+          ?.replace(/^["']|["']$/g, ""); // replace a leading and trailing quote
+      }
+
+      newFilter.start = oldFilter.start;
+      if (oldFilter.total === 10_000) {
+        newFilter.count = oldFilter.count;
+      }
+
+      break;
+    }
+
+    case "namespaceSample -> bucketSample": {
+      oldFilter = oldFilter as Partial<NamespaceSampleFilterObject>;
+      newFilter = newFilter as Partial<BucketSampleFilterObject>;
+
+      newFilter.input = ["normandy.userId"];
+      if (oldFilter.namespace) {
+        newFilter.input.push(`"${oldFilter.namespace}"`);
+      }
+
+      newFilter.start = oldFilter.start;
+      newFilter.count = oldFilter.count;
+      newFilter.total = 10_000;
+    }
+
+    // More conversions could be added here, if we want.
+  }
+
+  return newFilter;
 }
