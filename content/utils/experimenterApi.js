@@ -11,6 +11,7 @@ export default class ExperimenterAPI extends API {
     });
   }
 
+  /** @return {Promise<import("devtools/types/experimenterApi").ExperimenterResponse>} */
   async fetchExperiment(slug) {
     return this.request({
       url: `experiments/${slug}/`,

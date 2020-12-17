@@ -86,9 +86,13 @@ export const OverviewPage: React.FC = () => {
       await Promise.all(
         experiments.map(async (experiment) => {
           if (experiment.normandy_id && experiment.proposed_enrollment) {
-            const recipe = await normandyApi.fetchRecipe(
+            interface MaybePausable {
+              latest_revision: { arguments: { isEnrollmentPaused?: boolean } };
+            }
+            const recipe = (await normandyApi.fetchRecipe(
               experiment.normandy_id,
-            );
+            )) as MaybePausable;
+
             if (!recipe.latest_revision.arguments.isEnrollmentPaused) {
               const pauseDate = new Date(experiment.start_date);
               pauseDate.setDate(
