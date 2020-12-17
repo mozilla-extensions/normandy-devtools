@@ -6,6 +6,7 @@ import RecipeDetailsPage from "devtools/components/pages/RecipeDetailsPage";
 import RecipeDetails from "devtools/components/recipes/details/RecipeDetails";
 import { RecipeDetailsProvider } from "devtools/contexts/recipeDetails";
 import { actionFactory } from "devtools/tests/factories/api";
+import { extensionFactory } from "devtools/tests/factories/api";
 import { experimenterResponseFactory } from "devtools/tests/factories/experiments";
 import {
   versionFoFactory,
@@ -94,6 +95,23 @@ describe("The `RecipeDetails` component", () => {
     return /** @type import("devtools/types/recipes").RecipeV3<import("devtools/types/arguments").BranchedAddonStudyArguments> */ (recipe);
   };
 
+  const extensionSetup = (count) => {
+    const extensions = extensionFactory.buildCount(count);
+    const mockFetchExtension = jest
+      .fn()
+      .mockImplementation((i) => extensions[i % extensions.length]);
+
+    jest
+      .spyOn(NormandyAPI.prototype, "fetchExtension")
+      .mockImplementation(() =>
+        Promise.resolve(
+          mockFetchExtension(mockFetchExtension.mock.calls.length),
+        ),
+      );
+
+    return extensions;
+  };
+
   const multiprefRecipeSetUp = () => {
     const sample = stableSampleFoFactory.build();
     const versions = versionFoFactory.build({}, { generateVersionsCount: 2 });
@@ -128,7 +146,9 @@ describe("The `RecipeDetails` component", () => {
 
   it("displays details of an branchedAddon recipe", async () => {
     const recipeData = branchedAddonSetup();
+    const extensions = extensionSetup(2);
     setup(recipeData);
+
     const doc = renderForTest(recipeData);
 
     await doc.findByText(recipeData.latest_revision.name);
@@ -165,6 +185,15 @@ describe("The `RecipeDetails` component", () => {
         doc.getAllByText(branch.extensionApiId.toString()),
       ).not.toHaveLength(0);
       expect(doc.getAllByText(branch.ratio.toString())).not.toHaveLength(0);
+    }
+
+    for (const extension of extensions) {
+      expect(
+        doc.getByText(extension.name, { exact: false }),
+      ).toBeInTheDocument();
+      expect(
+        doc.getByText(extension.version, { exact: false }),
+      ).toBeInTheDocument();
     }
   });
 

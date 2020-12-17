@@ -1,6 +1,7 @@
 import React from "react";
-import { Tag } from "rsuite";
+import { Tag, Icon, IconButton } from "rsuite";
 
+import { useSelectedNormandyEnvironmentAPI } from "devtools/contexts/environment";
 import { splitCamelCase } from "devtools/utils/helpers";
 
 export function multiColumnFormatter(fields = [], formatters = {}) {
@@ -128,4 +129,41 @@ export function nl2pbrFormatter(key, value) {
       })}
     </>,
   );
+}
+
+export function extensionApiFormatter(key, value) {
+  const normandyApi = useSelectedNormandyEnvironmentAPI();
+
+  /**
+   * @type {[Partial<import("devtools/types/normandyApi").Extension>, Function]} extensionDetail
+   */
+  const [extensionDetail, setExtensionDetail] = React.useState({});
+  React.useEffect(() => {
+    normandyApi.fetchExtension(value).then((response) => {
+      setExtensionDetail(response);
+    });
+  }, []);
+
+  const extensionInfo = (
+    <div className="d-flex flex-wrap m-0">
+      <div className="flex-grow-1">
+        <Tag className="mr-half mb-half" color="violet">
+          {value}
+        </Tag>
+        {extensionDetail.name} (version: {extensionDetail.version})
+      </div>
+
+      <IconButton
+        href={extensionDetail.xpi}
+        icon={<Icon icon="download" />}
+        size="xs"
+      />
+    </div>
+  );
+
+  if (key) {
+    return stringFormatter(key, extensionInfo);
+  }
+
+  return extensionInfo;
 }
