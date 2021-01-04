@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
+import { Loader } from "rsuite";
 
 import PageWrapper from "devtools/components/common/PageWrapper";
 import NotFoundPage from "devtools/components/pages/NotFoundPage";
@@ -19,7 +20,8 @@ import {
 // export default
 const RecipeFormPage: React.FC = () => {
   const { selectedKey: environmentKey } = useEnvironmentState();
-  const [data, setData] = React.useState({});
+  const [data, setData] = React.useState(INITIAL_RECIPE_DATA);
+  const [loading, setLoading] = useState(true);
   const [importInstructions, setImportInstructions] = React.useState("");
   const { recipeId: recipeIdStr, experimenterSlug } = useParams<{
     recipeId: string;
@@ -46,6 +48,7 @@ const RecipeFormPage: React.FC = () => {
       normandyApi.fetchRecipe(recipeId).then((recipeData) => {
         setData(recipeData.latest_revision);
         setImportInstructions("");
+        setLoading(false);
       });
     } else if (experimenterSlug) {
       normandyApi.fetchAllActions().then((actions) => {
@@ -62,13 +65,23 @@ const RecipeFormPage: React.FC = () => {
               action: actions.find((a) => a.name === action_name),
             });
             setImportInstructions(comment);
+            setLoading(false);
           });
       });
     } else {
       setData(INITIAL_RECIPE_DATA);
       setImportInstructions("");
+      setLoading(false);
     }
   }, [recipeId, experimenterSlug, environmentKey]);
+
+  if (loading) {
+    return (
+      <div className="text-center mt-4">
+        <Loader content="Loading recipe&hellip;" />
+      </div>
+    );
+  }
 
   return (
     <RecipeDetailsProvider data={data} importInstructions={importInstructions}>
