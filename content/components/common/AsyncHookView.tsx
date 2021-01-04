@@ -1,4 +1,5 @@
 import React, { ReactElement } from "react";
+import { Loader } from "rsuite";
 
 import { AsyncHook } from "devtools/types/hooks";
 
@@ -20,9 +21,13 @@ function AsyncHookView<T>({
       errMsg = `Error: ${errMsg}`;
     }
 
-    return <p>{errMsg}</p>;
+    return <div className="text-center mt-4 text-red">{errMsg}</div>;
   } else if (loading) {
-    return <p>Loading</p>;
+    return (
+      <div className="text-center mt-4">
+        <Loader content="Loading&hellip;" />
+      </div>
+    );
   }
 
   return children(value);
