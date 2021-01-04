@@ -53,6 +53,7 @@ const RecipeFormPage: React.FC = () => {
           .fetchRecipe(experimenterSlug)
           .then(({ comment, action_name, ...recipeData }) => {
             setData({
+              ...INITIAL_RECIPE_DATA,
               ...recipeData,
               arguments: {
                 ...INITIAL_ACTION_ARGUMENTS[action_name],
