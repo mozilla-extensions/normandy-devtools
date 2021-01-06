@@ -1,18 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router";
-import {
-  ControlLabel,
-  Form,
-  FormControl,
-  FormGroup,
-  Icon,
-  Input,
-  InputGroup,
-  InputPicker,
-} from "rsuite";
+import { Icon, Input, InputGroup, InputPicker } from "rsuite";
 import { useDebouncedCallback } from "use-debounce/lib";
 
 import ActionSelector from "devtools/components/common/ActionSelector";
+import { layoutContext } from "devtools/contexts/layout";
 import { RecipeListQuery } from "devtools/types/normandyApi";
 import NormandyAPI from "devtools/utils/normandyApi";
 
@@ -28,7 +20,6 @@ interface Props {
   query: RecipeListQuery;
   setQuery: (newQuery: RecipeListQuery) => void;
   normandyApi: NormandyAPI;
-  className?: string;
 }
 
 // default export
@@ -36,9 +27,9 @@ const RecipeQueryEditor: React.FC<Props> = ({
   query,
   setQuery,
   normandyApi,
-  className,
 }) => {
   const [draftQuery, setDraftQuery] = useState<RecipeListQuery>(query ?? {});
+  const { container } = React.useContext(layoutContext);
 
   // Don't update the parent component for every keypress
   const debouncedSetQuery = useDebouncedCallback(setQuery, 300);
@@ -112,43 +103,40 @@ const RecipeQueryEditor: React.FC<Props> = ({
   ];
 
   return (
-    <Form className={className} layout="inline">
-      <FormGroup controlId="text">
-        <ControlLabel>Search</ControlLabel>
+    <div className="d-flex">
+      <div className="flex-grow-1 pr-1">
+        <div className="font-weight-bold mb-1">Search</div>
         <InputGroup>
           <InputGroup.Addon>
             <Icon icon="search" />
           </InputGroup.Addon>
-          <FormControl
-            accepter={Input}
+          <Input
+            data-testid="filter-field-search"
             value={draftQuery.text ?? ""}
             onChange={makeHandler("text", { debounce: true })}
             onPressEnter={debouncedSetQuery.flush}
           />
         </InputGroup>
-      </FormGroup>
-      <FormGroup controlId="enabled">
-        <ControlLabel>Enabled</ControlLabel>
-        <FormControl
-          accepter={InputPicker}
-          classPrefix="d-block "
+      </div>
+      <div className="pr-1">
+        <div className="font-weight-bold mb-1">Enabled</div>
+        <InputPicker
+          container={container}
           data={enabledPickerData}
           placeholder="Any"
           value={draftQuery.enabled}
           onChange={makeHandler("enabled", { debounce: false })}
         />
-      </FormGroup>
-      <FormGroup controlId="action">
-        <ControlLabel>Action</ControlLabel>
-        <FormControl
-          accepter={ActionSelector}
-          classPrefix="d-block "
+      </div>
+      <div>
+        <div className="font-weight-bold mb-1">Action</div>
+        <ActionSelector
           normandyApi={normandyApi}
           value={draftQuery.action}
           onChangeName={makeHandler("action", { debounce: false })}
         />
-      </FormGroup>
-    </Form>
+      </div>
+    </div>
   );
 };
 

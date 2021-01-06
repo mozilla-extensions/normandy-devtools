@@ -3,19 +3,17 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Button,
   ButtonToolbar,
-  Col,
   ControlLabel,
+  Divider,
   Form,
   FormControl,
   FormGroup,
-  Grid,
   Icon,
   IconButton,
   Pagination,
   Panel,
   Popover,
   PopoverProps,
-  Row,
   Tag,
   Uploader,
   Whisper,
@@ -24,11 +22,11 @@ import { FileType } from "rsuite/lib/Uploader";
 import { WhisperInstance } from "rsuite/lib/Whisper";
 
 import AsyncHookView from "devtools/components/common/AsyncHookView";
+import PageWrapper from "devtools/components/common/PageWrapper";
 import { useSelectedNormandyEnvironmentAPI } from "devtools/contexts/environment";
 import styles from "devtools/less/extensions.module.less";
 import { AsyncHook } from "devtools/types/hooks";
 import { Extension } from "devtools/types/normandyApi";
-import { chunkBy } from "devtools/utils/helpers";
 import { ApiPage } from "devtools/utils/normandyApi";
 
 // default export
@@ -37,88 +35,82 @@ const ExtensionsPage: React.FC = () => {
   const extensions = useExtensionsPage(page);
 
   return (
-    <>
-      <div className="page-header align-items-baseline">
-        <div className="flex-grow-1 text-right">
+    <div className="d-flex flex-column h-100">
+      <div className="page-header">
+        <div className="flex-grow-1" />
+        <div className="d-flex align-items-center text-right">
           <UploadWhisper />
         </div>
       </div>
 
-      <div className="page-wrapper">
-        <AsyncHookView<ApiPage<Extension>> hook={extensions}>
-          {({ results: extensions }) => (
-            <Grid className="extension-list w-100">
-              {chunkBy(extensions, 2).map((extensionChunk, rowIdx) => (
-                <Row key={`row-${rowIdx}`}>
-                  {extensionChunk.map((extension, colIdx) => (
-                    <Col key={`col-${colIdx}`} md={12} sm={24}>
-                      <ExtensionCard key={extension.id} extension={extension} />
-                    </Col>
-                  ))}
-                </Row>
-              ))}
-            </Grid>
-          )}
-        </AsyncHookView>
-
-        <div>
-          <Pagination
-            boundaryLinks
-            ellipsis
-            first
-            last
-            next
-            prev
-            activePage={page}
-            maxButtons={5}
-            pages={Math.ceil((extensions.value?.count ?? 1) / 25)}
-            size="lg"
-            onSelect={setPage}
-          />
-        </div>
+      <div className="flex-grow-1 overflow-auto">
+        <PageWrapper>
+          <AsyncHookView<ApiPage<Extension>> hook={extensions}>
+            {({ results }) => (
+              <div
+                className="grid-layout grid-2 card-grid"
+                data-testid="extensions-list"
+              >
+                {results.map((extension) => (
+                  <ExtensionCard key={extension.id} extension={extension} />
+                ))}
+              </div>
+            )}
+          </AsyncHookView>
+        </PageWrapper>
       </div>
-    </>
+
+      <div className="page-footer text-center">
+        <Pagination
+          boundaryLinks
+          ellipsis
+          first
+          last
+          next
+          prev
+          activePage={page}
+          maxButtons={5}
+          pages={Math.ceil((extensions.value?.count ?? 1) / 25)}
+          size="lg"
+          onSelect={setPage}
+        />
+      </div>
+    </div>
   );
 };
 
 const ExtensionCard: React.FC<{ extension: Extension }> = ({ extension }) => {
   return (
-    <Panel
-      bordered
-      className="extension-card mb-2"
-      header={<ExtensionCardHeader extension={extension} />}
-    >
-      <dl className="d-flex flex-wrap m-0">
-        <span className="flex-grow-1 d-inline-block flex-basis-half">
-          <dt>Extension ID</dt>
-          <dd>{extension.extension_id}</dd>
-        </span>
-        <span className="flex-grow-1 d-inline-block flex-basis-half">
-          <dt>Version</dt>
-          <dd>{extension.version}</dd>
-        </span>
-      </dl>
-    </Panel>
-  );
-};
+    <Panel bordered className="extension-card mb-2">
+      <div className="d-flex font-size-larger">
+        <div>
+          <Tag className="mt-0 mr-1" color="violet">
+            {extension.id}
+          </Tag>
+        </div>
+        <div className="font-weight-bold flex-grow-1">{extension.name}</div>
+        <div className="ml-1 text-right">
+          <a href={extension.xpi}>
+            <Icon icon="download" />
+          </a>
+        </div>
+      </div>
 
-const ExtensionCardHeader: React.FC<{ extension: Extension }> = ({
-  extension,
-}) => {
-  return (
-    <div className="d-flex">
-      <span className="flex-basis-0 flex-grow-0">
-        <Tag className="mr-half" color="violet">
-          {extension.id}
-        </Tag>
-      </span>
-      <span className="flex-grow-1 pr-1">{extension.name}</span>
-      <span>
-        <a href={extension.xpi}>
-          <Icon icon="download" />
-        </a>
-      </span>
-    </div>
+      <Divider />
+
+      <div>
+        <div className="font-weight-bold">Extension ID</div>
+        <div className="text-subtle font-family-monospace">
+          {extension.extension_id}
+        </div>
+      </div>
+      <div className="mt-2">
+        <div className="font-weight-bold">Version</div>
+        <div className="text-subtle font-family-monospace">
+          {extension.version}
+        </div>
+      </div>
+    </Panel>
   );
 };
 

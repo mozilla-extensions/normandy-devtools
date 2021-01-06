@@ -13,7 +13,7 @@ import { AppSidebar } from "devtools/components/common/AppSidebar";
 import { ErrorFallbackPage } from "devtools/components/pages/ErrorFallbackPage";
 import NotFoundPage from "devtools/components/pages/NotFoundPage";
 import { OverviewPage } from "devtools/components/pages/OverviewPage";
-import RecipesPage from "devtools/components/pages/RecipesPage";
+import RecipeListingPage from "devtools/components/pages/RecipeListingPage";
 import { EnvironmentProvider } from "devtools/contexts/environment";
 import { useHistoryRecorder } from "devtools/hooks/urls";
 
@@ -75,7 +75,7 @@ function Page() {
             />
             <Route
               exact
-              component={RecipesPage}
+              component={RecipeListingPage}
               path={`${match.path}/recipes`}
             />
             <Route

@@ -6,7 +6,7 @@ import { MemoryRouter } from "react-router";
 import RecipeQueryEditor, {
   convertDraftToQuery,
   getRecipeQueryFromUrlSearch,
-} from "devtools/components/recipes/details/RecipeQueryEditor";
+} from "devtools/components/recipes/listings/RecipeQueryEditor";
 import { actionFactory } from "devtools/tests/factories/api";
 import { environmentFactory } from "devtools/tests/factories/state";
 import { Action } from "devtools/types/normandyApi";
@@ -52,7 +52,7 @@ describe("RecipeQueryEditor", () => {
       </MemoryRouter>,
     );
 
-    const searchInput = doc.getByLabelText("Search");
+    const searchInput = doc.getByTestId("filter-field-search");
     // type twice in quick succession to test debouncing
     userEvent.type(searchInput, "poc");
     userEvent.type(searchInput, "ket");
@@ -73,7 +73,7 @@ describe("RecipeQueryEditor", () => {
       </MemoryRouter>,
     );
 
-    const searchInput = doc.getByLabelText("Search");
+    const searchInput = doc.getByTestId("filter-field-search");
     userEvent.type(searchInput, "etp");
   });
 });

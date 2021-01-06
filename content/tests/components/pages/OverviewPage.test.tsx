@@ -55,9 +55,18 @@ describe("OverviewPage", () => {
 
   it("should display overdue recipes", async () => {
     const recipes = recipeFactory.buildMany([
-      { latest_revision: { enabled: true } },
-      { latest_revision: { enabled: true } },
-      { latest_revision: { enabled: false } },
+      {
+        latest_revision: { enabled: true },
+        approved_revision: { enabled: true },
+      },
+      {
+        latest_revision: { enabled: true },
+        approved_revision: { enabled: true },
+      },
+      {
+        latest_revision: { enabled: false },
+        approved_revision: { enabled: false },
+      },
     ]);
 
     const experiments = experimenterResponseFactory.buildMany(
@@ -93,11 +102,12 @@ describe("OverviewPage", () => {
     expect(doc.getByText(recipes[2].id.toString())).toBeInTheDocument();
     expect(doc.getByText(recipes[2].latest_revision.name)).toBeInTheDocument();
 
-    const disabledButton = document.querySelectorAll("button");
+    const disabledButtons = await doc.findAllByText("Disable");
 
-    expect(disabledButton[2]).toBeDisabled();
+    expect(disabledButtons[2]).toBeDisabled();
 
-    fireEvent.click(disabledButton[0]);
+    expect(disabledButtons[0]).toBeEnabled();
+    fireEvent.click(disabledButtons[0]);
 
     expect(NormandyAPI.prototype.disableRecipe).toBeCalled();
   });

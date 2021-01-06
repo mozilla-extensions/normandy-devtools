@@ -82,25 +82,6 @@ export function has<K extends string>(
   return x && typeof x === "object" && key in x;
 }
 
-/** Group an iterable into non-overlapping chunks of size `n`. The last chunk may be smaller than `n` */
-export function chunkBy<T>(iter: Iterable<T>, n: number): Array<Array<T>> {
-  const rv: Array<Array<T>> = [];
-  let chunk: Array<T> = [];
-  for (const item of iter) {
-    chunk.push(item);
-    if (chunk.length >= n) {
-      rv.push(chunk);
-      chunk = [];
-    }
-  }
-
-  if (chunk.length) {
-    rv.push(chunk);
-  }
-
-  return rv;
-}
-
 export type CompareFunc<T = unknown> = (a: T, b: T) => number;
 
 /**
