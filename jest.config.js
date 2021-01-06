@@ -17,9 +17,10 @@ module.exports = {
     "^.+\\.[jt]sx?$": "babel-jest",
   },
   moduleNameMapper: {
-    "^devtools/(.*)$": "<rootDir>/content/$1",
     "\\.(less|css)$": "identity-obj-proxy",
+    // Anything in devtools, but not files that end in `.less` or `.css`
+    "^devtools/(.*)(?<!\\.less|\\.css)$": "<rootDir>/content/$1",
   },
   collectCoverage: false,
-  collectCoverageFrom: ["<rootDir>/content/**/*.{js,ts,tsx}"],
+  collectCoverageFrom: ["<rootDir>/content/**/*\\.{js,ts,tsx}(?<!\\.d\\.ts)"],
 };

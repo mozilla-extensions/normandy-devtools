@@ -107,6 +107,7 @@
     "auth0-js": "9.14.0",
     "autobind-decorator": "2.4.0",
     "codemirror": "5.58.2",
+    "css-modules-typescript-loader": "4.0.1",
     "dayjs": "1.9.5",
     "firacode": "5.2.0",
     "highlight.js": "10.4.1",

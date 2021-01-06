@@ -1,0 +1,37 @@
+@popoverWidth: 500px;
+
+.uploadPopover {
+  width: @popoverWidth;
+
+  :global(.rs-uploader) {
+    display: flex;
+  }
+
+  :global(.rs-uploader-file-item-content) {
+    display: flex;
+    max-width: @popoverWidth - 150px;
+  }
+
+  :global(.rs-uploader-file-item-title) {
+    flex-grow: 1;
+  }
+
+  /* Specify the element names to increase specificity over Rsuite's styles */
+  div:global(.rs-uploader-file-items) {
+    margin-top: 0;
+    width: 100%;
+  }
+
+  div:global(.rs-uploader-file-item) {
+    padding-right: 0;
+  }
+
+  span:global(.rs-uploader-file-item-size) {
+    padding-right: 0;
+  }
+
+  a:global(.rs-uploader-file-item-btn-remove) {
+    right: 6px;
+    top: 10px;
+  }
+}

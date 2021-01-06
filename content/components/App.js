@@ -108,6 +108,11 @@ function Page() {
               component={RecipeFormPage}
               path={`${match.path}/recipes/import/:experimenterSlug`}
             />
+            <Route
+              exact
+              component={ExtensionsPage}
+              path={`${match.path}/extensions`}
+            />
             {__ENV__ === "web" ? null : (
               <>
                 <Route
@@ -125,11 +130,6 @@ function Page() {
                 />
               </>
             )}
-            <Route
-              exact
-              component={ExtensionsPage}
-              path={`${match.path}/extensions`}
-            />
 
             <Route component={NotFoundPage} />
           </Switch>
