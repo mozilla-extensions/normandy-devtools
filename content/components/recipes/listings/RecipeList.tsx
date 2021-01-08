@@ -3,6 +3,7 @@ import { useHistory } from "react-router";
 import { IconButton, Divider, Tag, Icon, Popover, Whisper } from "rsuite";
 
 import SuitabilityTag from "devtools/components/recipes/details/SuitabilityTag";
+import EnabledTag from "devtools/components/recipes/EnabledTag";
 import RecipeCard from "devtools/components/recipes/RecipeCard";
 import { layoutContext } from "devtools/contexts/layout";
 import { RecipeV3 } from "devtools/types/recipes";
@@ -48,11 +49,6 @@ const Card: React.FC<CardProps> = ({
   const history = useHistory();
   const [running, setRunning] = React.useState(false);
   const { container } = React.useContext(layoutContext);
-
-  let enabledTag = <Tag color="red">Disabled</Tag>;
-  if (recipe.latest_revision.enabled) {
-    enabledTag = <Tag color="green">Enabled</Tag>;
-  }
 
   const handleEditClick = (): void => {
     history.push(`/${environmentKey}/recipes/${recipe.id}/`);
@@ -142,7 +138,7 @@ const Card: React.FC<CardProps> = ({
               revision={recipe.latest_revision}
             />
           )}
-          {enabledTag}
+          <EnabledTag revision={recipe.latest_revision} />
         </span>
       </div>
       {metaData.length ? (

@@ -1,15 +1,16 @@
-import React, { useContext } from "react";
+import React, { ReactElement, useCallback, useContext } from "react";
 import {
   Col,
   ControlLabel,
   FormGroup,
   InputNumber,
-  Input,
   InputPicker,
   Row,
   TagPicker,
+  Toggle,
 } from "rsuite";
 
+import NamespacePicker from "devtools/components/recipes/NamespacePicker";
 import { layoutContext } from "devtools/contexts/layout";
 import {
   ACTION_UPDATE_DATA,
@@ -18,8 +19,8 @@ import {
 } from "devtools/contexts/recipeDetails";
 import {
   BucketSampleFilterObject,
-  StableSampleFilterObject,
   NamespaceSampleFilterObject,
+  SampleFilterObject,
 } from "devtools/types/filters";
 import { assert } from "devtools/utils/helpers";
 
@@ -179,15 +180,42 @@ const NamespaceSampleOptions: React.FC<Changeable> = ({ onChange }) => {
   const filterObject = getFilterObjectFromData();
   assert(filterObject.type === NAMESPACE_SAMPLE);
 
+  const autoOnChange = useCallback(
+    (auto) => {
+      onChange({ auto });
+    },
+    [onChange],
+  );
+
+  const startLabelWithAuto = (
+    <>
+      <span>Start</span>
+      <FormGroup className="d-inline-block">
+        <ControlLabel
+          className="mx-1 pl-1 border-left d-inline text-subtle"
+          style={{ textTransform: "capitalize" }}
+        >
+          Auto?
+        </ControlLabel>
+        <Toggle checked={filterObject.auto} size="sm" onChange={autoOnChange} />
+      </FormGroup>
+    </>
+  );
+
   return (
     <Row>
       <Col xs={4}>
-        <SamplingNumberInput label="Start" name="start" onChange={onChange} />
+        <SamplingNumberInput
+          disabled={filterObject.auto}
+          label={startLabelWithAuto}
+          name="start"
+          onChange={onChange}
+        />
       </Col>
       <Col xs={4}>
         <SamplingNumberInput label="Count" name="count" onChange={onChange} />
       </Col>
-      <Col xs={4}>
+      <Col xs={8}>
         <NamespaceInput onChange={onChange} />
       </Col>
     </Row>
@@ -195,9 +223,10 @@ const NamespaceSampleOptions: React.FC<Changeable> = ({ onChange }) => {
 };
 
 interface SamplingNumberInputProps extends Changeable {
-  label?: string;
+  label: string | ReactElement;
   name: string;
   isPercentage?: boolean;
+  disabled?: boolean;
 }
 
 const SamplingNumberInput: React.FC<SamplingNumberInputProps> = ({
@@ -205,6 +234,7 @@ const SamplingNumberInput: React.FC<SamplingNumberInputProps> = ({
   name,
   onChange,
   isPercentage,
+  disabled,
 }) => {
   const filterObject = getFilterObjectFromData();
 
@@ -239,6 +269,7 @@ const SamplingNumberInput: React.FC<SamplingNumberInputProps> = ({
         {label}
       </ControlLabel>
       <InputNumber
+        disabled={!!disabled}
         min={0}
         postfix={isPercentage ? "%" : undefined}
         value={value}
@@ -313,23 +344,12 @@ const NamespaceInput: React.FC<Changeable> = ({ onChange }) => {
       <ControlLabel style={{ textTransform: "capitalize" }}>
         Namespace
       </ControlLabel>
-      <Input
-        value={value}
-        onBlur={(event): void => {
-          handleChange(event.target.value);
-        }}
-        onChange={handleChange}
-      />
+      <NamespacePicker value={value} onChange={handleChange} />
     </FormGroup>
   );
 };
 
-type SamplingFilterObject =
-  | BucketSampleFilterObject
-  | StableSampleFilterObject
-  | NamespaceSampleFilterObject;
-
-function getFilterObjectFromData(): SamplingFilterObject {
+function getFilterObjectFromData(): SampleFilterObject {
   const data = useRecipeDetailsData();
 
   let filterObject;
@@ -343,10 +363,10 @@ function getFilterObjectFromData(): SamplingFilterObject {
 }
 
 export function convertBetweenSamplingTypes(
-  oldFilter: null | Partial<SamplingFilterObject>,
-  newType: SamplingFilterObject["type"],
-): Partial<SamplingFilterObject> {
-  let newFilter: Partial<SamplingFilterObject> = { type: newType };
+  oldFilter: null | Partial<SampleFilterObject>,
+  newType: SampleFilterObject["type"],
+): Partial<SampleFilterObject> {
+  let newFilter: Partial<SampleFilterObject> = { type: newType };
   if (!oldFilter?.type) {
     return newFilter;
   }
@@ -356,8 +376,11 @@ export function convertBetweenSamplingTypes(
       oldFilter = oldFilter as Partial<BucketSampleFilterObject>;
       newFilter = newFilter as Partial<NamespaceSampleFilterObject>;
 
-      if (oldFilter.input?.length === 2) {
-        newFilter.namespace = oldFilter.input
+      if (
+        oldFilter.input?.length === 2 &&
+        oldFilter.input.every((i) => typeof i === "string")
+      ) {
+        newFilter.namespace = (oldFilter.input as Array<string>)
           .find((i) => i !== "normandy.userId")
           ?.replace(/^["']|["']$/g, ""); // replace a leading and trailing quote
       }

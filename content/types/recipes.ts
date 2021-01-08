@@ -1,10 +1,10 @@
 import { ActionArguments } from "devtools/types/arguments";
 import { FilterObject } from "devtools/types/filters";
 
-export interface RecipeV3<T = ActionArguments> {
+export interface RecipeV3<T = ActionArguments, F = FilterObject> {
   id: number;
-  latest_revision: Revision<T>;
-  approved_revision: Revision | null;
+  latest_revision: Revision<T, F>;
+  approved_revision: Revision<T, F> | null;
 }
 
 export interface RecipeV1<T = ActionArguments> {
@@ -24,7 +24,7 @@ export interface RecipeReference {
   latest_revision_id: number;
 }
 
-export interface Revision<T = ActionArguments> {
+export interface Revision<T = ActionArguments, F = FilterObject> {
   action: Action;
   approval_request: ApprovalRequest;
   arguments: T;
@@ -35,7 +35,7 @@ export interface Revision<T = ActionArguments> {
   experimenter_slug: string;
   extra_filter_expression: string;
   filter_expression: string;
-  filter_object: Array<FilterObject>;
+  filter_object: Array<F>;
   id: number;
   is_approved: boolean;
   name: string;

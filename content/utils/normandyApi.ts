@@ -1,4 +1,7 @@
+import _ from "lodash";
+
 import { AuthState, Environment } from "devtools/contexts/environment";
+import { ActionArguments } from "devtools/types/arguments";
 import { Extension, FilterApiResponse } from "devtools/types/normandyApi";
 import {
   Action,
@@ -15,6 +18,13 @@ export interface ApiPage<T> {
   next: string | null;
   previous: string | null;
 }
+
+export type RevisionForPost<T = ActionArguments> = Omit<
+  Revision<T>,
+  "action"
+> & {
+  action_id: number;
+};
 
 export default class NormandyAPI extends API {
   auth: AuthState;
@@ -79,21 +89,40 @@ export default class NormandyAPI extends API {
     });
   }
 
-  async fetchAllRecipes(searchParams = {}): Promise<Array<RecipeV3>> {
-    let response = await this.request<ApiPage<RecipeV3>>({
-      url: "recipe/",
-      data: searchParams,
+  private async fetchAllPages<T>(
+    url: string,
+    searchParams: Record<string, string> = {},
+  ): Promise<Array<T>> {
+    // fetch the first page of results
+    const response = await this.request<ApiPage<T>>({
+      url,
+      data: { ...searchParams, page: 1 },
     });
-    let recipes = response.results;
+    let results = response.results;
 
-    while (response.next) {
-      response = await this.request({
-        url: response.next,
-      });
-      recipes = [...recipes, ...response.results];
+    // request all the other pages in parallel, the browser will rate limit them
+    if (response.count > results.length) {
+      const pageCount = Math.ceil(response.count / results.length);
+      const pageResponses = await Promise.all(
+        _.range(2, pageCount + 1).map((page) =>
+          this.request<ApiPage<T>>({
+            url,
+            data: { ...searchParams, page },
+          }),
+        ),
+      );
+      for (const pageResponse of pageResponses) {
+        results = [...results, ...pageResponse.results];
+      }
     }
 
-    return recipes;
+    return results;
+  }
+
+  async fetchAllRecipes(
+    searchParams: Record<string, string> = {},
+  ): Promise<Array<RecipeV3>> {
+    return this.fetchAllPages("recipe/", searchParams);
   }
 
   async fetchRecipe(id: number): Promise<RecipeV3> {
@@ -102,7 +131,7 @@ export default class NormandyAPI extends API {
     });
   }
 
-  async saveRecipe(id: number, data: Partial<Revision>): Promise<RecipeV3> {
+  async saveRecipe(id: number, data: RevisionForPost): Promise<RecipeV3> {
     let url = "recipe/";
     let method = "POST";
     if (id) {
@@ -137,19 +166,7 @@ export default class NormandyAPI extends API {
   }
 
   async fetchAllActions(): Promise<Array<Action>> {
-    let response = await this.request<ApiPage<Action>>({
-      url: "action/",
-    });
-    let actions = response.results;
-
-    while (response.next) {
-      response = await this.request({
-        url: response.next,
-      });
-      actions = [...actions, ...response.results];
-    }
-
-    return actions;
+    return this.fetchAllPages("action/");
   }
 
   async fetchFilters(): Promise<FilterApiResponse> {
@@ -157,19 +174,7 @@ export default class NormandyAPI extends API {
   }
 
   async fetchAllExtensions(): Promise<Array<Extension>> {
-    let response = await this.request<ApiPage<Extension>>({
-      url: "extension/",
-    });
-    let extensions = response.results;
-
-    while (response.next) {
-      response = await this.request({
-        url: response.next,
-      });
-      extensions = [...extensions, ...response.results];
-    }
-
-    return extensions;
+    return this.fetchAllPages("extension/");
   }
 
   async fetchExtensionsPage({

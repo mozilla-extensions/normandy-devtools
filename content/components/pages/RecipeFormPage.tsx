@@ -12,6 +12,7 @@ import {
   useSelectedExperimenterEnvironmentAPI,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
+import { NamespacesProvider } from "devtools/contexts/namespaces";
 import {
   INITIAL_RECIPE_DATA,
   RecipeDetailsProvider,
@@ -85,14 +86,16 @@ const RecipeFormPage: React.FC = () => {
 
   return (
     <RecipeDetailsProvider data={data} importInstructions={importInstructions}>
-      <div className="d-flex flex-column h-100">
-        <RecipeFormHeader />
-        <div className="flex-grow-1 overflow-auto">
-          <PageWrapper>
-            <RecipeForm />
-          </PageWrapper>
+      <NamespacesProvider normandyApi={normandyApi}>
+        <div className="d-flex flex-column h-100">
+          <RecipeFormHeader />
+          <div className="flex-grow-1 overflow-auto">
+            <PageWrapper>
+              <RecipeForm />
+            </PageWrapper>
+          </div>
         </div>
-      </div>
+      </NamespacesProvider>
     </RecipeDetailsProvider>
   );
 };

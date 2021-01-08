@@ -4,6 +4,7 @@ import { Environment } from "devtools/contexts/environment";
 import Factory from "devtools/tests/factories";
 
 export const environmentFactory = Factory.fromFields<Environment>({
+  key: "test",
   readOnlyUrl: "https://example.com/readonly",
   writeableUrl: "https://example.com/writeable",
   experimenterUrl: faker.random.arrayElement([

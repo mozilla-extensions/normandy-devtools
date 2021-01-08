@@ -27,6 +27,9 @@ const RecipeDetailsPage = React.lazy(() =>
 const ExtensionsPage = React.lazy(() =>
   import("devtools/components/pages/ExtensionsPage"),
 );
+const NamespacesPage = React.lazy(() =>
+  import("devtools/components/pages/NamespacesPage"),
+);
 const FiltersPage =
   __ENV__ === "web"
     ? null
@@ -112,6 +115,11 @@ function Page() {
               exact
               component={ExtensionsPage}
               path={`${match.path}/extensions`}
+            />
+            <Route
+              exact
+              component={NamespacesPage}
+              path={`${match.path}/namespaces`}
             />
             {__ENV__ === "web" ? null : (
               <>

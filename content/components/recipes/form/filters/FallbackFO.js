@@ -102,9 +102,9 @@ export default function FallbackFO() {
 
   return (
     <FormGroup>
+      {errMessages}
       <ControlLabel>Additional Filter Objects</ControlLabel>
       <JsonEditor key={key} value={additionalFO} onChange={handleChange} />
-      {errMessages}
     </FormGroup>
   );
 }

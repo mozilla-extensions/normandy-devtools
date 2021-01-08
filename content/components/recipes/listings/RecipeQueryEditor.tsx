@@ -181,7 +181,6 @@ export function convertDraftToQuery(draftQuery: DraftQuery): RecipeListQuery {
 export function getRecipeQueryFromUrlSearch(search: string): RecipeListQuery {
   const workUrl = new URL(window.location.toString());
   workUrl.search = search;
-  console.log(search);
 
   const query: RecipeListQuery = {};
 
