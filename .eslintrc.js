@@ -1,6 +1,8 @@
 /* eslint-env node */
+const path = require("path");
+
 const rulesDirPlugin = require("eslint-plugin-rulesdir");
-rulesDirPlugin.RULES_DIR = "eslint-rules";
+rulesDirPlugin.RULES_DIR = path.join(path.dirname(__filename), "eslint-rules");
 
 const sharedRules = {
   "mozilla/no-define-cc-etc": "off",
@@ -103,7 +105,10 @@ module.exports = {
         "@typescript-eslint/no-use-before-define": ["off"],
         "react/prop-types": ["off"],
         "@typescript-eslint/camelcase": ["off"],
-        "@typescript-eslint/explicit-function-return-type": ["warn", {allowExpressions: true}],
+        "@typescript-eslint/explicit-function-return-type": [
+          "warn",
+          { allowExpressions: true },
+        ],
       },
     },
   ],
