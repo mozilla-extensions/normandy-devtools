@@ -10,6 +10,31 @@ import { Router, Route } from "react-router-dom";
 
 import { EnvironmentProvider } from "devtools/contexts/environment";
 
+global.consoleWarn = console.warn;
+global.consoleError = console.error;
+
+// Prevent console.info from printing anything in results
+console.info = () => {};
+
+global.restoreConsole = () => {
+  console.warn = global.consoleWarn;
+  console.error = global.consoleError;
+};
+
+global.modifyConsole = () => {
+  console.warn = (...data) => {
+    global.consoleWarn(...data);
+    throw new Error("`console.warn` was called.");
+  };
+
+  console.error = (...data) => {
+    global.consoleError(...data);
+    throw new Error("`console.error` was called.");
+  };
+};
+
+modifyConsole();
+
 Object.defineProperty(global.self, "crypto", {
   value: {
     getRandomValues: (arr) => crypto.randomBytes(arr.length),

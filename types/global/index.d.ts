@@ -11,6 +11,9 @@ declare const __ENV__: "web" | "extension";
 
 declare const __TESTING__: boolean;
 
+declare const restoreConsole: () => void;
+declare const modifyConsole: () => void;
+
 declare namespace browser.experiments.normandy {
   type V1Recipe = Record<string, unknown>;
 

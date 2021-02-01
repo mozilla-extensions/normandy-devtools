@@ -18,6 +18,14 @@ function WrappedAppHeader() {
 }
 
 describe("`AppHeader`", () => {
+  beforeEach(() => {
+    restoreConsole();
+  });
+
+  afterEach(() => {
+    modifyConsole();
+  });
+
   it("should start the authentication flow when the login button is clicked", async () => {
     const spyLaunchWebAuthFlow = jest.spyOn(
       browser.identity,

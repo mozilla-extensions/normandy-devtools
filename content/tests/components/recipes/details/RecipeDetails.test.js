@@ -34,7 +34,12 @@ function renderForTest(recipe, component = <RecipeDetailsPage />) {
 }
 
 describe("The `RecipeDetails` component", () => {
+  beforeEach(() => {
+    restoreConsole();
+  });
+
   afterEach(async () => {
+    modifyConsole();
     jest.clearAllMocks();
     await cleanup();
   });

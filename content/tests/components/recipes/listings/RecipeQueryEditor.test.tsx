@@ -12,6 +12,14 @@ import { environmentFactory } from "devtools/tests/factories/state";
 import { Action } from "devtools/types/normandyApi";
 import NormandyAPI from "devtools/utils/normandyApi";
 
+beforeEach(() => {
+  restoreConsole();
+});
+
+afterEach(() => {
+  modifyConsole();
+});
+
 describe("RecipeQueryEditor", () => {
   let actions: Array<Action>;
   let api: NormandyAPI;

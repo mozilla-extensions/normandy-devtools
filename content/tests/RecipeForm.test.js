@@ -22,9 +22,14 @@ import ExperimenterAPI from "devtools/utils/experimenterApi";
 import NormandyAPI from "devtools/utils/normandyApi";
 
 describe("The `RecipeForm` component", () => {
+  beforeEach(() => {
+    restoreConsole();
+  });
+
   afterEach(async () => {
     await jest.clearAllMocks();
     await cleanup();
+    modifyConsole();
   });
 
   const findForm = (formGroups, formName) => {
