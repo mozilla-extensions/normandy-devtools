@@ -29,12 +29,15 @@ beforeEach(() => {
         results: extensionPage,
       };
     });
+
+  restoreConsole();
 });
 
 afterEach(() => {
   jest.clearAllMocks();
   jest.clearAllTimers();
   cleanup();
+  modifyConsole();
 });
 
 describe("ExtensionPage", () => {

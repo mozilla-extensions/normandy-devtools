@@ -12,13 +12,19 @@ import { environmentFactory } from "devtools/tests/factories/state";
 import { Action } from "devtools/types/normandyApi";
 import NormandyAPI from "devtools/utils/normandyApi";
 
+beforeEach(() => {
+  restoreConsole();
+});
+
+afterEach(() => {
+  modifyConsole();
+});
+
 describe("RecipeQueryEditor", () => {
   let actions: Array<Action>;
   let api: NormandyAPI;
 
   beforeEach(() => {
-    restoreConsole();
-
     jest.useFakeTimers("modern");
     // use-debounce tries to use requestAnimationFrame if it is available,
     // requestAnimationFrame is not hooked by Jest's fake timers. Setting it to
@@ -31,7 +37,6 @@ describe("RecipeQueryEditor", () => {
   });
 
   afterEach(() => {
-    modifyConsole();
     jest.clearAllMocks();
     cleanup();
   });
