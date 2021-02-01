@@ -17,6 +17,8 @@ describe("RecipeQueryEditor", () => {
   let api: NormandyAPI;
 
   beforeEach(() => {
+    restoreConsole();
+
     jest.useFakeTimers("modern");
     // use-debounce tries to use requestAnimationFrame if it is available,
     // requestAnimationFrame is not hooked by Jest's fake timers. Setting it to
@@ -29,6 +31,7 @@ describe("RecipeQueryEditor", () => {
   });
 
   afterEach(() => {
+    modifyConsole();
     jest.clearAllMocks();
     cleanup();
   });

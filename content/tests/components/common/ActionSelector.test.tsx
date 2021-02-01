@@ -11,12 +11,14 @@ describe("ActionSelector", () => {
   const api = new NormandyAPI(environmentFactory.build(), null, false);
 
   beforeEach(() => {
+    restoreConsole();
     jest
       .spyOn(NormandyAPI.prototype, "fetchAllActions")
       .mockResolvedValue(actions);
   });
 
   afterEach(() => {
+    modifyConsole();
     jest.clearAllMocks();
     cleanup();
   });

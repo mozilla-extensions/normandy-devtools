@@ -15,7 +15,12 @@ import { RecipeV3 } from "devtools/types/recipes";
 import ExperimenterAPI from "devtools/utils/experimenterApi";
 import NormandyAPI from "devtools/utils/normandyApi";
 
+beforeEach(() => {
+  restoreConsole();
+});
+
 afterEach(async () => {
+  modifyConsole();
   jest.clearAllMocks();
   await cleanup();
 });
