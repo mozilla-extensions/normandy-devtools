@@ -43,6 +43,7 @@
     "@testing-library/react": "11.2.2",
     "@testing-library/user-event": "12.2.2",
     "@types/auth0-js": "9.14.2",
+    "@types/classnames": "2.2.11",
     "@types/faker": "5.1.4",
     "@types/jest": "26.0.18",
     "@types/js-yaml": "3.12.5",

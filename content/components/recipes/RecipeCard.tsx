@@ -22,7 +22,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
 
   return (
     <Panel bordered className={`recipe-listing ${className}`} {...props}>
-      <div className="d-flex font-size-larger">
+      <div className="d-flex font-size-larger flex-grow-1">
         <div>
           <Link to={linkUrl}>
             <Tag className="mt-0 mr-1" color="violet">

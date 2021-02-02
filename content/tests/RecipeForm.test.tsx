@@ -1,4 +1,6 @@
 import { cleanup, waitFor, fireEvent, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import _ from "lodash";
 import React from "react";
 import "@testing-library/jest-dom/extend-expect";
 
@@ -18,12 +20,17 @@ import {
   addonStudyBranchFactory,
   multiPrefBranchFactory,
 } from "devtools/tests/factories/recipes";
+import { MultiPreferenceExperimentArguments } from "devtools/types/arguments";
+import { ExperimenterRecipePreview } from "devtools/types/experimenterApi";
+import { Extension } from "devtools/types/normandyApi";
+import { RecipeV3 } from "devtools/types/recipes";
 import ExperimenterAPI from "devtools/utils/experimenterApi";
-import NormandyAPI from "devtools/utils/normandyApi";
+import NormandyAPI, { RevisionForPost } from "devtools/utils/normandyApi";
 
 describe("The `RecipeForm` component", () => {
   beforeEach(() => {
     restoreConsole();
+    jest.spyOn(NormandyAPI.prototype, "fetchAllRecipes").mockResolvedValue([]);
   });
 
   afterEach(async () => {
@@ -32,7 +39,7 @@ describe("The `RecipeForm` component", () => {
     modifyConsole();
   });
 
-  const findForm = (formGroups, formName) => {
+  const findForm = (formGroups, formName): HTMLElement => {
     const forms = formGroups.filter((form) =>
       within(form).queryByText(formName),
     );
@@ -43,7 +50,7 @@ describe("The `RecipeForm` component", () => {
     return forms.reduce((a, b) => (a.length <= b.length ? a : b));
   };
 
-  const getForms = (formGroups) => {
+  const getForms = (formGroups): Record<string, HTMLElement> => {
     const nameForm = findForm(formGroups, "Name");
     const experimenterSlugForm = findForm(formGroups, "Experimenter Slug");
     const samplingTypeForm = findForm(formGroups, "Sampling Type");
@@ -66,7 +73,7 @@ describe("The `RecipeForm` component", () => {
     };
   };
 
-  const getPrefFields = (forms) => {
+  const getPrefFields = (forms): Record<string, HTMLElement> => {
     const experimentSlugForm = findForm(forms, "Experiment Slug");
     const preferenceNameForm = findForm(forms, "Preference Name");
     const experimentDocURLForm = findForm(forms, "Experiment Document URL");
@@ -102,7 +109,7 @@ describe("The `RecipeForm` component", () => {
     };
   };
 
-  const getAddonFields = (forms) => {
+  const getAddonFields = (forms): Record<string, HTMLElement> => {
     const studyNameForm = findForm(forms, "Study Name");
     const studyDescriptionForm = findForm(forms, "Study Description");
     const extensionForm = findForm(forms, "Extension");
@@ -116,7 +123,7 @@ describe("The `RecipeForm` component", () => {
     };
   };
 
-  const getHeartBeatFields = (forms) => {
+  const getHeartBeatFields = (forms): Record<string, HTMLElement> => {
     const surveyIDForm = findForm(forms, "Survey ID");
     const engagementButtonForm = findForm(forms, "Engagement Button Label");
     const messageForm = findForm(forms, "Message");
@@ -139,7 +146,7 @@ describe("The `RecipeForm` component", () => {
     };
   };
 
-  const setup = (...recipes) => {
+  const setup = (...recipes: Array<RecipeV3>): void => {
     const pageResponse = {
       results: recipes,
       count: recipes.length,
@@ -184,7 +191,7 @@ describe("The `RecipeForm` component", () => {
     );
   };
 
-  const extensionSetup = () => {
+  const extensionSetup = (): Array<Extension> => {
     const extensions = extensionFactory.buildCount(3);
 
     jest
@@ -194,7 +201,7 @@ describe("The `RecipeForm` component", () => {
     return extensions;
   };
 
-  const consoleLogRecipeSetup = () => {
+  const consoleLogRecipeSetup = (): RecipeV3 => {
     const versions = versionFoFactory.build({}, { generateVersionsCount: 2 });
     const channels = channelFoFactory.build({}, { generateChannelsCount: 1 });
     const sample = bucketSampleFoFactory.build();
@@ -208,7 +215,7 @@ describe("The `RecipeForm` component", () => {
     );
   };
 
-  const branchedAddonSetup = () => {
+  const branchedAddonSetup = (): RecipeV3 => {
     const channels = channelFoFactory.build({}, { generateChannelsCount: 1 });
     const filter_object = [channels];
     const branches = addonStudyBranchFactory.buildCount(2);
@@ -325,39 +332,41 @@ describe("The `RecipeForm` component", () => {
 
     fireEvent.click(within(modalDialog).getByText("Save"));
 
-    expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(undefined, {
-      action_id: 3,
-      arguments: {
-        branches: [
+    await waitFor(() =>
+      expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(undefined, {
+        action_id: 3,
+        arguments: {
+          branches: [
+            {
+              ratio: 1,
+              slug: "branch1",
+              value: "pref value",
+            },
+          ],
+          experimentDocumentUrl: "https://example.com",
+          isEnrollmentPaused: true,
+          isHighPopulation: true,
+          preferenceBranchType: "user",
+          preferenceName: "pref1.name",
+          preferenceType: "string",
+          slug: "experimenter-slug-field",
+        },
+        comment: saveMessage,
+        experimenter_slug: "the-experimenter-slug",
+        filter_object: [
+          { input: ['"global-v4"'], rate: 0.05, type: "stableSample" },
           {
-            ratio: 1,
-            slug: "branch1",
-            value: "pref value",
+            type: "version",
+            versions: [89, 90],
+          },
+          {
+            channels: ["beta", "release"],
+            type: "channel",
           },
         ],
-        experimentDocumentUrl: "https://example.com",
-        isEnrollmentPaused: true,
-        isHighPopulation: true,
-        preferenceBranchType: "user",
-        preferenceName: "pref1.name",
-        preferenceType: "string",
-        slug: "experimenter-slug-field",
-      },
-      comment: saveMessage,
-      experimenter_slug: "the-experimenter-slug",
-      filter_object: [
-        { input: ['"global-v4"'], rate: 0.05, type: "stableSample" },
-        {
-          type: "version",
-          versions: [89, 90],
-        },
-        {
-          channels: ["beta", "release"],
-          type: "channel",
-        },
-      ],
-      name: "Recipe Name",
-    });
+        name: "Recipe Name",
+      }),
+    );
   });
 
   it("edit recipe form", async () => {
@@ -441,28 +450,23 @@ describe("The `RecipeForm` component", () => {
 
     fireEvent.click(within(modalDialog).getByText("Save"));
 
-    let {
-      latest_revision: { action, ...updatedRecipeData },
-    } = recipeData;
-
     const channelValues = ["nightly", "aurora", "beta", "release"];
 
-    updatedRecipeData = {
-      ...updatedRecipeData,
+    const rev = recipeData.latest_revision;
+    const updatedRecipeData: RevisionForPost = {
+      ..._.omit(rev, "action"),
+      action_id: rev.action.id,
       experimenter_slug,
       name,
       comment: saveMessage,
-      // @ts-ignore
-      action_id: action.id,
       arguments: {
-        ...updatedRecipeData.arguments,
+        ...rev.arguments,
         branches: [{ slug, ratio, extensionApiId: selectedExtension.id }],
       },
-      filter_object: updatedRecipeData.filter_object.map((fo) => {
+      filter_object: rev.filter_object.map((fo) => {
         if (fo.type === "channel") {
           return {
             ...fo,
-            // @ts-ignore
             channels: channelValues.filter((c) => !fo.channels.includes(c)),
           };
         }
@@ -471,15 +475,29 @@ describe("The `RecipeForm` component", () => {
       }),
     };
 
-    expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(
-      recipeData.id.toString(),
-      updatedRecipeData,
+    await waitFor(() =>
+      expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(
+        recipeData.id.toString(),
+        updatedRecipeData,
+      ),
     );
   });
 
   it("server errors are shown in along the fields", async () => {
     const recipeData = consoleLogRecipeSetup();
     await setup(recipeData);
+
+    jest.spyOn(NormandyAPI.prototype, "saveRecipe").mockRejectedValue({
+      data: {
+        status: 400,
+        action_id: ["Bad action"],
+        experimenter_slug: ["Wrong slug"],
+        arguments: {
+          message: ["Bad message"],
+        },
+      },
+    });
+
     const doc = renderWithContext(<RecipeFormPage />, {
       route: `/prod/recipes/${recipeData.id}/edit`,
       path: "/prod/recipes/:recipeId/edit",
@@ -488,19 +506,6 @@ describe("The `RecipeForm` component", () => {
     await waitFor(() => {
       expect(doc.getByText("Experimenter Slug")).toBeInTheDocument();
     });
-
-    jest.spyOn(NormandyAPI.prototype, "saveRecipe").mockImplementation(() =>
-      Promise.reject({
-        data: {
-          status: 400,
-          action_id: ["Bad action"],
-          experimenter_slug: ["Wrong slug"],
-          arguments: {
-            message: ["Bad message"],
-          },
-        },
-      }),
-    );
 
     fireEvent.click(doc.getByText("Save"));
 
@@ -550,9 +555,12 @@ describe("The `RecipeForm` component", () => {
       bubbles: true,
       cancelable: true,
       composed: true,
-    });
-    // @ts-ignore
-    clipboardEvent.clipboardData = {
+    }) as ClipboardEvent;
+    // clipboardData is supposed to be readonly. Lie to TypeScript so we can
+    // update it on our mock event.
+    ((clipboardEvent as unknown) as {
+      clipboardData: { getData: () => string };
+    }).clipboardData = {
       getData: () => "invalid json!",
     };
 
@@ -567,9 +575,10 @@ describe("The `RecipeForm` component", () => {
     ).toBeInTheDocument();
     expect(saveButton).toHaveAttribute("disabled");
 
-    //ctrl z... the paste
+    // undo the paste
     foCodeBlock.dispatchEvent(new Event("focus"));
     foCodeBlock.dispatchEvent(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       new KeyboardEvent("keydown", { keyCode: 90, ctrlKey: true }),
     );
@@ -586,20 +595,17 @@ describe("The `RecipeForm` component", () => {
 
     fireEvent.click(within(modalDialog).getByText("Save"));
 
-    let {
-      latest_revision: { action, ...updatedRecipeData },
-    } = recipeData;
-
-    updatedRecipeData = {
-      ...updatedRecipeData,
+    const updatedRecipeData: RevisionForPost = {
+      ..._.omit(recipeData.latest_revision, "action"),
       comment: saveMessage,
-      // @ts-ignore
-      action_id: action.id,
+      action_id: recipeData.latest_revision.action.id,
     };
 
-    expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(
-      recipeData.id.toString(),
-      updatedRecipeData,
+    await waitFor(() =>
+      expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(
+        recipeData.id.toString(),
+        updatedRecipeData,
+      ),
     );
   });
 
@@ -612,15 +618,16 @@ describe("The `RecipeForm` component", () => {
         arguments: { branches },
         filter_object: [versions],
       },
-    });
+    }) as RecipeV3<MultiPreferenceExperimentArguments>;
 
     setup(recipe);
 
-    /** @type Record<string, any> */
-    const experimenterRecipe = { ...recipe.latest_revision };
-    experimenterRecipe.action_name = experimenterRecipe.action.name;
-    experimenterRecipe.comment = "";
-    delete experimenterRecipe.action;
+    const experimenterRecipe = {
+      ..._.omit(recipe.latest_revision, "action"),
+      action_name: recipe.latest_revision.action.name,
+      comment: "",
+    } as ExperimenterRecipePreview<MultiPreferenceExperimentArguments>;
+
     jest
       .spyOn(ExperimenterAPI.prototype, "fetchRecipe")
       .mockImplementation(() => Promise.resolve(experimenterRecipe));
@@ -635,44 +642,40 @@ describe("The `RecipeForm` component", () => {
       route: "/prod/recipes/import/experimenter-slug",
       path: "/prod/recipes/import/:experimenterSlug",
     });
-    const { getByText, getAllByRole } = doc;
-    expect(ExperimenterAPI.prototype.fetchRecipe).toHaveBeenCalled();
+    await waitFor(() =>
+      expect(ExperimenterAPI.prototype.fetchRecipe).toHaveBeenCalled(),
+    );
 
     await waitFor(() => {
-      expect(getByText("Experimenter Slug")).toBeInTheDocument();
+      expect(doc.getByText("Experimenter Slug")).toBeInTheDocument();
     });
 
-    const formGroups = getAllByRole("group");
+    const formGroups = doc.getAllByRole("group");
     const highVolumeForm = findForm(formGroups, "High Volume Recipe");
     const highVolumeToggle = within(highVolumeForm).getByRole("button");
 
     fireEvent.click(highVolumeToggle);
+    fireEvent.click(doc.getByText("Save"));
 
-    fireEvent.click(getByText("Save"));
-
-    const modalDialog = getAllByRole("dialog")[0];
+    const modalDialog = doc.getAllByRole("dialog")[0];
     const commentInput = modalDialog.querySelector("textArea");
-    const saveMessage = "Edited Recipe";
-    fireEvent.change(commentInput, { target: { value: saveMessage } });
+    userEvent.type(commentInput, "Edited Recipe");
 
     fireEvent.click(within(modalDialog).getByText("Save"));
 
-    let { action: _omitAction, ...updatedRecipeData } = recipe.latest_revision;
-    updatedRecipeData = {
-      ...updatedRecipeData,
-      comment: saveMessage,
-      // @ts-ignore
+    const expectedRecipeData: RevisionForPost<MultiPreferenceExperimentArguments> = {
+      ..._.omit(recipe.latest_revision, "action"),
       action_id: recipe.latest_revision.action.id,
-      arguments: {
-        ...updatedRecipeData.arguments,
-        // @ts-ignore
-        isHighPopulation: true,
-        isEnrollmentPaused: false,
-      },
+      comment: "Edited Recipe",
     };
-    expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(
-      undefined,
-      updatedRecipeData,
+    expectedRecipeData.arguments.isHighPopulation = true;
+    expectedRecipeData.arguments.isEnrollmentPaused = false;
+
+    await waitFor(() =>
+      expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(
+        undefined,
+        expectedRecipeData,
+      ),
     );
   });
 
@@ -770,25 +773,27 @@ describe("The `RecipeForm` component", () => {
 
     fireEvent.click(within(modalDialog).getByText("Save"));
 
-    expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(undefined, {
-      action_id: 1,
-      arguments: {
-        learnMoreUrl,
-        message,
-        postAnswerUrl,
-        surveyId,
-        thanksMessage,
-        engagementButtonLabel: engagementButton,
-        includeTelemetryUUID: true,
-        learnMoreMessage: learnMessage,
-        repeatEvery: 4,
-        repeatOption: "xdays",
-      },
-      comment: "Created Recipe",
-      experimenter_slug: "the-experimenter-slug",
-      filter_object: [{ channels: ["release"], type: "channel" }],
-      name: "Recipe Name",
-    });
+    await waitFor(() =>
+      expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(undefined, {
+        action_id: 1,
+        arguments: {
+          learnMoreUrl,
+          message,
+          postAnswerUrl,
+          surveyId,
+          thanksMessage,
+          engagementButtonLabel: engagementButton,
+          includeTelemetryUUID: true,
+          learnMoreMessage: learnMessage,
+          repeatEvery: 4,
+          repeatOption: "xdays",
+        },
+        comment: "Created Recipe",
+        experimenter_slug: "the-experimenter-slug",
+        filter_object: [{ channels: ["release"], type: "channel" }],
+        name: "Recipe Name",
+      }),
+    );
   });
 
   it("creation addon recipe form", async () => {
@@ -873,20 +878,22 @@ describe("The `RecipeForm` component", () => {
 
     fireEvent.click(within(modalDialog).getByText("Save"));
 
-    expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(undefined, {
-      action_id: 2,
-      arguments: {
-        addonUrl: selectedExtension.xpi,
-        description: "This is the description of the addon study description",
-        extensionApiId: selectedExtension.id,
-        isEnrollmentPaused: true,
-        name: "Addon Study Name",
-      },
-      comment: "Created Recipe",
-      experimenter_slug: "the-experimenter-slug",
-      filter_object: [{ channels: ["release"], type: "channel" }],
-      name: "Recipe Name",
-    });
+    await waitFor(() =>
+      expect(NormandyAPI.prototype.saveRecipe).toBeCalledWith(undefined, {
+        action_id: 2,
+        arguments: {
+          addonUrl: selectedExtension.xpi,
+          description: "This is the description of the addon study description",
+          extensionApiId: selectedExtension.id,
+          isEnrollmentPaused: true,
+          name: "Addon Study Name",
+        },
+        comment: "Created Recipe",
+        experimenter_slug: "the-experimenter-slug",
+        filter_object: [{ channels: ["release"], type: "channel" }],
+        name: "Recipe Name",
+      }),
+    );
   });
 
   it("fallback editor is rendered for unknown action types", async () => {

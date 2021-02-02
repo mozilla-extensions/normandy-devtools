@@ -11,6 +11,7 @@ import NormandyAPI from "devtools/utils/normandyApi";
 import { MINUTE, SECOND } from "devtools/utils/timeConstants";
 
 export interface Environment {
+  key: string;
   readOnlyUrl: string;
   writeableUrl: string;
   oidcClientId: string;

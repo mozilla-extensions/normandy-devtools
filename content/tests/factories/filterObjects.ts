@@ -91,6 +91,16 @@ const inputFieldGenerator: GeneratedField<
   },
 };
 
+export const namespaceSampleFoFactory = Factory.fromFields<
+  filterTypes.NamespaceSampleFilterObject
+>({
+  type: "namespaceSample",
+  start: () => faker.random.number(10_000),
+  count: () => faker.random.number(10_000),
+  namespace: () => faker.random.word(),
+  auto: undefined,
+});
+
 export const bucketSampleFoFactory = Factory.fromFields<
   filterTypes.BucketSampleFilterObject
 >({
@@ -120,6 +130,7 @@ const factoriesByType = {
   channel: channelFoFactory,
   country: countryFoFactory,
   locale: localeFoFactory,
+  namespaceSample: namespaceSampleFoFactory,
   bucketSample: bucketSampleFoFactory,
   stableSample: stableSampleFoFactory,
 };

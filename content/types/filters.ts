@@ -1,38 +1,50 @@
-export type FilterObject = { type: string };
+export type FilterObject =
+  | BucketSampleFilterObject
+  | StableSampleFilterObject
+  | NamespaceSampleFilterObject
+  | VersionFilterObject
+  | ChannelFilterObject
+  | CountryFilterObject
+  | LocaleFilterObject;
 
-export interface BucketSampleFilterObject extends FilterObject {
+export interface UnknownFilterObject {
+  type: Exclude<string, FilterObject["type"]>;
+  [key: string]: unknown;
+}
+
+export interface BucketSampleFilterObject {
   type: "bucketSample";
-  input: Array<string>;
+  input: Array<string | number>;
   start: number;
   count: number;
   total: number;
 }
 
-export interface StableSampleFilterObject extends FilterObject {
+export interface StableSampleFilterObject {
   type: "stableSample";
-  input: Array<string>;
+  input: Array<string | number>;
   rate: number;
 }
 
-export interface NamespaceSampleFilterObject extends FilterObject {
+export interface NamespaceSampleFilterObject {
   type: "namespaceSample";
   namespace: string;
   start: number;
   count: number;
-  total: number;
+  auto?: boolean;
 }
 
-export interface VersionFilterObject extends FilterObject {
+export interface VersionFilterObject {
   type: "version";
   versions: Array<number>;
 }
 
-export interface ChannelFilterObject extends FilterObject {
+export interface ChannelFilterObject {
   type: "channel";
   channels: Array<string>;
 }
 
-export interface CountryFilterObject extends FilterObject {
+export interface CountryFilterObject {
   type: "country";
   countries: Array<string>;
 }

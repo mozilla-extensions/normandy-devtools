@@ -3,7 +3,7 @@ import { RatioInput } from "devtools/utils/recipes";
 export type ActionArguments =
   | ConsoleLogArguments
   | BranchedAddonStudyArguments
-  | MultiPreferenceExperimentPrefs
+  | MultiPreferenceExperimentArguments
   | PreferenceRolloutArguments
   | UnknownArguments;
 

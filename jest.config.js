@@ -23,4 +23,5 @@ module.exports = {
   },
   collectCoverage: false,
   collectCoverageFrom: ["<rootDir>/content/**/*\\.{js,ts,tsx}(?<!\\.d\\.ts)"],
+  coverageReporters: ["html-spa", "json", "text-summary"],
 };

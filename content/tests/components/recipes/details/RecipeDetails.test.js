@@ -21,6 +21,7 @@ import {
   addonStudyBranchFactory,
   multiPrefBranchFactory,
   approvalRequestFactory,
+  recipeFactoryAllowUnknownFo,
 } from "devtools/tests/factories/recipes";
 import ExperimenterAPI from "devtools/utils/experimenterApi";
 import { Deferred } from "devtools/utils/helpers";
@@ -77,7 +78,6 @@ describe("The `RecipeDetails` component", () => {
     const sample = bucketSampleFoFactory.build();
     const extraFO = { type: "unknown", unknowns: ["something unknown"] };
 
-    /** @type Array<import("devtools/types/filters").FilterObject> */
     const filter_object = [
       versions,
       channels,
@@ -87,7 +87,7 @@ describe("The `RecipeDetails` component", () => {
       extraFO,
     ];
     const branches = addonStudyBranchFactory.buildCount(2);
-    const recipe = recipeFactory.build(
+    const recipe = recipeFactoryAllowUnknownFo.build(
       {
         latest_revision: {
           action: { name: "branched-addon-study" },

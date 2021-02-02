@@ -150,10 +150,14 @@ export default class Factory<T, O extends object = object>
     return rv;
   }
 
-  buildCount(count: number): Array<T> {
+  buildCount(
+    count: number,
+    partial?: RecursivePartial<T>,
+    options?: RecursivePartial<O>,
+  ): Array<T> {
     const rv = [];
     while (rv.length < count) {
-      rv.push(this._buildFunc());
+      rv.push(this._buildFunc(partial, options));
     }
 
     return rv;
