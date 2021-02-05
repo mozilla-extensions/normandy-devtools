@@ -52,7 +52,7 @@
     "@types/react-router": "5.1.8",
     "@types/react-router-dom": "5.1.6",
     "@types/requestidlecallback": "0.3.1",
-    "@typescript-eslint/eslint-plugin": "4.8.2",
+    "@typescript-eslint/eslint-plugin": "4.14.2",
     "@typescript-eslint/parser": "4.7.0",
     "babel-eslint": "10.1.0",
     "babel-jest": "26.6.3",
@@ -122,7 +122,7 @@
     "react-split": "2.0.9",
     "rsuite": "4.8.4",
     "use-debounce": "5.1.0",
-    "validator": "13.1.17"
+    "validator": "13.5.2"
   },
   "resolutions": {
     "web-ext/addons-linter": "1.24.0"
