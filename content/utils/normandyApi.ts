@@ -297,4 +297,10 @@ export default class NormandyAPI extends API {
       timeoutAfter,
     });
   }
+
+  fetchRecipeHistory(recipeId: number): Promise<Revision[]> {
+    return this.request({
+      url: `recipe/${recipeId}/history/`,
+    });
+  }
 }

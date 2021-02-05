@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import PageWrapper from "devtools/components/common/PageWrapper";
 import NotFoundPage from "devtools/components/pages/NotFoundPage";
 import DetailsHeader from "devtools/components/recipes/details/DetailsHeader";
+import HistorySidebar from "devtools/components/recipes/details/HistorySidebar";
 import RecipeDetails from "devtools/components/recipes/details/RecipeDetails";
 import {
   useSelectedNormandyEnvironmentAPI,
@@ -20,9 +21,14 @@ const RecipeDetailsPage: React.FC = () => {
     experimenter_slug: null,
   });
   const [recipeStatusData, setRecipeStatusData] = React.useState(null);
+  const [recipeHistory, setRecipeHistory] = React.useState([]);
+  const [historyOpen, setHistoryOpen] = React.useState(false);
   const [experimenterData, setExperimenterData] = React.useState(null);
 
-  const { recipeId } = useParams<{ recipeId: string }>();
+  const { recipeId, revisionId } = useParams<{
+    recipeId: string;
+    revisionId: string;
+  }>();
   const [errorPage, setErrorPage] = React.useState(null);
 
   React.useEffect(() => {
@@ -41,18 +47,31 @@ const RecipeDetailsPage: React.FC = () => {
       }
 
       const recipeData = await normandyApi.fetchRecipe(recipeIdParsed);
+      const recipeHistory = await normandyApi.fetchRecipeHistory(
+        recipeIdParsed,
+      );
       if (!mounted) {
         return;
       }
 
-      setRecipeData(recipeData.latest_revision);
+      if (revisionId) {
+        setRecipeData(
+          recipeHistory.find(
+            (revision) => revision.id.toString() === revisionId,
+          ),
+        );
+      } else {
+        setRecipeData(recipeData.latest_revision);
+      }
+
       setRecipeStatusData(recipeData.approved_revision);
+      setRecipeHistory(recipeHistory);
     })();
 
     return () => {
       mounted = false;
     };
-  }, [recipeId, normandyApi.getBaseUrl({ method: "GET" })]);
+  }, [recipeId, revisionId, normandyApi.getBaseUrl({ method: "GET" })]);
 
   React.useEffect(() => {
     if (!recipeData?.experimenter_slug) {
@@ -90,11 +109,20 @@ const RecipeDetailsPage: React.FC = () => {
     return errorPage;
   }
 
+  const handleClickHistoryButton = (): void => {
+    setHistoryOpen(!historyOpen);
+  };
+
   return (
-    <RecipeDetailsProvider data={recipeData} statusData={recipeStatusData}>
+    <RecipeDetailsProvider
+      data={recipeData}
+      history={recipeHistory}
+      statusData={recipeStatusData}
+    >
       <ExperimenterDetailsProvider data={experimenterData}>
+        <HistorySidebar open={historyOpen} />
         <div className="d-flex flex-column h-100">
-          <DetailsHeader />
+          <DetailsHeader onClickHistoryButton={handleClickHistoryButton} />
           <div className="flex-grow-1 overflow-auto">
             <PageWrapper>
               <RecipeDetails />

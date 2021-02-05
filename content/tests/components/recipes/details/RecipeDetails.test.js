@@ -67,6 +67,10 @@ describe("The `RecipeDetails` component", () => {
     jest
       .spyOn(ExperimenterAPI.prototype, "fetchExperiment")
       .mockImplementation(() => Promise.resolve(experiment));
+
+    jest
+      .spyOn(NormandyAPI.prototype, "fetchRecipeHistory")
+      .mockImplementation(() => Promise.resolve([recipe.latest_revision]));
   };
 
   /** @return {import("devtools/types/recipes").RecipeV3<import("devtools/types/arguments").BranchedAddonStudyArguments>} */
