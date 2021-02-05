@@ -30,9 +30,9 @@ export const ENVIRONMENTS = {
   local: {
     key: "local",
     readOnlyUrl:
-      process.env.NDT_LOCAL_READ_ONLY_URL || "https://localhost:8000/",
+      process.env.NDT_LOCAL_READ_ONLY_URL || "http://localhost:8000/",
     writeableUrl:
-      process.env.NDT_LOCAL_WRITEABLE_URL || "https://localhost:8000/",
+      process.env.NDT_LOCAL_WRITEABLE_URL || "http://localhost:8000/",
     oidcClientId:
       process.env.NDT_LOCAL_OIDC_CLIENT_ID ||
       "hU1YpGcL82wL04vTPsaPAQmkilrSE7wr",
