@@ -44,7 +44,6 @@ const HistoryTimelineItem: React.FC<HistoryTimelineItemProps> = ({
   }>();
   const history = useHistory();
   const { data: recipeData, statusData } = useRecipeDetailsState();
-  console.log(revision, statusData);
 
   let tag = null;
   if (
@@ -87,7 +86,7 @@ const HistoryTimelineItem: React.FC<HistoryTimelineItemProps> = ({
     >
       <Whisper
         placement="right"
-        speaker={<Popover>{revision.comment}</Popover>}
+        speaker={<Popover>{revision.comment || <em>No comment.</em>}</Popover>}
         trigger="hover"
       >
         <span>

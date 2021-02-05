@@ -264,11 +264,17 @@ const DetailsHeader: React.FC<DetailsHeaderProps> = ({
         >
           Edit Recipe
         </IconButton>
-        <IconButton
-          className="ml-1"
-          icon={<Icon icon="history" />}
-          onClick={onClickHistoryButton}
-        />
+        <Whisper
+          placement="bottomEnd"
+          speaker={<Popover>Show history.</Popover>}
+          trigger="hover"
+        >
+          <IconButton
+            className="ml-1"
+            icon={<Icon icon="history" />}
+            onClick={onClickHistoryButton}
+          />
+        </Whisper>
         <Whisper
           placement="bottomEnd"
           speaker={
