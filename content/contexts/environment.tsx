@@ -1,6 +1,6 @@
 import auth0, { AuthorizeUrlOptions } from "auth0-js";
 import PropTypes from "prop-types";
-import React, { Reducer } from "react";
+import React, { Reducer, useMemo } from "react";
 import { Route, Redirect, Switch, useParams } from "react-router-dom";
 
 import { DEFAULT_ENV, ENVIRONMENTS } from "devtools/config";
@@ -420,12 +420,16 @@ export function useSelectedEnvironmentState(): SingleEnvironmentState {
 
 export function useSelectedNormandyEnvironmentAPI(): NormandyAPI {
   const { environment, auth, connectionStatus } = useSelectedEnvironmentState();
-  return new NormandyAPI(environment, auth, connectionStatus);
+  return useMemo(() => new NormandyAPI(environment, auth, connectionStatus), [
+    environment,
+    auth,
+    connectionStatus,
+  ]);
 }
 
 export function useSelectedExperimenterEnvironmentAPI(): ExperimenterAPI {
   const { environment } = useSelectedEnvironmentState();
-  return new ExperimenterAPI(environment);
+  return useMemo(() => new ExperimenterAPI(environment), [environment]);
 }
 
 async function checkVPNStatus(
