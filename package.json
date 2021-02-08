@@ -33,7 +33,7 @@
     "publish-docs": "gh-pages --dist docs --dotfiles --message '[skip ci] Docs updates'"
   },
   "devDependencies": {
-    "@babel/core": "7.12.3",
+    "@babel/core": "7.12.13",
     "@babel/plugin-proposal-class-properties": "7.12.1",
     "@babel/plugin-proposal-decorators": "7.12.1",
     "@babel/preset-env": "7.12.7",
@@ -67,7 +67,7 @@
     "eslint-plugin-fetch-options": "0.0.5",
     "eslint-plugin-html": "6.1.0",
     "eslint-plugin-import": "2.22.1",
-    "eslint-plugin-mozilla": "2.8.0",
+    "eslint-plugin-mozilla": "2.9.2",
     "eslint-plugin-no-unsanitized": "3.1.4",
     "eslint-plugin-prettier": "3.1.4",
     "eslint-plugin-react": "7.22.0",
@@ -97,14 +97,14 @@
     "web-ext": "5.4.1",
     "web-ext-types": "3.2.1",
     "webpack": "4.44.2",
-    "webpack-bundle-analyzer": "4.1.0",
+    "webpack-bundle-analyzer": "4.4.0",
     "webpack-cli": "3.3.12",
     "webpack-dev-server": "3.11.0",
     "webpack-fix-style-only-entries": "0.6.0",
     "webpack-merge": "5.4.0"
   },
   "dependencies": {
-    "@types/lodash": "4.14.164",
+    "@types/lodash": "4.14.168",
     "auth0-js": "9.14.0",
     "autobind-decorator": "2.4.0",
     "codemirror": "5.58.2",
@@ -122,7 +122,7 @@
     "react-split": "2.0.9",
     "rsuite": "4.8.4",
     "use-debounce": "5.1.0",
-    "validator": "13.1.17"
+    "validator": "13.5.2"
   },
   "resolutions": {
     "web-ext/addons-linter": "1.24.0"
