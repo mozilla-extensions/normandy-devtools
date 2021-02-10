@@ -20,7 +20,7 @@ describe("environment context", () => {
       );
 
       // Setup
-      const { result, rerender, waitForNextUpdate, waitFor } = renderHook(
+      const { result, waitFor } = renderHook(
         () => ({
           history: useHistory(),
           normandyApi: useSelectedNormandyEnvironmentAPI(),
@@ -34,8 +34,6 @@ describe("environment context", () => {
       const originalApi: NormandyAPI = result.current.normandyApi;
 
       // The API returned should be the same object if we re-render the hook.
-      rerender();
-      await waitForNextUpdate();
       expect(result.current.normandyApi).toBe(originalApi);
 
       // After switching to a new environment, the result should be distinct from the previous ones.
@@ -56,7 +54,7 @@ describe("environment context", () => {
       );
 
       // Setup
-      const { result, rerender, waitForNextUpdate, waitFor } = renderHook(
+      const { result, waitFor } = renderHook(
         () => ({
           history: useHistory(),
           experimenterApi: useSelectedExperimenterEnvironmentAPI(),
@@ -70,8 +68,6 @@ describe("environment context", () => {
       const originalApi: ExperimenterAPI = result.current.experimenterApi;
 
       // The API returned should be the same object if we re-render the hook.
-      rerender();
-      await waitForNextUpdate();
       expect(result.current.experimenterApi).toBe(originalApi);
 
       // After switching to a new environment, the result should be distinct from the previous ones.
