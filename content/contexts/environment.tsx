@@ -1,6 +1,6 @@
 import auth0, { AuthorizeUrlOptions } from "auth0-js";
 import PropTypes from "prop-types";
-import React, { Reducer } from "react";
+import React, { Reducer, useMemo } from "react";
 import { Route, Redirect, Switch, useParams } from "react-router-dom";
 
 import { DEFAULT_ENV, ENVIRONMENTS } from "devtools/config";
@@ -271,9 +271,16 @@ EnvironmentRouter.propTypes = {
 };
 
 export const EnvironmentProvider: React.FC = ({ children }) => {
-  const [state, dispatch] = React.useReducer<
+  const [state, ungatedDispatch] = React.useReducer<
     Reducer<EnvironmentState, EnvironmentAction>
   >(reducer, initialState);
+
+  let mounted = true;
+  const gatedDispatch = (action: EnvironmentAction): void => {
+    if (mounted) {
+      ungatedDispatch(action);
+    }
+  };
 
   React.useEffect(() => {
     // Add event listener for changes to local storage
@@ -286,7 +293,7 @@ export const EnvironmentProvider: React.FC = ({ children }) => {
         const match = ev.key.match(regex);
         if (match) {
           const envKey = match[1];
-          dispatch({
+          gatedDispatch({
             type: actionType,
             key: envKey,
             [valueName]: JSON.parse(ev.newValue) as EnvironmentAction,
@@ -302,7 +309,7 @@ export const EnvironmentProvider: React.FC = ({ children }) => {
       console.info("Checking connection status...");
 
       Object.keys(ENVIRONMENTS).forEach((key) => {
-        dispatch({
+        gatedDispatch({
           type: "SET_CONNECTION_STATUS",
           status: false,
           key,
@@ -325,7 +332,7 @@ export const EnvironmentProvider: React.FC = ({ children }) => {
             status = false;
           }
 
-          dispatch({
+          gatedDispatch({
             type: "SET_CONNECTION_STATUS",
             status,
             key,
@@ -343,6 +350,7 @@ export const EnvironmentProvider: React.FC = ({ children }) => {
     return () => {
       window.removeEventListener("storage", storageListener);
       browser.networkStatus.onConnectionChanged.removeListener(networkListener);
+      mounted = false;
     };
   }, []);
 
@@ -353,15 +361,15 @@ export const EnvironmentProvider: React.FC = ({ children }) => {
       if (expiresAt) {
         if (Number(expiresAt) - new Date().getTime() <= REFRESH_THRESHOLD_MS) {
           try {
-            await refreshToken(dispatch, key, environment);
+            await refreshToken(gatedDispatch, key, environment);
           } catch (err) {
             console.warn(`Unable to refresh Auth0 access token for "${key}"`);
             console.warn(err);
-            logout(dispatch, key);
+            logout(gatedDispatch, key);
           }
         }
       } else {
-        logout(dispatch, key);
+        logout(gatedDispatch, key);
       }
     });
   };
@@ -382,7 +390,7 @@ export const EnvironmentProvider: React.FC = ({ children }) => {
   }, []);
 
   return (
-    <Provider value={{ state, dispatch }}>
+    <Provider value={{ state, dispatch: gatedDispatch }}>
       <EnvironmentRouter>{children}</EnvironmentRouter>
     </Provider>
   );
@@ -420,12 +428,16 @@ export function useSelectedEnvironmentState(): SingleEnvironmentState {
 
 export function useSelectedNormandyEnvironmentAPI(): NormandyAPI {
   const { environment, auth, connectionStatus } = useSelectedEnvironmentState();
-  return new NormandyAPI(environment, auth, connectionStatus);
+  return useMemo(() => new NormandyAPI(environment, auth, connectionStatus), [
+    environment,
+    auth,
+    connectionStatus,
+  ]);
 }
 
 export function useSelectedExperimenterEnvironmentAPI(): ExperimenterAPI {
   const { environment } = useSelectedEnvironmentState();
-  return new ExperimenterAPI(environment);
+  return useMemo(() => new ExperimenterAPI(environment), [environment]);
 }
 
 async function checkVPNStatus(
