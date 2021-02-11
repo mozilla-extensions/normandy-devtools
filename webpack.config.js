@@ -106,10 +106,33 @@ function makeBaseConfig(development, argv) {
         },
         {
           test: /\.less/,
+          exclude: /\.module\.less/,
           use: [
             cacheLoader,
             MiniCssExtractPlugin.loader,
             "css-loader",
+            {
+              loader: "less-loader",
+              options: {
+                lessOptions: {
+                  javascriptEnabled: true,
+                },
+              },
+            },
+          ],
+        },
+        {
+          test: /\.module\.less/,
+          use: [
+            cacheLoader,
+            MiniCssExtractPlugin.loader,
+            "css-modules-typescript-loader",
+            {
+              loader: "css-loader",
+              options: {
+                modules: true,
+              },
+            },
             {
               loader: "less-loader",
               options: {

@@ -1,7 +1,10 @@
 import { strict as assert } from "assert";
 
+import { SAMPLING_FILTER_TYPES } from "devtools/constants";
 import {
   BucketSampleFilterObject,
+  FilterObject,
+  NamespaceSampleFilterObject,
   SampleFilterObject,
 } from "devtools/types/filters";
 import { Revision, RecipeV1 } from "devtools/types/recipes";
@@ -51,11 +54,12 @@ async function* bruteForceSampleMatchesGenerator(
 
   for (const input of filter.input) {
     if (
-      input !== "normandy.userId" &&
-      !(
-        (input.startsWith('"') && input.endsWith('"')) ||
-        (input.startsWith("'") && input.endsWith("'"))
-      )
+      typeof input !== "string" ||
+      (input !== "normandy.userId" &&
+        !(
+          (input.startsWith('"') && input.endsWith('"')) ||
+          (input.startsWith("'") && input.endsWith("'"))
+        ))
     ) {
       throw new Error(
         `Can only handle inputs that are constant strings or "normandy.userId". Got "${input}".`,
@@ -192,4 +196,160 @@ const _pausableActions = new Set([
 ]);
 export function actionIsPausable(actionName: string): boolean {
   return _pausableActions.has(actionName);
+}
+
+export function revisionIsPausable(
+  revision: Revision,
+): revision is Revision<{ isEnrollmentPaused: boolean }> {
+  return actionIsPausable(revision.action.name);
+}
+
+export function getNamespaceForFilter(
+  filter: SampleFilterObject,
+): string | null {
+  if (filter.type === "namespaceSample") {
+    return filter.namespace;
+  } else if (filter.type === "stableSample" || filter.type === "bucketSample") {
+    if (filter.input.length !== 2) {
+      return null;
+    }
+
+    for (const input of filter.input) {
+      if (
+        input !== "normandy.userId" &&
+        typeof input === "string" &&
+        ((input.startsWith('"') && input.endsWith('"')) ||
+          (input.startsWith("'") && input.endsWith("'")))
+      ) {
+        return input.replace(/^['"]/, "").replace(/['"]$/, "");
+      }
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Returns a namespace sample filter associated with a revision. Will convert
+ * bucket sample and simple sample recipes to a compatible format, if possible.
+ *
+ * An error that is of a unique class (instanceof can be used) will be thrown
+ * in any of these cases:
+ *
+ *  - No sampling filters are found.
+ *  - More than one filter is found.
+ *  - A filter is found, but conversion to a namespace filter is not possible.
+ */
+export function getSamplingFilterAsNamespaceSample(
+  revision: Revision,
+  { backwardsInputs = false } = {},
+): NamespaceSampleFilterObject {
+  const samplingFilters = revision.filter_object.filter(isSamplingFilter);
+
+  if (samplingFilters.length > 1) {
+    throw new getSamplingFilterAsNamespaceSample.TooManySampleFiltersError();
+  } else if (samplingFilters.length < 1) {
+    throw new getSamplingFilterAsNamespaceSample.NoSampleFilterError();
+  }
+
+  let samplingFilter: SampleFilterObject = samplingFilters[0] as SampleFilterObject;
+  if (samplingFilter.type === "stableSample") {
+    // convert to bucket sample
+    samplingFilter = {
+      type: "bucketSample",
+      start: 0,
+      count: 10_000 * samplingFilter.rate,
+      total: 10_000,
+      input: samplingFilter.input,
+    };
+  }
+
+  if (samplingFilter.type === "bucketSample") {
+    if (samplingFilter.input.length !== 2) {
+      throw new getSamplingFilterAsNamespaceSample.WrongNumberOfInputsError();
+    }
+
+    const namespaceIdx = !backwardsInputs ? 0 : 1;
+    const userIdx = !backwardsInputs ? 1 : 0;
+
+    if (
+      typeof samplingFilter.input[userIdx] === "string" &&
+      (samplingFilter.input[userIdx] as string).match(/(^'.*'$)|(^".*"$)/) &&
+      samplingFilter.input[namespaceIdx] === "normandy.userId"
+    ) {
+      throw new getSamplingFilterAsNamespaceSample.BackwardsInputsError();
+    }
+
+    if (
+      typeof samplingFilter.input[namespaceIdx] === "string" &&
+      !(samplingFilter.input[namespaceIdx] as string).match(/^(['"]).*\1$/)
+    ) {
+      throw new getSamplingFilterAsNamespaceSample.NotANamespaceIdError();
+    }
+
+    if (samplingFilter.input[userIdx] !== "normandy.userId") {
+      throw new getSamplingFilterAsNamespaceSample.NotAUserIdError();
+    }
+
+    if (samplingFilter.total !== 10_000) {
+      throw new getSamplingFilterAsNamespaceSample.WrongTotalError();
+    }
+
+    if (samplingFilter.input.some((i) => typeof i !== "string")) {
+      throw new getSamplingFilterAsNamespaceSample.NonStringInputError();
+    }
+
+    samplingFilter = {
+      type: "namespaceSample",
+      start: samplingFilter.start,
+      count: samplingFilter.count,
+      // cast is safe since non-string inputs are rejected above
+      namespace: (samplingFilter.input[namespaceIdx] as string).slice(1, -2),
+    };
+  }
+
+  assert(samplingFilter.type === "namespaceSample");
+  return samplingFilter;
+}
+
+getSamplingFilterAsNamespaceSample.TooManySampleFiltersError = class extends Error {
+  message = "More than one sampling filter found";
+};
+
+getSamplingFilterAsNamespaceSample.NoSampleFilterError = class extends Error {
+  message = "No sampling filter found";
+};
+
+getSamplingFilterAsNamespaceSample.WrongNumberOfInputsError = class extends Error {
+  message = "Nonstandard filter: wrong number of inputs";
+};
+
+getSamplingFilterAsNamespaceSample.BackwardsInputsError = class extends Error {
+  message = "Nonstandard filter: inputs are backwards";
+};
+
+getSamplingFilterAsNamespaceSample.BackwardsInputsError = class extends Error {
+  message = "Nonstandard filter: inputs are backwards";
+};
+
+getSamplingFilterAsNamespaceSample.NotANamespaceIdError = class extends Error {
+  message = "Nonstandard filter: first input is not a namespace ID";
+};
+
+getSamplingFilterAsNamespaceSample.NotAUserIdError = class extends Error {
+  message = "Nonstandard filter: second input is not normandy.userId";
+};
+
+getSamplingFilterAsNamespaceSample.WrongTotalError = class extends Error {
+  message = "Nonstandard filter: total is not 10,000";
+};
+
+getSamplingFilterAsNamespaceSample.NonStringInputError = class extends Error {
+  message = "Nonstandard filter: non-string input";
+};
+
+export function isSamplingFilter(
+  filter: FilterObject,
+): filter is SampleFilterObject {
+  return SAMPLING_FILTER_TYPES.includes(filter.type);
 }

@@ -1,3 +1,9 @@
+/* eslint-env node */
+const path = require("path");
+
+const rulesDirPlugin = require("eslint-plugin-rulesdir");
+rulesDirPlugin.RULES_DIR = path.join(path.dirname(__filename), "eslint-rules");
+
 const sharedRules = {
   "mozilla/no-define-cc-etc": "off",
   "react/jsx-fragments": ["error", "syntax"],
@@ -44,6 +50,7 @@ const sharedRules = {
       "newlines-between": "always",
     },
   ],
+  "rulesdir/no-relative-imports": ["error", { roots: { devtools: "content" } }],
 };
 
 module.exports = {
@@ -58,7 +65,7 @@ module.exports = {
     "plugin:mozilla/recommended",
     "plugin:react/recommended",
   ],
-  plugins: ["mozilla", "import"],
+  plugins: ["mozilla", "import", "rulesdir"],
   settings: {
     react: {
       version: "detect",
@@ -98,7 +105,10 @@ module.exports = {
         "@typescript-eslint/no-use-before-define": ["off"],
         "react/prop-types": ["off"],
         "@typescript-eslint/camelcase": ["off"],
-        "@typescript-eslint/explicit-function-return-type": ["warn", {allowExpressions: true}],
+        "@typescript-eslint/explicit-function-return-type": [
+          "warn",
+          { allowExpressions: true },
+        ],
       },
     },
   ],

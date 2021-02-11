@@ -1,6 +1,9 @@
 import React from "react";
 import { ButtonGroup, Icon, IconButton, Tag } from "rsuite";
 
+import CollapsibleSection, {
+  HeaderButtonPopover,
+} from "devtools/components/common/CollapsibleSection";
 import Highlight from "devtools/components/common/Highlight";
 import AddonStudy from "devtools/components/recipes/details/arguments/AddonStudy";
 import BranchedAddonStudy from "devtools/components/recipes/details/arguments/BranchedAddonStudy";
@@ -9,9 +12,6 @@ import MessagingExperiment from "devtools/components/recipes/details/arguments/M
 import MultiPreferenceExperiment from "devtools/components/recipes/details/arguments/MultiPreferenceExperiment";
 import PreferenceExperiment from "devtools/components/recipes/details/arguments/PreferenceExperiment";
 import PreferenceRollout from "devtools/components/recipes/details/arguments/PreferenceRollout";
-import CollapsibleSection, {
-  HeaderButtonPopover,
-} from "devtools/components/recipes/details/CollapsibleSection";
 import { useRecipeDetailsData } from "devtools/contexts/recipeDetails";
 
 const MODE_RICH = "RICH";

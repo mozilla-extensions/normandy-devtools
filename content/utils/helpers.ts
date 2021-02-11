@@ -16,7 +16,7 @@ export function splitCamelCase(
       return group1 + " " + group2.toLowerCase();
     })
 
-    // A normal camel case transition, with a single capital letter lase
+    // A normal camel case transition, with a single capital letter
     .replace(/([a-z])([A-Z].)/g, (match, group1: string, group2: string) => {
       if (group2 === group2.toUpperCase()) {
         return group1 + " " + group2;
@@ -39,6 +39,9 @@ export function splitCamelCase(
       (_, match1, match2) => match1 + match2.toUpperCase(),
     );
   }
+
+  // Special case a few acronyms
+  rv = rv.replace(/\b(url|api|id)\b/gi, (acronym) => acronym.toUpperCase());
 
   return rv;
 }
@@ -77,25 +80,6 @@ export function has<K extends string>(
   x: unknown,
 ): x is { [key in K]: unknown } {
   return x && typeof x === "object" && key in x;
-}
-
-/** Group an iterable into non-overlapping chunks of size `n`. The last chunk may be smaller than `n` */
-export function chunkBy<T>(iter: Iterable<T>, n: number): Array<Array<T>> {
-  const rv: Array<Array<T>> = [];
-  let chunk: Array<T> = [];
-  for (const item of iter) {
-    chunk.push(item);
-    if (chunk.length >= n) {
-      rv.push(chunk);
-      chunk = [];
-    }
-  }
-
-  if (chunk.length) {
-    rv.push(chunk);
-  }
-
-  return rv;
 }
 
 export type CompareFunc<T = unknown> = (a: T, b: T) => number;

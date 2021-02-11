@@ -5,10 +5,12 @@ import { actionFactory } from "devtools/tests/factories/api";
 import { actionArgumentsFactory } from "devtools/tests/factories/arguments";
 import { filterObjectFactory } from "devtools/tests/factories/filterObjects";
 import {
+  ActionArguments,
   BranchedAddonStudyBranch,
   MultiPreferenceExperimentBranch,
   PreferenceRolloutBranch,
 } from "devtools/types/arguments";
+import { FilterObject, UnknownFilterObject } from "devtools/types/filters";
 import {
   User,
   RecipeV3,
@@ -91,6 +93,21 @@ export const revisionFactory = Factory.fromFields<
 });
 
 export const recipeFactory = Factory.fromFields<RecipeV3>({
+  id: autoIncrementField(),
+  latest_revision: {
+    subfactory: revisionFactory,
+    dependencies: ["id"],
+    passOptions: (_option, _input, partialRecipe): { recipeId: number } => {
+      return { recipeId: partialRecipe.id };
+    },
+  },
+  approved_revision: null,
+});
+
+// A hack since recipe factories can't be generic to their users
+export const recipeFactoryAllowUnknownFo = Factory.fromFields<
+  RecipeV3<ActionArguments, FilterObject | UnknownFilterObject>
+>({
   id: autoIncrementField(),
   latest_revision: {
     subfactory: revisionFactory,

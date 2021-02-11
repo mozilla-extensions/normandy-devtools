@@ -13,7 +13,13 @@ declare global {
     }
   }
 }
+
+beforeEach(() => {
+  restoreConsole();
+});
+
 afterEach(async () => {
+  modifyConsole();
   jest.clearAllMocks();
   await cleanup();
 });

@@ -17,7 +17,13 @@ import {
 } from "devtools/contexts/recipeDetails";
 import { actionIsPausable } from "devtools/utils/recipes";
 
-const DetailsHeader: React.FC = () => {
+interface DetailsHeaderProps {
+  onClickHistoryButton: () => void;
+}
+
+const DetailsHeader: React.FC<DetailsHeaderProps> = ({
+  onClickHistoryButton,
+}) => {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
   const { recipeId, revisionId } = useParams<{
@@ -258,6 +264,17 @@ const DetailsHeader: React.FC = () => {
         >
           Edit Recipe
         </IconButton>
+        <Whisper
+          placement="bottomEnd"
+          speaker={<Popover>Show history.</Popover>}
+          trigger="hover"
+        >
+          <IconButton
+            className="ml-1"
+            icon={<Icon icon="history" />}
+            onClick={onClickHistoryButton}
+          />
+        </Whisper>
         <Whisper
           placement="bottomEnd"
           speaker={

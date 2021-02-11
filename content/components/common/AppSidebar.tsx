@@ -27,6 +27,20 @@ export const AppSidebar: React.FC = () => {
             >
               Recipes
             </Nav.Item>
+            <Nav.Item
+              componentClass={NavLink}
+              icon={<Icon icon="puzzle-piece" />}
+              to={`/${selectedKey}/extensions`}
+            >
+              Extensions
+            </Nav.Item>
+            <Nav.Item
+              componentClass={NavLink}
+              icon={<Icon icon="project" />}
+              to={`/${selectedKey}/namespaces`}
+            >
+              Namespaces
+            </Nav.Item>
             {__ENV__ === "web" ? null : (
               <>
                 <Nav.Item

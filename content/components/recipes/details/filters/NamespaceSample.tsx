@@ -16,7 +16,7 @@ const NamespaceSample: React.FunctionComponent<{
           <div className="flex-grow-1 flex-basis-0 pr-2">
             <strong>Percentage</strong>
             <div className="my-1 text-subtle">
-              <code>{(data.count * 100) / data.total}%</code>
+              <code>{data.count / 100}%</code>
             </div>
           </div>
           <div className="flex-grow-1 flex-basis-0 pr-2">
@@ -29,12 +29,6 @@ const NamespaceSample: React.FunctionComponent<{
             <strong>Count</strong>
             <div className="my-1 text-subtle">
               <code>{data.count}</code>
-            </div>
-          </div>
-          <div className="flex-grow-1 flex-basis-0">
-            <strong>Total</strong>
-            <div className="my-1 text-subtle">
-              <code>{data.total}</code>
             </div>
           </div>
         </div>

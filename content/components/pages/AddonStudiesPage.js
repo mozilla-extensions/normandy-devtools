@@ -1,6 +1,7 @@
 import React from "react";
 import { Loader } from "rsuite";
 
+import PageWrapper from "devtools/components/common/PageWrapper";
 import AddonStudy from "devtools/components/studies/AddonStudy";
 
 const normandy = browser.experiments.normandy;
@@ -50,6 +51,6 @@ export default class AddonStudiesPage extends React.PureComponent {
   }
 
   render() {
-    return <div className="page-wrapper">{this.renderStudiesList()}</div>;
+    return <PageWrapper>{this.renderStudiesList()}</PageWrapper>;
   }
 }

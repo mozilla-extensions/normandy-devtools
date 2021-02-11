@@ -1,0 +1,47 @@
+.history-timeline {
+  left: 0;
+  margin-left: -251px;
+  padding: 20px;
+  position: fixed;
+  transition: margin-left 0.35s ease;
+
+  &.open {
+    margin-left: 0;
+  }
+
+  .timeline-dot {
+    &::before {
+      background-color: @time-line-dot-default-background-color;
+      border-radius: 50%;
+      content: '';
+      display: block;
+      height: 10px;
+      width: 10px;
+    }
+
+    &.approved {
+      &::before {
+        background-color: @green;
+      }
+    }
+
+    &.rejected {
+      &::before {
+        background-color: @red;
+      }
+    }
+
+    &.selected {
+      &::before {
+        border: 2px solid @text-color;
+        height: 12px;
+        margin: -1px 0 0 -1px;
+        width: 12px;
+      }
+    }
+  }
+}
+
+.history-timeline-tooltip {
+  margin-top: -5px;
+}

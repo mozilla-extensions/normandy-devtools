@@ -9,10 +9,15 @@ webpage is more accessible and a little easier to work on.
 Clone the repository, and install the dependencies:
 
 ```sh
-$ git clone https://github.com/mozilla/normandy-devtools.git
-$ cd normandy-devtools
-$ yarn install
+git clone https://github.com/mozilla/normandy-devtools.git
+cd normandy-devtools
+yarn install
 ```
+
+> One of Normandy Devtools core features is interacting with various
+> services. Although these services often have stage and dev instances that
+> can be worked with, it can be helpful to have your own local copies. As an
+> optional setup step, considering [setting those up](./local-servers).
 
 ## Extension
 
@@ -27,7 +32,7 @@ To run the extension in development mode, you can use the `watch-ext` command to
 build the extension, package it and install it into a Nightly temporary profile:
 
 ```sh
-$ yarn watch-ext
+yarn watch-ext
 ```
 
 > NOTE: If you are seeing an error while trying to run `watch-ext` make sure
@@ -39,21 +44,21 @@ $ yarn watch-ext
 To work on the web version of NDT, you can use any modern version of Firefox and the `watch-web` command:
 
 ```sh
-$ yarn watch-web
+yarn watch-web
 ```
 
 ## Configuration
 
 You may want to configure some aspects of your build for local development.
-To do this you need to create a `.env` file in the root directory of the 
+To do this you need to create a `.env` file in the root directory of the
 project and set the relevant values:
 
 ### NDT_DEFAULT_ENV
 
-This sets the default environment set at startup when you load the 
+This sets the default environment set at startup when you load the
 extension.
 
-Must be one of `prod`, `stage`, `dev` or `local`. 
+Must be one of `prod`, `stage`, `dev` or `local`.
 
 ### NDT_LOCAL_READ_ONLY_URL
 
@@ -69,7 +74,7 @@ The Auth0 client ID used by your local instance of Normandy server.
 
 ### NDT_LOCAL_OIDC_DOMAIN
 
-The Auth0 domain of the tenant used by your local instance of Normandy 
+The Auth0 domain of the tenant used by your local instance of Normandy
 server.
 
 ### NDT_LOCAL_EXPERIMENTER_URL
@@ -85,7 +90,7 @@ React Devtools.
 To start React Devtools run the following in a separate shell:
 
 ```sh
-$ yarn react-devtools
+yarn react-devtools
 ```
 
 Now simply reload the extension or webpage. It should connect to React Devtools.
@@ -112,7 +117,7 @@ preference in `about:config`:
 - Create a new boolean preference named `xpinstall.signatures.dev-root` and set it to
   `true`.
 
-If you wish to use this profile with a mix of stage-signed XPIs and 
+If you wish to use this profile with a mix of stage-signed XPIs and
 production-signed/AMO-signed XPIs you can alternatively change the following
 preferences in `about:config`:
 

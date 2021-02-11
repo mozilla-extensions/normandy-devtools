@@ -11,8 +11,9 @@ import {
 import AppHeader from "devtools/components/common/AppHeader";
 import { AppSidebar } from "devtools/components/common/AppSidebar";
 import { ErrorFallbackPage } from "devtools/components/pages/ErrorFallbackPage";
+import NotFoundPage from "devtools/components/pages/NotFoundPage";
 import { OverviewPage } from "devtools/components/pages/OverviewPage";
-import RecipesPage from "devtools/components/pages/RecipesPage";
+import RecipeListingPage from "devtools/components/pages/RecipeListingPage";
 import { EnvironmentProvider } from "devtools/contexts/environment";
 import { useHistoryRecorder } from "devtools/hooks/urls";
 
@@ -22,6 +23,12 @@ const RecipeFormPage = React.lazy(() =>
 );
 const RecipeDetailsPage = React.lazy(() =>
   import("devtools/components/pages/RecipeDetailsPage"),
+);
+const ExtensionsPage = React.lazy(() =>
+  import("devtools/components/pages/ExtensionsPage"),
+);
+const NamespacesPage = React.lazy(() =>
+  import("devtools/components/pages/NamespacesPage"),
 );
 const FiltersPage =
   __ENV__ === "web"
@@ -71,7 +78,7 @@ function Page() {
             />
             <Route
               exact
-              component={RecipesPage}
+              component={RecipeListingPage}
               path={`${match.path}/recipes`}
             />
             <Route
@@ -104,6 +111,16 @@ function Page() {
               component={RecipeFormPage}
               path={`${match.path}/recipes/import/:experimenterSlug`}
             />
+            <Route
+              exact
+              component={ExtensionsPage}
+              path={`${match.path}/extensions`}
+            />
+            <Route
+              exact
+              component={NamespacesPage}
+              path={`${match.path}/namespaces`}
+            />
             {__ENV__ === "web" ? null : (
               <>
                 <Route
@@ -122,16 +139,7 @@ function Page() {
               </>
             )}
 
-            <Route
-              render={(args) => (
-                <>
-                  <span>404</span>
-                  <pre>
-                    <code>{JSON.stringify(args, null, 4)}</code>
-                  </pre>
-                </>
-              )}
-            />
+            <Route component={NotFoundPage} />
           </Switch>
         </Suspense>
       </ErrorBoundary>

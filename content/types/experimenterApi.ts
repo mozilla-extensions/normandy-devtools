@@ -1,3 +1,6 @@
+import { ActionArguments } from "devtools/types/arguments";
+import { Revision } from "devtools/types/recipes";
+
 interface Variant {
   slug: string;
   description: string;
@@ -16,3 +19,10 @@ export interface ExperimenterResponse {
   variants: Variant[];
   status: string;
 }
+
+export type ExperimenterRecipePreview<T = ActionArguments> = Omit<
+  Revision<T>,
+  "action"
+> & {
+  action_name: string;
+};

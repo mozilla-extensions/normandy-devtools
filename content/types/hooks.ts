@@ -1,8 +1,8 @@
-export type AsyncHook<T> = LoadingHook | LoadedHook<T> | ErrorHook;
+export type AsyncHook<T> = LoadingHook<T> | LoadedHook<T> | ErrorHook;
 
-interface LoadingHook {
+interface LoadingHook<T> {
   loading: true;
-  value: null;
+  value?: T | null;
   error: null;
 }
 

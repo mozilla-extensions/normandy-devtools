@@ -11,6 +11,9 @@ declare const __ENV__: "web" | "extension";
 
 declare const __TESTING__: boolean;
 
+declare const restoreConsole: () => void;
+declare const modifyConsole: () => void;
+
 declare namespace browser.experiments.normandy {
   type V1Recipe = Record<string, unknown>;
 
@@ -48,8 +51,10 @@ declare namespace browser.experiments.normandy {
 declare const renderWithContext: (
   ui: React.ReactElement,
   options?: {
-    route: string;
-    path: string;
+    /** The URL the browser is viewing, like `/prod/recipe/270` */
+    route?: string;
+    /** The pattern the router is matching, like `/:env/recipe/:recipeId` */
+    path?: string;
     history?: import("history").MemoryHistory;
   },
 ) => import("@testing-library/react").RenderResult & {

@@ -10,6 +10,7 @@ export const INITIAL_RECIPE_DATA = {
 const initialState = {
   data: INITIAL_RECIPE_DATA,
   statusData: INITIAL_RECIPE_DATA,
+  history: [],
   importInstructions: "",
   clientErrors: {},
   serverErrors: {},
@@ -24,6 +25,7 @@ export const ACTION_SET_SERVER_ERRORS = "ACTION_SET_SERVER_ERRORS";
 export const ACTION_CLEAR_SERVER_ERRORS = "ACTION_CLEAR_SERVER_ERRORS";
 export const ACTION_UPDATE_CLIENT_ERRORS = "UPDATE_CLIENT_ERRORS";
 export const ACTION_REMOVE_CLIENT_ERRORS = "REMOVE_CLIENT_ERRORS";
+export const ACTION_UPDATE_HISTORY = "UPDATE_HISTORY";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -68,6 +70,12 @@ function reducer(state, action) {
         clientErrors,
       };
 
+    case ACTION_UPDATE_HISTORY:
+      return {
+        ...state,
+        history: action.history,
+      };
+
     default:
       return state;
   }
@@ -76,6 +84,7 @@ function reducer(state, action) {
 export function RecipeDetailsProvider({
   children,
   data,
+  history,
   importInstructions,
   statusData,
 }) {
@@ -92,6 +101,13 @@ export function RecipeDetailsProvider({
 
   React.useEffect(() => {
     dispatch({
+      type: ACTION_UPDATE_HISTORY,
+      history,
+    });
+  }, [history]);
+
+  React.useEffect(() => {
+    dispatch({
       type: ACTION_UPDATE_IMPORT_INSTRUCTIONS,
       importInstructions,
     });
@@ -104,6 +120,7 @@ export function RecipeDetailsProvider({
 RecipeDetailsProvider.propTypes = {
   children: PropTypes.any,
   data: PropTypes.object.isRequired,
+  history: PropTypes.array,
   statusData: PropTypes.object,
   importInstructions: PropTypes.string,
 };

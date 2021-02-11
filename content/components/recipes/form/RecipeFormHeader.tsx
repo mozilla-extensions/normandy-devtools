@@ -6,6 +6,7 @@ import {
   useEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
+import { useNamespaceInfo } from "devtools/contexts/namespaces";
 import {
   ACTION_SET_SERVER_ERRORS,
   ACTION_CLEAR_SERVER_ERRORS,
@@ -26,6 +27,7 @@ const RecipeFormHeader: React.FC = () => {
   const [showCommentModal, setShowCommentModal] = React.useState(false);
 
   const dispatch = useRecipeDetailsDispatch();
+  const namespaceInfo = useNamespaceInfo();
 
   const handleSaveClick = (): void => {
     try {
@@ -39,11 +41,18 @@ const RecipeFormHeader: React.FC = () => {
     }
   };
 
-  const saveRecipe = (comment): void => {
+  const saveRecipe = async (comment): Promise<void> => {
     const { action, ...cleanedData } = data;
     let id;
     if (!history.location.pathname.includes("clone")) {
       id = recipeId;
+    }
+
+    try {
+      await namespaceInfo.updateSamplingForAutoBucketing(cleanedData);
+    } catch (err) {
+      Alert.error(`Could not save: ${err}`, 60_000);
+      return;
     }
 
     // Clean form errors on save.is

@@ -1,18 +1,19 @@
-import PropTypes from "prop-types";
-import React from "react";
+import React, { useContext } from "react";
 import { Col, ControlLabel, FormGroup, Row, TagPicker } from "rsuite";
 
 import {
   useEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
+import { layoutContext } from "devtools/contexts/layout";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
   useRecipeDetailsDispatch,
 } from "devtools/contexts/recipeDetails";
 
-export default function GeoOptions() {
+// default export
+const GeoOptions: React.FC = () => {
   const { selectedKey: environmentKey } = useEnvironmentState();
   const normandyApi = useSelectedNormandyEnvironmentAPI();
   const [filters, setFilters] = React.useState({
@@ -46,11 +47,26 @@ export default function GeoOptions() {
       </Col>
     </Row>
   );
+};
+
+export default GeoOptions;
+
+interface GeoFilterFieldProps {
+  label?: string;
+  name: string;
+  dataKey: string;
+  options: Array<{ key: string; value: string }>;
 }
 
-function GeoFilterField({ label, name, dataKey, options }) {
+const GeoFilterField: React.FC<GeoFilterFieldProps> = ({
+  label,
+  name,
+  dataKey,
+  options,
+}) => {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
+  const { container } = useContext(layoutContext);
 
   let filterObject;
   if (data.filter_object) {
@@ -60,32 +76,36 @@ function GeoFilterField({ label, name, dataKey, options }) {
   const value =
     filterObject && filterObject[dataKey] ? filterObject[dataKey] : [];
 
-  const handleChange = (value) => {
-    const newFilterObjects = [
-      ...data.filter_object.filter((fo) => fo !== filterObject),
-    ];
+  const handleChange = React.useCallback(
+    (value: Array<string>): void => {
+      const newFilterObjects = [
+        ...data.filter_object.filter((fo) => fo !== filterObject),
+      ];
 
-    if (value.length) {
-      newFilterObjects.push({
-        type: name,
-        [dataKey]: value,
+      if (value.length) {
+        newFilterObjects.push({
+          type: name,
+          [dataKey]: value,
+        });
+      }
+
+      dispatch({
+        type: ACTION_UPDATE_DATA,
+        data: {
+          ...data,
+          filter_object: newFilterObjects,
+        },
       });
-    }
-
-    dispatch({
-      type: ACTION_UPDATE_DATA,
-      data: {
-        ...data,
-        filter_object: newFilterObjects,
-      },
-    });
-  };
+    },
+    [data.filter_object, dispatch],
+  );
 
   return (
     <FormGroup>
       <ControlLabel>{label}</ControlLabel>
       <TagPicker
         block
+        container={container}
         data={options.map((o) => ({
           label: `${o.value} [${o.key}]`,
           value: o.key,
@@ -95,11 +115,4 @@ function GeoFilterField({ label, name, dataKey, options }) {
       />
     </FormGroup>
   );
-}
-
-GeoFilterField.propTypes = {
-  label: PropTypes.string,
-  name: PropTypes.string.isRequired,
-  dataKey: PropTypes.string.isRequired,
-  options: PropTypes.array.isRequired,
 };

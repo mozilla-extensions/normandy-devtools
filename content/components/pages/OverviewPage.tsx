@@ -1,9 +1,10 @@
 import React from "react";
-import { Loader } from "rsuite";
+import { Divider, Loader } from "rsuite";
 
+import PageWrapper from "devtools/components/common/PageWrapper";
 import { EndingRecipes } from "devtools/components/overview/EndingRecipes";
 import { PausingRecipes } from "devtools/components/overview/PausingRecipes";
-import { PendingReviews } from "devtools/components/overview/PendingReviews";
+import PendingReviews from "devtools/components/overview/PendingReviews";
 import {
   useEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
@@ -85,9 +86,13 @@ export const OverviewPage: React.FC = () => {
       await Promise.all(
         experiments.map(async (experiment) => {
           if (experiment.normandy_id && experiment.proposed_enrollment) {
-            const recipe = await normandyApi.fetchRecipe(
+            interface MaybePausable {
+              latest_revision: { arguments: { isEnrollmentPaused?: boolean } };
+            }
+            const recipe = (await normandyApi.fetchRecipe(
               experiment.normandy_id,
-            );
+            )) as MaybePausable;
+
             if (!recipe.latest_revision.arguments.isEnrollmentPaused) {
               const pauseDate = new Date(experiment.start_date);
               pauseDate.setDate(
@@ -108,17 +113,23 @@ export const OverviewPage: React.FC = () => {
 
   if (recipes.length || liveRecipes.length || pauseRecipes.length) {
     return (
-      <div className="page-wrapper">
+      <PageWrapper>
+        <h5>Delivery Overview</h5>
+        <Divider />
         <PendingReviews data={recipes} />
+        <Divider />
         <EndingRecipes data={liveRecipes} />
+        <Divider />
         <PausingRecipes data={pauseRecipes} />
-      </div>
+      </PageWrapper>
     );
   }
 
   return (
-    <div className="text-center">
-      <Loader content="Loading Overview&hellip;" />
+    <div className="page-wrapper">
+      <div className="text-center">
+        <Loader content="Loading Overview&hellip;" />
+      </div>
     </div>
   );
 };

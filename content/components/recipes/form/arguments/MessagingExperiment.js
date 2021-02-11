@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useContext } from "react";
 import {
   Col,
   ControlLabel,
@@ -19,6 +19,7 @@ import JsonEditor from "devtools/components/common/JsonEditor";
 import InputField from "devtools/components/recipes/form/arguments/fields/InputField";
 import ToggleField from "devtools/components/recipes/form/arguments/fields/ToggleField";
 import ServerErrors from "devtools/components/recipes/form/ServerErrors";
+import { layoutContext } from "devtools/contexts/layout";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
@@ -104,6 +105,8 @@ function Branches() {
 function Branch({ index, branchesUpdated, setBranchesUpdated }) {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
+  const { container } = useContext(layoutContext);
+
   const branch = data.arguments.branches[index];
   const { branches } = data.arguments;
 
@@ -194,6 +197,7 @@ function Branch({ index, branchesUpdated, setBranchesUpdated }) {
                 block
                 cleanable
                 creatable
+                container={container}
                 data={branch.groups.map((g) => ({
                   label: g,
                   value: g,

@@ -4,7 +4,10 @@ import { MultiPreferenceExperimentArguments } from "devtools/types/arguments";
 import { SampleFilterObject } from "devtools/types/filters";
 import { AsyncHook } from "devtools/types/hooks";
 import { Revision } from "devtools/types/recipes";
-import { bruteForceSampleAndBranches } from "devtools/utils/recipes";
+import {
+  bruteForceSampleAndBranches,
+  isSamplingFilter,
+} from "devtools/utils/recipes";
 
 type TestingIdsValue = { [key: string]: null | string };
 
@@ -16,16 +19,13 @@ export function useBranchTestingIds(
   const [error, setError] = useState(null);
 
   const sampleFilters: Array<SampleFilterObject> = revision.filter_object.filter(
-    (f): f is SampleFilterObject =>
-      f.type === "bucketSample" ||
-      f.type === "namespaceSample" ||
-      f.type === "stableSample",
+    isSamplingFilter,
   );
   if (sampleFilters.length > 1) {
     return {
       loading: false,
       value: null,
-      error: new Error("Found too many sample filter"),
+      error: new Error("Found too many sample filters"),
     };
   }
 

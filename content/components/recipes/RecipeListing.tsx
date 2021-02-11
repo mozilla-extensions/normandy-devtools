@@ -55,7 +55,7 @@ class RecipeListing extends React.PureComponent<
       return <Tag color="green">Enabled</Tag>;
     }
 
-    return <Tag className="text-danger">Disabled</Tag>;
+    return <Tag color="red">Disabled</Tag>;
   }
 
   renderPendingReviewIcon(): ReactElement {
@@ -180,11 +180,7 @@ class RecipeListing extends React.PureComponent<
 
   render(): ReactElement {
     return (
-      <Panel
-        bordered
-        className="recipe-listing mb-2"
-        header={this.renderHeader()}
-      >
+      <Panel bordered className="recipe-listing" header={this.renderHeader()}>
         {this.renderMetaData()}
       </Panel>
     );

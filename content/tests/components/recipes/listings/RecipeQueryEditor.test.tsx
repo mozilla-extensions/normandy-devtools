@@ -6,10 +6,19 @@ import { MemoryRouter } from "react-router";
 import RecipeQueryEditor, {
   convertDraftToQuery,
   getRecipeQueryFromUrlSearch,
-} from "devtools/components/recipes/details/RecipeQueryEditor";
+} from "devtools/components/recipes/listings/RecipeQueryEditor";
 import { actionFactory } from "devtools/tests/factories/api";
+import { environmentFactory } from "devtools/tests/factories/state";
 import { Action } from "devtools/types/normandyApi";
 import NormandyAPI from "devtools/utils/normandyApi";
+
+beforeEach(() => {
+  restoreConsole();
+});
+
+afterEach(() => {
+  modifyConsole();
+});
 
 describe("RecipeQueryEditor", () => {
   let actions: Array<Action>;
@@ -22,7 +31,7 @@ describe("RecipeQueryEditor", () => {
     // undefined makes the debounce library fall back to setTimeout.
     window.requestAnimationFrame = undefined;
 
-    api = new NormandyAPI("test", null, false);
+    api = new NormandyAPI(environmentFactory.build(), null, false);
     actions = actionFactory.buildCount(4);
     jest.spyOn(api, "fetchAllActions").mockResolvedValue(actions);
   });
@@ -51,7 +60,7 @@ describe("RecipeQueryEditor", () => {
       </MemoryRouter>,
     );
 
-    const searchInput = doc.getByLabelText("Search");
+    const searchInput = doc.getByTestId("filter-field-search");
     // type twice in quick succession to test debouncing
     userEvent.type(searchInput, "poc");
     userEvent.type(searchInput, "ket");
@@ -72,7 +81,7 @@ describe("RecipeQueryEditor", () => {
       </MemoryRouter>,
     );
 
-    const searchInput = doc.getByLabelText("Search");
+    const searchInput = doc.getByTestId("filter-field-search");
     userEvent.type(searchInput, "etp");
   });
 });

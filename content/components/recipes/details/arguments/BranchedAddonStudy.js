@@ -1,11 +1,12 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { Tag } from "rsuite";
 
-import { tableFormatter } from "devtools/components/recipes/details/arguments/formatters";
+import {
+  tableFormatter,
+  extensionApiFormatter,
+} from "devtools/components/recipes/details/arguments/formatters";
 import GenericArguments from "devtools/components/recipes/details/arguments/GenericArguments";
 import { useExperimenterDetailsData } from "devtools/contexts/experimenterDetails";
-
 export default function BranchedAddonStudy({ data }) {
   const experimenterData = useExperimenterDetailsData();
   return (
@@ -27,7 +28,7 @@ export default function BranchedAddonStudy({ data }) {
             },
             extensionApiId(index, value) {
               if (value) {
-                return <Tag color="violet">{value}</Tag>;
+                return extensionApiFormatter(null, value);
               }
 
               return (

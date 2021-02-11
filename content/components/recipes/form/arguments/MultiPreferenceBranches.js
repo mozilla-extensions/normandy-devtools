@@ -42,8 +42,8 @@ export default function MultiPreferenceBranches() {
   };
 
   let branchesList = <HelpBlock>There are no branches.</HelpBlock>;
-  const branchLength = data.arguments.branches.length;
   if (data.arguments.branches && data.arguments.branches.length) {
+    const branchLength = data.arguments.branches.length;
     branchesList = data.arguments.branches.map((branch, index) => {
       return <Branch key={`${index}${branchLength}`} index={index} />;
     });

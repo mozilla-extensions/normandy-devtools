@@ -45,6 +45,11 @@ table.data-table {
 }
 
 dl {
+  dd:last-child,
+  dt:last-child {
+    margin-bottom: 0;
+  }
+
   &.documentation {
     margin: 0;
 
@@ -65,11 +70,6 @@ dl {
       + dd {
         margin-top: -10px;
       }
-    }
-
-    dd:last-child,
-    dt:last-child {
-      margin-bottom: 0;
     }
   }
 }
@@ -172,6 +172,12 @@ code.hljs {
   padding: 9px 20px;
 }
 
+.page-footer {
+  background: @sidenav-default-bg;
+  border-top: 1px solid @input-border;
+  padding: 2px 20px;
+}
+
 .authenticator {
   .d-flex {
     align-items: center;
@@ -195,6 +201,27 @@ code.hljs {
     &:hover {
       color: @text-primary-color;
     }
+  }
+}
+
+.grid-layout {
+  display: grid;
+  grid-gap: @padding-base-horizontal @padding-base-horizontal;
+
+  &.grid-3 {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  &.grid-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.card-grid {
+  .rs-panel-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
 }
 

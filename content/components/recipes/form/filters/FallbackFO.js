@@ -18,6 +18,7 @@ const KNOWN_FILTER_TYPES = [
   "locale",
   "bucketSample",
   "stableSample",
+  "namespaceSample",
 ];
 
 export default function FallbackFO() {
@@ -101,9 +102,9 @@ export default function FallbackFO() {
 
   return (
     <FormGroup>
+      {errMessages}
       <ControlLabel>Additional Filter Objects</ControlLabel>
       <JsonEditor key={key} value={additionalFO} onChange={handleChange} />
-      {errMessages}
     </FormGroup>
   );
 }

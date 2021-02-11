@@ -3,19 +3,22 @@ import React from "react";
 
 import ActionSelector from "devtools/components/common/ActionSelector";
 import { actionFactory } from "devtools/tests/factories/api";
+import { environmentFactory } from "devtools/tests/factories/state";
 import NormandyAPI from "devtools/utils/normandyApi";
 
 describe("ActionSelector", () => {
   const actions = actionFactory.buildCount(4);
-  const api = new NormandyAPI("test", null, false);
+  const api = new NormandyAPI(environmentFactory.build(), null, false);
 
   beforeEach(() => {
+    restoreConsole();
     jest
       .spyOn(NormandyAPI.prototype, "fetchAllActions")
       .mockResolvedValue(actions);
   });
 
   afterEach(() => {
+    modifyConsole();
     jest.clearAllMocks();
     cleanup();
   });
