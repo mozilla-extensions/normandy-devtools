@@ -12,6 +12,7 @@ import {
   RadioGroup,
 } from "rsuite";
 
+import ServerErrors from "devtools/components/recipes/form/ServerErrors";
 import { layoutContext } from "devtools/contexts/layout";
 
 const PREFERENCE_TYPE_OPTIONS = [
@@ -106,6 +107,7 @@ export default function PreferenceFields({
               value={preferenceName}
               onChange={handleChange("preferenceName")}
             />
+            <ServerErrors field={`arguments.preferences.${index}.name`} />
           </FormGroup>
         </div>
         <div className="pr-1">
@@ -136,6 +138,7 @@ export default function PreferenceFields({
           <FormGroup>
             <ControlLabel>Value</ControlLabel>
             {valueField}
+            <ServerErrors field={`arguments.preferences.${index}.value`} />
           </FormGroup>
         </div>
       </div>

@@ -90,6 +90,7 @@ function Branches() {
       <ControlLabel>Branches</ControlLabel>
       <Panel bordered>
         {branchesList}
+        <ServerErrors field="arguments.branches" />
         <IconButton
           icon={<Icon icon="plus-circle" />}
           onClick={handleClickAddBranch}

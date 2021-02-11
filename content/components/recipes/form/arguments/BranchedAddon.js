@@ -17,6 +17,7 @@ import {
 
 import InputField from "devtools/components/recipes/form/arguments/fields/InputField";
 import ToggleField from "devtools/components/recipes/form/arguments/fields/ToggleField";
+import ServerErrors from "devtools/components/recipes/form/ServerErrors";
 import {
   useEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
@@ -98,6 +99,7 @@ function Branches() {
       <ControlLabel>Branches</ControlLabel>
       <Panel bordered>
         {branchesList}
+        <ServerErrors field="arguments.branches" />
         <Divider />
         <IconButton
           icon={<Icon icon="plus-circle" />}
@@ -160,6 +162,7 @@ function Branch({ index, extensionOptions }) {
     return parseInt(value, 10);
   };
 
+  const errorPrefix = `arguments.branches.${index}.`;
   return (
     <FormGroup>
       <div className="d-flex">
@@ -177,6 +180,7 @@ function Branch({ index, extensionOptions }) {
           <FormGroup>
             <ControlLabel>Slug</ControlLabel>
             <Input value={branch.slug} onChange={handleChange("slug")} />
+            <ServerErrors field={errorPrefix + "slug"} />
           </FormGroup>
         </div>
         <div className="pr-1">
@@ -187,6 +191,7 @@ function Branch({ index, extensionOptions }) {
               value={branch.ratio}
               onChange={handleChange("ratio", parseNumericInput)}
             />
+            <ServerErrors field={errorPrefix + "ratio"} />
           </FormGroup>
         </div>
         <div className="flex-basis-0 flex-grow-1">
@@ -201,6 +206,7 @@ function Branch({ index, extensionOptions }) {
               value={branch.extensionApiId}
               onChange={handleChange("extensionApiId")}
             />
+            <ServerErrors field={errorPrefix + "extensionApiId"} />
           </FormGroup>
         </div>
       </div>

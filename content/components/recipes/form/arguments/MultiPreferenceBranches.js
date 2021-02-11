@@ -14,6 +14,7 @@ import {
 } from "rsuite";
 
 import PreferenceFields from "devtools/components/recipes/form/arguments/PreferenceFields";
+import ServerErrors from "devtools/components/recipes/form/ServerErrors";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
@@ -53,6 +54,7 @@ export default function MultiPreferenceBranches() {
       <ControlLabel>Branches</ControlLabel>
       <Panel bordered>
         {branchesList}
+        <ServerErrors field="arguments.branches" />
         <Divider />
         <IconButton
           icon={<Icon icon="plus-circle" />}
@@ -230,6 +232,7 @@ function Branch({ index }) {
     return parseInt(value, 10);
   };
 
+  const errorPrefix = `arguments.branches.${index}.`;
   return (
     <FormGroup>
       <FormGroup>
@@ -248,6 +251,7 @@ function Branch({ index }) {
             <FormGroup>
               <ControlLabel>Branch Name</ControlLabel>
               <Input value={branch.slug} onChange={handleChange("slug")} />
+              <ServerErrors field={errorPrefix + "slug"} />
             </FormGroup>
           </div>
           <div className="pr-1">
@@ -261,6 +265,7 @@ function Branch({ index }) {
                 value={branch.ratio}
                 onChange={handleChange("ratio", parseNumericInput)}
               />
+              <ServerErrors field={errorPrefix + "ratio"} />
             </FormGroup>
           </div>
         </div>

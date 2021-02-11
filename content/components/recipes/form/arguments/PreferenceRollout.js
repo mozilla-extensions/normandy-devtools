@@ -16,6 +16,7 @@ import {
 } from "rsuite";
 
 import InputField from "devtools/components/recipes/form/arguments/fields/InputField";
+import ServerErrors from "devtools/components/recipes/form/ServerErrors";
 import { layoutContext } from "devtools/contexts/layout";
 import {
   ACTION_UPDATE_DATA,
@@ -185,6 +186,7 @@ function Preference({ index }) {
               value={preference.preferenceName}
               onChange={handleChange("preferenceName")}
             />
+            <ServerErrors field={`arguments.preferences.${index}.name`} />
           </FormGroup>
         </div>
         <div className="pr-1">
@@ -204,6 +206,7 @@ function Preference({ index }) {
             <ControlLabel>Value</ControlLabel>
             {valueField}
           </FormGroup>
+          <ServerErrors field={`arguments.preferences.${index}.value`} />
         </div>
       </div>
     </FormGroup>
