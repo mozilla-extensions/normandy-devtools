@@ -45,6 +45,11 @@ table.data-table {
 }
 
 dl {
+  dd:last-child,
+  dt:last-child {
+    margin-bottom: 0;
+  }
+
   &.documentation {
     margin: 0;
 
@@ -65,11 +70,6 @@ dl {
       + dd {
         margin-top: -10px;
       }
-    }
-
-    dd:last-child,
-    dt:last-child {
-      margin-bottom: 0;
     }
   }
 }
