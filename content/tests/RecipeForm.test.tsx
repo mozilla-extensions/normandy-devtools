@@ -367,7 +367,7 @@ describe("The `RecipeForm` component", () => {
         name: "Recipe Name",
       }),
     );
-  });
+  }, /* timeout = */ 10_000);
 
   it("edit recipe form", async () => {
     const recipeData = branchedAddonSetup();
