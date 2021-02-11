@@ -1,5 +1,20 @@
 # Changelog
 
+## v2.3.0
+
+- Fix that already paused recipes would show as needing to be paused in the overview
+- Improve consistency and flow of recipe details page
+- Improve error display when creating new recipes
+- Fix some labels not being capitalized correctly
+- Fix that dropdowns would sometimes become detached as the page scrolled
+- Improved Namespace Sample editing and display
+- Added namespace management tools
+- Added extension management tools
+- Improve UI of overview and recipe listing page
+- Fix the display of code editors on the import form
+- Added recipe revision timeline
+- Fix a bug that would cause repeated API requests while editing pages
+
 ## v2.2.1
 
 Normandy Devtools is now available as a website, at https://normandy-devtools.services.mozilla.com. This version is not as full featured as the extension, missing features that require the tight integration with Firefox that extensions enjoy.
