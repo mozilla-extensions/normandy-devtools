@@ -25,7 +25,7 @@ export const ENVIRONMENTS = {
     writeableUrl: "https://dev-admin.normandy.nonprod.cloudops.mozgcp.net/",
     oidcClientId: "hU1YpGcL82wL04vTPsaPAQmkilrSE7wr",
     oidcDomain: "auth.mozilla.auth0.com",
-    experimenterUrl: "https://experimenter.services.mozilla.com/",
+    experimenterUrl: null,
   },
   local: {
     key: "local",
