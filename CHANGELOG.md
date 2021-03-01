@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.3.1
+
+- Fix a bug that caused injected links on Experimenter's production instance to point to the dev environment on NDT.
+
 ## v2.3.0
 
 - Fix that already paused recipes would show as needing to be paused in the overview
