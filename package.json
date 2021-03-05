@@ -94,7 +94,7 @@
     "stylelint-config-standard": "20.0.0",
     "stylelint-order": "4.1.0",
     "ts-jest": "26.4.4",
-    "typescript": "4.0.5",
+    "typescript": "4.2.3",
     "web-ext": "5.4.1",
     "web-ext-types": "3.2.1",
     "webpack": "4.44.2",
