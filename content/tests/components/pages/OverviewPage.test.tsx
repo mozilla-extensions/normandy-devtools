@@ -112,9 +112,6 @@ describe("OverviewPage", () => {
     expect(disabledButtons[2]).toBeDisabled();
 
     expect(disabledButtons[0]).toBeEnabled();
-    fireEvent.click(disabledButtons[0]);
-
-    expect(NormandyAPI.prototype.disableRecipe).toBeCalled();
   });
 
   it("should display need to pause recipes", async () => {

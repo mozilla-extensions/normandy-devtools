@@ -1,10 +1,9 @@
 import dayjs from "dayjs";
 import React from "react";
-import { Alert, Icon, IconButton } from "rsuite";
 
 import CollapsibleSection from "devtools/components/common/CollapsibleSection";
+import DisableRecipeButton from "devtools/components/recipes/DisableRecipeButton";
 import RecipeCard from "devtools/components/recipes/RecipeCard";
-import { useSelectedNormandyEnvironmentAPI } from "devtools/contexts/environment";
 import { RecipeV3 } from "devtools/types/recipes";
 
 export const EndingRecipes: React.FC<{
@@ -40,22 +39,6 @@ export const EndingRecipes: React.FC<{
 const EndingRecipeCard: React.FC<{
   data: { endDate: number; recipe: RecipeV3 };
 }> = ({ data: { endDate, recipe } }) => {
-  const [isButtonLoading, setIsButtonLoading] = React.useState(false);
-  const normandyApi = useSelectedNormandyEnvironmentAPI();
-
-  const handleDisableClick = async (): Promise<void> => {
-    setIsButtonLoading(true);
-    try {
-      await normandyApi.disableRecipe(recipe.id);
-      Alert.success("Recipe Successfully disabled");
-    } catch (err) {
-      console.warn(err.message, err.data);
-      Alert.error(`An Error Occurred: ${JSON.stringify(err.message)}`, 5000);
-    } finally {
-      setIsButtonLoading(false);
-    }
-  };
-
   const endingDate = dayjs(endDate);
   return (
     <RecipeCard recipe={recipe}>
@@ -69,15 +52,11 @@ const EndingRecipeCard: React.FC<{
         </div>
       </div>
       <div className="pt-2">
-        <IconButton
-          color="red"
-          disabled={!recipe.approved_revision?.enabled}
-          icon={<Icon icon="close-circle" />}
-          loading={isButtonLoading}
-          onClick={handleDisableClick}
-        >
-          Disable
-        </IconButton>
+        <DisableRecipeButton
+          postDispatch={false}
+          recipe={recipe.approved_revision}
+          recipeId={recipe.id}
+        />
       </div>
     </RecipeCard>
   );
