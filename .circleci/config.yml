@@ -1,8 +1,5 @@
 version: 2.1
 
-orbs:
-  codecov: codecov/codecov@1.0.5
-
 jobs:
   lint:
     docker:
@@ -50,17 +47,7 @@ jobs:
       - run:
           name: Run tests
           command: |
-            # Don't include coverage for Dependabot; it's noisy and rarely tells us anything useful.
-            if [[ "$CIRCLE_USERNAME" = "dependabot[bot]" ]]; then
-              echo "User is $CIRCLE_USERNAME, *not* including test coverage."
-              yarn test
-            else
-              echo "User is $CIRCLE_USERNAME, including test coverage."
-              yarn test --coverage
-            fi
-      # This will only upload if a coverage file was actually generated.
-      - codecov/upload:
-          file: coverage/coverage-final.json
+            yarn test
 
   build:
     docker:
