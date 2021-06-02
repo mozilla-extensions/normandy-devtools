@@ -1,9 +1,0 @@
-version: 2
-updates:
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "daily"
-    # Disable rebasing, since it interferes with Bors
-    rebase-strategy: "disabled"
-
