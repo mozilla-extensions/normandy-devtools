@@ -165,6 +165,14 @@ export default class NormandyAPI extends API {
     });
   }
 
+  async patchMetaDataRecipe(
+    revisionId: number,
+    data: Record<string, unknown>,
+  ): Promise<Record<string, unknown>> {
+    const url = `recipe_revision/${revisionId}/metadata/`;
+    return this.request({ url, method: "PATCH", data });
+  }
+
   async fetchAllActions(): Promise<Array<Action>> {
     return this.fetchAllPages("action/");
   }

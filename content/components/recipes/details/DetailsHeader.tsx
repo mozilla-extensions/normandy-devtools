@@ -5,6 +5,7 @@ import { Alert, Icon, IconButton, Nav, Popover, Whisper } from "rsuite";
 import TelemetryLink, {
   TelemetryLinkTypes,
 } from "devtools/components/recipes/details/TelemetryLink";
+import DisableRecipeButton from "devtools/components/recipes/DisableRecipeButton";
 import {
   useSelectedEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
@@ -99,22 +100,6 @@ const DetailsHeader: React.FC<DetailsHeaderProps> = ({
     }
   };
 
-  const handleDisableClick = async (): Promise<void> => {
-    addButtonLoading("disable");
-    try {
-      const updatedRecipe = await normandyApi.disableRecipe(data.recipe.id);
-      dispatch({
-        data: updatedRecipe.approved_revision,
-        type: ACTION_UPDATE_DATA,
-      });
-    } catch (err) {
-      console.warn(err.message, err.data);
-      Alert.error(`An Error Occurred: ${JSON.stringify(err.message)}`, 5000);
-    } finally {
-      removeButtonLoading("disable");
-    }
-  };
-
   const handlePauseClick = async (): Promise<void> => {
     addButtonLoading("pause");
     try {
@@ -185,16 +170,11 @@ const DetailsHeader: React.FC<DetailsHeaderProps> = ({
     } else if (data.approval_request.approved) {
       if (data.enabled) {
         statusToggleButton = (
-          <IconButton
-            className="ml-1"
-            color="red"
-            disabled={buttonsLoading.size > 0}
-            icon={<Icon icon="close-circle" />}
-            loading={buttonsLoading.has("disable")}
-            onClick={handleDisableClick}
-          >
-            Disable
-          </IconButton>
+          <DisableRecipeButton
+            postDispatch={true}
+            recipe={data.recipe}
+            recipeId={data.recipe.id}
+          />
         );
       } else {
         statusToggleButton = (
