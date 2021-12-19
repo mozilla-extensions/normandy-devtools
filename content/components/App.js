@@ -11,6 +11,7 @@ import {
 import AppHeader from "devtools/components/common/AppHeader";
 import { AppSidebar } from "devtools/components/common/AppSidebar";
 import { ErrorFallbackPage } from "devtools/components/pages/ErrorFallbackPage";
+import NotFoundPage from "devtools/components/pages/NotFoundPage";
 import { OverviewPage } from "devtools/components/pages/OverviewPage";
 import RecipeListingPage from "devtools/components/pages/RecipeListingPage";
 import { EnvironmentProvider } from "devtools/contexts/environment";
@@ -22,6 +23,9 @@ const RecipeFormPage = React.lazy(() =>
 );
 const RecipeDetailsPage = React.lazy(() =>
   import("devtools/components/pages/RecipeDetailsPage"),
+);
+const ExtensionsPage = React.lazy(() =>
+  import("devtools/components/pages/ExtensionsPage"),
 );
 const FiltersPage =
   __ENV__ === "web"
@@ -121,17 +125,13 @@ function Page() {
                 />
               </>
             )}
-
             <Route
-              render={(args) => (
-                <>
-                  <span>404</span>
-                  <pre>
-                    <code>{JSON.stringify(args, null, 4)}</code>
-                  </pre>
-                </>
-              )}
+              exact
+              component={ExtensionsPage}
+              path={`${match.path}/extensions`}
             />
+
+            <Route component={NotFoundPage} />
           </Switch>
         </Suspense>
       </ErrorBoundary>

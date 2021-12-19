@@ -27,6 +27,7 @@ import {
   useEnvironments,
   useSelectedEnvironmentState,
 } from "devtools/contexts/environment";
+import { layoutContext } from "devtools/contexts/layout";
 import { useExtensionUrl } from "devtools/hooks/urls";
 import { upperCaseFirst } from "devtools/utils/helpers";
 
@@ -126,6 +127,7 @@ function AddressBar() {
 
 function EnvironmentConfigurator() {
   const [showEnvironmentModal, setShowEnvironmentModal] = React.useState(false);
+  const { container } = React.useContext(layoutContext);
 
   const environments = useEnvironments();
   const envOptions = Object.keys(environments).map((key) => ({
@@ -180,6 +182,7 @@ function EnvironmentConfigurator() {
               <ControlLabel>Current Environment</ControlLabel>
               <SelectPicker
                 cleanable={false}
+                container={container}
                 data={envOptions}
                 defaultValue={selectedKey}
                 searchable={false}

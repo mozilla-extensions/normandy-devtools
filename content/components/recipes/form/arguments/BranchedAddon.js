@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useContext } from "react";
 import {
   Col,
   ControlLabel,
@@ -21,6 +21,7 @@ import {
   useEnvironmentState,
   useSelectedNormandyEnvironmentAPI,
 } from "devtools/contexts/environment";
+import { layoutContext } from "devtools/contexts/layout";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
@@ -112,6 +113,8 @@ function Branches() {
 function Branch({ index, extensionOptions }) {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
+  const { container } = useContext(layoutContext);
+
   const branch = data.arguments.branches[index];
   const { branches } = data.arguments;
 
@@ -192,6 +195,7 @@ function Branch({ index, extensionOptions }) {
             <SelectPicker
               block
               cleanable={false}
+              container={container}
               data={extensionOptions}
               placement="autoVertical"
               value={branch.extensionApiId}

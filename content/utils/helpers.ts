@@ -16,7 +16,7 @@ export function splitCamelCase(
       return group1 + " " + group2.toLowerCase();
     })
 
-    // A normal camel case transition, with a single capital letter lase
+    // A normal camel case transition, with a single capital letter
     .replace(/([a-z])([A-Z].)/g, (match, group1: string, group2: string) => {
       if (group2 === group2.toUpperCase()) {
         return group1 + " " + group2;
@@ -39,6 +39,9 @@ export function splitCamelCase(
       (_, match1, match2) => match1 + match2.toUpperCase(),
     );
   }
+
+  // Special case a few acronyms
+  rv = rv.replace(/\b(url|api|id)\b/gi, (acronym) => acronym.toUpperCase());
 
   return rv;
 }
@@ -104,4 +107,29 @@ export function makeCompare<T = unknown>(
     const bKey = keyFunc(b);
     return compare(aKey, bKey);
   };
+}
+
+interface ErrorDict {
+  [key: string]: unknown;
+}
+
+export function normalizeServerValidationErrors(errors: ErrorDict): ErrorDict {
+  const output = {};
+
+  function flatten(obj: unknown, parent = ""): void {
+    for (const [key, value] of Object.entries(obj)) {
+      const flatKey = parent ? `${parent}.${key}` : key;
+      if (Array.isArray(value)) {
+        output[flatKey] = value;
+      } else if (typeof value === "string") {
+        output[flatKey] = [value];
+      } else if (typeof value === "object") {
+        flatten(value, flatKey);
+      }
+    }
+  }
+
+  flatten(errors);
+
+  return output;
 }

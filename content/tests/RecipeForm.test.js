@@ -7,19 +7,19 @@ import {
   filtersApiResponseFactory,
   extensionFactory,
 } from "devtools/tests/factories/api";
-import ExperimenterAPI from "devtools/utils/experimenterApi";
-import NormandyAPI from "devtools/utils/normandyApi";
-
+import { experimenterResponseFactory } from "devtools/tests/factories/experiments";
 import {
   versionFoFactory,
   channelFoFactory,
   bucketSampleFoFactory,
-} from "./factories/filterObjects";
+} from "devtools/tests/factories/filterObjects";
 import {
   recipeFactory,
   addonStudyBranchFactory,
   multiPrefBranchFactory,
-} from "./factories/recipes";
+} from "devtools/tests/factories/recipes";
+import ExperimenterAPI from "devtools/utils/experimenterApi";
+import NormandyAPI from "devtools/utils/normandyApi";
 
 describe("The `RecipeForm` component", () => {
   afterEach(async () => {
@@ -32,7 +32,7 @@ describe("The `RecipeForm` component", () => {
       within(form).queryByText(formName),
     );
     if (!forms.length) {
-      throw new Error(`Form ${formName} not found in group`);
+      throw new Error(`Form group "${formName}" not found on the page`);
     }
 
     return forms.reduce((a, b) => (a.length <= b.length ? a : b));
@@ -134,8 +134,13 @@ describe("The `RecipeForm` component", () => {
     };
   };
 
-  const setup = (recipe) => {
-    const pageResponse = { results: [recipe] };
+  const setup = (...recipes) => {
+    const pageResponse = {
+      results: recipes,
+      count: recipes.length,
+      previous: null,
+      next: null,
+    };
     const filtersResponse = filtersApiResponseFactory.build(
       {},
       { countryCount: 3, localeCount: 3 },
@@ -160,20 +165,18 @@ describe("The `RecipeForm` component", () => {
 
     jest
       .spyOn(NormandyAPI.prototype, "saveRecipe")
-      .mockImplementation(() => Promise.resolve(jest.fn()));
+      .mockResolvedValue(recipeFactory.build());
 
     jest
       .spyOn(NormandyAPI.prototype, "fetchRecipe")
-      .mockImplementation(() => Promise.resolve(recipe));
+      .mockImplementation(() => Promise.resolve(recipes[0]));
 
-    jest
-      .spyOn(ExperimenterAPI.prototype, "fetchExperiment")
-      .mockImplementation(() =>
-        Promise.resolve({
-          public_description: "",
-          variants: [],
-        }),
-      );
+    jest.spyOn(ExperimenterAPI.prototype, "fetchExperiment").mockResolvedValue(
+      experimenterResponseFactory.build({
+        public_description: "",
+        variants: [],
+      }),
+    );
   };
 
   const extensionSetup = () => {
@@ -214,8 +217,7 @@ describe("The `RecipeForm` component", () => {
   };
 
   it("creation pref recipe form", async () => {
-    const recipe = recipeFactory.build();
-    setup(recipe);
+    setup();
     const { getByText, getAllByRole } = renderWithContext(<RecipeFormPage />);
     await waitFor(() =>
       expect(getByText("Experimenter Slug")).toBeInTheDocument(),
@@ -470,6 +472,53 @@ describe("The `RecipeForm` component", () => {
     );
   });
 
+  it("server errors are shown in along the fields", async () => {
+    const recipeData = consoleLogRecipeSetup();
+    await setup(recipeData);
+    const doc = renderWithContext(<RecipeFormPage />, {
+      route: `/prod/recipes/${recipeData.id}/edit`,
+      path: "/prod/recipes/:recipeId/edit",
+    });
+
+    await waitFor(() => {
+      expect(doc.getByText("Experimenter Slug")).toBeInTheDocument();
+    });
+
+    jest.spyOn(NormandyAPI.prototype, "saveRecipe").mockImplementation(() =>
+      Promise.reject({
+        data: {
+          status: 400,
+          action_id: ["Bad action"],
+          experimenter_slug: ["Wrong slug"],
+          arguments: {
+            message: ["Bad message"],
+          },
+        },
+      }),
+    );
+
+    fireEvent.click(doc.getByText("Save"));
+
+    const modalDialog = doc.getAllByRole("dialog")[0];
+    const commentInput = modalDialog.querySelector("textArea");
+    const saveMessage = "Form with error";
+    fireEvent.change(commentInput, { target: { value: saveMessage } });
+
+    fireEvent.click(within(modalDialog).getByText("Save"));
+
+    await waitFor(() => {
+      const formGroups = doc.getAllByRole("group");
+      const { actionForm, experimenterSlugForm } = getForms(formGroups);
+      expect(actionForm.querySelector(".text-red")).toBeInTheDocument();
+      expect(
+        experimenterSlugForm.querySelector(".text-red"),
+      ).toBeInTheDocument();
+
+      const messageForm = findForm(formGroups, "Message");
+      expect(messageForm.querySelector(".text-red")).toBeInTheDocument();
+    });
+  });
+
   it("save button is re-enabled when form errors are addressed", async () => {
     const recipeData = consoleLogRecipeSetup();
     await setup(recipeData);
@@ -623,8 +672,7 @@ describe("The `RecipeForm` component", () => {
   });
 
   it("create show heart beat recipe", async () => {
-    const recipe = recipeFactory.build();
-    setup(recipe);
+    setup();
 
     const { getByText, getAllByRole } = renderWithContext(<RecipeFormPage />);
 
@@ -738,31 +786,19 @@ describe("The `RecipeForm` component", () => {
     });
   });
 
-  it("fallback editor is rendered for unknown action types", async () => {
-    const recipeData = recipeFactory.build({
-      latest_revision: { action: { name: "unknown" } },
-    });
-    setup(recipeData);
-    const doc = renderWithContext(<RecipeFormPage />, {
-      route: `/prod/recipes/${recipeData.id}/edit`,
-      path: "/prod/recipes/:recipeId/edit",
-    });
-
-    expect(await doc.findByText("Experimenter Slug")).toBeInTheDocument();
-    expect(await doc.findByText("Action Arguments")).toBeInTheDocument();
-  });
-
   it("creation addon recipe form", async () => {
-    const recipe = recipeFactory.build();
-    setup(recipe);
+    setup();
     const extensions = extensionSetup();
 
-    const { getByText, getAllByRole } = renderWithContext(<RecipeFormPage />);
+    const doc = renderWithContext(<RecipeFormPage />, {
+      path: "/prod/recipes/new",
+      route: `/prod/recipes/new`,
+    });
 
     await waitFor(() =>
-      expect(getByText("Experimenter Slug")).toBeInTheDocument(),
+      expect(doc.getByText("Experimenter Slug")).toBeInTheDocument(),
     );
-    let formGroups = getAllByRole("group");
+    let formGroups = doc.getAllByRole("group");
 
     const {
       nameForm,
@@ -784,14 +820,14 @@ describe("The `RecipeForm` component", () => {
     const actionInput = within(actionForm).getByRole("combobox");
     expect(NormandyAPI.prototype.fetchAllActions).toHaveBeenCalled();
     fireEvent.click(actionInput);
-    fireEvent.click(getByText("opt-out-study"));
+    fireEvent.click(doc.getByText("opt-out-study"));
     fireEvent.click(document);
 
     await waitFor(() =>
       expect(NormandyAPI.prototype.fetchAllExtensions).toReturn(),
     );
 
-    formGroups = getAllByRole("group");
+    formGroups = doc.getAllByRole("group");
     const {
       studyNameForm,
       studyDescriptionForm,
@@ -818,14 +854,14 @@ describe("The `RecipeForm` component", () => {
     });
 
     fireEvent.click(extensionInput);
-    expect(getByText(selectedExtension.name)).toBeInTheDocument();
-    fireEvent.click(getByText(selectedExtension.name));
+    expect(doc.getByText(selectedExtension.name)).toBeInTheDocument();
+    fireEvent.click(doc.getByText(selectedExtension.name));
     fireEvent.click(preventNewEnrollmentToggle);
 
-    getByText("Save");
-    fireEvent.click(getByText("Save"));
+    doc.getByText("Save");
+    fireEvent.click(doc.getByText("Save"));
 
-    const modalDialog = getAllByRole("dialog")[0];
+    const modalDialog = doc.getAllByRole("dialog")[0];
     const commentInput = modalDialog.querySelector("textArea");
     const saveMessage = "Created Recipe";
     fireEvent.change(commentInput, { target: { value: saveMessage } });
@@ -854,13 +890,16 @@ describe("The `RecipeForm` component", () => {
     });
     setup(recipeData);
     const doc = renderWithContext(<RecipeFormPage />, {
-      route: `/prod/recipes/${recipeData.id}/edit`,
-      path: "/prod/recipes/:recipeId/edit",
+      path: "/prod/recipe/edit/:recipeId",
+      route: `/prod/recipe/edit/${recipeData.id}`,
     });
     await waitFor(() => {
       expect(doc.getByText("Experimenter Slug")).toBeInTheDocument();
     });
 
-    expect(doc.getByText("Action Arguments")).toBeInTheDocument();
+    const argumentSection = doc.getByTestId("recipe-form-argument-editor");
+    expect(
+      await within(argumentSection).findByText("Action Arguments"),
+    ).toBeInTheDocument();
   });
 });

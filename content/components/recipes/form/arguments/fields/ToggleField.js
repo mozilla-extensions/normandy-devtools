@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { ControlLabel, FormGroup, HelpBlock, Toggle } from "rsuite";
 
+import ServerErrors from "devtools/components/recipes/form/ServerErrors";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
@@ -44,6 +45,7 @@ export default function ToggleField({
           <Toggle checked={data.arguments[name]} onChange={handleChange} />
         </span>
         <HelpBlock className="flex-grow-1">{children}</HelpBlock>
+        <ServerErrors field={`arguments.${name}`} />
       </div>
     </FormGroup>
   );
@@ -53,5 +55,6 @@ ToggleField.propTypes = {
   changeSideEffect: PropTypes.func,
   children: PropTypes.any,
   label: PropTypes.string,
+  parent: PropTypes.string,
   name: PropTypes.string.isRequired,
 };

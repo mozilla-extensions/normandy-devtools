@@ -8,6 +8,7 @@ import RecipeQueryEditor, {
   getRecipeQueryFromUrlSearch,
 } from "devtools/components/recipes/listings/RecipeQueryEditor";
 import { actionFactory } from "devtools/tests/factories/api";
+import { environmentFactory } from "devtools/tests/factories/state";
 import { Action } from "devtools/types/normandyApi";
 import NormandyAPI from "devtools/utils/normandyApi";
 
@@ -22,7 +23,7 @@ describe("RecipeQueryEditor", () => {
     // undefined makes the debounce library fall back to setTimeout.
     window.requestAnimationFrame = undefined;
 
-    api = new NormandyAPI("test", null, false);
+    api = new NormandyAPI(environmentFactory.build(), null, false);
     actions = actionFactory.buildCount(4);
     jest.spyOn(api, "fetchAllActions").mockResolvedValue(actions);
   });

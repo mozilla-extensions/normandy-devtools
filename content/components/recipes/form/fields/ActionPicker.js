@@ -3,6 +3,7 @@ import { ControlLabel, FormControl, FormGroup } from "rsuite";
 
 import ActionSelector from "devtools/components/common/ActionSelector";
 import { INITIAL_ACTION_ARGUMENTS } from "devtools/components/recipes/form/ActionArguments";
+import ServerErrors from "devtools/components/recipes/form/ServerErrors";
 import { useSelectedNormandyEnvironmentAPI } from "devtools/contexts/environment";
 import {
   ACTION_UPDATE_DATA,
@@ -42,6 +43,7 @@ export default function ActionPicker() {
         value={value}
         onChangeAction={handleChange}
       />
+      <ServerErrors field="action_id" />
     </FormGroup>
   );
 }

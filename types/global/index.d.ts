@@ -48,8 +48,10 @@ declare namespace browser.experiments.normandy {
 declare const renderWithContext: (
   ui: React.ReactElement,
   options?: {
-    route: string;
-    path: string;
+    /** The URL the browser is viewing, like `/prod/recipe/270` */
+    route?: string;
+    /** The pattern the router is matching, like `/:env/recipe/:recipeId` */
+    path?: string;
     history?: import("history").MemoryHistory;
   },
 ) => import("@testing-library/react").RenderResult & {

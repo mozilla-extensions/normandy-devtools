@@ -1,14 +1,45 @@
-import API, { RequestError } from "devtools/utils/api";
+import { AuthState, Environment } from "devtools/contexts/environment";
+import { Extension, FilterApiResponse } from "devtools/types/normandyApi";
+import {
+  Action,
+  ApprovalRequest,
+  RecipeV3,
+  Revision,
+} from "devtools/types/recipes";
+import API, { ApiRequestOptions, RequestError } from "devtools/utils/api";
 import { SECOND } from "devtools/utils/timeConstants";
 
+export interface ApiPage<T> {
+  results: Array<T>;
+  count: number;
+  next: string | null;
+  previous: string | null;
+}
+
 export default class NormandyAPI extends API {
-  constructor(environment, auth, writeableConnected) {
+  auth: AuthState;
+
+  writableConnected: boolean;
+
+  writeableConnected: boolean;
+
+  constructor(
+    environment: Environment,
+    auth?: AuthState,
+    writeableConnected?: boolean,
+  ) {
     super(environment);
     this.auth = auth;
     this.writeableConnected = writeableConnected;
   }
 
-  getBaseUrl({ version = 3, method }) {
+  getBaseUrl({
+    version = 3,
+    method,
+  }: {
+    version?: number;
+    method: string;
+  }): string {
     const isReadOperation = ["GET", "HEAD"].includes(method.toUpperCase());
     const base =
       isReadOperation && !this.writeableConnected
@@ -17,11 +48,11 @@ export default class NormandyAPI extends API {
     return new URL(`api/v${version}/`, base).href;
   }
 
-  async request(options) {
+  async request<T = unknown>(options: ApiRequestOptions): Promise<T> {
     const { method = "GET" } = options;
     const isReadOperation = ["GET", "HEAD"].includes(method.toUpperCase());
 
-    const normandyHeaders = {};
+    const normandyHeaders: Record<string, string> = {};
     if (!isReadOperation) {
       if (!this.auth || !this.auth.result) {
         throw new RequestError(
@@ -41,18 +72,15 @@ export default class NormandyAPI extends API {
     });
   }
 
-  /**
-   * @param {import("devtools/types/normandyApi").RecipeListQuery} searchParams
-   */
-  fetchRecipePage(searchParams = {}) {
+  fetchRecipePage(searchParams = {}): Promise<ApiPage<RecipeV3>> {
     return this.request({
       url: "recipe/",
       data: searchParams,
     });
   }
 
-  async fetchAllRecipes(searchParams = {}) {
-    let response = await this.request({
+  async fetchAllRecipes(searchParams = {}): Promise<Array<RecipeV3>> {
+    let response = await this.request<ApiPage<RecipeV3>>({
       url: "recipe/",
       data: searchParams,
     });
@@ -68,13 +96,13 @@ export default class NormandyAPI extends API {
     return recipes;
   }
 
-  async fetchRecipe(id) {
-    return this.request({
+  async fetchRecipe(id: number): Promise<RecipeV3> {
+    return this.request<RecipeV3>({
       url: `recipe/${id}/`,
     });
   }
 
-  async saveRecipe(id, data) {
+  async saveRecipe(id: number, data: Partial<Revision>): Promise<RecipeV3> {
     let url = "recipe/";
     let method = "POST";
     if (id) {
@@ -91,10 +119,11 @@ export default class NormandyAPI extends API {
 
   /**
    * Issue a PATCH request, updating the specified fields and not editing unspecified fields.
-   * @param {number} recipeId
-   * @param {Partial<import("devtools/types/recipes").Revision>} data
    */
-  async patchRecipe(recipeId, data) {
+  async patchRecipe(
+    recipeId: number,
+    data: Partial<Revision>,
+  ): Promise<RecipeV3> {
     let url = "recipe/";
     if (recipeId) {
       url = `recipe/${recipeId}/`;
@@ -107,11 +136,8 @@ export default class NormandyAPI extends API {
     });
   }
 
-  /**
-   * @return {Promise<Array<import("devtools/types/recipes").Action>>}
-   */
-  async fetchAllActions() {
-    let response = await this.request({
+  async fetchAllActions(): Promise<Array<Action>> {
+    let response = await this.request<ApiPage<Action>>({
       url: "action/",
     });
     let actions = response.results;
@@ -126,12 +152,12 @@ export default class NormandyAPI extends API {
     return actions;
   }
 
-  async fetchFilters() {
+  async fetchFilters(): Promise<FilterApiResponse> {
     return this.request({ url: "filters/" });
   }
 
-  async fetchAllExtensions() {
-    let response = await this.request({
+  async fetchAllExtensions(): Promise<Array<Extension>> {
+    let response = await this.request<ApiPage<Extension>>({
       url: "extension/",
     });
     let extensions = response.results;
@@ -146,8 +172,29 @@ export default class NormandyAPI extends API {
     return extensions;
   }
 
-  async fetchApprovalRequests(searchParams = {}) {
-    let response = await this.request({
+  async fetchExtensionsPage({
+    page = 1,
+  }: {
+    page: number;
+  }): Promise<ApiPage<Extension>> {
+    return this.request({
+      url: "extension/",
+      data: {
+        page,
+      },
+    });
+  }
+
+  async fetchExtension(id: number): Promise<Extension> {
+    return this.request({
+      url: `extension/${id}/`,
+    });
+  }
+
+  async fetchApprovalRequests(
+    searchParams = {},
+  ): Promise<Array<ApprovalRequest>> {
+    let response = await this.request<ApiPage<ApprovalRequest>>({
       url: "approval_request/",
       data: searchParams,
     });
@@ -163,21 +210,24 @@ export default class NormandyAPI extends API {
     return approvalRequests;
   }
 
-  requestApproval(revisionId) {
+  requestApproval(revisionId: number): Promise<ApprovalRequest> {
     return this.request({
       url: `recipe_revision/${revisionId}/request_approval/`,
       method: "POST",
     });
   }
 
-  closeApprovalRequest(approvalRequestId) {
+  closeApprovalRequest(approvalRequestId: number): Promise<unknown> {
     return this.request({
       url: `approval_request/${approvalRequestId}/close/`,
       method: "POST",
     });
   }
 
-  approveApprovalRequest(approvalRequestId, comment) {
+  approveApprovalRequest(
+    approvalRequestId: number,
+    comment: string,
+  ): Promise<unknown> {
     return this.request({
       url: `approval_request/${approvalRequestId}/approve/`,
       data: {
@@ -187,7 +237,10 @@ export default class NormandyAPI extends API {
     });
   }
 
-  rejectApprovalRequest(approvalRequestId, comment) {
+  rejectApprovalRequest(
+    approvalRequestId: number,
+    comment: string,
+  ): Promise<unknown> {
     return this.request({
       url: `approval_request/${approvalRequestId}/reject/`,
       data: {
@@ -197,21 +250,25 @@ export default class NormandyAPI extends API {
     });
   }
 
-  enableRecipe(recipeId) {
+  enableRecipe(recipeId: number): Promise<RecipeV3> {
     return this.request({
       url: `recipe/${recipeId}/enable/`,
       method: "POST",
     });
   }
 
-  disableRecipe(recipeId) {
+  disableRecipe(recipeId: number): Promise<RecipeV3> {
     return this.request({
       url: `recipe/${recipeId}/disable/`,
       method: "POST",
     });
   }
 
-  checkLBHeartbeat({ timeoutAfter = 3 * SECOND }) {
+  checkLBHeartbeat({
+    timeoutAfter = 3 * SECOND,
+  }: {
+    timeoutAfter: number;
+  }): Promise<unknown> {
     return this.request({
       url: new URL("/__lbheartbeat__/", this.environment.writeableUrl),
       timeoutAfter,

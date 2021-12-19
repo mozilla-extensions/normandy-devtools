@@ -1,6 +1,7 @@
 import React from "react";
 import { InputPicker, InputPickerProps } from "rsuite";
 
+import { layoutContext } from "devtools/contexts/layout";
 import { Action } from "devtools/types/normandyApi";
 import { CompareFunc, makeCompare } from "devtools/utils/helpers";
 import NormandyAPI from "devtools/utils/normandyApi";
@@ -38,6 +39,7 @@ const ActionSelector: React.FC<Props> = ({
   ...inputPickerProps
 }) => {
   const [actions, setActions] = React.useState<Array<Action>>(null);
+  const { container } = React.useContext(layoutContext);
 
   React.useEffect(() => {
     normandyApi.fetchAllActions().then(setActions);
@@ -84,6 +86,7 @@ const ActionSelector: React.FC<Props> = ({
   return (
     <InputPicker
       {...inputPickerProps}
+      container={container}
       data={actionSelectData}
       defaultValue={defaultValue}
       groupBy="group"

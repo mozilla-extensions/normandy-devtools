@@ -1,6 +1,8 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useContext } from "react";
 import { ControlLabel, FormGroup, InputProps, SelectPicker } from "rsuite";
 
+import ServerErrors from "devtools/components/recipes/form/ServerErrors";
+import { layoutContext } from "devtools/contexts/layout";
 import {
   ACTION_UPDATE_DATA,
   useRecipeDetailsData,
@@ -9,6 +11,7 @@ import {
 
 type SelectFieldProps = InputProps & {
   label: string;
+  parent?: string;
   name: string;
   changeSideEffect?: (change: ChangeData) => void;
   options?: Array<{ label: string; value: string }>;
@@ -28,6 +31,7 @@ export default function SelectField({
 }: SelectFieldProps): ReactElement {
   const data = useRecipeDetailsData();
   const dispatch = useRecipeDetailsDispatch();
+  const { container } = useContext(layoutContext);
 
   const handleChange = (value): void => {
     let newData = data;
@@ -54,12 +58,14 @@ export default function SelectField({
       <SelectPicker
         block
         cleanable={false}
+        container={container}
         data={options}
         searchable={false}
         value={data.arguments[name]}
         onChange={handleChange}
         {...props}
       />
+      <ServerErrors field={`arguments.${name}`} />
     </FormGroup>
   );
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Loader, Pagination } from "rsuite";
 import { Divider } from "rsuite/es";
 
+import PageWrapper from "devtools/components/common/PageWrapper";
 import ListingsHeader from "devtools/components/recipes/listings/ListingsHeader";
 import RecipeList from "devtools/components/recipes/listings/RecipeList";
 import RecipeQueryEditor from "devtools/components/recipes/listings/RecipeQueryEditor";
@@ -71,7 +72,7 @@ const RecipeListingPage: React.FC = () => {
       <ListingsHeader setShowWriteRecipes={setShowWriteRecipes} />
 
       <div className="flex-grow-1 overflow-auto">
-        <div className="page-wrapper pt-3">
+        <PageWrapper className="pt-3">
           <RecipeQueryEditor
             normandyApi={api}
             query={recipeQuery}
@@ -79,7 +80,7 @@ const RecipeListingPage: React.FC = () => {
           />
           <Divider />
           {recipeList}
-        </div>
+        </PageWrapper>
       </div>
 
       <div className="page-footer text-center">

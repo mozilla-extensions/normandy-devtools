@@ -6,6 +6,7 @@ import RecipeDetailsPage from "devtools/components/pages/RecipeDetailsPage";
 import RecipeDetails from "devtools/components/recipes/details/RecipeDetails";
 import { RecipeDetailsProvider } from "devtools/contexts/recipeDetails";
 import { actionFactory } from "devtools/tests/factories/api";
+import { extensionFactory } from "devtools/tests/factories/api";
 import { experimenterResponseFactory } from "devtools/tests/factories/experiments";
 import {
   versionFoFactory,
@@ -25,6 +26,13 @@ import ExperimenterAPI from "devtools/utils/experimenterApi";
 import { Deferred } from "devtools/utils/helpers";
 import NormandyAPI from "devtools/utils/normandyApi";
 
+function renderForTest(recipe, component = <RecipeDetailsPage />) {
+  return renderWithContext(component, {
+    route: "/prod/recipes/270",
+    path: "/prod/recipes/:recipeId",
+  });
+}
+
 describe("The `RecipeDetails` component", () => {
   afterEach(async () => {
     jest.clearAllMocks();
@@ -32,7 +40,12 @@ describe("The `RecipeDetails` component", () => {
   });
 
   const setup = (recipe, experiment = experimenterResponseFactory.build()) => {
-    const pageResponse = { results: [recipe] };
+    const pageResponse = {
+      results: [recipe],
+      count: 1,
+      next: null,
+      previous: null,
+    };
     jest
       .spyOn(NormandyAPI.prototype, "fetchRecipePage")
       .mockImplementation(() => Promise.resolve(pageResponse));
@@ -82,6 +95,23 @@ describe("The `RecipeDetails` component", () => {
     return /** @type import("devtools/types/recipes").RecipeV3<import("devtools/types/arguments").BranchedAddonStudyArguments> */ (recipe);
   };
 
+  const extensionSetup = (count) => {
+    const extensions = extensionFactory.buildCount(count);
+    const mockFetchExtension = jest
+      .fn()
+      .mockImplementation((i) => extensions[i % extensions.length]);
+
+    jest
+      .spyOn(NormandyAPI.prototype, "fetchExtension")
+      .mockImplementation(() =>
+        Promise.resolve(
+          mockFetchExtension(mockFetchExtension.mock.calls.length),
+        ),
+      );
+
+    return extensions;
+  };
+
   const multiprefRecipeSetUp = () => {
     const sample = stableSampleFoFactory.build();
     const versions = versionFoFactory.build({}, { generateVersionsCount: 2 });
@@ -116,8 +146,10 @@ describe("The `RecipeDetails` component", () => {
 
   it("displays details of an branchedAddon recipe", async () => {
     const recipeData = branchedAddonSetup();
+    const extensions = extensionSetup(2);
     setup(recipeData);
-    const doc = renderWithContext(<RecipeDetailsPage />);
+
+    const doc = renderForTest(recipeData);
 
     await doc.findByText(recipeData.latest_revision.name);
     await waitFor(() => expect(NormandyAPI.prototype.fetchRecipe).toReturn());
@@ -154,6 +186,15 @@ describe("The `RecipeDetails` component", () => {
       ).not.toHaveLength(0);
       expect(doc.getAllByText(branch.ratio.toString())).not.toHaveLength(0);
     }
+
+    for (const extension of extensions) {
+      expect(
+        doc.getByText(extension.name, { exact: false }),
+      ).toBeInTheDocument();
+      expect(
+        doc.getByText(extension.version, { exact: false }),
+      ).toBeInTheDocument();
+    }
   });
 
   it("displays details from experimenter", async () => {
@@ -167,7 +208,7 @@ describe("The `RecipeDetails` component", () => {
     );
     setup(recipeData, experiment);
 
-    const doc = renderWithContext(<RecipeDetailsPage />);
+    const doc = renderForTest(recipeData);
     expect(await doc.findByText("Experimenter Details")).toBeInTheDocument();
     expect(
       await doc.findByText(experiment.public_description),
@@ -201,7 +242,7 @@ describe("The `RecipeDetails` component", () => {
     });
     setup(recipeData, experiment);
 
-    const doc = renderWithContext(<RecipeDetailsPage />);
+    const doc = renderForTest(recipeData);
     await waitFor(() =>
       expect(ExperimenterAPI.prototype.fetchExperiment).toReturn(),
     );
@@ -220,7 +261,7 @@ describe("The `RecipeDetails` component", () => {
     let recipeData = multiprefRecipeSetUp();
     recipeData = unapproveRecipe(recipeData);
     setup(recipeData);
-    const doc = renderWithContext(<RecipeDetailsPage />);
+    const doc = renderForTest(recipeData);
 
     await doc.findByText(recipeData.latest_revision.name);
     expect(doc.getByText("Approval Request")).toBeInTheDocument();
@@ -245,7 +286,7 @@ describe("The `RecipeDetails` component", () => {
     recipeData = unapproveRecipe(recipeData);
     setup(recipeData);
 
-    const doc = renderWithContext(<RecipeDetailsPage />);
+    const doc = renderForTest(recipeData);
 
     await doc.findByText(recipeData.latest_revision.name);
     expect(doc.getByText("Approval Request")).toBeInTheDocument();
@@ -269,7 +310,7 @@ describe("The `RecipeDetails` component", () => {
     let recipeData = multiprefRecipeSetUp();
     recipeData = unapproveRecipe(recipeData);
     setup(recipeData);
-    const doc = renderWithContext(<RecipeDetailsPage />);
+    const doc = renderForTest(recipeData);
 
     await waitFor(() => expect(NormandyAPI.prototype.fetchRecipe).toReturn());
     await doc.findByText(recipeData.latest_revision.name);
@@ -284,6 +325,7 @@ describe("The `RecipeDetails` component", () => {
 
   it("should be able to pause recipes", async () => {
     const nextRevisionId = 10042;
+    /** @type {Deferred<import("devtools/types/recipes").RecipeV3>} */
     const patchRecipeDeferred = new Deferred();
     jest
       .spyOn(NormandyAPI.prototype, "patchRecipe")
@@ -301,7 +343,7 @@ describe("The `RecipeDetails` component", () => {
     });
     setup(recipe);
 
-    const doc = renderWithContext(<RecipeDetailsPage />);
+    const doc = renderForTest(recipe);
     // wait for load to complete
     await doc.findByText(recipe.latest_revision.name);
 
@@ -324,7 +366,15 @@ describe("The `RecipeDetails` component", () => {
     });
 
     // After the pause completes, an approval recipe should be sent
-    patchRecipeDeferred.resolve({ latest_revision: { id: nextRevisionId } });
+    patchRecipeDeferred.resolve(
+      recipeFactory.build({
+        latest_revision: {
+          ...recipe.latest_revision,
+          id: nextRevisionId,
+          arguments: { isEnrollmentPaused: true },
+        },
+      }),
+    );
     await Promise.resolve();
     expect(NormandyAPI.prototype.requestApproval).toBeCalledWith(
       nextRevisionId,
@@ -347,7 +397,7 @@ describe("The `RecipeDetails` component", () => {
     });
     setup(recipe);
 
-    const doc = renderWithContext(<RecipeDetailsPage />);
+    const doc = renderForTest(recipe);
     // wait for load to complete
     await doc.findByText(recipe.latest_revision.name);
 
@@ -363,7 +413,7 @@ describe("The `RecipeDetails` component", () => {
     });
     setup(recipe);
 
-    const doc = renderWithContext(<RecipeDetailsPage />);
+    const doc = renderForTest(recipe);
     await doc.findByText(recipe.latest_revision.name);
 
     expect(doc.queryAllByText("Pause")).toHaveLength(0);
@@ -374,7 +424,7 @@ describe("The `RecipeDetails` component", () => {
     const recipe = recipeFactory.build();
     setup(recipe);
 
-    const doc = renderWithContext(<RecipeDetailsPage />);
+    const doc = renderForTest(recipe);
     await doc.findByText(recipe.latest_revision.name);
     expect(doc.queryByText("Match")).toBeNull();
   });
@@ -383,7 +433,8 @@ describe("The `RecipeDetails` component", () => {
     global.__ENV__ = "extension";
     const recipe = recipeFactory.build();
 
-    const doc = renderWithContext(
+    const doc = renderForTest(
+      recipe,
       <RecipeDetailsProvider data={recipe.latest_revision}>
         <RecipeDetails />
       </RecipeDetailsProvider>,
