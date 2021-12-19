@@ -39,7 +39,10 @@ const ExtensionsPage: React.FC = () => {
         <PageWrapper>
           <AsyncHookView<ApiPage<Extension>> hook={extensions}>
             {({ results }) => (
-              <div className="grid-layout grid-2 card-grid">
+              <div
+                className="grid-layout grid-2 card-grid"
+                data-testid="extensions-list"
+              >
                 {results.map((extension) => (
                   <ExtensionCard key={extension.id} extension={extension} />
                 ))}

@@ -39,14 +39,16 @@ describe("ExtensionPage", () => {
     expect(extensions.length).toBeGreaterThanOrEqual(pageSize);
 
     const doc = renderWithContext(<ExtensionsPage />);
-    const headers = await doc.findAllByRole("rowheader");
-    expect(headers).toHaveLength(pageSize);
+    await waitFor(() => doc.findByTestId("extensions-list"));
+    const extensionsList = await doc.getByTestId("extensions-list");
+    const cards = extensionsList.querySelectorAll(".extension-card");
+    expect(cards).toHaveLength(pageSize);
     for (let i = 0; i < pageSize; i++) {
       expect(
-        within(headers[i]).getByText(`${extensions[i].id}`),
+        within(cards[i] as HTMLElement).getByText(`${extensions[i].id}`),
       ).toBeInTheDocument();
       expect(
-        within(headers[i]).getByText(extensions[i].name),
+        within(cards[i] as HTMLElement).getByText(extensions[i].name),
       ).toBeInTheDocument();
     }
   });
@@ -57,7 +59,7 @@ describe("ExtensionPage", () => {
       .spyOn(NormandyAPI.prototype, "fetchExtensionsPage")
       .mockResolvedValue(extensionPageDeferred.promise);
     const doc = renderWithContext(<ExtensionsPage />);
-    expect(await doc.findByText("Loading")).toBeInTheDocument();
+    expect(await doc.findByText(/^Loading/)).toBeInTheDocument();
 
     extensionPageDeferred.resolve({
       count: 10,
@@ -65,7 +67,7 @@ describe("ExtensionPage", () => {
       previous: null,
       results: extensions.slice(0, 10),
     });
-    await waitFor(() => expect(doc.queryByText("Loading")).toBeNull());
+    await waitFor(() => expect(doc.queryByText(/^Loading/)).toBeNull());
   });
 
   it("should show errors", async () => {
