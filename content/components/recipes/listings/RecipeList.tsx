@@ -1,9 +1,10 @@
 import React from "react";
 import { useHistory } from "react-router";
-import { IconButton, Divider, Tag, Icon } from "rsuite";
+import { IconButton, Divider, Tag, Icon, Popover, Whisper } from "rsuite";
 
 import SuitabilityTag from "devtools/components/recipes/details/SuitabilityTag";
 import RecipeCard from "devtools/components/recipes/RecipeCard";
+import { layoutContext } from "devtools/contexts/layout";
 import { RecipeV3 } from "devtools/types/recipes";
 import { has } from "devtools/utils/helpers";
 import { convertToV1Recipe } from "devtools/utils/recipes";
@@ -46,6 +47,7 @@ const Card: React.FC<CardProps> = ({
 }) => {
   const history = useHistory();
   const [running, setRunning] = React.useState(false);
+  const { container } = React.useContext(layoutContext);
 
   let enabledTag = <Tag color="red">Disabled</Tag>;
   if (recipe.latest_revision.enabled) {
@@ -61,11 +63,13 @@ const Card: React.FC<CardProps> = ({
   };
 
   const handleRunButtonClick = async (): Promise<void> => {
-    setRunning(true);
-    await browser.experiments.normandy.runRecipe(
-      convertToV1Recipe(recipe.latest_revision, environmentKey),
-    );
-    setRunning(false);
+    if (!running) {
+      setRunning(true);
+      await browser.experiments.normandy.runRecipe(
+        convertToV1Recipe(recipe.latest_revision, environmentKey),
+      );
+      setRunning(false);
+    }
   };
 
   const metaDataKeys = ["slug", "surveyId", "rolloutSlug"];
@@ -83,8 +87,49 @@ const Card: React.FC<CardProps> = ({
     }
   });
 
+  const moreButton = (
+    <div>
+      <Whisper
+        placement="bottomEnd"
+        speaker={
+          <Popover container={container}>
+            <ul className="link-list border-top-0 mt-0">
+              <li onClick={handleEditClick}>
+                <Icon className="mr-1" icon="pencil" />
+                Edit
+              </li>
+              {__ENV__ === "extension" ? (
+                <li onClick={handleRunButtonClick}>
+                  <Icon
+                    className="mr-1"
+                    icon={running ? "spinner" : "play"}
+                    spin={running}
+                  />
+                  Run
+                </li>
+              ) : null}
+              {__ENV__ === "extension" ? (
+                <li onClick={handleCustomRunButtonClick}>
+                  <Icon className="mr-1" icon="gear" />
+                  Customize & Run
+                </li>
+              ) : null}
+            </ul>
+          </Popover>
+        }
+        trigger="click"
+      >
+        <IconButton
+          appearance="primary"
+          icon={<Icon icon="ellipsis-h" />}
+          size="sm"
+        />
+      </Whisper>
+    </div>
+  );
+
   return (
-    <RecipeCard className="mb-1" recipe={recipe}>
+    <RecipeCard afterHeader={moreButton} className="mb-1" recipe={recipe}>
       <Divider className="mb-2 mt-2" />
       <div className="d-flex pb-half">
         <span className="flex-grow-1">
@@ -100,29 +145,12 @@ const Card: React.FC<CardProps> = ({
           {enabledTag}
         </span>
       </div>
-      <Divider className="mt-2 mb-0" />
-      <div className="flex-grow-1">{metaData}</div>
-      <Divider className="my-2" />
-      <div className="grid-layout grid-3">
-        <IconButton icon={<Icon icon="pencil" />} onClick={handleEditClick}>
-          Edit
-        </IconButton>
-        <IconButton
-          disabled={__ENV__ !== "extension"}
-          icon={<Icon icon="play" />}
-          loading={running}
-          onClick={handleRunButtonClick}
-        >
-          Run
-        </IconButton>
-        <IconButton
-          disabled={__ENV__ !== "extension"}
-          icon={<Icon icon="gear" />}
-          onClick={handleCustomRunButtonClick}
-        >
-          Customize & Run
-        </IconButton>
-      </div>
+      {metaData.length ? (
+        <>
+          <Divider className="mt-2 mb-0" />
+          <div className="flex-grow-1">{metaData}</div>
+        </>
+      ) : null}
     </RecipeCard>
   );
 };

@@ -4,6 +4,7 @@ import { Icon, Input, InputGroup, InputPicker } from "rsuite";
 import { useDebouncedCallback } from "use-debounce/lib";
 
 import ActionSelector from "devtools/components/common/ActionSelector";
+import { layoutContext } from "devtools/contexts/layout";
 import { RecipeListQuery } from "devtools/types/normandyApi";
 import NormandyAPI from "devtools/utils/normandyApi";
 
@@ -28,6 +29,7 @@ const RecipeQueryEditor: React.FC<Props> = ({
   normandyApi,
 }) => {
   const [draftQuery, setDraftQuery] = useState<RecipeListQuery>(query ?? {});
+  const { container } = React.useContext(layoutContext);
 
   // Don't update the parent component for every keypress
   const debouncedSetQuery = useDebouncedCallback(setQuery, 300);
@@ -119,6 +121,7 @@ const RecipeQueryEditor: React.FC<Props> = ({
       <div className="pr-1">
         <div className="font-weight-bold mb-1">Enabled</div>
         <InputPicker
+          container={container}
           data={enabledPickerData}
           placeholder="Any"
           value={draftQuery.enabled}
