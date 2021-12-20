@@ -13,7 +13,7 @@ interface RecipeCardProps extends PanelProps {
 const RecipeCard: React.FC<RecipeCardProps> = ({
   afterHeader = null,
   children,
-  className,
+  className = "",
   recipe,
   ...props
 }) => {

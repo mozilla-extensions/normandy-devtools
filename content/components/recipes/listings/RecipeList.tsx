@@ -15,12 +15,6 @@ interface RecipeListProps {
   environmentKey: string;
 }
 
-interface CardProps {
-  recipe: RecipeV3;
-  copyRecipeToArbitrary: (recipe: RecipeV3) => void;
-  environmentKey: string;
-}
-
 const RecipeList: React.FC<RecipeListProps> = ({
   recipes,
   copyRecipeToArbitrary,
@@ -39,6 +33,12 @@ const RecipeList: React.FC<RecipeListProps> = ({
     </div>
   );
 };
+
+interface CardProps {
+  recipe: RecipeV3;
+  copyRecipeToArbitrary: (recipe: RecipeV3) => void;
+  environmentKey: string;
+}
 
 const Card: React.FC<CardProps> = ({
   recipe,

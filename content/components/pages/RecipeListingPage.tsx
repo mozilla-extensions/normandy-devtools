@@ -14,7 +14,6 @@ import {
 import { RecipeListQuery } from "devtools/types/normandyApi";
 import { convertToV1Recipe } from "devtools/utils/recipes";
 
-// Wrapped in a HOC and then exported as default
 const RecipeListingPage: React.FC = () => {
   const {
     connectionStatus,

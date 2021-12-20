@@ -5,7 +5,7 @@ import { Icon, IconButton } from "rsuite";
 import { useSelectedEnvironmentState } from "devtools/contexts/environment";
 
 interface ListingsHeaderProps {
-  setShowWriteRecipes: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowWriteRecipes: (show: boolean) => void;
 }
 
 const ListingsHeader: React.FC<ListingsHeaderProps> = ({
