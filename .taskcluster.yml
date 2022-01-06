@@ -7,7 +7,7 @@ tasks:
     - $let:
           taskgraph:
               branch: taskgraph
-              revision: 8051b20c975711d4ce09537285cef7451d043d8b
+              revision: b6ecb0fd4e7e36437520f7359ab5b3ff59494c44
           template:
               repo: https://github.com/mozilla-extensions/xpi-template
               branch: master
@@ -138,7 +138,6 @@ tasks:
                                     - "index.${trustDomain}.v2.${project}.revision.${head_sha}.taskgraph.decision"
                                 else: []
                       scopes:
-                          # `https://` is 8 characters so, ${repoUrl[8:]} is the repository without the protocol.
                           $if: 'tasks_for == "github-push"'
                           then:
                               $let:
@@ -224,14 +223,14 @@ tasks:
                                 in:
                                     $if: 'tasks_for == "action"'
                                     then: >
-                                        PIP_IGNORE_INSTALLED=0 pip install --user /builds/worker/checkouts/taskgraph &&
+                                        PIP_IGNORE_INSTALLED=0 pip3 install --user /builds/worker/checkouts/taskgraph &&
                                         cd /builds/worker/checkouts/src &&
                                         rm -rf taskcluster &&
                                         ln -s /builds/worker/checkouts/template/taskcluster taskcluster &&
                                         ln -s /builds/worker/artifacts artifacts &&
                                         ~/.local/bin/taskgraph action-callback
                                     else: >
-                                        PIP_IGNORE_INSTALLED=0 pip install --user /builds/worker/checkouts/taskgraph &&
+                                        PIP_IGNORE_INSTALLED=0 pip3 install --user /builds/worker/checkouts/taskgraph &&
                                         rm -rf taskcluster &&
                                         ln -s /builds/worker/checkouts/template/taskcluster taskcluster &&
                                         ln -s /builds/worker/artifacts artifacts &&
