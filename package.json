@@ -123,7 +123,7 @@
     "react-split": "2.0.9",
     "rsuite": "4.8.4",
     "use-debounce": "5.1.0",
-    "validator": "13.5.2"
+    "validator": "13.7.0"
   },
   "resolutions": {
     "web-ext/addons-linter": "1.24.0"
