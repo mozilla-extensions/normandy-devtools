@@ -11,7 +11,7 @@ Clone the repository, and install the dependencies:
 ```sh
 git clone https://github.com/mozilla/normandy-devtools.git
 cd normandy-devtools
-yarn install
+yarn
 ```
 
 > One of Normandy Devtools core features is interacting with various

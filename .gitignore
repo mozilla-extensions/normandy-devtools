@@ -5,3 +5,9 @@ yarn-error.log
 .env*
 .webpack-cache
 coverage/
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions

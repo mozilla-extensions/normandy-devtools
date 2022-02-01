@@ -16,11 +16,16 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v2-dependencies-
       - run:
+          name: Install corepack
+          command: |
+            npm install corepack
+            corepack enable
+      - run:
           name: Install node dependencies
-          command: yarn install --frozen-lockfile
+          command: yarn --immutable
       - save_cache:
           paths:
-            - "node_modules"
+            - ".yarn/cache"
           key: v2-dependencies-{{ checksum "yarn.lock" }}
       - run:
           name: Lint
@@ -38,11 +43,16 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v2-dependencies-
       - run:
+          name: Install corepack
+          command: |
+            npm install corepack
+            corepack enable
+      - run:
           name: Install node dependencies
-          command: yarn install --frozen-lockfile
+          command: yarn --immutable
       - save_cache:
           paths:
-            - "node_modules"
+            - ".yarn/cache"
           key: v2-dependencies-{{ checksum "yarn.lock" }}
       - run:
           name: Run tests
@@ -61,11 +71,16 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v2-dependencies-
       - run:
+          name: Install corepack
+          command: |
+            npm install corepack
+            corepack enable
+      - run:
           name: Install node dependencies
-          command: yarn install --frozen-lockfile
+          command: yarn --immutable
       - save_cache:
           paths:
-            - "node_modules"
+            - ".yarn/cache"
           key: v2-dependencies-{{ checksum "yarn.lock" }}
       - run:
           name: Build
@@ -86,7 +101,7 @@ jobs:
       - checkout
       - run:
           name: Verify git tag matches version
-          command: node ./bin/check-package-version.js
+          command: yarn node ./bin/check-package-version.js
 
   publish-docs:
     docker:
@@ -100,11 +115,16 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v2-dependencies-
       - run:
+          name: Install corepack
+          command: |
+            npm install corepack
+            corepack enable
+      - run:
           name: Install node dependencies
-          command: yarn install --frozen-lockfile
+          command: yarn --immutable
       - save_cache:
           paths:
-            - "node_modules"
+            - ".yarn/cache"
           key: v2-dependencies-{{ checksum "yarn.lock" }}
 
       - add_ssh_keys:
@@ -165,11 +185,16 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v2-dependencies-
       - run:
+          name: Install corepack
+          command: |
+            npm install corepack
+            corepack enable
+      - run:
           name: Install node dependencies
-          command: yarn install --frozen-lockfile
+          command: yarn --immutable
       - save_cache:
           paths:
-            - "node_modules"
+            - ".yarn/cache"
           key: v2-dependencies-{{ checksum "yarn.lock" }}
 
       - run:
