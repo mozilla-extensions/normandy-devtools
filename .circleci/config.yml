@@ -18,6 +18,7 @@ jobs:
       - run:
           name: Install corepack
           command: |
+            npm r -g yarn
             npm i -g corepack
             corepack enable
       - run:
@@ -45,6 +46,7 @@ jobs:
       - run:
           name: Install corepack
           command: |
+            npm r -g yarn
             npm i -g corepack
             corepack enable
       - run:
@@ -73,6 +75,7 @@ jobs:
       - run:
           name: Install corepack
           command: |
+            npm r -g yarn
             npm i -g corepack
             corepack enable
       - run:
@@ -117,6 +120,7 @@ jobs:
       - run:
           name: Install corepack
           command: |
+            npm r -g yarn
             npm i -g corepack
             corepack enable
       - run:
@@ -187,6 +191,7 @@ jobs:
       - run:
           name: Install corepack
           command: |
+            npm r -g yarn
             npm i -g corepack
             corepack enable
       - run:
